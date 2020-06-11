@@ -1,0 +1,4 @@
+# ホワイトリストのシート名とセルの範囲
+WHITE_LIST:
+  SHEET: 凸管理
+  CELLS: A2:A100

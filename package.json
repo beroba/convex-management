@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/smicle/convex-management#readme",
   "dependencies": {
+    "const-settings": "^1.0.0",
     "google-spreadsheet-as-promised": "^0.2.12",
     "throw-env": "^1.0.1",
     "typescript": "^3.9.5"
