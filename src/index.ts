@@ -1,30 +1,19 @@
+import * as Discord from 'discord.js'
 import throwEnv from 'throw-env'
 import Settings from 'const-settings'
 
-const GoogleSpreadsheetAsPromised = require('google-spreadsheet-as-promised')
+const client = new Discord.Client()
 
-/**
- * GoogleSpreadSheetから指定されたシートを取得する
- * @param name シートの名前
- * @return 取得したシート
- */
-const getWorksheet = async (name: string): Promise<any> => {
-  // GoogleSpreadSheetで使う定数を定義
-  const CREDS = JSON.parse(throwEnv('CREDS'))
-  const SHEET_ID = throwEnv('SHEET_ID')
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user?.username}!`)
+})
 
-  const sheet = new GoogleSpreadsheetAsPromised()
-  await sheet.load(SHEET_ID, CREDS)
-  return sheet.getWorksheetByName(name)
-}
+client.on('guildMemberAdd', member => {
+  // ウェルカムメッセージしないサーバなら終了
+  if (member.guild.name !== Settings.WELCOME_SERVER) return
 
-;(async () => {
-  const name = 'test'
+  const channel = client.channels.cache.get(throwEnv('WELCOME_CHANNEL_ID')) as Discord.TextChannel
+  channel?.send(`<@!${member.user?.id}> まずは <#${throwEnv('GUIDE_CHANNEL_ID')}> を確認しなさい！`)
+})
 
-  const worksheet = await getWorksheet(Settings.WHITE_LIST.SHEET)
-  const cells = await worksheet.getCells(Settings.WHITE_LIST.CELLS)
-
-  const l = cells.getAllValues().filter((v: string) => v).length
-  const cell = await worksheet.getCell(`A${l + 2}`)
-  await cell.setValue(name)
-})()
+client.login(throwEnv('CAL_TOKEN'))
