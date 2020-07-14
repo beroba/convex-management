@@ -24,17 +24,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var Discord = __importStar(require("discord.js"));
 var throw_env_1 = __importDefault(require("throw-env"));
-var const_settings_1 = __importDefault(require("const-settings"));
+var ready_1 = require("./client/ready");
+var guildMemberAdd_1 = require("./client/guildMemberAdd");
 var client = new Discord.Client();
-client.on('ready', function () {
-    var _a;
-    console.log("Logged in as " + ((_a = client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
-});
+client.on('ready', function () { return ready_1.Ready(client); });
 client.on('guildMemberAdd', function (member) {
-    var _a;
-    if (member.guild.name !== const_settings_1["default"].WELCOME_SERVER)
-        return;
-    var channel = client.channels.cache.get(throw_env_1["default"]('WELCOME_CHANNEL_ID'));
-    channel === null || channel === void 0 ? void 0 : channel.send("<@!" + ((_a = member.user) === null || _a === void 0 ? void 0 : _a.id) + "> \u307E\u305A\u306F <#" + throw_env_1["default"]('GUIDE_CHANNEL_ID') + "> \u3092\u78BA\u8A8D\u3057\u306A\u3055\u3044\uFF01");
+    return guildMemberAdd_1.GuildMemberAdd(client, member);
 });
 client.login(throw_env_1["default"]('CAL_TOKEN'));
