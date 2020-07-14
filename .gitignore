@@ -151,7 +151,6 @@ temp/
 *.wav
 *.mp4
 
-assets
 .vscode
 
 memo.md
