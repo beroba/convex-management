@@ -31,4 +31,13 @@ client.on('ready', function () { return ready_1.Ready(client); });
 client.on('guildMemberAdd', function (member) {
     return guildMemberAdd_1.GuildMemberAdd(client, member);
 });
+client.on('message', function (msg) {
+    var _a;
+    if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+        return;
+    if (msg.content !== 'やばい')
+        return;
+    var yabai = 'https://raw.githubusercontent.com/smicle/smicle-line-bot/assets/assets/%E3%83%A4%E3%83%90%E3%82%A4%E3%82%8F%E3%82%88%EF%BC%81.png';
+    msg.channel.send('', { files: [yabai] });
+});
 client.login(throw_env_1["default"]('CAL_TOKEN'));
