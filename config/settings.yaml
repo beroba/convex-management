@@ -1,7 +1,7 @@
+# キャルが起動時に喋るメッセージ
+STARTUP_MESSAGE: きゃるきゃるーん
+
 # ホワイトリストのシート名とセルの範囲
 WHITE_LIST:
   SHEET: 凸管理
   CELLS: A2:A100
-
-# ウェルカムメッセージを飛ばすサーバ
-WELCOME_SERVER: べろばあ
