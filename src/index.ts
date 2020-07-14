@@ -8,6 +8,7 @@ const client = new Discord.Client()
 // botの起動時に実行
 client.on('ready', () => Ready(client))
 
+// 新しいメンバーが増えた際に実行
 client.on('guildMemberAdd', (member: Discord.GuildMember | Discord.PartialGuildMember) =>
   GuildMemberAdd(client, member)
 )

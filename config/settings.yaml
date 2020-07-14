@@ -5,6 +5,3 @@ STARTUP_MESSAGE: 'きゃるきゃるーん'
 WHITE_LIST:
   SHEET: 凸管理
   CELLS: A2:A100
-
-# ウェルカムメッセージを飛ばすサーバ
-WELCOME_SERVER: べろばあ
