@@ -24,6 +24,7 @@
     "discord.js": "^12.2.0",
     "google-spreadsheet-as-promised": "^0.2.12",
     "throw-env": "^1.0.1",
+    "type-of-option": "^1.0.1",
     "typescript": "^3.9.5"
   }
 }

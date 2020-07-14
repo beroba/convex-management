@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import throwEnv from 'throw-env'
 import {Ready} from './client/ready'
 import {GuildMemberAdd} from './client/guildMemberAdd'
+import {Message} from './client/message'
 
 const client = new Discord.Client()
 
@@ -12,5 +13,8 @@ client.on('ready', () => Ready(client))
 client.on('guildMemberAdd', (member: Discord.GuildMember | Discord.PartialGuildMember) =>
   GuildMemberAdd(client, member)
 )
+
+// メッセージが送信された際に実行
+client.on('message', (msg: Discord.Message) => Message(msg))
 
 client.login(throwEnv('CAL_TOKEN'))

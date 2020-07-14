@@ -1,6 +1,10 @@
 # キャルが起動時に喋るメッセージ
 STARTUP_MESSAGE: きゃるきゃるーん
 
+# 画像のURL
+URL:
+  YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo.png
+
 # ホワイトリストのシート名とセルの範囲
 WHITE_LIST:
   SHEET: 凸管理
