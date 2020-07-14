@@ -16,6 +16,9 @@ exports.Message = function (msg) {
         return console.log(comment);
 };
 var SendYabaiImage = function (msg) {
+    var channel = msg.channel;
+    if (!const_settings_1["default"].SEND_IMAGE_CHANNEL.some(function (c) { return c === (channel === null || channel === void 0 ? void 0 : channel.name); }))
+        return;
     var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
     if (!match)
         return;
