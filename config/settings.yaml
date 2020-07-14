@@ -1,5 +1,5 @@
 # キャルが起動時に喋るメッセージ
-STARTUP_MESSAGE: 'きゃるきゃるーん'
+STARTUP_MESSAGE: きゃるきゃるーん
 
 # ホワイトリストのシート名とセルの範囲
 WHITE_LIST:
