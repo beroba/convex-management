@@ -15,4 +15,5 @@ export const GuildMemberAdd = (
 
   const channel = client.channels.cache.get(throwEnv('WELCOME_CHANNEL_ID')) as Discord.TextChannel
   channel?.send(`<@!${member.user?.id}> まずは <#${throwEnv('POLICY_CHANNEL_ID')}> を確認しなさい！`)
+  console.log(`I’m ${member.user?.username}, a new member.`)
 }
