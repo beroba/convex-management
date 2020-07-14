@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js'
 import throwEnv from 'throw-env'
 import Settings from 'const-settings'
+import {Ready} from './client/ready'
 
 const client = new Discord.Client()
 
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user?.username}!`)
-})
+// botの起動時に実行
+client.on('ready', () => Ready(client))
 
 client.on('guildMemberAdd', member => {
   // ウェルカムメッセージしないサーバなら終了
