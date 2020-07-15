@@ -1,9 +1,16 @@
 # キャルが起動時に喋るメッセージ
 STARTUP_MESSAGE: きゃるきゃるーん
 
-# コマンドが入力できるチャンネル
+# コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
-  - bot-test
+  # 凸予約コマンドが入力出来るチャンネル
+  CONVEX_RESERVATION:
+    - 凸予約
+    - bot-test
+  # 管理コマンドが入力できるチャンネル
+  MANAGEMENT:
+    - 運営管理用
+    - bot-test
 
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
 SEND_IMAGE_CHANNEL:

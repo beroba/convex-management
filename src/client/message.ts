@@ -30,7 +30,7 @@ export const Message = (msg: Discord.Message) => {
  */
 const SendYabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel('SEND_IMAGE_CHANNEL', msg.channel)) return
+  if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
 
   // ヤバイの文字が入っているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
