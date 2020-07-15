@@ -18,17 +18,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
-var Discord = __importStar(require("discord.js"));
-var throw_env_1 = __importDefault(require("throw-env"));
-var ready_1 = require("./client/ready");
-var guildMemberAdd_1 = require("./client/guildMemberAdd");
-var message_1 = require("./client/message");
-var client = new Discord.Client();
-client.on('ready', function () { return ready_1.Ready(client); });
-client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.GuildMemberAdd(client, member); });
-client.on('message', function (msg) { return message_1.Message(msg); });
-client.login(throw_env_1["default"]('CAL_TOKEN'));
+exports.Command = void 0;
+var util = __importStar(require("../../util"));
+exports.Command = function (msg) {
+    var _a, _b, _c;
+    if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
+        return;
+    if (!util.IsChannel('COMMAND_CHANNEL', msg.channel))
+        return;
+    console.log((_c = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.roles.cache.get('719906267824521267')) === null || _c === void 0 ? void 0 : _c.members.map(function (m) { return m.user.username; }));
+};
