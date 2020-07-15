@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import throwEnv from 'throw-env'
 import Settings from 'const-settings'
+import {Command} from './command/command'
 
 /**
  * 入力されたメッセージに応じて適切なコマンドを実行する
@@ -10,6 +11,9 @@ import Settings from 'const-settings'
 export const Message = (msg: Discord.Message) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== throwEnv('CLAN_SERVER_ID')) return
+
+  // `/`から始まるコマンドの処理
+  if (msg.content.charAt(0) !== '/') return Command(msg)
 
   console.log(msg.guild.roles.cache.get('719906267824521267')?.members.map(m => m.user.username))
 
