@@ -7,9 +7,10 @@ exports.Message = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 exports.Message = function (msg) {
-    var _a;
+    var _a, _b;
     if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
         return;
+    console.log((_b = msg.guild.roles.cache.get('719906267824521267')) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m.user; }));
     var comment;
     comment = SendYabaiImage(msg);
     if (comment)

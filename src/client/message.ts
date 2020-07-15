@@ -11,6 +11,8 @@ export const Message = (msg: Discord.Message) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== throwEnv('CLAN_SERVER_ID')) return
 
+  console.log(msg.guild.roles.cache.get('719906267824521267')?.members.map(m => m.user.username))
+
   let comment: Option<string>
 
   // ヤバイの文字がある場合の処理
