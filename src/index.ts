@@ -10,11 +10,9 @@ const client = new Discord.Client()
 client.on('ready', () => Ready(client))
 
 // 新しいメンバーが増えた際に実行
-client.on('guildMemberAdd', (member: Discord.GuildMember | Discord.PartialGuildMember) =>
-  GuildMemberAdd(client, member)
-)
+client.on('guildMemberAdd', member => GuildMemberAdd(client, member as Discord.GuildMember))
 
 // メッセージが送信された際に実行
-client.on('message', (msg: Discord.Message) => Message(msg))
+client.on('message', msg => Message(msg))
 
 client.login(throwEnv('CAL_TOKEN'))

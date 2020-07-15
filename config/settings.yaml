@@ -1,6 +1,10 @@
 # キャルが起動時に喋るメッセージ
 STARTUP_MESSAGE: きゃるきゃるーん
 
+# コマンドが入力できるチャンネル
+COMMAND_CHANNEL:
+  - bot-test
+
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
 SEND_IMAGE_CHANNEL:
   - 雑談

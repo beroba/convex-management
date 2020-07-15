@@ -6,10 +6,7 @@ import throwEnv from 'throw-env'
  * @param client bot(キャル)のclient
  * @param member 新規メンバー
  */
-export const GuildMemberAdd = (
-  client: Discord.Client,
-  member: Discord.GuildMember | Discord.PartialGuildMember
-) => {
+export const GuildMemberAdd = (client: Discord.Client, member: Discord.GuildMember) => {
   // クランのサーバーでなければ終了
   if (member.guild.id !== throwEnv('CLAN_SERVER_ID')) return
 

@@ -8,4 +8,6 @@ export const Command = (msg: Discord.Message) => {
   // 指定のチャンネル以外でキャルが動かないようにする
   const channel = msg.channel as Discord.TextChannel
   if (!Settings.COMMAND_CHANNEL.some((c: string) => c === channel?.name)) return
+
+  console.log(msg.guild?.roles.cache.get('719906267824521267')?.members.map(m => m.user.username))
 }
