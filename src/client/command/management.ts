@@ -24,6 +24,8 @@ export const Management = (command: string, msg: Discord.Message): Option<string
  * @param msg DiscordからのMessage
  */
 const resetMember = (msg: Discord.Message) => {
-  const clanMembers = msg.guild?.roles.cache.get('719906267824521267')?.members.map(m => m.user.username)
+  const clanMembers = msg.guild?.roles.cache
+    .get('719906267824521267')
+    ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
   msg.reply(clanMembers)
 }
