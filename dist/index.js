@@ -29,8 +29,6 @@ var guildMemberAdd_1 = require("./client/guildMemberAdd");
 var message_1 = require("./client/message");
 var client = new Discord.Client();
 client.on('ready', function () { return ready_1.Ready(client); });
-client.on('guildMemberAdd', function (member) {
-    return guildMemberAdd_1.GuildMemberAdd(client, member);
-});
+client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.GuildMemberAdd(client, member); });
 client.on('message', function (msg) { return message_1.Message(msg); });
 client.login(throw_env_1["default"]('CAL_TOKEN'));

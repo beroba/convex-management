@@ -1,7 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
-import throwEnv from 'throw-env'
+import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
+import * as util from '../util'
+import {Command} from './command'
 
 /**
  * 入力されたメッセージに応じて適切なコマンドを実行する
@@ -9,7 +11,10 @@ import Settings from 'const-settings'
  */
 export const Message = (msg: Discord.Message) => {
   // クランのサーバーでなければ終了
-  if (msg.guild?.id !== throwEnv('CLAN_SERVER_ID')) return
+  if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
+
+  // `/`から始まるコマンドの処理
+  if (msg.content.charAt(0) === '/') return Command(msg)
 
   let comment: Option<string>
 
@@ -25,8 +30,7 @@ export const Message = (msg: Discord.Message) => {
  */
 const SendYabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  const channel = msg.channel as Discord.TextChannel
-  if (!Settings.SEND_IMAGE_CHANNEL.some((c: string) => c === channel?.name)) return
+  if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
 
   // ヤバイの文字が入っているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
@@ -35,5 +39,6 @@ const SendYabaiImage = (msg: Discord.Message): Option<string> => {
   if (!match) return
 
   msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
+
   return 'Send Yabai Image'
 }
