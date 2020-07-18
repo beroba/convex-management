@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
+import * as spreadsheet from '../../util/spreadsheet'
 
 /**
  * 運営管理者側のコマンド
@@ -13,19 +14,28 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
   switch (command.split(' ')[0]) {
-    case '/manage.resetmember':
-      resetMember(msg)
-      return 'Reset convex management members'
+    case '/manage.relocation':
+      relocation(msg)
+      return 'Relocate convex management members'
   }
 }
 
 /**
- * 凸管理のメンバーをリセットする
+ * 凸管理のメンバーを再配置する
  * @param msg DiscordからのMessage
  */
-const resetMember = (msg: Discord.Message) => {
-  const clanMembers = msg.guild?.roles.cache
+const relocation = async (msg: Discord.Message) => {
+  const clanMembers: Option<string[]> = msg.guild?.roles.cache
     .get('719906267824521267')
     ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
-  msg.reply(clanMembers)
+    .sort()
+
+  const worksheet = await spreadsheet.GetWorksheet(Settings.RELOCATION.SHEET)
+
+  clanMembers?.forEach(async (m, i) => {
+    const cell = await worksheet.getCell(`A${i + 2}`)
+    await cell.setValue(m)
+  })
+
+  msg.reply('凸管理のメンバー一覧を再配置したわよ！')
 }

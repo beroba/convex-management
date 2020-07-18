@@ -23,6 +23,5 @@ URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo.png
 
 # ホワイトリストのシート名とセルの範囲
-WHITE_LIST:
+RELOCATION:
   SHEET: 凸管理
-  CELLS: A2:A100
