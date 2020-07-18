@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import throwEnv from 'throw-env'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
@@ -13,9 +14,9 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
-  switch (command.split(' ')[0]) {
-    case '/cb manage memberUpdate':
-      memberUpdate(msg)
+  switch (command) {
+    case '/cb manage update members':
+      updateMembers(msg)
       return 'Update convex management members'
   }
 }
@@ -24,10 +25,10 @@ export const Management = (command: string, msg: Discord.Message): Option<string
  * 凸管理のメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
-const memberUpdate = async (msg: Discord.Message) => {
+const updateMembers = async (msg: Discord.Message) => {
   // クランメンバー一覧をニックネームで取得
   const clanMembers: Option<string[]> = msg.guild?.roles.cache
-    .get('719906267824521267')
+    .get(throwEnv('CLANMEMBERS_ROLE_ID'))
     ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
     .sort()
 

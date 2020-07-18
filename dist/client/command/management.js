@@ -59,25 +59,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Management = void 0;
+var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Management = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
         return;
-    switch (command.split(' ')[0]) {
-        case '/cb manage memberUpdate':
-            memberUpdate(msg);
+    switch (command) {
+        case '/cb manage update members':
+            updateMembers(msg);
             return 'Update convex management members';
     }
 };
-var memberUpdate = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, worksheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get('719906267824521267')) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return (m.nickname ? m.nickname : m.user.username); }).sort();
+                clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(throw_env_1["default"]('CLANMEMBERS_ROLE_ID'))) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return (m.nickname ? m.nickname : m.user.username); }).sort();
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_WORKSHEET.MANAGEMENT)];
             case 1:
                 worksheet = _c.sent();
