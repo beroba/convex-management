@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js'
-import throwEnv from 'throw-env'
+import ThrowEnv from 'throw-env'
 import {Ready} from './client/ready'
 import {GuildMemberAdd} from './client/guildMemberAdd'
 import {Message} from './client/message'
@@ -15,4 +15,4 @@ client.on('guildMemberAdd', member => GuildMemberAdd(client, member as Discord.G
 // メッセージが送信された際に実行
 client.on('message', msg => Message(msg))
 
-client.login(throwEnv('CAL_TOKEN'))
+client.login(ThrowEnv('CAL_TOKEN'))

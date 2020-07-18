@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
-import throwEnv from 'throw-env'
+import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
 import {Command} from './command'
@@ -11,7 +11,7 @@ import {Command} from './command'
  */
 export const Message = (msg: Discord.Message) => {
   // クランのサーバーでなければ終了
-  if (msg.guild?.id !== throwEnv('CLAN_SERVER_ID')) return
+  if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
   // `/`から始まるコマンドの処理
   if (msg.content.charAt(0) === '/') return Command(msg)
@@ -39,5 +39,6 @@ const SendYabaiImage = (msg: Discord.Message): Option<string> => {
   if (!match) return
 
   msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
+
   return 'Send Yabai Image'
 }

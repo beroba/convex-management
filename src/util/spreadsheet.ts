@@ -1,4 +1,4 @@
-import throwEnv from 'throw-env'
+import ThrowEnv from 'throw-env'
 
 const GoogleSpreadsheetAsPromised = require('google-spreadsheet-as-promised')
 
@@ -9,8 +9,8 @@ const GoogleSpreadsheetAsPromised = require('google-spreadsheet-as-promised')
  */
 export const GetWorksheet = async (name: string): Promise<any> => {
   // GoogleSpreadSheetで使う定数を定義
-  const CREDS = JSON.parse(throwEnv('CREDS'))
-  const SHEET_ID = throwEnv('SHEET_ID')
+  const CREDS = JSON.parse(ThrowEnv('CREDS'))
+  const SHEET_ID = ThrowEnv('SHEET_ID')
 
   const sheet = new GoogleSpreadsheetAsPromised()
   await sheet.load(SHEET_ID, CREDS)

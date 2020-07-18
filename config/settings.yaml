@@ -22,6 +22,6 @@ SEND_IMAGE_CHANNEL:
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo.png
 
-# ホワイトリストのシート名とセルの範囲
+# 凸管理用のワークシート名
 CONVEX_WORKSHEET:
   MANAGEMENT: 凸管理
