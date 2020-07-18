@@ -66,19 +66,19 @@ exports.Management = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
         return;
     switch (command.split(' ')[0]) {
-        case '/manage.relocation':
-            relocation(msg);
-            return 'Relocate convex management members';
+        case '/cb manage memberUpdate':
+            memberUpdate(msg);
+            return 'Update convex management members';
     }
 };
-var relocation = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var memberUpdate = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, worksheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get('719906267824521267')) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return (m.nickname ? m.nickname : m.user.username); }).sort();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RELOCATION.SHEET)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_WORKSHEET.MANAGEMENT)];
             case 1:
                 worksheet = _c.sent();
                 clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
@@ -95,8 +95,7 @@ var relocation = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                         }
                     });
                 }); });
-                msg.reply('凸管理のメンバー一覧を再配置したわよ！');
-                msg.reply('https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso/edit#gid=0');
+                msg.reply('凸管理のメンバー一覧を更新したわよ！');
                 return [2];
         }
     });

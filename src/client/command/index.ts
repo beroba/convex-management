@@ -10,12 +10,9 @@ export const Command = (msg: Discord.Message) => {
   // キャルのメッセージはコマンド実行しない
   if (msg.member?.user.username === 'キャル') return
 
-  // スペース、カンマ、コロン、イコールの場合でもコマンドが動くようにピリオドに変換する
-  const command: string = msg.content.replace(/ |\.|,|:|=/, '.')
-
   let comment: Option<string>
 
   // 運営管理用コマンドを実行
-  comment = Management(command, msg)
+  comment = Management(msg.content, msg)
   if (comment) return console.log(comment)
 }
