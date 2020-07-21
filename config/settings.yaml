@@ -11,6 +11,10 @@ COMMAND_CHANNEL:
   MANAGEMENT:
     - 運営管理用
     - bot-test
+  PROGRESS:
+    - 進行
+    - bot-test
+
 
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
 SEND_IMAGE_CHANNEL:

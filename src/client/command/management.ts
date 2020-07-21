@@ -6,7 +6,7 @@ import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
- * 運営管理者側のコマンド
+ * 運営管理者用のコマンド
  * @param command 入力されたコマンド
  * @param msg DiscordからのMessage
  */
@@ -14,8 +14,8 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
-  switch (command) {
-    case '/cb manage update members':
+  switch (true) {
+    case /cb manage update members/.test(command):
       updateMembers(msg)
       return 'Update convex management members'
   }
