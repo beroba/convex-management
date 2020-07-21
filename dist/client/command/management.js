@@ -66,8 +66,8 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Management = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
         return;
-    switch (command) {
-        case '/cb manage update members':
+    switch (true) {
+        case /cb manage update members/.test(command):
             updateMembers(msg);
             return 'Update convex management members';
     }
