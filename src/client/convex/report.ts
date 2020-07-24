@@ -33,29 +33,6 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
 }
 
 /**
- * 凸状況の更新を行う
- * @param msg DiscordからのMessage
- */
-const updateStatus = async (msg: Discord.Message) => {
-  // 確認と❌のスタンプ
-  msg.react(Settings.EMOJI_ID.KAKUNIN)
-  msg.react('❌')
-
-  // ❌スタンプを押した際にデータの取り消しを行う
-  msg.awaitReactions((react, user) => {
-    if (user.id !== msg.author.id || react.emoji.name !== '❌') return false
-    msg.reply('取り消したわ')
-    console.log('Convex cancel')
-    return true
-  })
-
-  // 3凸終了者の処理
-  if (msg.content === '3') {
-    msg.reply('n人目の3凸終了者よ！')
-  }
-}
-
-/**
  * クラバトの日かどうかを確認する。
  * クラバトの日だった場合、凸管理で対応している日付の列名を返す
  * @return 対応している日付の列
@@ -80,4 +57,37 @@ const isClanBattleDays = async (): Promise<Option<string>> => {
     .filter(v => v[0] === mmdd())[0]
 
   return cell ? cell[1] : null
+}
+
+/**
+ * 凸状況の更新を行う
+ * @param msg DiscordからのMessage
+ */
+const updateStatus = async (msg: Discord.Message) => {
+  // リアクションの処理を行う
+  reaction(msg)
+
+  // 3凸終了者の処理
+  if (msg.content === '3') {
+    msg.reply('n人目の3凸終了者よ！')
+  }
+}
+
+/**
+ * 凸報告にリアクションをつける。
+ * 取り消しの処理も行う
+ * @param msg DiscordからのMessage
+ */
+const reaction = (msg: Discord.Message) => {
+  // 確認と❌のスタンプをつける
+  msg.react(Settings.EMOJI_ID.KAKUNIN)
+  msg.react('❌')
+
+  // ❌スタンプを押した際にデータの取り消しを行う
+  msg.awaitReactions((react, user) => {
+    if (user.id !== msg.author.id || react.emoji.name !== '❌') return false
+    msg.reply('取り消したわ')
+    console.log('Convex cancel')
+    return true
+  })
 }
