@@ -10,9 +10,10 @@ export const GuildMemberAdd = (client: Discord.Client, member: Discord.GuildMemb
   // クランのサーバーでなければ終了
   if (member.guild.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
-  // ウェルカムチャンネルにメ催促メッセージを送信
+  // ウェルカムチャンネルに催促メッセージを送信
   const channel = client.channels.cache.get(ThrowEnv('WELCOME_CHANNEL_ID')) as Discord.TextChannel
   channel?.send(`<@!${member.user?.id}> まずは <#${ThrowEnv('POLICY_CHANNEL_ID')}> を確認しなさい！`)
+  channel?.send(`ちゃんと <#${ThrowEnv('SELF_INTRODUCTION_ID')}> も書くことね`)
 
   console.log(`I’m ${member.user?.username}, a new member.`)
 }
