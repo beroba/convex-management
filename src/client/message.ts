@@ -4,13 +4,13 @@ import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
 import {Command} from './command'
-import {Report} from './convex/report'
+import {ConvexReport} from './convex/report'
 
 /**
  * 入力されたメッセージに応じて適切なコマンドを実行する
  * @param msg DiscordからのMessage
  */
-export const Message = (msg: Discord.Message) => {
+export const Message = async (msg: Discord.Message) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
@@ -19,7 +19,9 @@ export const Message = (msg: Discord.Message) => {
 
   let comment: Option<string>
 
-  Report(msg)
+  // 凸報告の処理を行う
+  comment = await ConvexReport(msg)
+  if (comment) return console.log(comment)
 
   // ヤバイの文字がある場合に画像を送信
   comment = sendYabaiImage(msg)
