@@ -18,8 +18,12 @@ export const Message = (msg: Discord.Message) => {
 
   let comment: Option<string>
 
-  // ヤバイの文字がある場合の処理
-  comment = SendYabaiImage(msg)
+  // ヤバイの文字がある場合に画像を送信
+  comment = sendYabaiImage(msg)
+  if (comment) return console.log(comment)
+
+  // ユイの文字がある場合にスタンプをつける
+  comment = sendYuiKusano(msg)
   if (comment) return console.log(comment)
 }
 
@@ -28,7 +32,7 @@ export const Message = (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  * @return 実行したコマンドの結果
  */
-const SendYabaiImage = (msg: Discord.Message): Option<string> => {
+const sendYabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
 
@@ -41,4 +45,21 @@ const SendYabaiImage = (msg: Discord.Message): Option<string> => {
   msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
 
   return 'Send Yabai Image'
+}
+
+/**
+ * 送信されたメッセージに草野またはユイの文字が入っていた場合、草野優衣のスタンプをつける
+ * @param msg DiscordからのMessage
+ * @return 実行したコマンドの結果
+ */
+const sendYuiKusano = (msg: Discord.Message): Option<string> => {
+  // 草野かユイの文字が入っているか確認
+  const match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/)
+
+  // 入っていない場合は終了、入っている場合は草野優衣のスタンプを押す
+  if (!match) return
+
+  msg.react(ThrowEnv('YUI_KUSANO_EMOJI'))
+
+  return 'Send Yui Kusano'
 }

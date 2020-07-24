@@ -9,6 +9,7 @@ import * as spreadsheet from '../../util/spreadsheet'
  * 運営管理者用のコマンド
  * @param command 入力されたコマンド
  * @param msg DiscordからのMessage
+ * @return 実行したコマンドの結果
  */
 export const Management = (command: string, msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
