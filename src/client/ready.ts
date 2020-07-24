@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 
 /**
@@ -7,8 +6,8 @@ import Settings from 'const-settings'
  * @param client bot(キャル)のclient
  */
 export const Ready = (client: Discord.Client) => {
-  const channel = client.channels.cache.get(ThrowEnv('NOTIFY_CHANNEL_ID')) as Discord.TextChannel
-  channel?.send(Settings.STARTUP_MESSAGE)
+  const channel = client.channels.cache.get(Settings.STARTUP.CHANNEL_ID) as Discord.TextChannel
+  channel?.send(Settings.STARTUP.MESSAGE)
 
   console.log(`Logged in as ${client.user?.username}!`)
 }

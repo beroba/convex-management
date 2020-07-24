@@ -54,6 +54,6 @@ var sendYuiKusano = function (msg) {
     var match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
-    msg.react(throw_env_1["default"]('YUI_KUSANO_EMOJI'));
+    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
     return 'Send Yui Kusano';
 };

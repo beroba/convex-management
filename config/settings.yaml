@@ -1,5 +1,25 @@
-# キャルが起動時に喋るメッセージ
-STARTUP_MESSAGE: きゃるきゃるーん
+# キャルが起動時に喋るメッセージと場所
+STARTUP:
+  MESSAGE: きゃるきゃるーん
+  CHANNEL_ID: '732598723376316456'
+
+# ウェルカムメッセージで使うチャンネルのID
+WELCOME_CHANNEL:
+  CHAT_ID: '714020537231343656'
+  POLICY_ID: '720761726391287939'
+  INTRODUCTION_ID: '714358491707473950'
+
+# ロールのID
+ROLE_ID:
+  # クランメンバーのロール
+  CLAN_MEMBERS: '719906267824521267'
+
+# カスタム絵文字のID
+EMOJI_ID:
+  # 草野優衣のカスタム絵文字
+  YUI_KUSANO: '715020255059247146'
+  # 確認のカスタム絵文字
+  KAKUNIN: '714684451057041448'
 
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
@@ -14,7 +34,6 @@ COMMAND_CHANNEL:
   PROGRESS:
     - 進行
     - bot-test
-
 
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
 SEND_IMAGE_CHANNEL:
