@@ -18,6 +18,9 @@ export const Management = (command: string, msg: Discord.Message): Option<string
     case /cb manage update members/.test(command):
       updateMembers(msg)
       return 'Update convex management members'
+    case /cb manage sheet/.test(command):
+      spreadsheetLink(msg)
+      return 'Show spreadsheet link'
   }
 }
 
@@ -42,4 +45,12 @@ const updateMembers = async (msg: Discord.Message) => {
   })
 
   msg.reply('凸管理のメンバー一覧を更新したわよ！')
+}
+
+/**
+ * スプレッドシートのリンクを送信する
+ * @param msg DiscordからのMessage
+ */
+const spreadsheetLink = (msg: Discord.Message) => {
+  msg.reply('https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso')
 }

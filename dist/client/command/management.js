@@ -70,6 +70,9 @@ exports.Management = function (command, msg) {
         case /cb manage update members/.test(command):
             updateMembers(msg);
             return 'Update convex management members';
+        case /cb manage sheet/.test(command):
+            spreadsheetLink(msg);
+            return 'Show spreadsheet link';
     }
 };
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -101,3 +104,6 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+var spreadsheetLink = function (msg) {
+    msg.reply('https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso');
+};
