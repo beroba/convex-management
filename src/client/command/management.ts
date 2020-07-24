@@ -1,6 +1,5 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
-import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
@@ -32,7 +31,7 @@ export const Management = (command: string, msg: Discord.Message): Option<string
 const updateMembers = async (msg: Discord.Message) => {
   // クランメンバー一覧をニックネームで取得
   const clanMembers: Option<string[]> = msg.guild?.roles.cache
-    .get(ThrowEnv('CLANMEMBERS_ROLE_ID'))
+    .get(Settings.ROLE_ID.CLAN_MEMBERS)
     ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
     .sort()
 
