@@ -1,5 +1,7 @@
-# キャルが起動時に喋るメッセージ
-STARTUP_MESSAGE: きゃるきゃるーん
+# キャルが起動時に喋るメッセージと場所
+STARTUP:
+  MESSAGE: きゃるきゃるーん
+  CHANNEL_ID: '732598723376316456'
 
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
