@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetWorksheet = void 0;
+exports.GetCells = exports.GetWorksheet = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var GoogleSpreadsheetAsPromised = require('google-spreadsheet-as-promised');
 exports.GetWorksheet = function (name) { return __awaiter(void 0, void 0, void 0, function () {
@@ -57,3 +57,9 @@ exports.GetWorksheet = function (name) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
+exports.GetCells = function (sheet, name) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    switch (_a.label) {
+        case 0: return [4, sheet.getCells(name)];
+        case 1: return [2, (_a.sent()).getAllValues()];
+    }
+}); }); };

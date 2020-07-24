@@ -1,6 +1,8 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import Option from 'type-of-option'
+import * as util from '../../util'
+import * as spreadsheet from '../../util/spreadsheet'
 
 /**
  * 凸報告の管理を行う
@@ -13,6 +15,12 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
 
   // 凸報告チャンネルでなければ終了
   if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
+
+  // クラバトの日じゃない場合は終了
+  if (!(await isClanBattleDays())) {
+    msg.reply('今日はクラバトの日じゃないわ')
+    return "It's not ClanBattle days"
+  }
 
   switch (true) {
     case /1|2|3/.test(msg.content.charAt(0)):
@@ -28,7 +36,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
  * 凸状況の更新を行う
  * @param msg DiscordからのMessage
  */
-const updateStatus = (msg: Discord.Message) => {
+const updateStatus = async (msg: Discord.Message) => {
   // 確認と❌のスタンプ
   msg.react(Settings.EMOJI_ID.KAKUNIN)
   msg.react('❌')
@@ -41,8 +49,35 @@ const updateStatus = (msg: Discord.Message) => {
     return true
   })
 
-  // 3凸終了者にコメント
+  // 3凸終了者の処理
   if (msg.content === '3') {
     msg.reply('n人目の3凸終了者よ！')
   }
+}
+
+/**
+ * クラバトの日かどうかを確認する。
+ * クラバトの日だった場合、凸管理で対応している日付の列名を返す
+ * @return 対応している日付の列
+ */
+const isClanBattleDays = async (): Promise<Option<string>> => {
+  /**
+   * 現在の日付を`MM/DD`の形式で返す
+   * @return 現在の日付
+   */
+  const mmdd = (): string => (d => `${d.getMonth() + 1}/${d.getDate()}`)(new Date())
+
+  // 情報のワークシートを取得
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.INFORMATION)
+
+  // 日付のセルを取得
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_CELLS.DATE)
+
+  // クラバトの日かどうか確認
+  const cell = util
+    .PiecesEach(cells, 2)
+    .map(v => [v[0].split('/').map(Number).join('/'), v[1]])
+    .filter(v => v[0] === mmdd())[0]
+
+  return cell ? cell[1] : null
 }

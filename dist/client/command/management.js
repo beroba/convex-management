@@ -75,20 +75,20 @@ exports.Management = function (command, msg) {
     }
 };
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var clanMembers, worksheet;
+    var clanMembers, manageSheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return (m.nickname ? m.nickname : m.user.username); }).sort();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_WORKSHEET.MANAGEMENT)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.MANAGEMENT)];
             case 1:
-                worksheet = _c.sent();
+                manageSheet = _c.sent();
                 clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
                     var cell;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, worksheet.getCell("A" + (i + 2))];
+                            case 0: return [4, manageSheet.getCell("A" + (i + 2))];
                             case 1:
                                 cell = _a.sent();
                                 return [4, cell.setValue(m)];

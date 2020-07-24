@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -41,35 +60,69 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
     return __generator(this, function (_b) {
-        if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
-            return [2];
-        if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
-            return [2];
-        switch (true) {
-            case /1|2|3/.test(msg.content.charAt(0)):
-                updateStatus(msg);
-                return [2, 'Update status'];
-            default:
-                msg.reply('形式が違うわ、やりなおし！');
-                return [2, 'Different format'];
+        switch (_b.label) {
+            case 0:
+                if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
+                    return [2];
+                if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
+                    return [2];
+                return [4, isClanBattleDays()];
+            case 1:
+                if (!(_b.sent())) {
+                    msg.reply('今日はクラバトの日じゃないわ');
+                    return [2, "It's not ClanBattle days"];
+                }
+                switch (true) {
+                    case /1|2|3/.test(msg.content.charAt(0)):
+                        updateStatus(msg);
+                        return [2, 'Update status'];
+                    default:
+                        msg.reply('形式が違うわ、やりなおし！');
+                        return [2, 'Different format'];
+                }
+                return [2];
+        }
+    });
+}); };
+var updateStatus = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
+        msg.react('❌');
+        msg.awaitReactions(function (react, user) {
+            if (user.id !== msg.author.id || react.emoji.name !== '❌')
+                return false;
+            msg.reply('取り消したわ');
+            console.log('Convex cancel');
+            return true;
+        });
+        if (msg.content === '3') {
+            msg.reply('n人目の3凸終了者よ！');
         }
         return [2];
     });
 }); };
-var updateStatus = function (msg) {
-    msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
-    msg.react('❌');
-    msg.awaitReactions(function (react, user) {
-        if (user.id !== msg.author.id || react.emoji.name !== '❌')
-            return false;
-        msg.reply('取り消したわ');
-        console.log('Convex cancel');
-        return true;
+var isClanBattleDays = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var mmdd, infoSheet, cells, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + d.getDate(); })(new Date()); };
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.INFORMATION)];
+            case 1:
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_CELLS.DATE)];
+            case 2:
+                cells = _a.sent();
+                cell = util
+                    .PiecesEach(cells, 2)
+                    .map(function (v) { return [v[0].split('/').map(Number).join('/'), v[1]]; })
+                    .filter(function (v) { return v[0] === mmdd(); })[0];
+                return [2, cell ? cell[1] : null];
+        }
     });
-    if (msg.content === '3') {
-        msg.reply('n人目の3凸終了者よ！');
-    }
-};
+}); };
