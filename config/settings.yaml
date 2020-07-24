@@ -3,6 +3,12 @@ STARTUP:
   MESSAGE: きゃるきゃるーん
   CHANNEL_ID: '732598723376316456'
 
+# ウェルカムメッセージで使うチャンネルのID
+WELCOME_CHANNEL:
+  CHAT_ID: '714020537231343656'
+  POLICY_ID: '720761726391287939'
+  INTRODUCTION_ID: '714358491707473950'
+
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
   # 凸予約コマンドが入力出来るチャンネル
@@ -16,7 +22,6 @@ COMMAND_CHANNEL:
   PROGRESS:
     - 進行
     - bot-test
-
 
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
 SEND_IMAGE_CHANNEL:
