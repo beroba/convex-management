@@ -12,8 +12,9 @@ export const GuildMemberAdd = (client: Discord.Client, member: Discord.GuildMemb
 
   // ウェルカムチャンネルに催促メッセージを送信
   const channel = client.channels.cache.get(ThrowEnv('WELCOME_CHANNEL_ID')) as Discord.TextChannel
-  channel?.send(`<@!${member.user?.id}> まずは <#${ThrowEnv('POLICY_CHANNEL_ID')}> を確認しなさい！`)
-  channel?.send(`ちゃんと <#${ThrowEnv('SELF_INTRODUCTION_ID')}> も書くことね`)
+  const firstLine = `<@!${member.user?.id}> まずは <#${ThrowEnv('POLICY_CHANNEL_ID')}> を確認しなさい！`
+  const secondLine = `ちゃんと <#${ThrowEnv('SELF_INTRODUCTION_ID')}> も書くことね`
+  channel?.send(`${firstLine}\n${secondLine}`)
 
   console.log(`I’m ${member.user?.username}, a new member.`)
 }
