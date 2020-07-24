@@ -27,6 +27,7 @@ var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
 var command_1 = require("./command");
+var report_1 = require("./convex/report");
 exports.Message = function (msg) {
     var _a;
     if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
@@ -34,6 +35,7 @@ exports.Message = function (msg) {
     if (msg.content.charAt(0) === '/')
         return command_1.Command(msg);
     var comment;
+    report_1.Report(msg);
     comment = sendYabaiImage(msg);
     if (comment)
         return console.log(comment);

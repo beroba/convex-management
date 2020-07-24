@@ -4,6 +4,7 @@ import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
 import {Command} from './command'
+import {Report} from './convex/report'
 
 /**
  * 入力されたメッセージに応じて適切なコマンドを実行する
@@ -17,6 +18,8 @@ export const Message = (msg: Discord.Message) => {
   if (msg.content.charAt(0) === '/') return Command(msg)
 
   let comment: Option<string>
+
+  Report(msg)
 
   // ヤバイの文字がある場合に画像を送信
   comment = sendYabaiImage(msg)
