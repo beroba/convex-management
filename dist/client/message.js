@@ -34,11 +34,14 @@ exports.Message = function (msg) {
     if (msg.content.charAt(0) === '/')
         return command_1.Command(msg);
     var comment;
-    comment = SendYabaiImage(msg);
+    comment = sendYabaiImage(msg);
+    if (comment)
+        return console.log(comment);
+    comment = sendYuiKusano(msg);
     if (comment)
         return console.log(comment);
 };
-var SendYabaiImage = function (msg) {
+var sendYabaiImage = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
         return;
     var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
@@ -46,4 +49,11 @@ var SendYabaiImage = function (msg) {
         return;
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
     return 'Send Yabai Image';
+};
+var sendYuiKusano = function (msg) {
+    var match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/);
+    if (!match)
+        return;
+    msg.react(throw_env_1["default"]('YUI_KUSANO_EMOJI'));
+    return 'Send Yui Kusano';
 };

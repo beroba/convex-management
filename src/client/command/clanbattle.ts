@@ -7,6 +7,7 @@ import * as util from '../../util'
  * クラバト用のコマンド
  * @param command 入力されたコマンド
  * @param msg DiscordからのMessage
+ * @return 実行したコマンドの結果
  */
 export const ClanBattle = (command: string, msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
