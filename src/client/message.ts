@@ -59,7 +59,7 @@ const sendYuiKusano = (msg: Discord.Message): Option<string> => {
   // 入っていない場合は終了、入っている場合は草野優衣のスタンプを押す
   if (!match) return
 
-  msg.react(ThrowEnv('YUI_KUSANO_EMOJI'))
+  msg.react(Settings.EMOJI_ID.YUI_KUSANO)
 
   return 'Send Yui Kusano'
 }
