@@ -35,12 +35,12 @@ const updateMembers = async (msg: Discord.Message) => {
     ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
     .sort()
 
-  // 凸管理のSHEETを取得
-  const worksheet = await spreadsheet.GetWorksheet(Settings.CONVEX_WORKSHEET.MANAGEMENT)
+  // 凸管理のシートを取得
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.MANAGEMENT)
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {
-    const cell = await worksheet.getCell(`A${i + 2}`)
+    const cell = await manageSheet.getCell(`A${i + 2}`)
     await cell.setValue(m)
   })
 

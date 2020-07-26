@@ -9,6 +9,10 @@ WELCOME_CHANNEL:
   POLICY_ID: '720761726391287939'
   INTRODUCTION_ID: '714358491707473950'
 
+# 凸に関するチャンネル
+CONVEX_CHANNEL:
+  REPORT_ID: '735190970760429648'
+
 # ロールのID
 ROLE_ID:
   # クランメンバーのロール
@@ -45,6 +49,12 @@ SEND_IMAGE_CHANNEL:
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo.png
 
-# 凸管理用のワークシート名
-CONVEX_WORKSHEET:
+# 凸管理用のシート名
+CONVEX_SHEET:
   MANAGEMENT: 凸管理
+  RESERVATION: 凸予約
+  INFORMATION: 情報
+
+# 情報シートで使うセルの範囲
+INFORMATION_CELLS:
+  DATE: B2:C6

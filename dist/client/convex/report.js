@@ -58,50 +58,71 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Message = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
+exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../util"));
-var command_1 = require("./command");
-var report_1 = require("./convex/report");
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
                     return [2];
-                if (msg.content.charAt(0) === '/')
-                    return [2, command_1.Command(msg)];
-                return [4, report_1.ConvexReport(msg)];
+                if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
+                    return [2];
+                return [4, isClanBattleDays()];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = sendYabaiImage(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = sendYuiKusano(msg);
-                if (comment)
-                    return [2, console.log(comment)];
+                if (!(_b.sent())) {
+                    msg.reply('今日はクラバトの日じゃないわ');
+                    return [2, "It's not ClanBattle days"];
+                }
+                switch (true) {
+                    case /1|2|3/.test(msg.content.charAt(0)):
+                        updateStatus(msg);
+                        return [2, 'Update status'];
+                    default:
+                        msg.reply('形式が違うわ、やりなおし！');
+                        return [2, 'Different format'];
+                }
                 return [2];
         }
     });
 }); };
-var sendYabaiImage = function (msg) {
-    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
-        return;
-    var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
-    if (!match)
-        return;
-    msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
-    return 'Send Yabai Image';
-};
-var sendYuiKusano = function (msg) {
-    var match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'Send Yui Kusano';
-};
+var updateStatus = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
+        msg.react('❌');
+        msg.awaitReactions(function (react, user) {
+            if (user.id !== msg.author.id || react.emoji.name !== '❌')
+                return false;
+            msg.reply('取り消したわ');
+            console.log('Convex cancel');
+            return true;
+        });
+        if (msg.content === '3') {
+            msg.reply('n人目の3凸終了者よ！');
+        }
+        return [2];
+    });
+}); };
+var isClanBattleDays = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var mmdd, infoSheet, cells, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + d.getDate(); })(new Date()); };
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.INFORMATION)];
+            case 1:
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_CELLS.DATE)];
+            case 2:
+                cells = _a.sent();
+                cell = util
+                    .PiecesEach(cells, 2)
+                    .map(function (v) { return [v[0].split('/').map(Number).join('/'), v[1]]; })
+                    .filter(function (v) { return v[0] === mmdd(); })[0];
+                return [2, cell ? cell[1] : null];
+        }
+    });
+}); };

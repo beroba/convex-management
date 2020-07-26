@@ -16,3 +16,6 @@ export const GetWorksheet = async (name: string): Promise<any> => {
   await sheet.load(SHEET_ID, CREDS)
   return sheet.getWorksheetByName(name)
 }
+
+export const GetCells = async (sheet: any, name: string): Promise<string[]> =>
+  (await sheet.getCells(name)).getAllValues()

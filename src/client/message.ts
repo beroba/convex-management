@@ -4,12 +4,13 @@ import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
 import {Command} from './command'
+import {ConvexReport} from './convex/report'
 
 /**
  * 入力されたメッセージに応じて適切なコマンドを実行する
  * @param msg DiscordからのMessage
  */
-export const Message = (msg: Discord.Message) => {
+export const Message = async (msg: Discord.Message) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
@@ -17,6 +18,10 @@ export const Message = (msg: Discord.Message) => {
   if (msg.content.charAt(0) === '/') return Command(msg)
 
   let comment: Option<string>
+
+  // 凸報告の処理を行う
+  comment = await ConvexReport(msg)
+  if (comment) return console.log(comment)
 
   // ヤバイの文字がある場合に画像を送信
   comment = sendYabaiImage(msg)
@@ -54,7 +59,7 @@ const sendYabaiImage = (msg: Discord.Message): Option<string> => {
  */
 const sendYuiKusano = (msg: Discord.Message): Option<string> => {
   // 草野かユイの文字が入っているか確認
-  const match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/)
+  const match = msg.content.replace(/草/g, 'ユイ').match(/ユイ/)
 
   // 入っていない場合は終了、入っている場合は草野優衣のスタンプを押す
   if (!match) return
