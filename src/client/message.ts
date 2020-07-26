@@ -59,7 +59,7 @@ const sendYabaiImage = (msg: Discord.Message): Option<string> => {
  */
 const sendYuiKusano = (msg: Discord.Message): Option<string> => {
   // 草野かユイの文字が入っているか確認
-  const match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/)
+  const match = msg.content.replace(/草/g, 'ユイ').match(/ユイ/)
 
   // 入っていない場合は終了、入っている場合は草野優衣のスタンプを押す
   if (!match) return
