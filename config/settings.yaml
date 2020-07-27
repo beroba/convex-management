@@ -47,7 +47,7 @@ SEND_IMAGE_CHANNEL:
 
 # 画像のURL
 URL:
-  YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo.png
+  YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
 
 # 凸管理用のシート名
 CONVEX_SHEET:
