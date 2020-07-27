@@ -83,9 +83,17 @@ exports.Management = function (command, msg) {
         return;
     switch (true) {
         case /cb manage create category/.test(command):
-            var arg = command.replace('/cb manage create category', '');
-            createCategory(msg, arg);
+            {
+                var arg = command.replace('/cb manage create category', '');
+                createCategory(msg, arg);
+            }
             return 'Create ClanBattle category';
+        case /cb manage delete category/.test(command):
+            {
+                var arg = command.replace('/cb manage delete category', '');
+                deleteCategory(msg, arg);
+            }
+            return 'Delete ClanBattle category';
         case /cb manage update members/.test(command):
             updateMembers(msg);
             return 'Update convex management members';
@@ -136,6 +144,7 @@ var createCategory = function (msg, arg) { return __awaiter(void 0, void 0, void
                         }
                     });
                 }); });
+                msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
                 return [2];
         }
     });
@@ -167,6 +176,19 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+var deleteCategory = function (msg, arg) {
+    var _a;
+    var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
+    if (!year)
+        return msg.reply('ちゃんと年と月を入力しなさい');
+    var category = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.find(function (c) { return c.name === year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8"; });
+    if (!category)
+        return msg.reply(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8\u306A\u3093\u3066\u306A\u3044\u3093\u3060\u3051\u3069\uFF01");
+    var channels = category.guild.channels.cache.filter(function (c) { return c.parentID === category.id; });
+    category === null || category === void 0 ? void 0 : category["delete"]();
+    channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
+    msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
+};
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, manageSheet;
     var _a, _b;
