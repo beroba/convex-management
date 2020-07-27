@@ -53,12 +53,12 @@ const createCategory = async (arg: string, msg: Discord.Message) => {
   // カテゴリーの権限を設定
   const permission: Discord.OverwriteResolvable[] = [
     {
-      id: msg.guild?.roles.everyone.id || '',
-      deny: ['VIEW_CHANNEL'],
-    },
-    {
       id: clanMembers.id,
       allow: ['VIEW_CHANNEL'],
+    },
+    {
+      id: msg.guild?.roles.everyone.id || '',
+      deny: ['VIEW_CHANNEL'],
     },
   ]
 

@@ -113,12 +113,12 @@ var createCategory = function (arg, msg) { return __awaiter(void 0, void 0, void
                     return [2];
                 permission = [
                     {
-                        id: ((_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.everyone.id) || '',
-                        deny: ['VIEW_CHANNEL']
-                    },
-                    {
                         id: clanMembers.id,
                         allow: ['VIEW_CHANNEL']
+                    },
+                    {
+                        id: ((_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.everyone.id) || '',
+                        deny: ['VIEW_CHANNEL']
                     },
                 ];
                 _a = __read(arg ? arg.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], day = _a[1];
