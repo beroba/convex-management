@@ -14,9 +14,10 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.PROGRESS, msg.channel)) return
 
   switch (true) {
-    case /cb over/.test(command):
+    case /cb over/.test(command): {
       simultConvexCalc(command, msg)
       return 'Simultaneous convex carryover calculation'
+    }
   }
 }
 

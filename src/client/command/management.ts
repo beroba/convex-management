@@ -15,33 +15,33 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
   switch (true) {
-    case /cb manage create category/.test(command):
-      {
-        const arg = command.replace('/cb manage create category', '')
-        createCategory(msg, arg)
-      }
+    case /cb manage create category/.test(command): {
+      const arg = command.replace('/cb manage create category', '')
+      createCategory(msg, arg)
       return 'Create ClanBattle category'
+    }
 
-    case /cb manage delete category/.test(command):
-      {
-        const arg = command.replace('/cb manage delete category', '')
-        deleteCategory(msg, arg)
-      }
+    case /cb manage delete category/.test(command): {
+      const arg = command.replace('/cb manage delete category', '')
+      deleteCategory(msg, arg)
       return 'Delete ClanBattle category'
+    }
 
-    case /cb manage update members/.test(command):
+    case /cb manage update members/.test(command): {
       updateMembers(msg)
       return 'Update convex management members'
+    }
 
-    case /cb manage sheet/.test(command):
+    case /cb manage sheet/.test(command): {
       spreadsheetLink(msg)
       return 'Show spreadsheet link'
+    }
   }
 }
 
 /**
  * クラバト用のカテゴリーとチャンネルを作成する
- * 引数がある場合は引数の年と日で作成ぢ、ない場合は現在の年と日で作成する
+ * 引数がある場合は引数の年と日で作成し、ない場合は現在の年と日で作成する
  * @param msg DiscordからのMessage
  * @param arg 作成する年と月
  */

@@ -23,12 +23,15 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   }
 
   switch (true) {
-    case /1|2|3/.test(msg.content.charAt(0)):
+    case /1|2|3/.test(msg.content.charAt(0)): {
       updateStatus(msg)
       return 'Update status'
-    default:
+    }
+
+    default: {
       msg.reply('形式が違うわ、やりなおし！')
       return 'Different format'
+    }
   }
 }
 
