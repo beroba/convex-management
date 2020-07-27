@@ -46,7 +46,7 @@ exports.ClanBattle = function (command, msg) {
         return;
     switch (true) {
         case /cb over/.test(command): {
-            var arg = command.replace('/cb over', '');
+            var arg = command.replace('/cb over ', '');
             simultConvexCalc(msg, arg);
             return 'Simultaneous convex carryover calculation';
         }

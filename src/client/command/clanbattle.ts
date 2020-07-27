@@ -15,7 +15,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 
   switch (true) {
     case /cb over/.test(command): {
-      const arg = command.replace('/cb over', '')
+      const arg = command.replace('/cb over ', '')
       simultConvexCalc(msg, arg)
       return 'Simultaneous convex carryover calculation'
     }
