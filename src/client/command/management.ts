@@ -76,6 +76,8 @@ const createCategory = async (msg: Discord.Message, arg: string) => {
     const c = await msg.guild?.channels.create(name, {type: 'text', parent: channel?.id})
     c?.send(name)
   })
+
+  msg.reply(`${year}年${day}月のカテゴリーを作成したわよ！`)
 }
 
 /**
@@ -109,14 +111,18 @@ const channelNameList = async (): Promise<string[]> => {
  */
 const deleteCategory = (msg: Discord.Message, arg: string) => {
   const [year, day] = arg.split('/').map(Number)
-  if (year) return
+  if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
 
   const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
-  const channels = category?.guild.channels.cache.filter(c => c.parentID === category.id)
+  if (!category) return msg.reply(`${year}年${day}月クラバトなんてないんだけど！`)
+
+  const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
 
   category?.delete()
   // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
   channels?.forEach(c => setTimeout(() => c.delete(), 1000))
+
+  msg.reply(`${year}年${day}月のカテゴリーを削除したわ`)
 }
 
 /**
