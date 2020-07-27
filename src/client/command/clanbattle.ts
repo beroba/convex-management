@@ -15,7 +15,8 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 
   switch (true) {
     case /cb over/.test(command): {
-      simultConvexCalc(command, msg)
+      const arg = command.replace('/cb over', '')
+      simultConvexCalc(msg, arg)
       return 'Simultaneous convex carryover calculation'
     }
   }
@@ -23,11 +24,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 
 /**
  * 同時凸時の持ち越し計算を行う
- * @param command 入力されたコマンド
  * @param msg DiscordからのMessage
+ * @param arg HPとダメージA・B
  */
-const simultConvexCalc = (command: string, msg: Discord.Message) => {
-  const [, , HP, A, B] = command.split(' ').map(Number)
+const simultConvexCalc = (msg: Discord.Message, arg: string) => {
+  const [HP, A, B] = arg.split(' ').map(Number)
   const overCalc = (b: number, a: number) => Math.ceil(90 - (((HP - b) * 90) / a - 20))
   msg.reply(`\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`ダメージの高い方を先に通すことね`)
 }
