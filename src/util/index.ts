@@ -9,7 +9,7 @@ export const IsChannel = (array: string[], channel: Discord.TextChannel | Discor
   array.some((c: string) => c === (channel as Discord.TextChannel).name)
 
 /**
- * 配列をn個づつの塊にして配列を作り直す
+ * 配列をn個づつの塊にして作り直す
  * @param array 元になる配列
  * @param n 塊としてまとめる数
  * @return 作り直した配列
