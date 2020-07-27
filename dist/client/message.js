@@ -99,7 +99,7 @@ var sendYabaiImage = function (msg) {
     return 'Send Yabai Image';
 };
 var sendYuiKusano = function (msg) {
-    var match = msg.content.replace(/草野/g, 'ユイ').match(/ユイ/);
+    var match = msg.content.replace(/草/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);

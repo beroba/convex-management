@@ -89,23 +89,6 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
-var updateStatus = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
-        msg.react('❌');
-        msg.awaitReactions(function (react, user) {
-            if (user.id !== msg.author.id || react.emoji.name !== '❌')
-                return false;
-            msg.reply('取り消したわ');
-            console.log('Convex cancel');
-            return true;
-        });
-        if (msg.content === '3') {
-            msg.reply('n人目の3凸終了者よ！');
-        }
-        return [2];
-    });
-}); };
 var isClanBattleDays = function () { return __awaiter(void 0, void 0, void 0, function () {
     var mmdd, infoSheet, cells, cell;
     return __generator(this, function (_a) {
@@ -126,3 +109,23 @@ var isClanBattleDays = function () { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+var updateStatus = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        reaction(msg);
+        if (msg.content === '3') {
+            msg.reply('n人目の3凸終了者よ！');
+        }
+        return [2];
+    });
+}); };
+var reaction = function (msg) {
+    msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
+    msg.react('❌');
+    msg.awaitReactions(function (react, user) {
+        if (user.id !== msg.author.id || react.emoji.name !== '❌')
+            return false;
+        msg.reply('取り消したわ');
+        console.log('Convex cancel');
+        return true;
+    });
+};

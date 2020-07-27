@@ -44,10 +44,8 @@ const isClanBattleDays = async (): Promise<Option<string>> => {
    */
   const mmdd = (): string => (d => `${d.getMonth() + 1}/${d.getDate()}`)(new Date())
 
-  // 情報のワークシートを取得
+  // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.INFORMATION)
-
-  // 日付のセルを取得
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_CELLS.DATE)
 
   // クラバトの日かどうか確認

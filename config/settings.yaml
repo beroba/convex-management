@@ -58,3 +58,4 @@ CONVEX_SHEET:
 # 情報シートで使うセルの範囲
 INFORMATION_CELLS:
   DATE: B2:C6
+  BOSS: E2:F6
