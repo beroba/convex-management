@@ -82,24 +82,24 @@ exports.Management = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
         return;
     switch (true) {
-        case /cb manage create category/.test(command):
-            {
-                var arg = command.replace('/cb manage create category', '');
-                createCategory(msg, arg);
-            }
+        case /cb manage create category/.test(command): {
+            var arg = command.replace('/cb manage create category', '');
+            createCategory(msg, arg);
             return 'Create ClanBattle category';
-        case /cb manage delete category/.test(command):
-            {
-                var arg = command.replace('/cb manage delete category', '');
-                deleteCategory(msg, arg);
-            }
+        }
+        case /cb manage delete category/.test(command): {
+            var arg = command.replace('/cb manage delete category', '');
+            deleteCategory(msg, arg);
             return 'Delete ClanBattle category';
-        case /cb manage update members/.test(command):
+        }
+        case /cb manage update members/.test(command): {
             updateMembers(msg);
             return 'Update convex management members';
-        case /cb manage sheet/.test(command):
+        }
+        case /cb manage sheet/.test(command): {
             spreadsheetLink(msg);
             return 'Show spreadsheet link';
+        }
     }
 };
 var createCategory = function (msg, arg) { return __awaiter(void 0, void 0, void 0, function () {
