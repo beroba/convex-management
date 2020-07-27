@@ -16,9 +16,18 @@ export const Management = (command: string, msg: Discord.Message): Option<string
 
   switch (true) {
     case /cb manage create category/.test(command):
-      const arg = command.replace('/cb manage create category', '')
-      createCategory(msg, arg)
+      {
+        const arg = command.replace('/cb manage create category', '')
+        createCategory(msg, arg)
+      }
       return 'Create ClanBattle category'
+
+    case /cb manage delete category/.test(command):
+      {
+        const arg = command.replace('/cb manage delete category', '')
+        deleteCategory(msg, arg)
+      }
+      return 'Delete ClanBattle category'
 
     case /cb manage update members/.test(command):
       updateMembers(msg)
@@ -31,9 +40,10 @@ export const Management = (command: string, msg: Discord.Message): Option<string
 }
 
 /**
- *
+ * クラバト用のカテゴリーとチャンネルを作成する
+ * 引数がある場合は引数の年と日で作成ぢ、ない場合は現在の年と日で作成する
  * @param msg DiscordからのMessage
- * @param command コマンドの引数
+ * @param arg 作成する年と月
  */
 const createCategory = async (msg: Discord.Message, arg: string) => {
   // クランメンバーのロールがあるか確認
@@ -90,6 +100,23 @@ const channelNameList = async (): Promise<string[]> => {
     `${d}模擬`, 'ⓓtl',
     `${e}模擬`, 'ⓔtl',
   ]
+}
+
+/**
+ * 不要になったクラバト用のカテゴリーとチャンネルを削除する
+ * @param msg DiscordからのMessage
+ * @param arg 削除する年と月
+ */
+const deleteCategory = (msg: Discord.Message, arg: string) => {
+  const [year, day] = arg.split('/').map(Number)
+  if (year) return
+
+  const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
+  const channels = category?.guild.channels.cache.filter(c => c.parentID === category.id)
+
+  category?.delete()
+  // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
+  channels?.forEach(c => setTimeout(() => c.delete(), 1000))
 }
 
 /**

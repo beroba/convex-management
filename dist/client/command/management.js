@@ -83,9 +83,17 @@ exports.Management = function (command, msg) {
         return;
     switch (true) {
         case /cb manage create category/.test(command):
-            var arg = command.replace('/cb manage create category', '');
-            createCategory(msg, arg);
+            {
+                var arg = command.replace('/cb manage create category', '');
+                createCategory(msg, arg);
+            }
             return 'Create ClanBattle category';
+        case /cb manage delete category/.test(command):
+            {
+                var arg = command.replace('/cb manage delete category', '');
+                deleteCategory(msg, arg);
+            }
+            return 'Delete ClanBattle category';
         case /cb manage update members/.test(command):
             updateMembers(msg);
             return 'Update convex management members';
@@ -167,6 +175,10 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+var deleteCategory = function (_msg, arg) {
+    var _a = __read(arg.split('/').map(Number), 2), year = _a[0], day = _a[1];
+    console.log(year, day);
+};
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, manageSheet;
     var _a, _b;
