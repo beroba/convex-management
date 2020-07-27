@@ -54,6 +54,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -66,6 +82,18 @@ exports.Management = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
         return;
     switch (true) {
+        case /cb manage create category/.test(command):
+            {
+                var arg = command.replace('/cb manage create category', '');
+                createCategory(msg, arg);
+            }
+            return 'Create ClanBattle category';
+        case /cb manage delete category/.test(command):
+            {
+                var arg = command.replace('/cb manage delete category', '');
+                deleteCategory(msg, arg);
+            }
+            return 'Delete ClanBattle category';
         case /cb manage update members/.test(command):
             updateMembers(msg);
             return 'Update convex management members';
@@ -73,6 +101,93 @@ exports.Management = function (command, msg) {
             spreadsheetLink(msg);
             return 'Show spreadsheet link';
     }
+};
+var createCategory = function (msg, arg) { return __awaiter(void 0, void 0, void 0, function () {
+    var clanMembers, permission, _a, year, day, channel;
+    var _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                clanMembers = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
+                if (!clanMembers)
+                    return [2];
+                permission = [
+                    {
+                        id: ((_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.everyone.id) || '',
+                        deny: ['VIEW_CHANNEL']
+                    },
+                    {
+                        id: clanMembers.id,
+                        allow: ['VIEW_CHANNEL']
+                    },
+                ];
+                _a = __read(arg ? arg.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], day = _a[1];
+                return [4, ((_d = msg.guild) === null || _d === void 0 ? void 0 : _d.channels.create(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8", {
+                        type: 'category',
+                        position: 4,
+                        permissionOverwrites: permission
+                    }))];
+            case 1:
+                channel = _e.sent();
+                return [4, channelNameList()];
+            case 2:
+                (_e.sent()).forEach(function (name) { return __awaiter(void 0, void 0, void 0, function () {
+                    var c;
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(name, { type: 'text', parent: channel === null || channel === void 0 ? void 0 : channel.id }))];
+                            case 1:
+                                c = _b.sent();
+                                c === null || c === void 0 ? void 0 : c.send(name);
+                                return [2];
+                        }
+                    });
+                }); });
+                msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
+                return [2];
+        }
+    });
+}); };
+var channelNameList = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, cells, _a, _b, a, _c, b, _d, c, _e, d, _f, e;
+    return __generator(this, function (_g) {
+        switch (_g.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.INFORMATION)];
+            case 1:
+                infoSheet = _g.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_CELLS.BOSS)];
+            case 2:
+                cells = _g.sent();
+                _a = __read(util.PiecesEach(cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
+                return [2, [
+                        '検証総合', '凸ルート相談', '編成相談',
+                        a + "\u6A21\u64EC",
+                        'ⓐtl',
+                        b + "\u6A21\u64EC",
+                        'ⓑtl',
+                        c + "\u6A21\u64EC",
+                        'ⓒtl',
+                        d + "\u6A21\u64EC",
+                        'ⓓtl',
+                        e + "\u6A21\u64EC",
+                        'ⓔtl',
+                    ]];
+        }
+    });
+}); };
+var deleteCategory = function (msg, arg) {
+    var _a;
+    var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
+    if (!year)
+        return msg.reply('ちゃんと年と月を入力しなさい');
+    var category = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.find(function (c) { return c.name === year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8"; });
+    if (!category)
+        return msg.reply(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8\u306A\u3093\u3066\u306A\u3044\u3093\u3060\u3051\u3069\uFF01");
+    var channels = category.guild.channels.cache.filter(function (c) { return c.parentID === category.id; });
+    category === null || category === void 0 ? void 0 : category["delete"]();
+    channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
+    msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
 };
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, manageSheet;
