@@ -17,13 +17,13 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   switch (true) {
     case /cb manage create category/.test(command): {
       const arg = command.replace('/cb manage create category', '')
-      createCategory(msg, arg)
+      createCategory(arg, msg)
       return 'Create ClanBattle category'
     }
 
     case /cb manage delete category/.test(command): {
       const arg = command.replace('/cb manage delete category', '')
-      deleteCategory(msg, arg)
+      deleteCategory(arg, msg)
       return 'Delete ClanBattle category'
     }
 
@@ -45,7 +45,7 @@ export const Management = (command: string, msg: Discord.Message): Option<string
  * @param msg DiscordからのMessage
  * @param arg 作成する年と月
  */
-const createCategory = async (msg: Discord.Message, arg: string) => {
+const createCategory = async (arg: string, msg: Discord.Message) => {
   // クランメンバーのロールがあるか確認
   const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
   if (!clanMembers) return
@@ -109,7 +109,7 @@ const channelNameList = async (): Promise<string[]> => {
  * @param msg DiscordからのMessage
  * @param arg 削除する年と月
  */
-const deleteCategory = (msg: Discord.Message, arg: string) => {
+const deleteCategory = (arg: string, msg: Discord.Message) => {
   const [year, day] = arg.split('/').map(Number)
   if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
 

@@ -84,12 +84,12 @@ exports.Management = function (command, msg) {
     switch (true) {
         case /cb manage create category/.test(command): {
             var arg = command.replace('/cb manage create category', '');
-            createCategory(msg, arg);
+            createCategory(arg, msg);
             return 'Create ClanBattle category';
         }
         case /cb manage delete category/.test(command): {
             var arg = command.replace('/cb manage delete category', '');
-            deleteCategory(msg, arg);
+            deleteCategory(arg, msg);
             return 'Delete ClanBattle category';
         }
         case /cb manage update members/.test(command): {
@@ -102,7 +102,7 @@ exports.Management = function (command, msg) {
         }
     }
 };
-var createCategory = function (msg, arg) { return __awaiter(void 0, void 0, void 0, function () {
+var createCategory = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, permission, _a, year, day, channel;
     var _b, _c, _d;
     return __generator(this, function (_e) {
@@ -176,7 +176,7 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-var deleteCategory = function (msg, arg) {
+var deleteCategory = function (arg, msg) {
     var _a;
     var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
     if (!year)
