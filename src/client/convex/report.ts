@@ -17,7 +17,8 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
 
   // クラバトの日じゃない場合は終了
-  if (!(await isClanBattleDays())) {
+  const day = await getDateColumn()
+  if (!day) {
     msg.reply('今日はクラバトの日じゃないわ')
     return "It's not ClanBattle days"
   }
@@ -36,11 +37,10 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
 }
 
 /**
- * クラバトの日かどうかを確認する。
- * クラバトの日だった場合、凸管理で対応している日付の列名を返す
+ * 凸管理で対応している日付の列名を返す
  * @return 対応している日付の列
  */
-const isClanBattleDays = async (): Promise<Option<string>> => {
+const getDateColumn = async (): Promise<Option<string>> => {
   /**
    * 現在の日付を`MM/DD`の形式で返す
    * @return 現在の日付
@@ -48,8 +48,8 @@ const isClanBattleDays = async (): Promise<Option<string>> => {
   const mmdd = (): string => (d => `${d.getMonth() + 1}/${d.getDate()}`)(new Date())
 
   // スプレッドシートから情報を取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.INFORMATION)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_CELLS.DATE)
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
   // クラバトの日かどうか確認
   const cell = util
@@ -65,8 +65,11 @@ const isClanBattleDays = async (): Promise<Option<string>> => {
  * @param msg DiscordからのMessage
  */
 const updateStatus = async (msg: Discord.Message) => {
+  // データの更新を行う
+  const old = await cellUpdate(msg.content, msg)
+
   // リアクションの処理を行う
-  reaction(msg)
+  reaction(old, msg)
 
   // 3凸終了者の処理
   if (msg.content === '3') {
@@ -75,20 +78,48 @@ const updateStatus = async (msg: Discord.Message) => {
 }
 
 /**
- * 凸報告にリアクションをつける。
- * 取り消しの処理も行う
+ * セルの更新を行う
+ * @param val 更新する内容
  * @param msg DiscordからのMessage
  */
-const reaction = (msg: Discord.Message) => {
+const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> => {
+  // 送信者の名前を取得
+  const user: string = msg.member?.nickname ? msg.member?.nickname : msg.member?.user.username || ''
+
+  // スプレッドシートから情報を取得
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+
+  // 値の更新を行う
+  const cell = await manageSheet.getCell(`${await getDateColumn()}${cells.indexOf(user) + 2}`)
+  const old = await cell.getValue()
+  await cell.setValue(val)
+  return old
+}
+
+/**
+ * 凸報告にリアクションをつける。
+ * 取り消しの処理も行う
+ * @param old 取り消す前の値
+ * @param msg DiscordからのMessage
+ */
+const reaction = (old: string, msg: Discord.Message) => {
   // 確認と❌のスタンプをつける
   msg.react(Settings.EMOJI_ID.KAKUNIN)
   msg.react('❌')
 
   // ❌スタンプを押した際にデータの取り消しを行う
   msg.awaitReactions((react, user) => {
-    if (user.id !== msg.author.id || react.emoji.name !== '❌') return false
-    msg.reply('取り消したわ')
-    console.log('Convex cancel')
+    ;(async () => {
+      // 送信者が❌スタンプ押した場合以外は終了
+      if (user.id !== msg.author.id || react.emoji.name !== '❌') return
+
+      // データの更新を行う
+      await cellUpdate(old, msg)
+
+      msg.reply('取り消したわ')
+      console.log('Convex cancel')
+    })()
     return true
   })
 }

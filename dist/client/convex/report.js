@@ -63,6 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var day;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -71,9 +72,10 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
                     return [2];
-                return [4, isClanBattleDays()];
+                return [4, getDateColumn()];
             case 1:
-                if (!(_b.sent())) {
+                day = _b.sent();
+                if (!day) {
                     msg.reply('今日はクラバトの日じゃないわ');
                     return [2, "It's not ClanBattle days"];
                 }
@@ -91,16 +93,16 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
-var isClanBattleDays = function () { return __awaiter(void 0, void 0, void 0, function () {
+var getDateColumn = function () { return __awaiter(void 0, void 0, void 0, function () {
     var mmdd, infoSheet, cells, cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + d.getDate(); })(new Date()); };
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.INFORMATION)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_CELLS.DATE)];
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
             case 2:
                 cells = _a.sent();
                 cell = util
@@ -112,20 +114,62 @@ var isClanBattleDays = function () { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 var updateStatus = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var old;
     return __generator(this, function (_a) {
-        reaction(msg);
-        if (msg.content === '3') {
-            msg.reply('n人目の3凸終了者よ！');
+        switch (_a.label) {
+            case 0: return [4, cellUpdate(msg.content, msg)];
+            case 1:
+                old = _a.sent();
+                reaction(old, msg);
+                if (msg.content === '3') {
+                    msg.reply('n人目の3凸終了者よ！');
+                }
+                return [2];
         }
-        return [2];
     });
 }); };
-var reaction = function (msg) {
+var cellUpdate = function (val, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, manageSheet, cells, cell, _a, _b, _c, old;
+    var _d, _e, _f;
+    return __generator(this, function (_g) {
+        switch (_g.label) {
+            case 0:
+                user = ((_d = msg.member) === null || _d === void 0 ? void 0 : _d.nickname) ? (_e = msg.member) === null || _e === void 0 ? void 0 : _e.nickname : ((_f = msg.member) === null || _f === void 0 ? void 0 : _f.user.username) || '';
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 1:
+                manageSheet = _g.sent();
+                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                cells = _g.sent();
+                _b = (_a = manageSheet).getCell;
+                _c = "";
+                return [4, getDateColumn()];
+            case 3: return [4, _b.apply(_a, [_c + (_g.sent()) + (cells.indexOf(user) + 2)])];
+            case 4:
+                cell = _g.sent();
+                return [4, cell.getValue()];
+            case 5:
+                old = _g.sent();
+                return [4, cell.setValue(val)];
+            case 6:
+                _g.sent();
+                return [2, old];
+        }
+    });
+}); };
+var reaction = function (old, msg) {
     msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
     msg.react('❌');
     msg.awaitReactions(function (react, user) {
         if (user.id !== msg.author.id || react.emoji.name !== '❌')
             return false;
+        (function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, cellUpdate(old, msg)];
+                case 1: return [2, _a.sent()];
+            }
+        }); }); })();
+        console.log(old);
         msg.reply('取り消したわ');
         console.log('Convex cancel');
         return true;

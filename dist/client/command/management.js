@@ -153,10 +153,10 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
     var infoSheet, cells, _a, _b, a, _c, b, _d, c, _e, d, _f, e;
     return __generator(this, function (_g) {
         switch (_g.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.INFORMATION)];
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _g.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_CELLS.BOSS)];
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
                 cells = _g.sent();
                 _a = __read(util.PiecesEach(cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
@@ -196,7 +196,7 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
         switch (_c.label) {
             case 0:
                 clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return (m.nickname ? m.nickname : m.user.username); }).sort();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.MANAGEMENT)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 manageSheet = _c.sent();
                 clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {

@@ -42,8 +42,8 @@ export const Management = (command: string, msg: Discord.Message): Option<string
 /**
  * クラバト用のカテゴリーとチャンネルを作成する
  * 引数がある場合は引数の年と日で作成し、ない場合は現在の年と日で作成する
- * @param msg DiscordからのMessage
  * @param arg 作成する年と月
+ * @param msg DiscordからのMessage
  */
 const createCategory = async (arg: string, msg: Discord.Message) => {
   // クランメンバーのロールがあるか確認
@@ -87,8 +87,8 @@ const createCategory = async (arg: string, msg: Discord.Message) => {
  */
 const channelNameList = async (): Promise<string[]> => {
   // スプレッドシートから情報を取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.INFORMATION)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_CELLS.BOSS)
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // ボスの名前を取得
   const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = util.PiecesEach(cells, 2).map(v => v[1])
@@ -106,8 +106,8 @@ const channelNameList = async (): Promise<string[]> => {
 
 /**
  * 不要になったクラバト用のカテゴリーとチャンネルを削除する
- * @param msg DiscordからのMessage
  * @param arg 削除する年と月
+ * @param msg DiscordからのMessage
  */
 const deleteCategory = (arg: string, msg: Discord.Message) => {
   const [year, day] = arg.split('/').map(Number)
@@ -137,7 +137,7 @@ const updateMembers = async (msg: Discord.Message) => {
     .sort()
 
   // 凸管理のシートを取得
-  const manageSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.MANAGEMENT)
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {
