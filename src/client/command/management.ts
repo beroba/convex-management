@@ -133,7 +133,7 @@ const updateMembers = async (msg: Discord.Message) => {
   // クランメンバー一覧をニックネームで取得
   const clanMembers: Option<string[]> = msg.guild?.roles.cache
     .get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
+    ?.members.map(m => util.GetUserName(m))
     .sort()
 
   // 凸管理のシートを取得

@@ -66,15 +66,13 @@ const getDateColumn = async (): Promise<Option<string>> => {
  */
 const updateStatus = async (msg: Discord.Message) => {
   // データの更新を行う
-  const old = await cellUpdate(msg.content, msg)
+  const old = await cellUpdate(msg.content.replace(' ', ','), msg)
 
   // リアクションの処理を行う
   reaction(old, msg)
 
   // 3凸終了者の処理
-  if (msg.content === '3') {
-    msg.reply('n人目の3凸終了者よ！')
-  }
+  if (msg.content === '3') threeConvexEnd(msg)
 }
 
 /**
@@ -83,17 +81,20 @@ const updateStatus = async (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> => {
-  // 送信者の名前を取得
-  const user: string = msg.member?.nickname ? msg.member?.nickname : msg.member?.user.username || ''
-
   // スプレッドシートから情報を取得
   const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const col = await getDateColumn()
+  const num = cells.indexOf(util.GetUserName(msg.member)) + 2
 
   // 値の更新を行う
-  const cell = await manageSheet.getCell(`${await getDateColumn()}${cells.indexOf(user) + 2}`)
+  const cell = await manageSheet.getCell(`${col}${num}`)
+
   const old = await cell.getValue()
   await cell.setValue(val)
+
   return old
 }
 
@@ -122,4 +123,25 @@ const reaction = (old: string, msg: Discord.Message) => {
     })()
     return true
   })
+}
+
+/**
+ * 3凸終了した際に報告をする
+ * @param msg DiscordからのMessage
+ */
+const threeConvexEnd = async (msg: Discord.Message) => {
+  // スプレッドシートから情報を取得
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // 変更するセルの場所
+  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const col = String.fromCharCode(((await getDateColumn()) || '').charCodeAt(0) + 1)
+  const num = cells.indexOf(util.GetUserName(msg.member)) + 2
+
+  // 凸終了の目印をつける
+  const cell = await manageSheet.getCell(`${col}${num}`)
+  await cell.setValue(1)
+
+  // 何番目の終了者なのかを報告
+  msg.reply(`${await manageSheet.getCell(`${col}1`)}人目の3凸終了者よ！`)
 }
