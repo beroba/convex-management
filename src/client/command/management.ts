@@ -15,37 +15,37 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
   switch (true) {
-    case /cb manage create category/.test(command):
-      {
-        const arg = command.replace('/cb manage create category', '')
-        createCategory(msg, arg)
-      }
+    case /cb manage create category/.test(command): {
+      const arg = command.replace('/cb manage create category', '')
+      createCategory(arg, msg)
       return 'Create ClanBattle category'
+    }
 
-    case /cb manage delete category/.test(command):
-      {
-        const arg = command.replace('/cb manage delete category', '')
-        deleteCategory(msg, arg)
-      }
+    case /cb manage delete category/.test(command): {
+      const arg = command.replace('/cb manage delete category', '')
+      deleteCategory(arg, msg)
       return 'Delete ClanBattle category'
+    }
 
-    case /cb manage update members/.test(command):
+    case /cb manage update members/.test(command): {
       updateMembers(msg)
       return 'Update convex management members'
+    }
 
-    case /cb manage sheet/.test(command):
+    case /cb manage sheet/.test(command): {
       spreadsheetLink(msg)
       return 'Show spreadsheet link'
+    }
   }
 }
 
 /**
  * クラバト用のカテゴリーとチャンネルを作成する
- * 引数がある場合は引数の年と日で作成ぢ、ない場合は現在の年と日で作成する
- * @param msg DiscordからのMessage
+ * 引数がある場合は引数の年と日で作成し、ない場合は現在の年と日で作成する
  * @param arg 作成する年と月
+ * @param msg DiscordからのMessage
  */
-const createCategory = async (msg: Discord.Message, arg: string) => {
+const createCategory = async (arg: string, msg: Discord.Message) => {
   // クランメンバーのロールがあるか確認
   const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
   if (!clanMembers) return
@@ -53,12 +53,12 @@ const createCategory = async (msg: Discord.Message, arg: string) => {
   // カテゴリーの権限を設定
   const permission: Discord.OverwriteResolvable[] = [
     {
-      id: msg.guild?.roles.everyone.id || '',
-      deny: ['VIEW_CHANNEL'],
-    },
-    {
       id: clanMembers.id,
       allow: ['VIEW_CHANNEL'],
+    },
+    {
+      id: msg.guild?.roles.everyone.id || '',
+      deny: ['VIEW_CHANNEL'],
     },
   ]
 
@@ -87,8 +87,8 @@ const createCategory = async (msg: Discord.Message, arg: string) => {
  */
 const channelNameList = async (): Promise<string[]> => {
   // スプレッドシートから情報を取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.INFORMATION)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_CELLS.BOSS)
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // ボスの名前を取得
   const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = util.PiecesEach(cells, 2).map(v => v[1])
@@ -106,10 +106,10 @@ const channelNameList = async (): Promise<string[]> => {
 
 /**
  * 不要になったクラバト用のカテゴリーとチャンネルを削除する
- * @param msg DiscordからのMessage
  * @param arg 削除する年と月
+ * @param msg DiscordからのMessage
  */
-const deleteCategory = (msg: Discord.Message, arg: string) => {
+const deleteCategory = (arg: string, msg: Discord.Message) => {
   const [year, day] = arg.split('/').map(Number)
   if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
 
@@ -133,11 +133,11 @@ const updateMembers = async (msg: Discord.Message) => {
   // クランメンバー一覧をニックネームで取得
   const clanMembers: Option<string[]> = msg.guild?.roles.cache
     .get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => (m.nickname ? m.nickname : m.user.username))
+    ?.members.map(m => util.GetUserName(m))
     .sort()
 
   // 凸管理のシートを取得
-  const manageSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.MANAGEMENT)
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {

@@ -17,5 +17,10 @@ export const GetWorksheet = async (name: string): Promise<any> => {
   return sheet.getWorksheetByName(name)
 }
 
-export const GetCells = async (sheet: any, name: string): Promise<string[]> =>
-  (await sheet.getCells(name)).getAllValues()
+/**
+ * 渡されたシートから指定されたセルの範囲を取得する
+ * @param sheet シートの値
+ * @param range セルの範囲
+ */
+export const GetCells = async (sheet: any, range: string): Promise<string[]> =>
+  (await sheet.getCells(range)).getAllValues()

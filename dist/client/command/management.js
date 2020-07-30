@@ -82,27 +82,27 @@ exports.Management = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
         return;
     switch (true) {
-        case /cb manage create category/.test(command):
-            {
-                var arg = command.replace('/cb manage create category', '');
-                createCategory(msg, arg);
-            }
+        case /cb manage create category/.test(command): {
+            var arg = command.replace('/cb manage create category', '');
+            createCategory(arg, msg);
             return 'Create ClanBattle category';
-        case /cb manage delete category/.test(command):
-            {
-                var arg = command.replace('/cb manage delete category', '');
-                deleteCategory(msg, arg);
-            }
+        }
+        case /cb manage delete category/.test(command): {
+            var arg = command.replace('/cb manage delete category', '');
+            deleteCategory(arg, msg);
             return 'Delete ClanBattle category';
-        case /cb manage update members/.test(command):
+        }
+        case /cb manage update members/.test(command): {
             updateMembers(msg);
             return 'Update convex management members';
-        case /cb manage sheet/.test(command):
+        }
+        case /cb manage sheet/.test(command): {
             spreadsheetLink(msg);
             return 'Show spreadsheet link';
+        }
     }
 };
-var createCategory = function (msg, arg) { return __awaiter(void 0, void 0, void 0, function () {
+var createCategory = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers, permission, _a, year, day, channel;
     var _b, _c, _d;
     return __generator(this, function (_e) {
@@ -113,12 +113,12 @@ var createCategory = function (msg, arg) { return __awaiter(void 0, void 0, void
                     return [2];
                 permission = [
                     {
-                        id: ((_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.everyone.id) || '',
-                        deny: ['VIEW_CHANNEL']
-                    },
-                    {
                         id: clanMembers.id,
                         allow: ['VIEW_CHANNEL']
+                    },
+                    {
+                        id: ((_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.everyone.id) || '',
+                        deny: ['VIEW_CHANNEL']
                     },
                 ];
                 _a = __read(arg ? arg.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], day = _a[1];
@@ -153,10 +153,10 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
     var infoSheet, cells, _a, _b, a, _c, b, _d, c, _e, d, _f, e;
     return __generator(this, function (_g) {
         switch (_g.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.INFORMATION)];
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _g.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_CELLS.BOSS)];
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
                 cells = _g.sent();
                 _a = __read(util.PiecesEach(cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
@@ -176,7 +176,7 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-var deleteCategory = function (msg, arg) {
+var deleteCategory = function (arg, msg) {
     var _a;
     var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
     if (!year)
@@ -195,8 +195,8 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return (m.nickname ? m.nickname : m.user.username); }).sort();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].CONVEX_SHEET.MANAGEMENT)];
+                clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return util.GetUserName(m); }).sort();
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 manageSheet = _c.sent();
                 clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {

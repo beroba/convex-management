@@ -1,15 +1,26 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 
 /**
  * 配列の中に確認用のチャンネルがあるか確認する
  * @param array 確認する配列
  * @param channel 比較するチャンネル
+ * @return 真偽値
  */
 export const IsChannel = (array: string[], channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel) =>
   array.some((c: string) => c === (channel as Discord.TextChannel).name)
 
 /**
- * 配列をn個づつの塊にして配列を作り直す
+ * Userの名前を取得する。
+ * ニックネームがある場合はそちらを取る
+ * @param m Userの情報
+ * @return Userの名前
+ */
+export const GetUserName = (m: Option<Discord.GuildMember>): string =>
+  m?.nickname ? m?.nickname : m?.user.username || ''
+
+/**
+ * 配列をn個づつの塊にして作り直す
  * @param array 元になる配列
  * @param n 塊としてまとめる数
  * @return 作り直した配列

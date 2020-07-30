@@ -49,13 +49,18 @@ SEND_IMAGE_CHANNEL:
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
 
-# 凸管理用のシート名
-CONVEX_SHEET:
-  MANAGEMENT: 凸管理
-  RESERVATION: 凸予約
-  INFORMATION: 情報
+# 凸管理のシート情報
+MANAGEMENT_SHEET:
+  SHEET_NAME: 凸管理
+  MEMBER_CELLS: A2:A31
 
-# 情報シートで使うセルの範囲
-INFORMATION_CELLS:
-  DATE: B2:C6
-  BOSS: E2:F6
+# 凸予約のシート情報
+RESERVATION_SHEET:
+  SHEET_NAME: 凸予約
+
+# 情報のシート情報
+INFORMATION_SHEET:
+  SHEET_NAME: 情報
+  DATE_CELLS: B2:C6
+  BOSS_CELLS: E2:F6
+

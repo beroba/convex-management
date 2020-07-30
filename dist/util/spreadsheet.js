@@ -57,9 +57,9 @@ exports.GetWorksheet = function (name) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.GetCells = function (sheet, name) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+exports.GetCells = function (sheet, range) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     switch (_a.label) {
-        case 0: return [4, sheet.getCells(name)];
+        case 0: return [4, sheet.getCells(range)];
         case 1: return [2, (_a.sent()).getAllValues()];
     }
 }); }); };

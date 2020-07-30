@@ -17,27 +17,30 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
 
   // クラバトの日じゃない場合は終了
-  if (!(await isClanBattleDays())) {
+  const day = await getDateColumn()
+  if (!day) {
     msg.reply('今日はクラバトの日じゃないわ')
     return "It's not ClanBattle days"
   }
 
   switch (true) {
-    case /1|2|3/.test(msg.content.charAt(0)):
+    case /1|2|3/.test(msg.content.charAt(0)): {
       updateStatus(msg)
       return 'Update status'
-    default:
+    }
+
+    default: {
       msg.reply('形式が違うわ、やりなおし！')
       return 'Different format'
+    }
   }
 }
 
 /**
- * クラバトの日かどうかを確認する。
- * クラバトの日だった場合、凸管理で対応している日付の列名を返す
+ * 凸管理で対応している日付の列名を返す
  * @return 対応している日付の列
  */
-const isClanBattleDays = async (): Promise<Option<string>> => {
+const getDateColumn = async (): Promise<Option<string>> => {
   /**
    * 現在の日付を`MM/DD`の形式で返す
    * @return 現在の日付
@@ -45,8 +48,8 @@ const isClanBattleDays = async (): Promise<Option<string>> => {
   const mmdd = (): string => (d => `${d.getMonth() + 1}/${d.getDate()}`)(new Date())
 
   // スプレッドシートから情報を取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.CONVEX_SHEET.INFORMATION)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_CELLS.DATE)
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
   // クラバトの日かどうか確認
   const cell = util
@@ -62,30 +65,97 @@ const isClanBattleDays = async (): Promise<Option<string>> => {
  * @param msg DiscordからのMessage
  */
 const updateStatus = async (msg: Discord.Message) => {
-  // リアクションの処理を行う
-  reaction(msg)
+  // データの更新を行う
+  const before = await cellUpdate(msg.content, msg)
 
-  // 3凸終了者の処理
-  if (msg.content === '3') {
-    msg.reply('n人目の3凸終了者よ！')
+  // リアクションの処理を行う
+  reaction(before, msg)
+
+  // 3凸終了者の処理を行う
+  if (msg.content === '3') threeConvexEnd(msg)
+}
+
+/**
+ * セルの更新を行う
+ * @param val 更新する内容
+ * @param msg DiscordからのMessage
+ */
+const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> => {
+  /**
+   * 入力された値をスプレッドシート用に形式を修正する
+   * @param v 凸報告に入力された値
+   * @return 修正された値
+   */
+  const formatCorrect = (v: string): string => {
+    const a: any[] = v.split(' ')
+    // 持ち越しがない場合は終了
+    if (!a[1]) return v
+    // 60以上の値をmm:ssの形式に変更する
+    const t = 1 <= a[1] / 60 ? `1:${(a[1] - 60 + '').padStart(2, '0')}` : a[1]
+    return `${a[0]},${t}`
   }
+
+  // スプレッドシートから情報を取得
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // 変更するセルの場所
+  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const col = await getDateColumn()
+  const num = cells.indexOf(util.GetUserName(msg.member)) + 2
+
+  // 値の更新を行う
+  const cell = await manageSheet.getCell(`${col}${num}`)
+
+  const before = await cell.getValue()
+  await cell.setValue(formatCorrect(val))
+
+  return before.replace(',', ' ')
 }
 
 /**
  * 凸報告にリアクションをつける。
  * 取り消しの処理も行う
+ * @param before 取り消す前の値
  * @param msg DiscordからのMessage
  */
-const reaction = (msg: Discord.Message) => {
+const reaction = (before: string, msg: Discord.Message) => {
   // 確認と❌のスタンプをつける
   msg.react(Settings.EMOJI_ID.KAKUNIN)
   msg.react('❌')
 
   // ❌スタンプを押した際にデータの取り消しを行う
   msg.awaitReactions((react, user) => {
-    if (user.id !== msg.author.id || react.emoji.name !== '❌') return false
-    msg.reply('取り消したわ')
-    console.log('Convex cancel')
+    ;(async () => {
+      // 送信者が❌スタンプ押した場合以外は終了
+      if (user.id !== msg.author.id || react.emoji.name !== '❌') return
+
+      // データの更新を行う
+      const after = await cellUpdate(before, msg)
+      msg.reply(`\`${after}\` を取り消したわ`)
+      console.log('Convex cancel')
+    })()
     return true
   })
+}
+
+/**
+ * 3凸終了した際に報告をする
+ * @param msg DiscordからのMessage
+ */
+const threeConvexEnd = async (msg: Discord.Message) => {
+  // スプレッドシートから情報を取得
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // 変更するセルの場所
+  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const col = String.fromCharCode(((await getDateColumn()) || '').charCodeAt(0) + 1)
+  const num = cells.indexOf(util.GetUserName(msg.member)) + 2
+
+  // 凸終了の目印をつける
+  const cell = await manageSheet.getCell(`${col}${num}`)
+  await cell.setValue(1)
+
+  // 何番目の終了者なのかを報告
+  const n = (await manageSheet.getCell(`${col}1`)).getValue()
+  msg.reply(`${n}人目の3凸終了者よ！`)
 }
