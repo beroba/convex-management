@@ -187,30 +187,35 @@ var reaction = function (before, msg) {
     });
 };
 var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, _a, _b, num, cell, n;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var manageSheet, cells, col, _a, _b, num, cell, n, remainConvex;
+    var _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _c.sent();
+                manageSheet = _e.sent();
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                cells = _c.sent();
+                cells = _e.sent();
                 _b = (_a = String).fromCharCode;
                 return [4, getDateColumn()];
             case 3:
-                col = _b.apply(_a, [((_c.sent()) || '').charCodeAt(0) + 1]);
+                col = _b.apply(_a, [((_e.sent()) || '').charCodeAt(0) + 1]);
                 num = cells.indexOf(util.GetUserName(msg.member)) + 2;
                 return [4, manageSheet.getCell("" + col + num)];
             case 4:
-                cell = _c.sent();
+                cell = _e.sent();
                 return [4, cell.setValue(1)];
             case 5:
-                _c.sent();
+                _e.sent();
                 return [4, manageSheet.getCell(col + "1")];
             case 6:
-                n = (_c.sent()).getValue();
+                n = (_e.sent()).getValue();
                 msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
+                remainConvex = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+                if (!remainConvex)
+                    return [2];
+                (_d = msg.member) === null || _d === void 0 ? void 0 : _d.roles.remove(remainConvex);
                 return [2];
         }
     });
