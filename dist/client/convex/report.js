@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ConvexReport = void 0;
+exports.GetDateColumn = exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -72,7 +72,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
                     return [2];
-                return [4, getDateColumn()];
+                return [4, exports.GetDateColumn()];
             case 1:
                 day = _b.sent();
                 if (!day) {
@@ -93,7 +93,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
-var getDateColumn = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.GetDateColumn = function () { return __awaiter(void 0, void 0, void 0, function () {
     var mmdd, infoSheet, cells, cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -145,7 +145,7 @@ var cellUpdate = function (val, msg) { return __awaiter(void 0, void 0, void 0, 
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [4, getDateColumn()];
+                return [4, exports.GetDateColumn()];
             case 3:
                 col = _a.sent();
                 num = cells.indexOf(util.GetUserName(msg.member)) + 2;
@@ -187,7 +187,7 @@ var reaction = function (before, msg) {
     });
 };
 var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, _a, _b, num, cell, n, remainConvex;
+    var manageSheet, cells, col, _a, _b, num, cell, remainConvex, n;
     var _c, _d;
     return __generator(this, function (_e) {
         switch (_e.label) {
@@ -198,7 +198,7 @@ var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, f
             case 2:
                 cells = _e.sent();
                 _b = (_a = String).fromCharCode;
-                return [4, getDateColumn()];
+                return [4, exports.GetDateColumn()];
             case 3:
                 col = _b.apply(_a, [((_e.sent()) || '').charCodeAt(0) + 1]);
                 num = cells.indexOf(util.GetUserName(msg.member)) + 2;
@@ -208,14 +208,14 @@ var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, f
                 return [4, cell.setValue(1)];
             case 5:
                 _e.sent();
-                return [4, manageSheet.getCell(col + "1")];
-            case 6:
-                n = (_e.sent()).getValue();
-                msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
                 remainConvex = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
                 if (!remainConvex)
                     return [2];
                 (_d = msg.member) === null || _d === void 0 ? void 0 : _d.roles.remove(remainConvex);
+                return [4, manageSheet.getCell(col + "1")];
+            case 6:
+                n = (_e.sent()).getValue();
+                msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
                 return [2];
         }
     });

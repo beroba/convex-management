@@ -19,10 +19,12 @@
   },
   "homepage": "https://github.com/smicle/convex-management#readme",
   "dependencies": {
+    "@types/node-cron": "^2.0.3",
     "@types/ws": "^7.2.5",
     "const-settings": "^1.0.0",
     "discord.js": "^12.2.0",
     "google-spreadsheet-as-promised": "^0.2.12",
+    "node-cron": "^2.0.3",
     "throw-env": "^1.0.1",
     "type-of-option": "^1.0.1",
     "typescript": "^3.9.5"

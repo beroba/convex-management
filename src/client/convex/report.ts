@@ -17,7 +17,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
 
   // クラバトの日じゃない場合は終了
-  const day = await getDateColumn()
+  const day = await GetDateColumn()
   if (!day) {
     msg.reply('今日はクラバトの日じゃないわ')
     return "It's not ClanBattle days"
@@ -40,7 +40,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
  * 凸管理で対応している日付の列名を返す
  * @return 対応している日付の列
  */
-const getDateColumn = async (): Promise<Option<string>> => {
+export const GetDateColumn = async (): Promise<Option<string>> => {
   /**
    * 現在の日付を`MM/DD`の形式で返す
    * @return 現在の日付
@@ -100,7 +100,7 @@ const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> =>
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = await getDateColumn()
+  const col = await GetDateColumn()
   const num = cells.indexOf(util.GetUserName(msg.member)) + 2
 
   // 値の更新を行う
@@ -148,7 +148,7 @@ const threeConvexEnd = async (msg: Discord.Message) => {
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = String.fromCharCode(((await getDateColumn()) || '').charCodeAt(0) + 1)
+  const col = String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + 1)
   const num = cells.indexOf(util.GetUserName(msg.member)) + 2
 
   // 凸終了の目印をつける

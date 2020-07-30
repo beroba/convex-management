@@ -3,6 +3,7 @@ import ThrowEnv from 'throw-env'
 import {Ready} from './client/ready'
 import {GuildMemberAdd} from './client/guildMemberAdd'
 import {Message} from './client/message'
+import {SetRemainConvex} from './util/cron'
 
 const client = new Discord.Client()
 
@@ -14,5 +15,8 @@ client.on('guildMemberAdd', member => GuildMemberAdd(client, member as Discord.G
 
 // メッセージが送信された際に実行
 client.on('message', msg => Message(msg))
+
+// 朝5時に凸残りロールを付与する
+SetRemainConvex(client)
 
 client.login(ThrowEnv('CAL_TOKEN'))
