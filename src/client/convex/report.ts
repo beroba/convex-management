@@ -155,6 +155,12 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   const cell = await manageSheet.getCell(`${col}${num}`)
   await cell.setValue(1)
 
+  // 凸残ロールを削除する
+  const remainConvex = msg.guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)
+  if (!remainConvex) return
+
+  msg.member?.roles.remove(remainConvex)
+
   // 何番目の終了者なのかを報告
   const n = (await manageSheet.getCell(`${col}1`)).getValue()
   msg.reply(`${n}人目の3凸終了者よ！`)
