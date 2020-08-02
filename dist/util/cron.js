@@ -64,7 +64,7 @@ var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var report_1 = require("../client/convex/report");
 exports.SetRemainConvex = function (client) {
-    cron.schedule('0 */1 * * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+    cron.schedule('0 0 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
         var guild, clanMembers, day, channel;
         var _a;
         return __generator(this, function (_b) {
