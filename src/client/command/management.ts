@@ -65,13 +65,14 @@ const createCategory = async (arg: string, msg: Discord.Message) => {
   // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と日を代入
   const [year, day] = arg ? arg.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
 
+  // カテゴリーの作成
   const channel = await msg.guild?.channels.create(`${year}年${day}月クラバト`, {
     type: 'category',
     position: 4,
     permissionOverwrites: permission,
   })
 
-  // チャンネルの作成
+  // チャンネルの作成し初回メッセージを送信
   ;(await channelNameList()).forEach(async name => {
     const c = await msg.guild?.channels.create(name, {type: 'text', parent: channel?.id})
     c?.send(name)
@@ -110,14 +111,17 @@ const channelNameList = async (): Promise<string[]> => {
  * @param msg DiscordからのMessage
  */
 const deleteCategory = (arg: string, msg: Discord.Message) => {
+  // 年と月がない場合終了
   const [year, day] = arg.split('/').map(Number)
   if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
 
+  // カテゴリーが見つからなかった場合終了
   const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
   if (!category) return msg.reply(`${year}年${day}月クラバトなんてないんだけど！`)
 
   const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
 
+  // カテゴリとチャンネルを削除
   category?.delete()
   // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
   channels?.forEach(c => setTimeout(() => c.delete(), 1000))
@@ -126,7 +130,7 @@ const deleteCategory = (arg: string, msg: Discord.Message) => {
 }
 
 /**
- * 凸管理のメンバー一覧を更新する
+ * スプレッドシートのメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
 const updateMembers = async (msg: Discord.Message) => {
@@ -136,7 +140,7 @@ const updateMembers = async (msg: Discord.Message) => {
     ?.members.map(m => util.GetUserName(m))
     .sort()
 
-  // 凸管理のシートを取得
+  // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // メンバー一覧を更新
@@ -153,5 +157,5 @@ const updateMembers = async (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const spreadsheetLink = (msg: Discord.Message) => {
-  msg.reply('https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso')
+  msg.reply(Settings.URL.SPREADSHEET)
 }

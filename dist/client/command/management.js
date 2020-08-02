@@ -219,5 +219,5 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 var spreadsheetLink = function (msg) {
-    msg.reply('https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso');
+    msg.reply(const_settings_1["default"].URL.SPREADSHEET);
 };

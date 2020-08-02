@@ -39,6 +39,7 @@ COMMAND_CHANNEL:
     - bot-test
   PROGRESS:
     - 進行
+    - 運営管理用
     - bot-test
 
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
@@ -47,9 +48,10 @@ SEND_IMAGE_CHANNEL:
   - vc用
   - bot-test
 
-# 画像のURL
+# URL一覧
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
+  SPREADSHEET: https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso
 
 # 凸管理のシート情報
 MANAGEMENT_SHEET:
