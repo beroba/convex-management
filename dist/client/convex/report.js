@@ -62,6 +62,8 @@ exports.GetDateColumn = exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var updateStatus_1 = require("./updateStatus");
+var updateBOSS_1 = require("./updateBOSS");
 exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     var _a;
@@ -81,8 +83,12 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                 }
                 switch (true) {
                     case /1|2|3/.test(msg.content.charAt(0)): {
-                        updateStatus(msg);
+                        updateStatus_1.UpdateStatus(msg);
                         return [2, 'Update status'];
+                    }
+                    case /a|b|c|d|e/.test(msg.content.charAt(0)): {
+                        updateBOSS_1.UpdateCurrentBOSS(msg);
+                        return [2, 'Update current BOSS'];
                     }
                     default: {
                         msg.reply('形式が違うわ、やりなおし！');
@@ -110,113 +116,6 @@ exports.GetDateColumn = function () { return __awaiter(void 0, void 0, void 0, f
                     .map(function (v) { return [v[0].split('/').map(Number).join('/'), v[1]]; })
                     .filter(function (v) { return v[0] === mmdd(); })[0];
                 return [2, cell ? cell[1] : null];
-        }
-    });
-}); };
-var updateStatus = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var before;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, cellUpdate(msg.content, msg)];
-            case 1:
-                before = _a.sent();
-                reaction(before, msg);
-                if (msg.content === '3')
-                    threeConvexEnd(msg);
-                return [2];
-        }
-    });
-}); };
-var cellUpdate = function (val, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var formatCorrect, manageSheet, cells, col, num, cell, before;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                formatCorrect = function (v) {
-                    var a = v.split(' ');
-                    if (!a[1])
-                        return v;
-                    var t = 1 <= a[1] / 60 ? "1:" + (a[1] - 60 + '').padStart(2, '0') : a[1];
-                    return a[0] + "," + t;
-                };
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
-            case 1:
-                manageSheet = _a.sent();
-                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                cells = _a.sent();
-                return [4, exports.GetDateColumn()];
-            case 3:
-                col = _a.sent();
-                num = cells.indexOf(util.GetUserName(msg.member)) + 2;
-                return [4, manageSheet.getCell("" + col + num)];
-            case 4:
-                cell = _a.sent();
-                return [4, cell.getValue()];
-            case 5:
-                before = _a.sent();
-                return [4, cell.setValue(formatCorrect(val))];
-            case 6:
-                _a.sent();
-                return [2, before.replace(',', ' ')];
-        }
-    });
-}); };
-var reaction = function (before, msg) {
-    msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
-    msg.react('❌');
-    msg.awaitReactions(function (react, user) {
-        ;
-        (function () { return __awaiter(void 0, void 0, void 0, function () {
-            var after;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (user.id !== msg.author.id || react.emoji.name !== '❌')
-                            return [2];
-                        return [4, cellUpdate(before, msg)];
-                    case 1:
-                        after = _a.sent();
-                        msg.reply("`" + after + "` \u3092\u53D6\u308A\u6D88\u3057\u305F\u308F");
-                        console.log('Convex cancel');
-                        return [2];
-                }
-            });
-        }); })();
-        return true;
-    });
-};
-var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, _a, _b, num, cell, remainConvex, n;
-    var _c, _d;
-    return __generator(this, function (_e) {
-        switch (_e.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
-            case 1:
-                manageSheet = _e.sent();
-                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                cells = _e.sent();
-                _b = (_a = String).fromCharCode;
-                return [4, exports.GetDateColumn()];
-            case 3:
-                col = _b.apply(_a, [((_e.sent()) || '').charCodeAt(0) + 1]);
-                num = cells.indexOf(util.GetUserName(msg.member)) + 2;
-                return [4, manageSheet.getCell("" + col + num)];
-            case 4:
-                cell = _e.sent();
-                return [4, cell.setValue(1)];
-            case 5:
-                _e.sent();
-                remainConvex = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
-                if (!remainConvex)
-                    return [2];
-                (_d = msg.member) === null || _d === void 0 ? void 0 : _d.roles.remove(remainConvex);
-                return [4, manageSheet.getCell(col + "1")];
-            case 6:
-                n = (_e.sent()).getValue();
-                msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
-                return [2];
         }
     });
 }); };
