@@ -203,7 +203,7 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     var cell;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, infoSheet.getCell("A" + (i + 2))];
+                            case 0: return [4, infoSheet.getCell("A" + (i + 3))];
                             case 1:
                                 cell = _a.sent();
                                 return [4, cell.setValue(m)];

@@ -20,6 +20,13 @@ export const UpdateStatus = async (msg: Discord.Message) => {
 }
 
 /**
+ * 指定された右隣の列名を取得
+ * @param n 何個目かの数字
+ */
+const nextRow = async (n: number): Promise<string> =>
+  String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + n)
+
+/**
  * セルの更新を行う
  * @param val 更新する内容
  * @param msg DiscordからのMessage
@@ -45,7 +52,7 @@ const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> =>
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const col = await GetDateColumn()
-  const num = cells.indexOf(util.GetUserName(msg.member)) + 2
+  const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
   // 値の更新を行う
   const cell = await manageSheet.getCell(`${col}${num}`)
@@ -92,8 +99,8 @@ const threeConvexEnd = async (msg: Discord.Message) => {
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + 1)
-  const num = cells.indexOf(util.GetUserName(msg.member)) + 2
+  const col = await nextRow(2)
+  const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
   // 凸終了の目印をつける
   const cell = await manageSheet.getCell(`${col}${num}`)
