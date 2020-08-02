@@ -121,7 +121,6 @@ var cellUpdate = function (val, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var reaction = function (before, msg) {
-    msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN);
     msg.react('❌');
     msg.awaitReactions(function (react, user) {
         ;
