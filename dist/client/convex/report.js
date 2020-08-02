@@ -112,8 +112,8 @@ exports.GetDateColumn = function () { return __awaiter(void 0, void 0, void 0, f
             case 2:
                 cells = _a.sent();
                 cell = util
-                    .PiecesEach(cells, 2)
-                    .map(function (v) { return [v[0].split('/').map(Number).join('/'), v[1]]; })
+                    .PiecesEach(cells, 3)
+                    .map(function (v) { return [v[1].split('/').map(Number).join('/'), v[2]]; })
                     .filter(function (v) { return v[0] === mmdd(); })[0];
                 return [2, cell ? cell[1] : null];
         }

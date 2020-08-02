@@ -190,20 +190,20 @@ var deleteCategory = function (arg, msg) {
     msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
 };
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var clanMembers, manageSheet;
+    var clanMembers, infoSheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return util.GetUserName(m); }).sort();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _c.sent();
+                infoSheet = _c.sent();
                 clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
                     var cell;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, manageSheet.getCell("A" + (i + 2))];
+                            case 0: return [4, infoSheet.getCell("A" + (i + 2))];
                             case 1:
                                 cell = _a.sent();
                                 return [4, cell.setValue(m)];
@@ -213,7 +213,7 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                         }
                     });
                 }); });
-                msg.reply('凸管理のメンバー一覧を更新したわよ！');
+                msg.reply('クランメンバー一覧を更新したわよ！');
                 return [2];
         }
     });

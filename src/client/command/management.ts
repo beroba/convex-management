@@ -137,15 +137,15 @@ const updateMembers = async (msg: Discord.Message) => {
     .sort()
 
   // 凸管理のシートを取得
-  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {
-    const cell = await manageSheet.getCell(`A${i + 2}`)
+    const cell = await infoSheet.getCell(`A${i + 2}`)
     await cell.setValue(m)
   })
 
-  msg.reply('凸管理のメンバー一覧を更新したわよ！')
+  msg.reply('クランメンバー一覧を更新したわよ！')
 }
 
 /**
