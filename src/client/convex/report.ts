@@ -60,8 +60,8 @@ export const GetDateColumn = async (): Promise<Option<string>> => {
 
   // クラバトの日かどうか確認
   const cell = util
-    .PiecesEach(cells, 2)
-    .map(v => [v[0].split('/').map(Number).join('/'), v[1]])
+    .PiecesEach(cells, 3)
+    .map(v => [v[1].split('/').map(Number).join('/'), v[2]])
     .filter(v => v[0] === mmdd())[0]
 
   return cell ? cell[1] : null
