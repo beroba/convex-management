@@ -70,8 +70,7 @@ const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> =>
  * @param msg DiscordからのMessage
  */
 const reaction = (before: string, msg: Discord.Message) => {
-  // 確認と❌のスタンプをつける
-  msg.react(Settings.EMOJI_ID.KAKUNIN)
+  // 凸報告に❌のスタンプをつける
   msg.react('❌')
 
   // ❌スタンプを押した際にデータの取り消しを行う
