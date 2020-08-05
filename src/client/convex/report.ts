@@ -3,8 +3,7 @@ import Settings from 'const-settings'
 import Option from 'type-of-option'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import {UpdateStatus} from './updateStatus'
-import {UpdateCurrentBOSS} from './updateBOSS'
+import {StatusUpdate} from './statusUpdate'
 
 /**
  * 凸報告の管理を行う
@@ -27,13 +26,8 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
 
   switch (true) {
     case /1|2|3/.test(msg.content.charAt(0)): {
-      UpdateStatus(msg)
+      StatusUpdate(msg)
       return 'Update status'
-    }
-
-    case /a|b|c|d|e/.test(msg.content.charAt(0)): {
-      UpdateCurrentBOSS(msg)
-      return 'Update current BOSS'
     }
 
     default: {

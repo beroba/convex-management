@@ -1,3 +1,6 @@
+# キャルbotの管理者のID
+ADMIN_ID: '420084355105423367'
+
 # キャルが起動時に喋るメッセージと場所
 STARTUP:
   MESSAGE: きゃるきゃるーん
@@ -19,13 +22,15 @@ ROLE_ID:
   CLAN_MEMBERS: '719906267824521267'
   # 凸残のロール
   REMAIN_CONVEX: '738500598718136373'
+  # ヤバイわよ！のロール
+  YABAIWAYO: '717003659745165373'
 
 # カスタム絵文字のID
 EMOJI_ID:
   # 草野優衣のカスタム絵文字
   YUI_KUSANO: '715020255059247146'
   # 確認のカスタム絵文字
-  KAKUNIN: '714684451057041448'
+  SAKUJO: '739441861521047592'
 
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
@@ -39,6 +44,7 @@ COMMAND_CHANNEL:
     - bot-test
   PROGRESS:
     - 進行
+    - 運営管理用
     - bot-test
 
 # 特定メッセージを入力した際にbotが画像を送信するチャンネル
@@ -47,9 +53,10 @@ SEND_IMAGE_CHANNEL:
   - vc用
   - bot-test
 
-# 画像のURL
+# URL一覧
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
+  SPREADSHEET: https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso
 
 # 凸管理のシート情報
 MANAGEMENT_SHEET:

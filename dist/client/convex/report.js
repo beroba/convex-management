@@ -62,8 +62,7 @@ exports.GetDateColumn = exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var updateStatus_1 = require("./updateStatus");
-var updateBOSS_1 = require("./updateBOSS");
+var statusUpdate_1 = require("./statusUpdate");
 exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     var _a;
@@ -83,12 +82,8 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                 }
                 switch (true) {
                     case /1|2|3/.test(msg.content.charAt(0)): {
-                        updateStatus_1.UpdateStatus(msg);
+                        statusUpdate_1.StatusUpdate(msg);
                         return [2, 'Update status'];
-                    }
-                    case /a|b|c|d|e/.test(msg.content.charAt(0)): {
-                        updateBOSS_1.UpdateCurrentBOSS(msg);
-                        return [2, 'Update current BOSS'];
                     }
                     default: {
                         msg.reply('形式が違うわ、やりなおし！');

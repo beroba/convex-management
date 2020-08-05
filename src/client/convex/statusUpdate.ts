@@ -5,17 +5,17 @@ import * as spreadsheet from '../../util/spreadsheet'
 import {GetDateColumn} from './report'
 
 /**
- * 凸状況の更新を行う
+ * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
  */
-export const UpdateStatus = async (msg: Discord.Message) => {
-  // データの更新を行う
+export const StatusUpdate = async (msg: Discord.Message) => {
+  // データの更新を実行
   const before = await cellUpdate(msg.content, msg)
 
-  // リアクションの処理を行う
+  // リアクションの処理を実行
   reaction(before, msg)
 
-  // 3凸終了者の処理を行う
+  // 3凸終了者の処理を実行
   if (msg.content === '3') threeConvexEnd(msg)
 }
 
@@ -70,8 +70,7 @@ const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> =>
  * @param msg DiscordからのMessage
  */
 const reaction = (before: string, msg: Discord.Message) => {
-  // 確認と❌のスタンプをつける
-  msg.react(Settings.EMOJI_ID.KAKUNIN)
+  // 凸報告に❌のスタンプをつける
   msg.react('❌')
 
   // ❌スタンプを押した際にデータの取り消しを行う
@@ -90,7 +89,7 @@ const reaction = (before: string, msg: Discord.Message) => {
 }
 
 /**
- * 3凸終了した際に報告をする
+ * 3凸終了した際に凸残ロールを削除し何人目の3凸終了者か報告をする
  * @param msg DiscordからのMessage
  */
 const threeConvexEnd = async (msg: Discord.Message) => {
@@ -107,10 +106,7 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   await cell.setValue(1)
 
   // 凸残ロールを削除する
-  const remainConvex = msg.guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)
-  if (!remainConvex) return
-
-  msg.member?.roles.remove(remainConvex)
+  msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何番目の終了者なのかを報告
   const n = (await manageSheet.getCell(`${col}1`)).getValue()
