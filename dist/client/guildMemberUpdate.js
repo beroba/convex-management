@@ -6,12 +6,12 @@ exports.__esModule = true;
 exports.GuildMemberUpdate = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 exports.GuildMemberUpdate = function (member) {
-    var _a;
-    var bool = (_a = member.guild.roles.cache.get(const_settings_1["default"].ROLE_ID.YABAIWAYO)) === null || _a === void 0 ? void 0 : _a.members.some(function (m) { return m.user === member.user; });
-    if (!bool)
+    if (member.user.id !== const_settings_1["default"].ADMIN_ID)
         return;
-    if (member.user.id === const_settings_1["default"].ADMIN_ID)
+    var yabaiwayo = member.guild.roles.cache.get(const_settings_1["default"].ROLE_ID.YABAIWAYO);
+    if (!yabaiwayo)
         return;
-    member.roles.remove(const_settings_1["default"].ROLE_ID.YABAIWAYO);
-    console.log('Delete yabaiwayo Role');
+    yabaiwayo.setPermissions(['ADMINISTRATOR']);
+    member.roles.add(const_settings_1["default"].ROLE_ID.YABAIWAYO);
+    console.log('Permission for bot admin');
 };
