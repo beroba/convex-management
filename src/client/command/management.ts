@@ -55,6 +55,7 @@ const createCategory = async (arg: string, msg: Discord.Message) => {
     {
       id: clanMembers.id,
       allow: ['VIEW_CHANNEL'],
+      deny: ['MENTION_EVERYONE'],
     },
     {
       id: msg.guild?.roles.everyone.id || '',
@@ -96,7 +97,7 @@ const channelNameList = async (): Promise<string[]> => {
 
   // prettier-ignore
   return [
-    '検証総合', '凸ルート相談', '編成相談',
+    '検証総合', '凸ルート相談',
     `${a}模擬`, 'ⓐtl',
     `${b}模擬`, 'ⓑtl',
     `${c}模擬`, 'ⓒtl',
