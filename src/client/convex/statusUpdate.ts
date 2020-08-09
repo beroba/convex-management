@@ -38,7 +38,7 @@ const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> =>
    * @return 修正された値
    */
   const formatCorrect = (v: string): string => {
-    const a: any[] = v.split(' ')
+    const a: any[] = v.replace('　', ' ').split(' ')
     // 持ち越しがない場合は終了
     if (!a[1]) return v
     // 60以上の値をmm:ssの形式に変更する
