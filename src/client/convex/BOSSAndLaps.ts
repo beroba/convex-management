@@ -39,5 +39,5 @@ export const CurrentMessage = async (): Promise<string> => {
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const [laps, BOSS] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.CURRENT_CELLS)
 
-  return `現在の状況は\`${laps}\`周目の\`${BOSS}\`よ`
+  return `現在、\`${laps}\`周目の\`${BOSS}\`よ`
 }
