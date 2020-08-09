@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var statusUpdate_1 = require("./statusUpdate");
-exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ConvexReport = function (client, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     var _a;
     return __generator(this, function (_b) {
@@ -82,7 +82,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                 }
                 switch (true) {
                     case /[1-3]/.test(msg.content.charAt(0)): {
-                        statusUpdate_1.StatusUpdate(msg);
+                        statusUpdate_1.StatusUpdate(client, msg);
                         return [2, 'Update status'];
                     }
                     default: {

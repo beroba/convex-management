@@ -33,6 +33,6 @@ var client = new Discord.Client();
 client.on('ready', function () { return ready_1.Ready(client); });
 client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.GuildMemberAdd(client, member); });
 client.on('guildMemberUpdate', function (_, member) { return guildMemberUpdate_1.GuildMemberUpdate(member); });
-client.on('message', function (msg) { return message_1.Message(msg); });
+client.on('message', function (msg) { return message_1.Message(client, msg); });
 cron_1.SetRemainConvex(client);
 client.login(throw_env_1["default"]('CAL_TOKEN'));

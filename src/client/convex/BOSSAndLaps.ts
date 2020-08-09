@@ -26,17 +26,18 @@ export const Update = async (arg: string, msg: Discord.Message) => {
   await (await infoSheet.getCell(laps_cell)).setValue(laps)
   await (await infoSheet.getCell(BOSS_cell)).setValue(BOSS)
 
-  CurrentMsg(msg)
+  msg.reply(await CurrentMessage())
 }
 
 /**
- * 現在の周回数とボスをDiscordに送信する
+ * 現在の周回数とボスをメッセージで返す
  * @param msg DiscordからのMessage
+ * @return 現在の周回数とボスのメッセージ
  */
-export const CurrentMsg = async (msg: Discord.Message) => {
+export const CurrentMessage = async (): Promise<string> => {
   // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const [laps, BOSS] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.CURRENT_CELLS)
 
-  msg.reply(`現在の周回数は\`${laps}\`、ボスは\`${BOSS}\`よ`)
+  return `現在の周回数は\`${laps}\`、ボスは\`${BOSS}\`よ`
 }

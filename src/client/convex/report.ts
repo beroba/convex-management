@@ -7,10 +7,11 @@ import {StatusUpdate} from './statusUpdate'
 
 /**
  * 凸報告の管理を行う
+ * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  * @return 凸報告の実行結果
  */
-export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>> => {
+export const ConvexReport = async (client: Discord.Client, msg: Discord.Message): Promise<Option<string>> => {
   // キャルのメッセージはコマンド実行しない
   if (msg.member?.user.username === 'キャル') return
 
@@ -26,7 +27,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
 
   switch (true) {
     case /[1-3]/.test(msg.content.charAt(0)): {
-      StatusUpdate(msg)
+      StatusUpdate(client, msg)
       return 'Update status'
     }
 

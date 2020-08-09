@@ -63,16 +63,33 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var report_1 = require("./report");
-exports.StatusUpdate = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var before;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var BOSSAndLaps = __importStar(require("./BOSSAndLaps"));
+exports.StatusUpdate = function (client, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var before, channel, _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0: return [4, cellUpdate(msg.content, msg)];
             case 1:
-                before = _a.sent();
+                before = _d.sent();
                 reaction(before, msg);
-                if (msg.content === '3')
-                    threeConvexEnd(msg);
+                if (!(msg.content === '3')) return [3, 3];
+                return [4, threeConvexEnd(msg)];
+            case 2:
+                _d.sent();
+                _d.label = 3;
+            case 3:
+                channel = client.channels.cache.get(const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID);
+                if (!(channel === null || channel === void 0)) return [3, 4];
+                _a = void 0;
+                return [3, 6];
+            case 4:
+                _c = (_b = channel).send;
+                return [4, BOSSAndLaps.CurrentMessage()];
+            case 5:
+                _a = _c.apply(_b, [_d.sent()]);
+                _d.label = 6;
+            case 6:
+                _a;
                 return [2];
         }
     });
