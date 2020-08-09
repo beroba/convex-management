@@ -91,7 +91,7 @@ var cellUpdate = function (val, msg) { return __awaiter(void 0, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 formatCorrect = function (v) {
-                    var a = v.split(' ');
+                    var a = v.replace('　', ' ').split(' ');
                     if (!a[1])
                         return v;
                     var t = 1 <= a[1] / 60 ? "1:" + (a[1] - 60 + '').padStart(2, '0') : a[1];
