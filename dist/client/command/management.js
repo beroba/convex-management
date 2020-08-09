@@ -103,36 +103,22 @@ exports.Management = function (command, msg) {
     }
 };
 var createCategory = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var clanMembers, permission, _a, year, day, channel;
-    var _b, _c, _d;
-    return __generator(this, function (_e) {
-        switch (_e.label) {
+    var _a, year, day, channel;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                clanMembers = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
-                if (!clanMembers)
-                    return [2];
-                permission = [
-                    {
-                        id: clanMembers.id,
-                        allow: ['VIEW_CHANNEL'],
-                        deny: ['MENTION_EVERYONE']
-                    },
-                    {
-                        id: ((_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.everyone.id) || '',
-                        deny: ['VIEW_CHANNEL']
-                    },
-                ];
                 _a = __read(arg ? arg.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], day = _a[1];
-                return [4, ((_d = msg.guild) === null || _d === void 0 ? void 0 : _d.channels.create(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8", {
+                return [4, ((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.channels.create(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8", {
                         type: 'category',
                         position: 4,
-                        permissionOverwrites: permission
+                        permissionOverwrites: settingPermissions(msg)
                     }))];
             case 1:
-                channel = _e.sent();
+                channel = _c.sent();
                 return [4, channelNameList()];
             case 2:
-                (_e.sent()).forEach(function (name) { return __awaiter(void 0, void 0, void 0, function () {
+                (_c.sent()).forEach(function (name) { return __awaiter(void 0, void 0, void 0, function () {
                     var c;
                     var _a;
                     return __generator(this, function (_b) {
@@ -150,6 +136,39 @@ var createCategory = function (arg, msg) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
+var settingPermissions = function (msg) {
+    var _a, _b, _c, _d;
+    var leader = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.LEADER);
+    if (!leader)
+        return [];
+    var subLeader = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.roles.cache.get(const_settings_1["default"].ROLE_ID.SUB_LEADER);
+    if (!subLeader)
+        return [];
+    var clanMembers = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
+    if (!clanMembers)
+        return [];
+    var everyone = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.everyone;
+    if (!everyone)
+        return [];
+    return [
+        {
+            id: leader.id,
+            allow: ['MENTION_EVERYONE']
+        },
+        {
+            id: subLeader.id,
+            allow: ['MANAGE_MESSAGES']
+        },
+        {
+            id: clanMembers.id,
+            allow: ['VIEW_CHANNEL']
+        },
+        {
+            id: everyone.id,
+            deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE']
+        },
+    ];
+};
 var channelNameList = function () { return __awaiter(void 0, void 0, void 0, function () {
     var infoSheet, cells, _a, _b, a, _c, b, _d, c, _e, d, _f, e;
     return __generator(this, function (_g) {
