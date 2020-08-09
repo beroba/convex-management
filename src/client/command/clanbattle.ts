@@ -44,6 +44,6 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
    */
   const overCalc = (a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
 
-  const [HP, A, B] = arg.split(' ').map(Number)
+  const [HP, A, B] = arg.replace('　', ' ').split(' ').map(Number)
   msg.reply(`\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`ダメージの高い方を先に通すことね`)
 }

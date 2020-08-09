@@ -25,7 +25,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   }
 
   switch (true) {
-    case /1|2|3/.test(msg.content.charAt(0)): {
+    case /[1-3]/.test(msg.content.charAt(0)): {
       StatusUpdate(msg)
       return 'Update status'
     }

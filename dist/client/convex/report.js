@@ -81,7 +81,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                     return [2, "It's not ClanBattle days"];
                 }
                 switch (true) {
-                    case /1|2|3/.test(msg.content.charAt(0)): {
+                    case /[1-3]/.test(msg.content.charAt(0)): {
                         statusUpdate_1.StatusUpdate(msg);
                         return [2, 'Update status'];
                     }
