@@ -46,23 +46,6 @@ export const Management = (command: string, msg: Discord.Message): Option<string
  * @param msg DiscordからのMessage
  */
 const createCategory = async (arg: string, msg: Discord.Message) => {
-  // クランメンバーのロールがあるか確認
-  const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-  if (!clanMembers) return
-
-  // カテゴリーの権限を設定
-  const permission: Discord.OverwriteResolvable[] = [
-    {
-      id: clanMembers.id,
-      allow: ['VIEW_CHANNEL'],
-      deny: ['MENTION_EVERYONE'],
-    },
-    {
-      id: msg.guild?.roles.everyone.id || '',
-      deny: ['VIEW_CHANNEL'],
-    },
-  ]
-
   // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と日を代入
   const [year, day] = arg ? arg.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
 
@@ -70,7 +53,7 @@ const createCategory = async (arg: string, msg: Discord.Message) => {
   const channel = await msg.guild?.channels.create(`${year}年${day}月クラバト`, {
     type: 'category',
     position: 4,
-    permissionOverwrites: permission,
+    permissionOverwrites: settingPermissions(msg),
   })
 
   // チャンネルの作成し初回メッセージを送信
@@ -80,6 +63,43 @@ const createCategory = async (arg: string, msg: Discord.Message) => {
   })
 
   msg.reply(`${year}年${day}月のカテゴリーを作成したわよ！`)
+}
+
+/**
+ * クラバト用カテゴリーの権限を設定
+ * @param msg
+ * @return 設定した権限
+ */
+const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[] => {
+  // 各ロールがあるか確認
+  const leader = msg.guild?.roles.cache.get(Settings.ROLE_ID.LEADER)
+  if (!leader) return []
+  const subLeader = msg.guild?.roles.cache.get(Settings.ROLE_ID.SUB_LEADER)
+  if (!subLeader) return []
+  const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!clanMembers) return []
+  const everyone = msg.guild?.roles.everyone
+  if (!everyone) return []
+
+  // カテゴリーの権限を設定
+  return [
+    {
+      id: leader.id,
+      allow: ['MENTION_EVERYONE'],
+    },
+    {
+      id: subLeader.id,
+      allow: ['MANAGE_MESSAGES'],
+    },
+    {
+      id: clanMembers.id,
+      allow: ['VIEW_CHANNEL'],
+    },
+    {
+      id: everyone.id,
+      deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE'],
+    },
+  ]
 }
 
 /**
