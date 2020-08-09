@@ -8,9 +8,10 @@ import {ConvexReport} from './convex/report'
 
 /**
  * 入力されたメッセージに応じて適切なコマンドを実行する
+ * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  */
-export const Message = async (msg: Discord.Message) => {
+export const Message = async (client: Discord.Client, msg: Discord.Message) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
@@ -20,7 +21,7 @@ export const Message = async (msg: Discord.Message) => {
   let comment: Option<string>
 
   // 凸報告の処理を行う
-  comment = await ConvexReport(msg)
+  comment = await ConvexReport(client, msg)
   if (comment) return console.log(comment)
 
   // ヤバイの文字がある場合に画像を送信

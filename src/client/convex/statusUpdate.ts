@@ -3,12 +3,14 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import {GetDateColumn} from './report'
+import * as BOSSAndLaps from './BOSSAndLaps'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
+ * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  */
-export const StatusUpdate = async (msg: Discord.Message) => {
+export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message) => {
   // データの更新を実行
   const before = await cellUpdate(msg.content, msg)
 
@@ -16,7 +18,11 @@ export const StatusUpdate = async (msg: Discord.Message) => {
   reaction(before, msg)
 
   // 3凸終了者の処理を実行
-  if (msg.content === '3') threeConvexEnd(msg)
+  if (msg.content === '3') await threeConvexEnd(msg)
+
+  // 現在の周回数とボスを凸報告に送信
+  const channel = client.channels.cache.get(Settings.CONVEX_CHANNEL.REPORT_ID) as Discord.TextChannel
+  channel?.send(await BOSSAndLaps.CurrentMessage())
 }
 
 /**

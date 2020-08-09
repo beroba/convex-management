@@ -18,7 +18,7 @@ client.on('guildMemberAdd', member => GuildMemberAdd(client, member as Discord.G
 client.on('guildMemberUpdate', (_, member) => GuildMemberUpdate(member as Discord.GuildMember))
 
 // メッセージが送信された際に実行
-client.on('message', msg => Message(msg))
+client.on('message', msg => Message(client, msg))
 
 // 朝5時に凸残りロールを付与する
 SetRemainConvex(client)
