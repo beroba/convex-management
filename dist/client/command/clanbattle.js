@@ -87,29 +87,14 @@ exports.ClanBattle = function (command, msg) {
             simultConvexCalc(arg, msg);
             return 'Simultaneous convex carryover calculation';
         }
+        case /cb boss next/.test(command): {
+            moveForward(msg);
+            return 'next';
+        }
         case /cb boss/.test(command): {
             var arg = command.replace('/cb boss ', '');
             bossAndLaps.Update(arg, msg);
-            return 'Simultaneous convex carryover calculation';
-        }
-        case /cb next/.test(command): {
-            ;
-            (function () { return __awaiter(void 0, void 0, void 0, function () {
-                var _a, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0: return [4, bossAndLaps.Next()];
-                        case 1:
-                            _c.sent();
-                            _b = (_a = msg).reply;
-                            return [4, bossAndLaps.CurrentMessage()];
-                        case 2:
-                            _b.apply(_a, [_c.sent()]);
-                            return [2];
-                    }
-                });
-            }); })();
-            return 'next';
+            return 'Change laps and boss';
         }
     }
 };
@@ -118,3 +103,18 @@ var simultConvexCalc = function (arg, msg) {
     var _a = __read(arg.replace('　', ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
     msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3059\u3053\u3068\u306D");
 };
+var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, bossAndLaps.Next()];
+            case 1:
+                _c.sent();
+                _b = (_a = msg).reply;
+                return [4, bossAndLaps.CurrentMessage()];
+            case 2:
+                _b.apply(_a, [_c.sent()]);
+                return [2];
+        }
+    });
+}); };

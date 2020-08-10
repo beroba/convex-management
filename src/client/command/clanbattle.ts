@@ -21,18 +21,15 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Simultaneous convex carryover calculation'
     }
 
+    case /cb boss next/.test(command): {
+      moveForward(msg)
+      return 'Advance to next lap and boss'
+    }
+
     case /cb boss/.test(command): {
       const arg = command.replace('/cb boss ', '')
       bossAndLaps.Update(arg, msg)
-      return 'Simultaneous convex carryover calculation'
-    }
-
-    case /cb next/.test(command): {
-      ;(async () => {
-        await bossAndLaps.Next()
-        msg.reply(await bossAndLaps.CurrentMessage())
-      })()
-      return 'next'
+      return 'Change laps and boss'
     }
   }
 }
@@ -54,4 +51,13 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
 
   const [HP, A, B] = arg.replace('　', ' ').split(' ').map(Number)
   msg.reply(`\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`ダメージの高い方を先に通すことね`)
+}
+
+/**
+ * 現在の周回数とボスを次に進める
+ * @param msg DiscordからのMessage
+ */
+const moveForward = async (msg: Discord.Message) => {
+  await bossAndLaps.Next()
+  msg.reply(await bossAndLaps.CurrentMessage())
 }

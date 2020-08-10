@@ -25,4 +25,16 @@ export const GetWorksheet = async (name: string): Promise<any> => {
 export const GetCells = async (sheet: any, range: string): Promise<string[]> =>
   (await sheet.getCells(range)).getAllValues()
 
+/**
+ * Promiseになっているセルの中身を取得する
+ * @param cell 対象のセル
+ * @return 取得した中身
+ */
 export const GetValue = async (cell: any): Promise<any> => (await cell).getValue()
+
+/**
+ * Promiseになっているセルの中身を設定する
+ * @param cell 対象のセル
+ * @param v 設定する値
+ */
+export const SetValue = async <T>(cell: any, v: T): Promise<void> => (await cell).setValue(v)

@@ -97,21 +97,18 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 return [4, getCurrentCell(infoSheet)];
             case 3:
                 _b = __read.apply(void 0, [_e.sent(), 3]), laps_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
-                return [4, laps_cell];
-            case 4: return [4, (_e.sent()).setValue(laps)];
+                return [4, spreadsheet.SetValue(laps_cell, laps)];
+            case 4:
+                _e.sent();
+                return [4, spreadsheet.SetValue(boss_cell, boss)];
             case 5:
                 _e.sent();
-                return [4, boss_cell];
-            case 6: return [4, (_e.sent()).setValue(boss)];
-            case 7:
-                _e.sent();
-                return [4, num_cell];
-            case 8: return [4, (_e.sent()).setValue(num)];
-            case 9:
+                return [4, spreadsheet.SetValue(num_cell, num)];
+            case 6:
                 _e.sent();
                 _d = (_c = msg).reply;
                 return [4, exports.CurrentMessage()];
-            case 10:
+            case 7:
                 _d.apply(_c, [_e.sent()]);
                 return [2];
         }
@@ -125,7 +122,7 @@ exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, 
             case 1:
                 infoSheet = _b.sent();
                 range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[2])];
+                return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[1])];
             case 2:
                 _a = __read.apply(void 0, [_b.sent(), 2]), laps = _a[0], boss = _a[1];
                 return [2, "\u73FE\u5728\u3001`" + laps + "`\u5468\u76EE\u306E`" + boss + "`\u3088"];
@@ -155,17 +152,14 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, getBossName(infoSheet, num_)];
             case 5:
                 boss_ = _b.sent();
-                return [4, laps_cell];
-            case 6: return [4, (_b.sent()).setValue(laps_)];
+                return [4, spreadsheet.SetValue(laps_cell, laps_)];
+            case 6:
+                _b.sent();
+                return [4, spreadsheet.SetValue(boss_cell, boss_)];
             case 7:
                 _b.sent();
-                return [4, boss_cell];
-            case 8: return [4, (_b.sent()).setValue(boss_)];
-            case 9:
-                _b.sent();
-                return [4, num_cell];
-            case 10: return [4, (_b.sent()).setValue(num_)];
-            case 11:
+                return [4, spreadsheet.SetValue(num_cell, num_)];
+            case 8:
                 _b.sent();
                 return [2];
         }
@@ -183,10 +177,5 @@ var getBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, v
     });
 }); };
 var getCurrentCell = function (infoSheet) {
-    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, infoSheet.getCell(cell)];
-            case 1: return [2, _a.sent()];
-        }
-    }); }); });
+    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return infoSheet.getCell(cell); });
 };
