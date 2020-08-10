@@ -122,7 +122,7 @@ exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, 
                 return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELLS)];
             case 2:
                 _a = __read.apply(void 0, [_b.sent(), 2]), laps = _a[0], BOSS = _a[1];
-                return [2, "\u73FE\u5728\u306E\u5468\u56DE\u6570\u306F`" + laps + "`\u3001\u30DC\u30B9\u306F`" + BOSS + "`\u3088"];
+                return [2, "\u73FE\u5728\u3001`" + laps + "`\u5468\u76EE\u306E`" + BOSS + "`\u3088"];
         }
     });
 }); };

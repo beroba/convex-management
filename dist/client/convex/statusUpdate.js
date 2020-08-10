@@ -94,7 +94,7 @@ exports.StatusUpdate = function (client, msg) { return __awaiter(void 0, void 0,
         }
     });
 }); };
-var nextRow = function (n) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
+var nextCol = function (n) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
     switch (_c.label) {
         case 0:
             _b = (_a = String).fromCharCode;
@@ -102,38 +102,51 @@ var nextRow = function (n) { return __awaiter(void 0, void 0, void 0, function (
         case 1: return [2, _b.apply(_a, [((_c.sent()) || '').charCodeAt(0) + n])];
     }
 }); }); };
-var cellUpdate = function (val, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var formatCorrect, manageSheet, cells, col, num, cell, before;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var cellUpdate = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var val, manageSheet, cells, col, num, convex_cell, before, over_cell, _a, _b, _c, over;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                formatCorrect = function (v) {
-                    var a = v.replace('　', ' ').split(' ');
-                    if (!a[1])
-                        return v;
-                    var t = 1 <= a[1] / 60 ? "1:" + (a[1] - 60 + '').padStart(2, '0') : a[1];
-                    return a[0] + "," + t;
-                };
+                val = content.replace('　', ' ').split(' ');
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _a.sent();
+                manageSheet = _d.sent();
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                cells = _a.sent();
+                cells = _d.sent();
                 return [4, report_1.GetDateColumn()];
             case 3:
-                col = _a.sent();
+                col = _d.sent();
                 num = cells.indexOf(util.GetUserName(msg.member)) + 3;
                 return [4, manageSheet.getCell("" + col + num)];
             case 4:
-                cell = _a.sent();
-                return [4, cell.getValue()];
+                convex_cell = _d.sent();
+                return [4, convex_cell.getValue()];
             case 5:
-                before = _a.sent();
-                return [4, cell.setValue(formatCorrect(val))];
+                before = _d.sent();
+                return [4, convex_cell.setValue(val[0])];
             case 6:
-                _a.sent();
-                return [2, before.replace(',', ' ')];
+                _d.sent();
+                if (val.length === 1)
+                    return [2, before];
+                _b = (_a = manageSheet).getCell;
+                _c = "";
+                return [4, nextCol(1)];
+            case 7: return [4, _b.apply(_a, [_c + (_d.sent()) + num])];
+            case 8:
+                over_cell = _d.sent();
+                return [4, over_cell.getValue()];
+            case 9:
+                over = _d.sent();
+                if (!over) return [3, 11];
+                return [4, over_cell.setValue()];
+            case 10:
+                _d.sent();
+                return [2, before + " 1"];
+            case 11: return [4, over_cell.setValue(1)];
+            case 12:
+                _d.sent();
+                return [2, before];
         }
     });
 }); };
@@ -171,7 +184,7 @@ var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, f
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
                 cells = _b.sent();
-                return [4, nextRow(2)];
+                return [4, nextCol(2)];
             case 3:
                 col = _b.sent();
                 num = cells.indexOf(util.GetUserName(msg.member)) + 3;
