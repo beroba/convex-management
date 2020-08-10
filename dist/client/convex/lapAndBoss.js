@@ -91,10 +91,10 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _e.sent();
-                return [4, getBossName(infoSheet, num)];
+                return [4, readBossName(infoSheet, num)];
             case 2:
                 boss = _e.sent();
-                _b = __read(getCurrentCell(infoSheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
+                _b = __read(readCurrentCell(infoSheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
             case 3:
                 _e.sent();
@@ -134,8 +134,8 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _c.sent();
-                _a = __read(getCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, getForwardDate(infoSheet)];
+                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, readForwardDate(infoSheet)];
             case 2:
                 _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
@@ -151,7 +151,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
         }
     });
 }); };
-var getBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
+var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
     var cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -162,15 +162,15 @@ var getBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
-var getCurrentCell = function (infoSheet) {
+var readCurrentCell = function (infoSheet) {
     return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return infoSheet.getCell(cell); });
 };
-var getForwardDate = function (infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
+var readForwardDate = function (infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap_cell, num_cell, lap, num, numberList, n, boss;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = __read(getCurrentCell(infoSheet), 3), lap_cell = _a[0], num_cell = _a[2];
+                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], num_cell = _a[2];
                 return [4, spreadsheet.GetValue(lap_cell)];
             case 1:
                 lap = _b.sent();
@@ -179,7 +179,7 @@ var getForwardDate = function (infoSheet) { return __awaiter(void 0, void 0, voi
                 num = _b.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
-                return [4, getBossName(infoSheet, numberList[n])];
+                return [4, readBossName(infoSheet, numberList[n])];
             case 3:
                 boss = _b.sent();
                 return [2, [n ? lap : Number(lap) + 1, boss, numberList[n]]];

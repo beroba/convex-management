@@ -18,10 +18,10 @@ export const Update = async (arg: string, msg: Discord.Message) => {
 
   // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const boss = await getBossName(infoSheet, num)
+  const boss = await readBossName(infoSheet, num)
 
   // 現在の周回数とボスを更新
-  const [lap_cell, boss_cell, num_cell] = getCurrentCell(infoSheet)
+  const [lap_cell, boss_cell, num_cell] = readCurrentCell(infoSheet)
   await spreadsheet.SetValue(lap_cell, lap)
   await spreadsheet.SetValue(boss_cell, boss)
   await spreadsheet.SetValue(num_cell, num)
@@ -54,8 +54,8 @@ export const Next = async () => {
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 設定するセルと値を取得
-  const [lap_cell, boss_cell, num_cell] = getCurrentCell(infoSheet)
-  const [lap, boss, num] = await getForwardDate(infoSheet)
+  const [lap_cell, boss_cell, num_cell] = readCurrentCell(infoSheet)
+  const [lap, boss, num] = await readForwardDate(infoSheet)
 
   await spreadsheet.SetValue(lap_cell, lap)
   await spreadsheet.SetValue(boss_cell, boss)
@@ -68,7 +68,7 @@ export const Next = async () => {
  * @param num ボスの番号
  * @return ボスの名前
  */
-const getBossName = async (infoSheet: any, num: string): Promise<string> => {
+const readBossName = async (infoSheet: any, num: string): Promise<string> => {
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
   return util.PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
 }
@@ -78,7 +78,7 @@ const getBossName = async (infoSheet: any, num: string): Promise<string> => {
  * @param infoSheet 情報のシート
  * @return セルの一覧
  */
-const getCurrentCell = (infoSheet: any): any[] =>
+const readCurrentCell = (infoSheet: any): any[] =>
   Settings.INFORMATION_SHEET.CURRENT_CELL.split(',').map((cell: string) => infoSheet.getCell(cell))
 
 /**
@@ -86,9 +86,9 @@ const getCurrentCell = (infoSheet: any): any[] =>
  * @param infoSheet 情報のシート
  * @return 次に設定する値
  */
-const getForwardDate = async (infoSheet: any): Promise<[number, string, string]> => {
+const readForwardDate = async (infoSheet: any): Promise<[number, string, string]> => {
   // 現在の周回数とボス番号を取得
-  const [lap_cell, , num_cell] = getCurrentCell(infoSheet)
+  const [lap_cell, , num_cell] = readCurrentCell(infoSheet)
   const lap = await spreadsheet.GetValue(lap_cell)
   const num = await spreadsheet.GetValue(num_cell)
 
@@ -97,6 +97,6 @@ const getForwardDate = async (infoSheet: any): Promise<[number, string, string]>
   const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
 
   // 次の周回数とボスにして返す
-  const boss = await getBossName(infoSheet, numberList[n])
+  const boss = await readBossName(infoSheet, numberList[n])
   return [n ? lap : Number(lap) + 1, boss, numberList[n]]
 }
