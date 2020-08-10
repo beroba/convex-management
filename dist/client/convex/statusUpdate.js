@@ -129,6 +129,7 @@ var cellUpdate = function (content, msg) { return __awaiter(void 0, void 0, void
                 _d.sent();
                 if (val.length === 1)
                     return [2, before];
+                lapAndBoss.Next();
                 _b = (_a = manageSheet).getCell;
                 _c = "";
                 return [4, nextCol(1)];

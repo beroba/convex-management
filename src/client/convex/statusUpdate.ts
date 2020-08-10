@@ -56,6 +56,9 @@ const cellUpdate = async (content: string, msg: Discord.Message): Promise<string
   // 持ち越しがない場合は終了
   if (val.length === 1) return before
 
+  // 次のボスに進める
+  lapAndBoss.Next()
+
   // 持ち越しがある場合の処理
   const over_cell = await manageSheet.getCell(`${await nextCol(1)}${num}`)
 
