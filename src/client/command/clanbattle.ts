@@ -2,7 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as bossAndLaps from '../convex/bossAndLaps'
+import * as lapAndBoss from '../convex/lapAndBoss'
 
 /**
  * クラバト用のコマンド
@@ -28,7 +28,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 
     case /cb boss/.test(command): {
       const arg = command.replace('/cb boss ', '')
-      bossAndLaps.Update(arg, msg)
+      lapAndBoss.Update(arg, msg)
       return 'Change laps and boss'
     }
   }
@@ -58,6 +58,6 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const moveForward = async (msg: Discord.Message) => {
-  await bossAndLaps.Next()
-  msg.reply(await bossAndLaps.CurrentMessage())
+  await lapAndBoss.Next()
+  msg.reply(await lapAndBoss.CurrentMessage())
 }

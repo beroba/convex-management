@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var report_1 = require("./report");
-var bossAndLaps = __importStar(require("./bossAndLaps"));
+var lapAndBoss = __importStar(require("./lapAndBoss"));
 exports.StatusUpdate = function (client, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var before, channel, _a, _b, _c;
     return __generator(this, function (_d) {
@@ -84,7 +84,7 @@ exports.StatusUpdate = function (client, msg) { return __awaiter(void 0, void 0,
                 return [3, 6];
             case 4:
                 _c = (_b = channel).send;
-                return [4, bossAndLaps.CurrentMessage()];
+                return [4, lapAndBoss.CurrentMessage()];
             case 5:
                 _a = _c.apply(_b, [_d.sent()]);
                 _d.label = 6;

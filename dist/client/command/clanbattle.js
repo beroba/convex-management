@@ -77,7 +77,7 @@ exports.__esModule = true;
 exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-var bossAndLaps = __importStar(require("../convex/bossAndLaps"));
+var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.PROGRESS, msg.channel))
         return;
@@ -89,11 +89,11 @@ exports.ClanBattle = function (command, msg) {
         }
         case /cb boss next/.test(command): {
             moveForward(msg);
-            return 'next';
+            return 'Advance to next lap and boss';
         }
         case /cb boss/.test(command): {
             var arg = command.replace('/cb boss ', '');
-            bossAndLaps.Update(arg, msg);
+            lapAndBoss.Update(arg, msg);
             return 'Change laps and boss';
         }
     }
@@ -107,11 +107,11 @@ var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, func
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
-            case 0: return [4, bossAndLaps.Next()];
+            case 0: return [4, lapAndBoss.Next()];
             case 1:
                 _c.sent();
                 _b = (_a = msg).reply;
-                return [4, bossAndLaps.CurrentMessage()];
+                return [4, lapAndBoss.CurrentMessage()];
             case 2:
                 _b.apply(_a, [_c.sent()]);
                 return [2];

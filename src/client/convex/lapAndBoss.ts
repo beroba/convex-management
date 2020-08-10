@@ -10,10 +10,10 @@ import * as util from '../../util'
  */
 export const Update = async (arg: string, msg: Discord.Message) => {
   // 周回数とボス番号を取得
-  const [laps, num] = arg.replace('　', ' ').split(' ')
+  const [lap, num] = arg.replace('　', ' ').split(' ')
 
   // 書式が違う場合は終了
-  if (!/\d/.test(laps)) return msg.reply('形式が違うわ、やりなおし！')
+  if (!/\d/.test(lap)) return msg.reply('形式が違うわ、やりなおし！')
   if (!/[a-e]|[A-E]/.test(num)) return msg.reply('形式が違うわ、やりなおし！')
 
   // スプレッドシートから情報を取得
@@ -21,8 +21,8 @@ export const Update = async (arg: string, msg: Discord.Message) => {
   const boss = await getBossName(infoSheet, num)
 
   // 現在の周回数とボスを更新
-  const [laps_cell, boss_cell, num_cell] = await getCurrentCell(infoSheet)
-  await spreadsheet.SetValue(laps_cell, laps)
+  const [lap_cell, boss_cell, num_cell] = getCurrentCell(infoSheet)
+  await spreadsheet.SetValue(lap_cell, lap)
   await spreadsheet.SetValue(boss_cell, boss)
   await spreadsheet.SetValue(num_cell, num)
 
@@ -41,9 +41,9 @@ export const CurrentMessage = async (): Promise<string> => {
 
   // 範囲を指定して現在の周回数とボスを取得
   const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
-  const [laps, boss] = await spreadsheet.GetCells(infoSheet, `${range[0]}:${range[1]}`)
+  const [lap, boss] = await spreadsheet.GetCells(infoSheet, `${range[0]}:${range[1]}`)
 
-  return `現在、\`${laps}\`周目の\`${boss}\`よ`
+  return `現在、\`${lap}\`周目の\`${boss}\`よ`
 }
 
 /**
@@ -53,21 +53,13 @@ export const Next = async () => {
   // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
-  const [laps_cell, boss_cell, num_cell] = await getCurrentCell(infoSheet)
+  // 設定するセルと値を取得
+  const [lap_cell, boss_cell, num_cell] = getCurrentCell(infoSheet)
+  const [lap, boss, num] = await getForwardDate(infoSheet)
 
-  const laps = await spreadsheet.GetValue(laps_cell)
-  const num = await spreadsheet.GetValue(num_cell)
-
-  const numberList = ['a', 'b', 'c', 'd', 'e']
-  const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
-  const num_ = numberList[n]
-  const laps_: number = n ? laps : Number(laps) + 1
-
-  const boss_ = await getBossName(infoSheet, num_)
-
-  await spreadsheet.SetValue(laps_cell, laps_)
-  await spreadsheet.SetValue(boss_cell, boss_)
-  await spreadsheet.SetValue(num_cell, num_)
+  await spreadsheet.SetValue(lap_cell, lap)
+  await spreadsheet.SetValue(boss_cell, boss)
+  await spreadsheet.SetValue(num_cell, num)
 }
 
 /**
@@ -88,3 +80,23 @@ const getBossName = async (infoSheet: any, num: string): Promise<string> => {
  */
 const getCurrentCell = (infoSheet: any): any[] =>
   Settings.INFORMATION_SHEET.CURRENT_CELL.split(',').map((cell: string) => infoSheet.getCell(cell))
+
+/**
+ * 情報シートの現在の周回数とボスから次に設定する値を取得する
+ * @param infoSheet 情報のシート
+ * @return 次に設定する値
+ */
+const getForwardDate = async (infoSheet: any): Promise<[number, string, string]> => {
+  // 現在の周回数とボス番号を取得
+  const [lap_cell, , num_cell] = getCurrentCell(infoSheet)
+  const lap = await spreadsheet.GetValue(lap_cell)
+  const num = await spreadsheet.GetValue(num_cell)
+
+  // 次のボス番号調べる
+  const numberList = ['a', 'b', 'c', 'd', 'e']
+  const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
+
+  // 次の周回数とボスにして返す
+  const boss = await getBossName(infoSheet, numberList[n])
+  return [n ? lap : Number(lap) + 1, boss, numberList[n]]
+}
