@@ -29,7 +29,7 @@ export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message)
  * 指定された右隣の列名を取得
  * @param n 何個目かの数字
  */
-const nextRow = async (n: number): Promise<string> =>
+const nextCol = async (n: number): Promise<string> =>
   String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + n)
 
 /**
@@ -37,20 +37,8 @@ const nextRow = async (n: number): Promise<string> =>
  * @param val 更新する内容
  * @param msg DiscordからのMessage
  */
-const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> => {
-  /**
-   * 入力された値をスプレッドシート用に形式を修正する
-   * @param v 凸報告に入力された値
-   * @return 修正された値
-   */
-  const formatCorrect = (v: string): string => {
-    const a: any[] = v.replace('　', ' ').split(' ')
-    // 持ち越しがない場合は終了
-    if (!a[1]) return v
-    // 60以上の値をmm:ssの形式に変更する
-    const t = 1 <= a[1] / 60 ? `1:${(a[1] - 60 + '').padStart(2, '0')}` : a[1]
-    return `${a[0]},${t}`
-  }
+const cellUpdate = async (content: string, msg: Discord.Message): Promise<string> => {
+  const val = content.replace('　', ' ').split(' ')
 
   // スプレッドシートから情報を取得
   const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
@@ -60,13 +48,27 @@ const cellUpdate = async (val: string, msg: Discord.Message): Promise<string> =>
   const col = await GetDateColumn()
   const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
-  // 値の更新を行う
-  const cell = await manageSheet.getCell(`${col}${num}`)
+  // 凸数の更新を行う
+  const convex_cell = await manageSheet.getCell(`${col}${num}`)
+  const before: string = await convex_cell.getValue()
+  await convex_cell.setValue(val[0])
 
-  const before = await cell.getValue()
-  await cell.setValue(formatCorrect(val))
+  // 持ち越しがない場合は終了
+  if (val.length === 1) return before
 
-  return before.replace(',', ' ')
+  // 持ち越しがある場合の処理
+  const over_cell = await manageSheet.getCell(`${await nextCol(1)}${num}`)
+
+  const over = await over_cell.getValue()
+  if (over) {
+    // 前回持ち越しがあった場合
+    await over_cell.setValue()
+    return `${before} 1`
+  } else {
+    // なかった場合
+    await over_cell.setValue(1)
+    return before
+  }
 }
 
 /**
@@ -104,7 +106,7 @@ const threeConvexEnd = async (msg: Discord.Message) => {
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = await nextRow(2)
+  const col = await nextCol(2)
   const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
   // 凸終了の目印をつける
