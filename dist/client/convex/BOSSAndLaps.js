@@ -74,55 +74,119 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CurrentMessage = exports.Update = void 0;
+exports.Next = exports.CurrentMessage = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, laps, BOSSNum, infoSheet, cells, BOSS, _b, laps_cell, BOSS_cell, _c, _d;
+    var _a, laps, num, infoSheet, boss, _b, laps_cell, boss_cell, num_cell, _c, _d;
     return __generator(this, function (_e) {
         switch (_e.label) {
             case 0:
-                _a = __read(arg.replace('　', ' ').split(' '), 2), laps = _a[0], BOSSNum = _a[1];
+                _a = __read(arg.replace('　', ' ').split(' '), 2), laps = _a[0], num = _a[1];
                 if (!/\d/.test(laps))
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
-                if (!/[a-e]|[A-E]/.test(BOSSNum))
+                if (!/[a-e]|[A-E]/.test(num))
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _e.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+                return [4, getBossName(infoSheet, num)];
             case 2:
-                cells = _e.sent();
-                BOSS = util.PiecesEach(cells, 2).filter(function (v) { return v[0] === BOSSNum.toLowerCase(); })[0][1];
-                _b = __read(const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELLS.split(':'), 2), laps_cell = _b[0], BOSS_cell = _b[1];
-                return [4, infoSheet.getCell(laps_cell)];
-            case 3: return [4, (_e.sent()).setValue(laps)];
-            case 4:
+                boss = _e.sent();
+                return [4, getCurrentCell(infoSheet)];
+            case 3:
+                _b = __read.apply(void 0, [_e.sent(), 3]), laps_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
+                return [4, laps_cell];
+            case 4: return [4, (_e.sent()).setValue(laps)];
+            case 5:
                 _e.sent();
-                return [4, infoSheet.getCell(BOSS_cell)];
-            case 5: return [4, (_e.sent()).setValue(BOSS)];
-            case 6:
+                return [4, boss_cell];
+            case 6: return [4, (_e.sent()).setValue(boss)];
+            case 7:
+                _e.sent();
+                return [4, num_cell];
+            case 8: return [4, (_e.sent()).setValue(num)];
+            case 9:
                 _e.sent();
                 _d = (_c = msg).reply;
                 return [4, exports.CurrentMessage()];
-            case 7:
+            case 10:
                 _d.apply(_c, [_e.sent()]);
                 return [2];
         }
     });
 }); };
 exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, _a, laps, BOSS;
+    var infoSheet, range, _a, laps, boss;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _b.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELLS)];
+                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
+                return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[2])];
             case 2:
-                _a = __read.apply(void 0, [_b.sent(), 2]), laps = _a[0], BOSS = _a[1];
-                return [2, "\u73FE\u5728\u3001`" + laps + "`\u5468\u76EE\u306E`" + BOSS + "`\u3088"];
+                _a = __read.apply(void 0, [_b.sent(), 2]), laps = _a[0], boss = _a[1];
+                return [2, "\u73FE\u5728\u3001`" + laps + "`\u5468\u76EE\u306E`" + boss + "`\u3088"];
         }
     });
 }); };
+exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, _a, laps_cell, boss_cell, num_cell, laps, num, numberList, n, num_, laps_, boss_;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _b.sent();
+                return [4, getCurrentCell(infoSheet)];
+            case 2:
+                _a = __read.apply(void 0, [_b.sent(), 3]), laps_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, spreadsheet.GetValue(laps_cell)];
+            case 3:
+                laps = _b.sent();
+                return [4, spreadsheet.GetValue(num_cell)];
+            case 4:
+                num = _b.sent();
+                numberList = ['a', 'b', 'c', 'd', 'e'];
+                n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
+                num_ = numberList[n];
+                laps_ = n ? laps : Number(laps) + 1;
+                return [4, getBossName(infoSheet, num_)];
+            case 5:
+                boss_ = _b.sent();
+                return [4, laps_cell];
+            case 6: return [4, (_b.sent()).setValue(laps_)];
+            case 7:
+                _b.sent();
+                return [4, boss_cell];
+            case 8: return [4, (_b.sent()).setValue(boss_)];
+            case 9:
+                _b.sent();
+                return [4, num_cell];
+            case 10: return [4, (_b.sent()).setValue(num_)];
+            case 11:
+                _b.sent();
+                return [2];
+        }
+    });
+}); };
+var getBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
+    var cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 1:
+                cells = _a.sent();
+                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+        }
+    });
+}); };
+var getCurrentCell = function (infoSheet) {
+    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, infoSheet.getCell(cell)];
+            case 1: return [2, _a.sent()];
+        }
+    }); }); });
+};

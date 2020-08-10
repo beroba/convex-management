@@ -3,7 +3,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import {GetDateColumn} from './report'
-import * as BOSSAndLaps from './BOSSAndLaps'
+import * as bossAndLaps from './bossAndLaps'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
@@ -22,7 +22,7 @@ export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message)
 
   // 現在の周回数とボスを凸報告に送信
   const channel = client.channels.cache.get(Settings.CONVEX_CHANNEL.REPORT_ID) as Discord.TextChannel
-  channel?.send(await BOSSAndLaps.CurrentMessage())
+  channel?.send(await bossAndLaps.CurrentMessage())
 }
 
 /**

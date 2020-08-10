@@ -24,3 +24,5 @@ export const GetWorksheet = async (name: string): Promise<any> => {
  */
 export const GetCells = async (sheet: any, range: string): Promise<string[]> =>
   (await sheet.getCells(range)).getAllValues()
+
+export const GetValue = async (cell: any): Promise<any> => (await cell).getValue()

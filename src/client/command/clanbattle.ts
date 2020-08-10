@@ -2,7 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as BOSSAndLaps from '../convex/BOSSAndLaps'
+import * as bossAndLaps from '../convex/bossAndLaps'
 
 /**
  * クラバト用のコマンド
@@ -23,8 +23,16 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 
     case /cb boss/.test(command): {
       const arg = command.replace('/cb boss ', '')
-      BOSSAndLaps.Update(arg, msg)
+      bossAndLaps.Update(arg, msg)
       return 'Simultaneous convex carryover calculation'
+    }
+
+    case /cb next/.test(command): {
+      ;(async () => {
+        await bossAndLaps.Next()
+        msg.reply(await bossAndLaps.CurrentMessage())
+      })()
+      return 'next'
     }
   }
 }
