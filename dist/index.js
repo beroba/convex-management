@@ -29,7 +29,7 @@ var guildMemberAdd_1 = require("./client/guildMemberAdd");
 var guildMemberUpdate_1 = require("./client/guildMemberUpdate");
 var message_1 = require("./client/message");
 var cron_1 = require("./util/cron");
-var client = new Discord.Client();
+var client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.on('ready', function () { return ready_1.Ready(client); });
 client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.GuildMemberAdd(client, member); });
 client.on('guildMemberUpdate', function (_, member) { return guildMemberUpdate_1.GuildMemberUpdate(member); });
