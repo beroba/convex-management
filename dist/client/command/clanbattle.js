@@ -91,6 +91,10 @@ exports.ClanBattle = function (command, msg) {
             moveForward(msg);
             return 'Advance to next lap and boss';
         }
+        case /cb boss previous/.test(command): {
+            moveReturn(msg);
+            return 'Advance to previous lap and boss';
+        }
         case /cb boss/.test(command): {
             var arg = command.replace('/cb boss ', '');
             lapAndBoss.Update(arg, msg);
@@ -108,6 +112,21 @@ var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, func
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0: return [4, lapAndBoss.Next()];
+            case 1:
+                _c.sent();
+                _b = (_a = msg).reply;
+                return [4, lapAndBoss.CurrentMessage()];
+            case 2:
+                _b.apply(_a, [_c.sent()]);
+                return [2];
+        }
+    });
+}); };
+var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, lapAndBoss.Practice()];
             case 1:
                 _c.sent();
                 _b = (_a = msg).reply;

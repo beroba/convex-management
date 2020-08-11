@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Next = exports.CurrentMessage = exports.Update = void 0;
+exports.Practice = exports.Next = exports.CurrentMessage = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
@@ -151,6 +151,30 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
         }
     });
 }); };
+exports.Practice = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _c.sent();
+                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, readReturnDate(infoSheet)];
+            case 2:
+                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
+                return [4, spreadsheet.SetValue(lap_cell, lap)];
+            case 3:
+                _c.sent();
+                return [4, spreadsheet.SetValue(boss_cell, boss)];
+            case 4:
+                _c.sent();
+                return [4, spreadsheet.SetValue(num_cell, num)];
+            case 5:
+                _c.sent();
+                return [2];
+        }
+    });
+}); };
 var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
     var cells;
     return __generator(this, function (_a) {
@@ -183,6 +207,27 @@ var readForwardDate = function (infoSheet) { return __awaiter(void 0, void 0, vo
             case 3:
                 boss = _b.sent();
                 return [2, [n ? lap : Number(lap) + 1, boss, numberList[n]]];
+        }
+    });
+}); };
+var readReturnDate = function (infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, lap_cell, num_cell, lap, num, numberList, n, boss;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], num_cell = _a[2];
+                return [4, spreadsheet.GetValue(lap_cell)];
+            case 1:
+                lap = _b.sent();
+                return [4, spreadsheet.GetValue(num_cell)];
+            case 2:
+                num = _b.sent();
+                numberList = ['a', 'b', 'c', 'd', 'e'];
+                n = (function (n) { return (n === 0 ? 4 : n - 1); })(numberList.indexOf(num));
+                return [4, readBossName(infoSheet, numberList[n])];
+            case 3:
+                boss = _b.sent();
+                return [2, [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]];
         }
     });
 }); };

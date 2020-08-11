@@ -63,6 +63,22 @@ export const Next = async () => {
 }
 
 /**
+ * 現在の周回数とボスを前に戻す
+ */
+export const Practice = async () => {
+  // スプレッドシートから情報を取得
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  // 設定するセルと値を取得
+  const [lap_cell, boss_cell, num_cell] = readCurrentCell(infoSheet)
+  const [lap, boss, num] = await readReturnDate(infoSheet)
+
+  await spreadsheet.SetValue(lap_cell, lap)
+  await spreadsheet.SetValue(boss_cell, boss)
+  await spreadsheet.SetValue(num_cell, num)
+}
+
+/**
  * 情報シートから現在のボスの名前を取得する
  * @param infoSheet 情報のシート
  * @param num ボスの番号
@@ -82,9 +98,9 @@ const readCurrentCell = (infoSheet: any): any[] =>
   Settings.INFORMATION_SHEET.CURRENT_CELL.split(',').map((cell: string) => infoSheet.getCell(cell))
 
 /**
- * 情報シートの現在の周回数とボスから次に設定する値を取得する
+ * 情報シートの現在の周回数とボスから次に進める値を取得する
  * @param infoSheet 情報のシート
- * @return 次に設定する値
+ * @return 設定する値
  */
 const readForwardDate = async (infoSheet: any): Promise<[number, string, string]> => {
   // 現在の周回数とボス番号を取得
@@ -92,11 +108,31 @@ const readForwardDate = async (infoSheet: any): Promise<[number, string, string]
   const lap = await spreadsheet.GetValue(lap_cell)
   const num = await spreadsheet.GetValue(num_cell)
 
-  // 次のボス番号調べる
+  // ボス番号調べる
   const numberList = ['a', 'b', 'c', 'd', 'e']
   const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
 
-  // 次の周回数とボスにして返す
+  // 周回数とボスとボス番号を返す
   const boss = await readBossName(infoSheet, numberList[n])
   return [n ? lap : Number(lap) + 1, boss, numberList[n]]
+}
+
+/**
+ * 情報シートの現在の周回数とボスから前に戻す値を取得する
+ * @param infoSheet 情報のシート
+ * @return 設定する値
+ */
+const readReturnDate = async (infoSheet: any): Promise<[number, string, string]> => {
+  // 現在の周回数とボス番号を取得
+  const [lap_cell, , num_cell] = readCurrentCell(infoSheet)
+  const lap = await spreadsheet.GetValue(lap_cell)
+  const num = await spreadsheet.GetValue(num_cell)
+
+  // ボス番号調べる
+  const numberList = ['a', 'b', 'c', 'd', 'e']
+  const n = (n => (n === 0 ? 4 : n - 1))(numberList.indexOf(num))
+
+  // 周回数とボスとボス番号を返す
+  const boss = await readBossName(infoSheet, numberList[n])
+  return [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]
 }

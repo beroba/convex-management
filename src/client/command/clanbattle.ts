@@ -26,6 +26,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Advance to next lap and boss'
     }
 
+    case /cb boss previous/.test(command): {
+      moveReturn(msg)
+      return 'Advance to previous lap and boss'
+    }
+
     case /cb boss/.test(command): {
       const arg = command.replace('/cb boss ', '')
       lapAndBoss.Update(arg, msg)
@@ -54,10 +59,19 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
 }
 
 /**
- * 現在の周回数とボスを次に進める
+ * 現在の周回数とボスを次に進め、報告をする
  * @param msg DiscordからのMessage
  */
 const moveForward = async (msg: Discord.Message) => {
   await lapAndBoss.Next()
+  msg.reply(await lapAndBoss.CurrentMessage())
+}
+
+/**
+ * 現在の周回数とボスを前に戻し、報告をする
+ * @param msg DiscordからのMessage
+ */
+const moveReturn = async (msg: Discord.Message) => {
+  await lapAndBoss.Practice()
   msg.reply(await lapAndBoss.CurrentMessage())
 }
