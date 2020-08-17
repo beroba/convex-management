@@ -6,7 +6,7 @@ import {GuildMemberUpdate} from './client/guildMemberUpdate'
 import {Message} from './client/message'
 import {SetRemainConvex} from './util/cron'
 
-const client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']})
+export const client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']})
 
 // botの起動時に実行
 client.on('ready', () => Ready(client))

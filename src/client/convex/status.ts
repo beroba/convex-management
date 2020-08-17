@@ -10,7 +10,7 @@ import * as lapAndBoss from './lapAndBoss'
  * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  */
-export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message) => {
+export const Update = async (client: Discord.Client, msg: Discord.Message) => {
   // データの更新を実行
   const before = await cellUpdate(msg.content, msg)
 
@@ -21,8 +21,8 @@ export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message)
   if (msg.content === '3') await threeConvexEnd(msg)
 
   // 現在の周回数とボスを凸報告に送信
-  const channel = client.channels.cache.get(Settings.CONVEX_CHANNEL.REPORT_ID) as Discord.TextChannel
-  channel?.send(await lapAndBoss.CurrentMessage())
+  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.REPORT_ID, client)
+  channel.send(await lapAndBoss.CurrentMessage())
 }
 
 /**

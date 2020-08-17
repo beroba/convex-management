@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import * as cron from 'node-cron'
 import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
+import * as util from '../util'
 import {GetDateColumn} from '../client/convex/report'
 
 /**
@@ -23,8 +24,8 @@ export const SetRemainConvex = (client: Discord.Client) => {
     clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
 
     // bot-notifyに通知をする
-    const channel = client.channels.cache.get(Settings.STARTUP.CHANNEL_ID) as Discord.TextChannel
-    channel?.send('クランメンバーに凸残ロールを付与したわ')
+    const channel = util.GetTextChannel(Settings.STARTUP.CHANNEL_ID, client)
+    channel.send('クランメンバーに凸残ロールを付与したわ')
 
     console.log('Add convex roll')
   })

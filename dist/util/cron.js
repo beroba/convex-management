@@ -62,6 +62,7 @@ exports.SetRemainConvex = void 0;
 var cron = __importStar(require("node-cron"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../util"));
 var report_1 = require("../client/convex/report");
 exports.SetRemainConvex = function (client) {
     cron.schedule('0 0 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -78,8 +79,8 @@ exports.SetRemainConvex = function (client) {
                     if (!day)
                         return [2];
                     clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
-                    channel = client.channels.cache.get(const_settings_1["default"].STARTUP.CHANNEL_ID);
-                    channel === null || channel === void 0 ? void 0 : channel.send('クランメンバーに凸残ロールを付与したわ');
+                    channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID, client);
+                    channel.send('クランメンバーに凸残ロールを付与したわ');
                     console.log('Add convex roll');
                     return [2];
             }

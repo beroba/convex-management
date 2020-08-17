@@ -20,6 +20,13 @@ export const GetUserName = (m: Option<Discord.GuildMember>): string =>
   m?.nickname ? m?.nickname : m?.user.username || ''
 
 /**
+ * 渡されたidのTextChannelを取得する
+ * @param client bot(キャル)のclient
+ */
+export const GetTextChannel = (id: string, client: Discord.Client): Discord.TextChannel =>
+  client.channels.cache.get(id) as Discord.TextChannel
+
+/**
  * 配列をn個づつの塊にして作り直す
  * @param array 元になる配列
  * @param n 塊としてまとめる数
