@@ -33,8 +33,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
     }
 
     case /cb boss/.test(command): {
-      const arg = command.replace('/cb boss ', '')
-      lapAndBoss.Update(arg, msg)
+      changeBoss(command, msg)
       return 'Change laps and boss'
     }
   }
@@ -76,5 +75,16 @@ const moveForward = async (msg: Discord.Message) => {
 const moveReturn = async (msg: Discord.Message) => {
   await lapAndBoss.Practice()
   msg.reply(await lapAndBoss.CurrentMessage())
+  situation.Report()
+}
+
+/**
+ * 引数で指定した周回数とボスに変更する
+ * @param command 入力されたコマンド
+ * @param msg DiscordからのMessage
+ */
+const changeBoss = (command: string, msg: Discord.Message) => {
+  const arg = command.replace('/cb boss ', '')
+  lapAndBoss.Update(arg, msg)
   situation.Report()
 }
