@@ -26,11 +26,11 @@ exports.GuildMemberAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
-exports.GuildMemberAdd = function (client, member) {
+exports.GuildMemberAdd = function (member) {
     var _a, _b;
     if (member.guild.id !== throw_env_1["default"]('CLAN_SERVER_ID'))
         return;
-    var channel = util.GetTextChannel(const_settings_1["default"].WELCOME_CHANNEL.CHAT_ID, client);
+    var channel = util.GetTextChannel(const_settings_1["default"].WELCOME_CHANNEL.CHAT_ID);
     var firstLine = "<@!" + ((_a = member.user) === null || _a === void 0 ? void 0 : _a.id) + "> \u307E\u305A\u306F <#" + const_settings_1["default"].WELCOME_CHANNEL.POLICY_ID + "> \u3092\u78BA\u8A8D\u3057\u306A\u3055\u3044\uFF01";
     var secondLine = "\u3061\u3083\u3093\u3068 <#" + const_settings_1["default"].WELCOME_CHANNEL.INTRODUCTION_ID + "> \u3082\u66F8\u304F\u3053\u3068\u306D";
     channel.send(firstLine + "\n" + secondLine);

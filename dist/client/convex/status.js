@@ -64,7 +64,7 @@ var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var report_1 = require("./report");
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-exports.Update = function (client, msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var before, channel, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -78,7 +78,7 @@ exports.Update = function (client, msg) { return __awaiter(void 0, void 0, void 
                 _c.sent();
                 _c.label = 3;
             case 3:
-                channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID, client);
+                channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID);
                 _b = (_a = channel).send;
                 return [4, lapAndBoss.CurrentMessage()];
             case 4:

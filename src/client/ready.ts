@@ -1,14 +1,13 @@
-import * as Discord from 'discord.js'
 import Settings from 'const-settings'
+import {Client} from '../index'
 import * as util from '../util'
 
 /**
  * キャルが起動した際に通知を送る
- * @param client bot(キャル)のclient
  */
-export const Ready = (client: Discord.Client) => {
-  const channel = util.GetTextChannel(Settings.STARTUP.CHANNEL_ID, client)
+export const Ready = () => {
+  const channel = util.GetTextChannel(Settings.STARTUP.CHANNEL_ID)
   channel.send(Settings.STARTUP.MESSAGE)
 
-  console.log(`Logged in as ${client.user?.username}!`)
+  console.log(`Logged in as ${Client.user?.username}!`)
 }

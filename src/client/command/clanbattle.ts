@@ -4,7 +4,6 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
-import {client} from '../../index'
 
 /**
  * クラバト用のコマンド
@@ -67,7 +66,7 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
 const moveForward = async (msg: Discord.Message) => {
   await lapAndBoss.Next()
   msg.reply(await lapAndBoss.CurrentMessage())
-  situation.Report(client)
+  situation.Report()
 }
 
 /**

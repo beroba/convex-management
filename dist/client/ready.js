@@ -24,10 +24,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Ready = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var index_1 = require("../index");
 var util = __importStar(require("../util"));
-exports.Ready = function (client) {
+exports.Ready = function () {
     var _a;
-    var channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID, client);
+    var channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID);
     channel.send(const_settings_1["default"].STARTUP.MESSAGE);
-    console.log("Logged in as " + ((_a = client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+    console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
 };

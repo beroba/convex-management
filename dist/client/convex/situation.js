@@ -61,10 +61,10 @@ exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.Report = function (client) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
-        channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.SITUATION_ID, client);
+        channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.SITUATION_ID);
         channel.send('test');
         return [2];
     });

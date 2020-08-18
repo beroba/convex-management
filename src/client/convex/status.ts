@@ -7,10 +7,9 @@ import * as lapAndBoss from './lapAndBoss'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
- * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  */
-export const Update = async (client: Discord.Client, msg: Discord.Message) => {
+export const Update = async (msg: Discord.Message) => {
   // データの更新を実行
   const before = await cellUpdate(msg.content, msg)
 
@@ -21,7 +20,7 @@ export const Update = async (client: Discord.Client, msg: Discord.Message) => {
   if (msg.content === '3') await threeConvexEnd(msg)
 
   // 現在の周回数とボスを凸報告に送信
-  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.REPORT_ID, client)
+  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.REPORT_ID)
   channel.send(await lapAndBoss.CurrentMessage())
 }
 

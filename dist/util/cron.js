@@ -63,15 +63,16 @@ var cron = __importStar(require("node-cron"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
+var index_1 = require("../index");
 var report_1 = require("../client/convex/report");
-exports.SetRemainConvex = function (client) {
+exports.SetRemainConvex = function () {
     cron.schedule('0 0 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
         var guild, clanMembers, day, channel;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    guild = client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
+                    guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
                     clanMembers = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
                     return [4, report_1.GetDateColumn()];
                 case 1:
@@ -79,7 +80,7 @@ exports.SetRemainConvex = function (client) {
                     if (!day)
                         return [2];
                     clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
-                    channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID, client);
+                    channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID);
                     channel.send('クランメンバーに凸残ロールを付与したわ');
                     console.log('Add convex roll');
                     return [2];
