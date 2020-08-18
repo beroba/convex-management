@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetDateColumn = exports.ConvexReport = void 0;
+exports.NextCol = exports.GetDateColumn = exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -114,3 +114,11 @@ exports.GetDateColumn = function () { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
+exports.NextCol = function (n) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
+    switch (_c.label) {
+        case 0:
+            _b = (_a = String).fromCharCode;
+            return [4, exports.GetDateColumn()];
+        case 1: return [2, _b.apply(_a, [((_c.sent()) || '').charCodeAt(0) + n])];
+    }
+}); }); };

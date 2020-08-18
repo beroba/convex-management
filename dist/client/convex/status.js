@@ -62,8 +62,9 @@ exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var report_1 = require("./report");
 var lapAndBoss = __importStar(require("./lapAndBoss"));
+var situation = __importStar(require("./situation"));
+var report_1 = require("./report");
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var before, channel, _a, _b;
     return __generator(this, function (_c) {
@@ -83,18 +84,11 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, lapAndBoss.CurrentMessage()];
             case 4:
                 _b.apply(_a, [_c.sent()]);
+                situation.Report();
                 return [2];
         }
     });
 }); };
-var nextCol = function (n) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
-    switch (_c.label) {
-        case 0:
-            _b = (_a = String).fromCharCode;
-            return [4, report_1.GetDateColumn()];
-        case 1: return [2, _b.apply(_a, [((_c.sent()) || '').charCodeAt(0) + n])];
-    }
-}); }); };
 var cellUpdate = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var val, manageSheet, cells, col, num, convex_cell, before, over_cell, _a, _b, _c, over;
     return __generator(this, function (_d) {
@@ -125,7 +119,7 @@ var cellUpdate = function (content, msg) { return __awaiter(void 0, void 0, void
                 lapAndBoss.Next();
                 _b = (_a = manageSheet).getCell;
                 _c = "";
-                return [4, nextCol(1)];
+                return [4, report_1.NextCol(1)];
             case 7: return [4, _b.apply(_a, [_c + (_d.sent()) + num])];
             case 8:
                 over_cell = _d.sent();
@@ -178,7 +172,7 @@ var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, f
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
                 cells = _b.sent();
-                return [4, nextCol(2)];
+                return [4, report_1.NextCol(2)];
             case 3:
                 col = _b.sent();
                 num = cells.indexOf(util.GetUserName(msg.member)) + 3;

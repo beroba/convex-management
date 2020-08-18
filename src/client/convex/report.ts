@@ -60,3 +60,10 @@ export const GetDateColumn = async (): Promise<Option<string>> => {
 
   return cell ? cell[1] : null
 }
+
+/**
+ * 指定された右隣の列名を取得
+ * @param n 何個目かの数字
+ */
+export const NextCol = async (n: number): Promise<string> =>
+  String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + n)

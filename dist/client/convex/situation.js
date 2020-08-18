@@ -54,6 +54,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -61,11 +81,78 @@ exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var lapAndBoss = __importStar(require("./lapAndBoss"));
+var report_1 = require("./report");
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    return __generator(this, function (_a) {
-        channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.SITUATION_ID);
-        channel.send('test');
-        return [2];
+    var day, manageSheet, range, _a, status, members, list, channel, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0: return [4, report_1.GetDateColumn()];
+            case 1:
+                day = _d.sent();
+                if (!day)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 2:
+                manageSheet = _d.sent();
+                return [4, report_1.GetDateColumn()];
+            case 3:
+                _a = (_d.sent()) + "3:";
+                return [4, report_1.NextCol(1)];
+            case 4:
+                range = _a + (_d.sent()) + "32";
+                return [4, spreadsheet.GetCells(manageSheet, range)];
+            case 5:
+                status = _d.sent();
+                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 6:
+                members = _d.sent();
+                list = util
+                    .PiecesEach(status, 2)
+                    .map(function (v) { return v.map(Number); })
+                    .map(function (v, i) { return __spread([members[i]], v); })
+                    .filter(function (v) { return v[0] !== ''; });
+                channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.SITUATION_ID);
+                _c = (_b = channel).send;
+                return [4, createMessage(list)];
+            case 7:
+                _c.apply(_b, [_d.sent()]);
+                return [2];
+        }
+    });
+}); };
+var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
+    var pad0, date, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                pad0 = function (n) { return (n + '').padStart(2, '0'); };
+                date = (function (d) { return pad0(d.getMonth() + 1) + "/" + pad0(d.getDate()) + " " + pad0(d.getHours()) + ":" + pad0(d.getMinutes()); })(new Date());
+                未凸 = list.filter(function (l) { return l[1] === 0; }).map(function (l) { return l[0]; });
+                持越1 = list.filter(function (l) { return l[1] === 1; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
+                凸1 = list.filter(function (l) { return l[1] === 1; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
+                持越2 = list.filter(function (l) { return l[1] === 2; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
+                凸2 = list.filter(function (l) { return l[1] === 2; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
+                持越3 = list.filter(function (l) { return l[1] === 3; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
+                凸3 = list.filter(function (l) { return l[1] === 3; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
+                _a = "`" + date + "` \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                    '```\n' +
+                    ("\u672A\u51F8: " + 未凸.toString().replace(/,/g, ', ') + "\n") +
+                    '\n' +
+                    ("\u6301\u8D8A: " + 持越1.toString().replace(/,/g, ', ') + "\n") +
+                    ("1\u51F8 : " + 凸1.toString().replace(/,/g, ', ') + "\n") +
+                    '\n' +
+                    ("\u6301\u8D8A: " + 持越2.toString().replace(/,/g, ', ') + "\n") +
+                    ("2\u51F8 : " + 凸2.toString().replace(/,/g, ', ') + "\n") +
+                    '\n' +
+                    ("\u6301\u8D8A: " + 持越3.toString().replace(/,/g, ', ') + "\n") +
+                    ("3\u51F8 : " + 凸3.toString().replace(/,/g, ', ') + "\n") +
+                    '\n' +
+                    '```\n';
+                return [4, lapAndBoss.CurrentMessage()];
+            case 1: return [2, (_a +
+                    (_b.sent()))];
+        }
     });
 }); };

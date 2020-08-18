@@ -76,4 +76,5 @@ const moveForward = async (msg: Discord.Message) => {
 const moveReturn = async (msg: Discord.Message) => {
   await lapAndBoss.Practice()
   msg.reply(await lapAndBoss.CurrentMessage())
+  situation.Report()
 }

@@ -135,6 +135,7 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, lapAndBoss.CurrentMessage()];
             case 2:
                 _b.apply(_a, [_c.sent()]);
+                situation.Report();
                 return [2];
         }
     });
