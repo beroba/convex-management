@@ -64,7 +64,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
 var command_1 = require("./command");
 var report_1 = require("./convex/report");
-exports.Message = function (client, msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
     return __generator(this, function (_b) {
@@ -74,7 +74,7 @@ exports.Message = function (client, msg) { return __awaiter(void 0, void 0, void
                     return [2];
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
-                return [4, report_1.ConvexReport(client, msg)];
+                return [4, report_1.ConvexReport(msg)];
             case 1:
                 comment = _b.sent();
                 if (comment)
@@ -99,7 +99,7 @@ var sendYabaiImage = function (msg) {
     return 'Send Yabai Image';
 };
 var sendYuiKusano = function (msg) {
-    var match = msg.content.replace(/草/g, 'ユイ').match(/ユイ/);
+    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);

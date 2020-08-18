@@ -78,6 +78,7 @@ exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var situation = __importStar(require("../convex/situation"));
 exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.PROGRESS, msg.channel))
         return;
@@ -118,6 +119,7 @@ var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 return [4, lapAndBoss.CurrentMessage()];
             case 2:
                 _b.apply(_a, [_c.sent()]);
+                situation.Report();
                 return [2];
         }
     });
@@ -133,6 +135,7 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, lapAndBoss.CurrentMessage()];
             case 2:
                 _b.apply(_a, [_c.sent()]);
+                situation.Report();
                 return [2];
         }
     });

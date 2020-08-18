@@ -2,15 +2,15 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import {GetDateColumn} from './report'
 import * as lapAndBoss from './lapAndBoss'
+import * as situation from './situation'
+import {GetDateColumn, NextCol} from './report'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
- * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  */
-export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message) => {
+export const Update = async (msg: Discord.Message) => {
   // データの更新を実行
   const before = await cellUpdate(msg.content, msg)
 
@@ -21,16 +21,11 @@ export const StatusUpdate = async (client: Discord.Client, msg: Discord.Message)
   if (msg.content === '3') await threeConvexEnd(msg)
 
   // 現在の周回数とボスを凸報告に送信
-  const channel = client.channels.cache.get(Settings.CONVEX_CHANNEL.REPORT_ID) as Discord.TextChannel
-  channel?.send(await lapAndBoss.CurrentMessage())
-}
+  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.REPORT_ID)
+  channel.send(await lapAndBoss.CurrentMessage())
 
-/**
- * 指定された右隣の列名を取得
- * @param n 何個目かの数字
- */
-const nextCol = async (n: number): Promise<string> =>
-  String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + n)
+  situation.Report()
+}
 
 /**
  * セルの更新を行う
@@ -60,7 +55,7 @@ const cellUpdate = async (content: string, msg: Discord.Message): Promise<string
   lapAndBoss.Next()
 
   // 持ち越しがある場合の処理
-  const over_cell = await manageSheet.getCell(`${await nextCol(1)}${num}`)
+  const over_cell = await manageSheet.getCell(`${await NextCol(1)}${num}`)
 
   const over = await over_cell.getValue()
   if (over) {
@@ -109,7 +104,7 @@ const threeConvexEnd = async (msg: Discord.Message) => {
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = await nextCol(2)
+  const col = await NextCol(2)
   const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
   // 凸終了の目印をつける

@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
+import {Client} from '../index'
 
 /**
  * 配列の中に確認用のチャンネルがあるか確認する
@@ -18,6 +19,12 @@ export const IsChannel = (array: string[], channel: Discord.TextChannel | Discor
  */
 export const GetUserName = (m: Option<Discord.GuildMember>): string =>
   m?.nickname ? m?.nickname : m?.user.username || ''
+
+/**
+ * 渡されたidのTextChannelを取得する
+ * @param id チャンネルのid
+ */
+export const GetTextChannel = (id: string): Discord.TextChannel => Client.channels.cache.get(id) as Discord.TextChannel
 
 /**
  * 配列をn個づつの塊にして作り直す

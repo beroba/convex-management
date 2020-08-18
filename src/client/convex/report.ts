@@ -3,15 +3,14 @@ import Settings from 'const-settings'
 import Option from 'type-of-option'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import {StatusUpdate} from './statusUpdate'
+import * as status from './status'
 
 /**
  * 凸報告の管理を行う
- * @param client bot(キャル)のclient
  * @param msg DiscordからのMessage
  * @return 凸報告の実行結果
  */
-export const ConvexReport = async (client: Discord.Client, msg: Discord.Message): Promise<Option<string>> => {
+export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>> => {
   // キャルのメッセージはコマンド実行しない
   if (msg.member?.user.username === 'キャル') return
 
@@ -27,7 +26,7 @@ export const ConvexReport = async (client: Discord.Client, msg: Discord.Message)
 
   switch (true) {
     case /[1-3]/.test(msg.content.charAt(0)): {
-      StatusUpdate(client, msg)
+      status.Update(msg)
       return 'Update status'
     }
 
@@ -61,3 +60,10 @@ export const GetDateColumn = async (): Promise<Option<string>> => {
 
   return cell ? cell[1] : null
 }
+
+/**
+ * 指定された右隣の列名を取得
+ * @param n 何個目かの数字
+ */
+export const NextCol = async (n: number): Promise<string> =>
+  String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + n)

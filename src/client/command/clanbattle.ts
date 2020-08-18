@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as situation from '../convex/situation'
 
 /**
  * クラバト用のコマンド
@@ -32,8 +33,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
     }
 
     case /cb boss/.test(command): {
-      const arg = command.replace('/cb boss ', '')
-      lapAndBoss.Update(arg, msg)
+      changeBoss(command, msg)
       return 'Change laps and boss'
     }
   }
@@ -65,6 +65,7 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
 const moveForward = async (msg: Discord.Message) => {
   await lapAndBoss.Next()
   msg.reply(await lapAndBoss.CurrentMessage())
+  situation.Report()
 }
 
 /**
@@ -74,4 +75,16 @@ const moveForward = async (msg: Discord.Message) => {
 const moveReturn = async (msg: Discord.Message) => {
   await lapAndBoss.Practice()
   msg.reply(await lapAndBoss.CurrentMessage())
+  situation.Report()
+}
+
+/**
+ * 引数で指定した周回数とボスに変更する
+ * @param command 入力されたコマンド
+ * @param msg DiscordからのMessage
+ */
+const changeBoss = (command: string, msg: Discord.Message) => {
+  const arg = command.replace('/cb boss ', '')
+  lapAndBoss.Update(arg, msg)
+  situation.Report()
 }
