@@ -117,4 +117,18 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   // 何番目の終了者なのかを報告
   const n = (await manageSheet.getCell(`${col}1`)).getValue()
   msg.reply(`${n}人目の3凸終了者よ！`)
+
+  // 全凸終了処理を行う
+  if (Number(n) !== cells.filter(v => v).length) return
+
+  const day = await date.GetDay()
+  const state = await lapAndBoss.GetCurrent()
+
+  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.PROGRESS_ID)
+  channel.send(
+    `${day}日目の全凸終了よ！\n` +
+      `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
+      `お疲れ様！次も頑張りなさい`
+  )
+  console.log('Complete convex end report')
 }

@@ -162,7 +162,7 @@ var reaction = function (before, msg) {
     });
 };
 var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, num, cell, n;
+    var manageSheet, cells, col, num, cell, n, day, state, channel;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -187,6 +187,19 @@ var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, f
             case 6:
                 n = (_b.sent()).getValue();
                 msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
+                if (Number(n) !== cells.filter(function (v) { return v; }).length)
+                    return [2];
+                return [4, date.GetDay()];
+            case 7:
+                day = _b.sent();
+                return [4, lapAndBoss.GetCurrent()];
+            case 8:
+                state = _b.sent();
+                channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.PROGRESS_ID);
+                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u3088\uFF01\n" +
+                    ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
+                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
+                console.log('Complete convex end report');
                 return [2];
         }
     });

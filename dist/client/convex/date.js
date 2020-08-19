@@ -79,13 +79,13 @@ exports.GetColumn = function (n) { return __awaiter(void 0, void 0, void 0, func
         switch (_a.label) {
             case 0: return [4, checkCalnBattle()];
             case 1:
-                cell = (_a.sent());
+                cell = _a.sent();
                 return [2, String.fromCharCode(cell[2].charCodeAt(0) + n)];
         }
     });
 }); };
 var checkCalnBattle = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, cell, day;
+    var infoSheet, cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
@@ -94,14 +94,10 @@ var checkCalnBattle = function () { return __awaiter(void 0, void 0, void 0, fun
                 return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
             case 2:
                 cells = _a.sent();
-                cell = util
-                    .PiecesEach(cells, 3)
-                    .map(function (v) { return [v[0], v[1].split('/').map(Number).join('/'), v[2]]; })
-                    .filter(function (v) { return v[1] === mmdd(); })[0];
-                if (cell[0] !== '5')
-                    return [2, cell];
-                day = (function (d) { return d.getMonth() + 1 + "/" + d.getDate(); })(new Date());
-                return [2, day === cell[1] ? cell : undefined];
+                return [2, util
+                        .PiecesEach(cells, 3)
+                        .map(function (v) { return [v[0], v[1].split('/').map(Number).join('/'), v[2]]; })
+                        .filter(function (v) { return v[1] === mmdd(); })[0]];
         }
     });
 }); };

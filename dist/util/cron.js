@@ -92,7 +92,34 @@ var setRemainConvex = function () {
     }); });
 };
 var fullConvexReport = function () {
-    cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2];
-    }); }); });
+    cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var day;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, date.GetDay()];
+                case 1:
+                    day = _a.sent();
+                    if (!day)
+                        return [2];
+                    if (day === '5')
+                        return [2];
+                    return [2];
+            }
+        });
+    }); });
+    cron.schedule('0 10 0 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var day;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, date.GetDay()];
+                case 1:
+                    day = _a.sent();
+                    if (!day)
+                        return [2];
+                    if (day !== '5')
+                        return [2];
+                    return [2];
+            }
+        });
+    }); });
 };

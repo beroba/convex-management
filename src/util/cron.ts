@@ -43,5 +43,23 @@ const setRemainConvex = () => {
  * 全凸されていない場合にその日付の凸状況を報告をする
  */
 const fullConvexReport = () => {
-  cron.schedule('0 10 5 * * *', async () => {})
+  // 最終日以外
+  cron.schedule('0 10 5 * * *', async () => {
+    // クラバトの日じゃない場合は終了
+    const day = await date.GetDay()
+    if (!day) return
+
+    // クラバト最終日は実行しない
+    if (day === '5') return
+  })
+
+  // 最終日のみ
+  cron.schedule('0 10 0 * * *', async () => {
+    // クラバトの日じゃない場合は終了
+    const day = await date.GetDay()
+    if (!day) return
+
+    // クラバト最終日以外は実行しない
+    if (day !== '5') return
+  })
 }

@@ -18,7 +18,7 @@ export const GetDay = async (): Promise<Option<string>> => {
  * @return 列名
  */
 export const GetColumn = async (n: number): Promise<string> => {
-  const cell = (await checkCalnBattle()) as string[]
+  const cell = await checkCalnBattle()
   return String.fromCharCode(cell[2].charCodeAt(0) + n)
 }
 
@@ -27,23 +27,16 @@ export const GetColumn = async (n: number): Promise<string> => {
  * あった場合は日付の情報を返す
  * @return 日付の情報
  */
-const checkCalnBattle = async (): Promise<string[] | undefined> => {
+const checkCalnBattle = async (): Promise<string[]> => {
   // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
   // クラバトの日かどうか確認
-  const cell = util
+  return util
     .PiecesEach(cells, 3)
     .map(v => [v[0], v[1].split('/').map(Number).join('/'), v[2]])
     .filter(v => v[1] === mmdd())[0]
-
-  // 最終日の場合は別処理をする
-  if (cell[0] !== '5') return cell
-
-  // 最終日のみ日付を超えてないか確認
-  const day = (d => `${d.getMonth() + 1}/${d.getDate()}`)(new Date())
-  return day === cell[1] ? cell : undefined
 }
 
 /**

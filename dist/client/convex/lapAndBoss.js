@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Practice = exports.Next = exports.CurrentMessage = exports.Update = void 0;
+exports.Practice = exports.Next = exports.CurrentMessage = exports.GetCurrent = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
@@ -112,7 +112,7 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, function () {
     var infoSheet, range, _a, lap, boss;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -123,7 +123,18 @@ exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, 
                 return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[1])];
             case 2:
                 _a = __read.apply(void 0, [_b.sent(), 2]), lap = _a[0], boss = _a[1];
-                return [2, "\u73FE\u5728\u3001`" + lap + "`\u5468\u76EE\u306E`" + boss + "`\u3088"];
+                return [2, { lap: lap, boss: boss }];
+        }
+    });
+}); };
+exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var state;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.GetCurrent()];
+            case 1:
+                state = _a.sent();
+                return [2, "\u73FE\u5728\u3001`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u3088"];
         }
     });
 }); };
