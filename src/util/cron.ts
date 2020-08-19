@@ -1,23 +1,32 @@
 import * as cron from 'node-cron'
 import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
-import * as util from '../util'
 import {Client} from '../index'
-import {GetDateColumn} from '../client/convex/report'
+import * as util from '../util'
+import * as date from '../client/convex/date'
 
 /**
- * クラバトがある日の朝5時に、クランメンバー全員に凸残ロールを付与する
+ * クーロンで操作する関数一覧
  */
-export const SetRemainConvex = () => {
+export const CronOperation = () => {
+  setRemainConvex()
+  fullConvexReport()
+}
+
+/**
+ * クラバトがある日の朝5時に、クランメンバー全員に凸残ロールを付与する。
+ * '0 0 5 * * *'
+ */
+const setRemainConvex = () => {
   // 朝5時に実行
   cron.schedule('0 0 5 * * *', async () => {
+    // クラバトの日じゃない場合は終了
+    const day = await date.GetDay()
+    if (!day) return
+
     // べろばあのクランメンバー一覧を取得
     const guild = Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
     const clanMembers = guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)?.members.map(m => m)
-
-    // クラバトの日じゃない場合は終了
-    const day = await GetDateColumn()
-    if (!day) return
 
     // クランメンバーに凸残ロールを付与する
     clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
@@ -28,4 +37,11 @@ export const SetRemainConvex = () => {
 
     console.log('Add convex roll')
   })
+}
+
+/**
+ * 全凸されていない場合にその日付の凸状況を報告をする
+ */
+const fullConvexReport = () => {
+  cron.schedule('0 10 5 * * *', async () => {})
 }

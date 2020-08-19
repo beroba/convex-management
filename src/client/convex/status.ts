@@ -4,7 +4,7 @@ import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
 import * as situation from './situation'
-import {GetDateColumn, NextCol} from './report'
+import * as date from './date'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
@@ -40,7 +40,7 @@ const cellUpdate = async (content: string, msg: Discord.Message): Promise<string
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = await GetDateColumn()
+  const col = await date.GetColumn(0)
   const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
   // 凸数の更新を行う
@@ -55,7 +55,7 @@ const cellUpdate = async (content: string, msg: Discord.Message): Promise<string
   lapAndBoss.Next()
 
   // 持ち越しがある場合の処理
-  const over_cell = await manageSheet.getCell(`${await NextCol(1)}${num}`)
+  const over_cell = await manageSheet.getCell(`${await date.GetColumn(1)}${num}`)
 
   const over = await over_cell.getValue()
   if (over) {
@@ -104,7 +104,7 @@ const threeConvexEnd = async (msg: Discord.Message) => {
 
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = await NextCol(2)
+  const col = await date.GetColumn(2)
   const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
   // 凸終了の目印をつける

@@ -58,11 +58,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.NextCol = exports.GetDateColumn = exports.ConvexReport = void 0;
+exports.ConvexReport = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var status = __importStar(require("./status"));
+var date = __importStar(require("./date"));
 exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     var _a;
@@ -73,7 +72,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
                     return [2];
-                return [4, exports.GetDateColumn()];
+                return [4, date.GetDay()];
             case 1:
                 day = _b.sent();
                 if (!day) {
@@ -94,31 +93,3 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
-exports.GetDateColumn = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var mmdd, infoSheet, cells, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + d.getDate(); })(new Date()); };
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
-            case 2:
-                cells = _a.sent();
-                cell = util
-                    .PiecesEach(cells, 3)
-                    .map(function (v) { return [v[1].split('/').map(Number).join('/'), v[2]]; })
-                    .filter(function (v) { return v[0] === mmdd(); })[0];
-                return [2, cell ? cell[1] : null];
-        }
-    });
-}); };
-exports.NextCol = function (n) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
-    switch (_c.label) {
-        case 0:
-            _b = (_a = String).fromCharCode;
-            return [4, exports.GetDateColumn()];
-        case 1: return [2, _b.apply(_a, [((_c.sent()) || '').charCodeAt(0) + n])];
-    }
-}); }); };

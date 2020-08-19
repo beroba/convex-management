@@ -83,12 +83,12 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var report_1 = require("./report");
+var date = __importStar(require("./date"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
     var day, manageSheet, range, _a, status, members, list, channel, _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
-            case 0: return [4, report_1.GetDateColumn()];
+            case 0: return [4, date.GetDay()];
             case 1:
                 day = _d.sent();
                 if (!day)
@@ -96,10 +96,10 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 2:
                 manageSheet = _d.sent();
-                return [4, report_1.GetDateColumn()];
+                return [4, date.GetColumn(0)];
             case 3:
                 _a = (_d.sent()) + "3:";
-                return [4, report_1.NextCol(1)];
+                return [4, date.GetColumn(1)];
             case 4:
                 range = _a + (_d.sent()) + "32";
                 return [4, spreadsheet.GetCells(manageSheet, range)];

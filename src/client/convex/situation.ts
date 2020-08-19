@@ -2,21 +2,21 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
-import {GetDateColumn, NextCol} from './report'
+import * as date from './date'
 
 /**
  * 凸状況に報告をする
  */
 export const Report = async () => {
   // クラバトの日じゃない場合は終了
-  const day = await GetDateColumn()
+  const day = await date.GetDay()
   if (!day) return
 
   // スプレッドシートから情報を取得
   const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバー一覧と凸状況を取得
-  const range = `${await GetDateColumn()}3:${await NextCol(1)}32`
+  const range = `${await date.GetColumn(0)}3:${await date.GetColumn(1)}32`
   const status: string[] = await spreadsheet.GetCells(manageSheet, range)
   const members: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
 

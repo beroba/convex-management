@@ -58,41 +58,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CronOperation = void 0;
-var cron = __importStar(require("node-cron"));
-var throw_env_1 = __importDefault(require("throw-env"));
+exports.GetColumn = exports.GetDay = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var index_1 = require("../index");
-var util = __importStar(require("../util"));
-var date = __importStar(require("../client/convex/date"));
-exports.CronOperation = function () {
-    setRemainConvex();
-    fullConvexReport();
-};
-var setRemainConvex = function () {
-    cron.schedule('0 0 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var day, guild, clanMembers, channel;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4, date.GetDay()];
-                case 1:
-                    day = _b.sent();
-                    if (!day)
-                        return [2];
-                    guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
-                    clanMembers = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
-                    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
-                    channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID);
-                    channel.send('クランメンバーに凸残ロールを付与したわ');
-                    console.log('Add convex roll');
-                    return [2];
-            }
-        });
-    }); });
-};
-var fullConvexReport = function () {
-    cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2];
-    }); }); });
-};
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.GetDay = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, checkCalnBattle()];
+            case 1:
+                cell = _a.sent();
+                return [2, cell ? cell[0] : null];
+        }
+    });
+}); };
+exports.GetColumn = function (n) { return __awaiter(void 0, void 0, void 0, function () {
+    var cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, checkCalnBattle()];
+            case 1:
+                cell = _a.sent();
+                return [2, String.fromCharCode(cell[2].charCodeAt(0) + n)];
+        }
+    });
+}); };
+var checkCalnBattle = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var mmdd, infoSheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + d.getDate(); })(new Date()); };
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
+            case 2:
+                cells = _a.sent();
+                return [2, util
+                        .PiecesEach(cells, 3)
+                        .map(function (v) { return [v[0], v[1].split('/').map(Number).join('/'), v[2]]; })
+                        .filter(function (v) { return v[1] === mmdd(); })[0]];
+        }
+    });
+}); };
