@@ -80,7 +80,11 @@ var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 exports.ClanBattle = function (command, msg) {
-    if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.PROGRESS, msg.channel))
+    var _a;
+    if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
+        return;
+    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return const_settings_1["default"].COMMAND_ROLE.some(function (v) { return v === r.id; }); });
+    if (!isRole)
         return;
     switch (true) {
         case /cb over/.test(command): {
@@ -98,7 +102,7 @@ exports.ClanBattle = function (command, msg) {
         }
         case /cb boss/.test(command): {
             var arg = command.replace('/cb boss ', '');
-            lapAndBoss.Update(arg, msg);
+            changeBoss(arg, msg);
             return 'Change laps and boss';
         }
     }
@@ -140,3 +144,7 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
+var changeBoss = function (arg, msg) {
+    lapAndBoss.Update(arg, msg);
+    situation.Report();
+};

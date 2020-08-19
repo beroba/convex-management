@@ -17,19 +17,6 @@ CONVEX_CHANNEL:
   REPORT_ID: '735190970760429648'
   SITUATION_ID: '735186004238925824'
 
-# ロールのID
-ROLE_ID:
-  # リーダーのロール
-  LEADER: '722547140487938181'
-  # サブリーダーのロール
-  SUB_LEADER: '739666967509598218'
-  # クランメンバーのロール
-  CLAN_MEMBERS: '719906267824521267'
-  # 凸残のロール
-  REMAIN_CONVEX: '738500598718136373'
-  # ヤバイわよ！のロール
-  YABAIWAYO: '717003659745165373'
-
 # カスタム絵文字のID
 EMOJI_ID:
   # 草野優衣のカスタム絵文字
@@ -37,18 +24,39 @@ EMOJI_ID:
   # 確認のカスタム絵文字
   SAKUJO: '739441861521047592'
 
+# ロールのID
+ROLE_ID:
+  # リーダーのロール
+  LEADER: &LEADER '722547140487938181'
+  # サブリーダーのロール
+  SUB_LEADER: &SUB_LEADER '739666967509598218'
+  # 進行補佐のロール
+  PROGRESS: &PROGRESS '714033569604829284'
+  # クランメンバーのロール
+  CLAN_MEMBERS: '719906267824521267'
+  # 凸残のロール
+  REMAIN_CONVEX: '738500598718136373'
+  # ヤバイわよ！のロール
+  YABAIWAYO: '717003659745165373'
+
+# クラバトコマンドの実行可能ユーザー
+COMMAND_ROLE:
+  - *LEADER
+  - *SUB_LEADER
+  - *PROGRESS
+
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
-  # 凸予約コマンドが入力出来るチャンネル
+  # クラバトコマンドが入力できるチャンネル
+  CLAN_BATTLE:
+    - 進行
+    - bot-test
+  # 凸予約コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
     - 凸予約
     - bot-test
   # 管理コマンドが入力できるチャンネル
   MANAGEMENT:
-    - 運営管理用
-    - bot-test
-  PROGRESS:
-    - 進行
     - 運営管理用
     - bot-test
 
