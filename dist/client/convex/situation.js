@@ -123,12 +123,17 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var pad0, date, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a;
+    var pad0, time, day, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 pad0 = function (n) { return (n + '').padStart(2, '0'); };
-                date = (function (d) { return pad0(d.getMonth() + 1) + "/" + pad0(d.getDate()) + " " + pad0(d.getHours()) + ":" + pad0(d.getMinutes()); })(new Date());
+                time = (function (d) {
+                    return pad0(d.getMonth() + 1) + "/" + pad0(d.getDate()) + " " + pad0(d.getHours()) + ":" + pad0(d.getMinutes());
+                })(new Date());
+                return [4, date.GetDay()];
+            case 1:
+                day = (_b.sent()) + "\u65E5\u76EE";
                 未凸 = list.filter(function (l) { return l[1] === 0; }).map(function (l) { return l[0]; });
                 持越1 = list.filter(function (l) { return l[1] === 1; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
                 凸1 = list.filter(function (l) { return l[1] === 1; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
@@ -136,7 +141,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 凸2 = list.filter(function (l) { return l[1] === 2; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
                 持越3 = list.filter(function (l) { return l[1] === 3; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
                 凸3 = list.filter(function (l) { return l[1] === 3; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
-                _a = "`" + date + "` \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                _a = "`" + time + "` " + day + "\u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
                     '```\n' +
                     ("\u672A\u51F8: " + 未凸.toString().replace(/,/g, ', ') + "\n") +
                     '\n' +
@@ -151,8 +156,8 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                     '\n' +
                     '```\n';
                 return [4, lapAndBoss.CurrentMessage()];
-            case 1: return [2, (_a +
-                    (_b.sent()))];
+            case 2: return [2, (_a +
+                    ((_b.sent()) + "\n"))];
         }
     });
 }); };

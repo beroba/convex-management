@@ -38,7 +38,10 @@ export const Report = async () => {
  */
 const createMessage = async (list: (string | number)[][]): Promise<string> => {
   const pad0 = (n: number): string => (n + '').padStart(2, '0')
-  const date = (d => `${pad0(d.getMonth() + 1)}/${pad0(d.getDate())} ${pad0(d.getHours())}:${pad0(d.getMinutes())}`)(new Date())
+  const time = (d =>
+    `${pad0(d.getMonth() + 1)}/${pad0(d.getDate())} ${pad0(d.getHours())}:${pad0(d.getMinutes())}`
+  )(new Date())
+  const day = `${await date.GetDay()}日目`
 
   const 未凸  = list.filter(l => l[1] === 0).map(l => l[0])
   const 持越1 = list.filter(l => l[1] === 1).filter(l => l[2] === 1).map(l => l[0])
@@ -49,7 +52,7 @@ const createMessage = async (list: (string | number)[][]): Promise<string> => {
   const 凸3   = list.filter(l => l[1] === 3).filter(l => l[2] === 0).map(l => l[0])
 
   return (
-    `\`${date}\` 凸状況一覧\n` +
+    `\`${time}\` ${day} 凸状況一覧\n` +
     '```\n' +
     `未凸: ${未凸.toString().replace(/,/g, ', ')}\n` +
     '\n' +
@@ -63,6 +66,6 @@ const createMessage = async (list: (string | number)[][]): Promise<string> => {
     `3凸 : ${凸3.toString().replace(/,/g, ', ')}\n` +
     '\n' +
     '```\n' +
-    (await lapAndBoss.CurrentMessage())
+    `${await lapAndBoss.CurrentMessage()}`
   )
 }
