@@ -124,6 +124,7 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   const day = await date.GetDay()
   const state = await lapAndBoss.GetCurrent()
 
+  // 進行に報告をする
   const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.PROGRESS_ID)
   channel.send(
     `${day}日目の全凸終了よ！\n` +
