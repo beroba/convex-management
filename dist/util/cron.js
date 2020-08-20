@@ -58,31 +58,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SetRemainConvex = void 0;
+exports.CronOperation = void 0;
 var cron = __importStar(require("node-cron"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../util"));
 var index_1 = require("../index");
-var report_1 = require("../client/convex/report");
-exports.SetRemainConvex = function () {
+var util = __importStar(require("../util"));
+var date = __importStar(require("../client/convex/date"));
+exports.CronOperation = function () {
+    setRemainConvex();
+    fullConvexReport();
+};
+var setRemainConvex = function () {
     cron.schedule('0 0 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var guild, clanMembers, day, channel;
+        var day, guild, clanMembers, channel;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
-                    clanMembers = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
-                    return [4, report_1.GetDateColumn()];
+                case 0: return [4, date.GetDay()];
                 case 1:
                     day = _b.sent();
                     if (!day)
                         return [2];
+                    guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
+                    clanMembers = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
                     clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
                     channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID);
                     channel.send('クランメンバーに凸残ロールを付与したわ');
                     console.log('Add convex roll');
+                    return [2];
+            }
+        });
+    }); });
+};
+var fullConvexReport = function () {
+    cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var day;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, date.GetDay()];
+                case 1:
+                    day = _a.sent();
+                    if (!day)
+                        return [2];
+                    if (day === '5')
+                        return [2];
+                    return [2];
+            }
+        });
+    }); });
+    cron.schedule('0 10 0 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var day;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, date.GetDay()];
+                case 1:
+                    day = _a.sent();
+                    if (!day)
+                        return [2];
+                    if (day !== '5')
+                        return [2];
                     return [2];
             }
         });

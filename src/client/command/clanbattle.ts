@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
+import * as date from '../convex/date'
 
 /**
  * クラバト用のコマンド
@@ -68,6 +69,10 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const moveForward = async (msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
   await lapAndBoss.Next()
   msg.reply(await lapAndBoss.CurrentMessage())
   situation.Report()
@@ -78,6 +83,10 @@ const moveForward = async (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const moveReturn = async (msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
   await lapAndBoss.Practice()
   msg.reply(await lapAndBoss.CurrentMessage())
   situation.Report()
@@ -88,7 +97,11 @@ const moveReturn = async (msg: Discord.Message) => {
  * @param arg 周回数とボス番号
  * @param msg DiscordからのMessage
  */
-const changeBoss = (arg: string, msg: Discord.Message) => {
+const changeBoss = async (arg: string, msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
   lapAndBoss.Update(arg, msg)
   situation.Report()
 }

@@ -31,19 +31,25 @@ export const Update = async (arg: string, msg: Discord.Message) => {
 }
 
 /**
- * 現在の周回数とボスをメッセージで返す
- * @param msg DiscordからのMessage
- * @return 現在の周回数とボスのメッセージ
+ * 現在の周回数とボスをオブジェクトで返す
+ * @return 現在の周回数とボス
  */
-export const CurrentMessage = async (): Promise<string> => {
+export const GetCurrent = async (): Promise<{lap: string; boss: string}> => {
   // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 範囲を指定して現在の周回数とボスを取得
   const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
   const [lap, boss] = await spreadsheet.GetCells(infoSheet, `${range[0]}:${range[1]}`)
-
-  return `現在、\`${lap}\`周目の\`${boss}\`よ`
+  return {lap: lap, boss: boss}
+}
+/**
+ * 現在の周回数とボスをメッセージで返す
+ * @return 現在の周回数とボスのメッセージ
+ */
+export const CurrentMessage = async (): Promise<string> => {
+  const state = await GetCurrent()
+  return `現在、\`${state.lap}\`周目の\`${state.boss}\`よ`
 }
 
 /**

@@ -79,6 +79,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
+var date = __importStar(require("../convex/date"));
 exports.ClanBattle = function (command, msg) {
     var _a;
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
@@ -113,15 +114,20 @@ var simultConvexCalc = function (arg, msg) {
     msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3059\u3053\u3068\u306D");
 };
 var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _b;
+    var day, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
-            case 0: return [4, lapAndBoss.Next()];
+            case 0: return [4, date.GetDay()];
             case 1:
+                day = _c.sent();
+                if (!day)
+                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
+                return [4, lapAndBoss.Next()];
+            case 2:
                 _c.sent();
                 _b = (_a = msg).reply;
                 return [4, lapAndBoss.CurrentMessage()];
-            case 2:
+            case 3:
                 _b.apply(_a, [_c.sent()]);
                 situation.Report();
                 return [2];
@@ -129,22 +135,38 @@ var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _b;
+    var day, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
-            case 0: return [4, lapAndBoss.Practice()];
+            case 0: return [4, date.GetDay()];
             case 1:
+                day = _c.sent();
+                if (!day)
+                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
+                return [4, lapAndBoss.Practice()];
+            case 2:
                 _c.sent();
                 _b = (_a = msg).reply;
                 return [4, lapAndBoss.CurrentMessage()];
-            case 2:
+            case 3:
                 _b.apply(_a, [_c.sent()]);
                 situation.Report();
                 return [2];
         }
     });
 }); };
-var changeBoss = function (arg, msg) {
-    lapAndBoss.Update(arg, msg);
-    situation.Report();
-};
+var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var day;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _a.sent();
+                if (!day)
+                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
+                lapAndBoss.Update(arg, msg);
+                situation.Report();
+                return [2];
+        }
+    });
+}); };

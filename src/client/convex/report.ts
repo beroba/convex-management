@@ -1,9 +1,8 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import Option from 'type-of-option'
-import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as status from './status'
+import * as date from './date'
 
 /**
  * 凸報告の管理を行う
@@ -18,7 +17,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
 
   // クラバトの日じゃない場合は終了
-  const day = await GetDateColumn()
+  const day = await date.GetDay()
   if (!day) {
     msg.reply('今日はクラバトの日じゃないわ')
     return "It's not ClanBattle days"
@@ -36,34 +35,3 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
     }
   }
 }
-
-/**
- * 今日のクラバトで使う日付の列名を返す
- * @return 対応している日付の列
- */
-export const GetDateColumn = async (): Promise<Option<string>> => {
-  /**
-   * 現在の日付を`MM/DD`の形式で返す
-   * @return 現在の日付
-   */
-  const mmdd = (): string => (d => `${d.getMonth() + 1}/${d.getDate()}`)(new Date())
-
-  // スプレッドシートから情報を取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
-
-  // クラバトの日かどうか確認
-  const cell = util
-    .PiecesEach(cells, 3)
-    .map(v => [v[1].split('/').map(Number).join('/'), v[2]])
-    .filter(v => v[0] === mmdd())[0]
-
-  return cell ? cell[1] : null
-}
-
-/**
- * 指定された右隣の列名を取得
- * @param n 何個目かの数字
- */
-export const NextCol = async (n: number): Promise<string> =>
-  String.fromCharCode(((await GetDateColumn()) || '').charCodeAt(0) + n)

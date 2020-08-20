@@ -58,38 +58,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ConvexReport = void 0;
+exports.GetColumn = exports.GetDay = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var status = __importStar(require("./status"));
-var date = __importStar(require("./date"));
-exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
-                    return [2];
-                return [4, date.GetDay()];
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.GetDay = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, checkCalnBattle()];
             case 1:
-                day = _b.sent();
-                if (!day) {
-                    msg.reply('今日はクラバトの日じゃないわ');
-                    return [2, "It's not ClanBattle days"];
-                }
-                switch (true) {
-                    case /[1-3]/.test(msg.content.charAt(0)): {
-                        status.Update(msg);
-                        return [2, 'Update status'];
-                    }
-                    default: {
-                        msg.reply('形式が違うわ、やりなおし！');
-                        return [2, 'Different format'];
-                    }
-                }
-                return [2];
+                cell = _a.sent();
+                return [2, cell ? cell[0] : null];
         }
     });
 }); };
+exports.GetColumn = function (n) { return __awaiter(void 0, void 0, void 0, function () {
+    var cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, checkCalnBattle()];
+            case 1:
+                cell = _a.sent();
+                return [2, String.fromCharCode(cell[2].charCodeAt(0) + n)];
+        }
+    });
+}); };
+var checkCalnBattle = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
+            case 2:
+                cells = _a.sent();
+                return [2, util
+                        .PiecesEach(cells, 3)
+                        .map(function (v) { return [v[0], v[1].split('/').map(Number).join('/'), v[2]]; })
+                        .filter(function (v) { return v[1] === mmdd(); })[0]];
+        }
+    });
+}); };
+var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };
