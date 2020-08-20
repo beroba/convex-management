@@ -3,6 +3,7 @@ import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
+import * as spreadsheet from '../util/spreadsheet'
 import * as date from '../client/convex/date'
 
 /**
@@ -45,21 +46,39 @@ const setRemainConvex = () => {
 const fullConvexReport = () => {
   // 最終日以外
   cron.schedule('0 10 5 * * *', async () => {
-    // クラバトの日じゃない場合は終了
+    // クラバトの日じゃない場合、またはクラバト最終日の場合は終了
     const day = await date.GetDay()
-    if (!day) return
+    if (!day || day === '5') return
 
-    // クラバト最終日は実行しない
-    if (day === '5') return
+    // 全凸している場合は終了
+    if (await convexConfirm()) return
   })
 
-  // 最終日のみ
+  // 最終日
   cron.schedule('0 10 0 * * *', async () => {
-    // クラバトの日じゃない場合は終了
+    // クラバトの日じゃない場合、またはクラバト最終日じゃない場合は終了
     const day = await date.GetDay()
-    if (!day) return
+    if (!day || day !== '5') return
 
-    // クラバト最終日以外は実行しない
-    if (day !== '5') return
+    // 全凸している場合は終了
+    if (await convexConfirm()) return
   })
+}
+
+/**
+ * 全凸してるか確認し真偽値を返す
+ * @return 真偽値
+ */
+const convexConfirm = async (): Promise<boolean> => {
+  // スプレッドシートから情報を取得
+  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // クランメンバー一覧を取得
+  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+
+  // 現在の3凸数を取得
+  const col = await date.GetColumn(2)
+  const n = (await manageSheet.getCell(`${col}1`)).getValue()
+
+  return Number(n) === cells.filter(v => v).length
 }
