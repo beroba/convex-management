@@ -28,6 +28,12 @@ export const Management = (command: string, msg: Discord.Message): Option<string
       return 'Delete ClanBattle category'
     }
 
+    case /cb manage set days/.test(command): {
+      const arg = command.replace('/cb manage set days ', '')
+      setDate(arg, msg)
+      return 'Update convex management members'
+    }
+
     case /cb manage update members/.test(command): {
       updateMembers(msg)
       return 'Update convex management members'
@@ -38,6 +44,27 @@ export const Management = (command: string, msg: Discord.Message): Option<string
       return 'Show spreadsheet link'
     }
   }
+}
+
+/**
+ * クランバトルの日付を引数に渡された開始日から設定する
+ * @param arg 開始日の日付
+ * @param msg DiscordからのMessage
+ */
+const setDate = async (arg: string, msg: Discord.Message) => {
+  // 開始日から順番に日付の配列を作成
+  const days = Array.from(Array(5), (_, i) => `${arg.split('/')[0]}/${Number(arg.split('/')[1]) + i}`)
+
+  // スプレッドシートから情報を取得
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  // 日付を更新
+  days.forEach(async (d, i) => {
+    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.DATE_COLUMN}${i + 3}`)
+    await cell.setValue(d)
+  })
+
+  msg.reply('クランバトルの日付を設定したわよ！')
 }
 
 /**
@@ -56,7 +83,7 @@ const updateMembers = async (msg: Discord.Message) => {
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {
-    const cell = await infoSheet.getCell(`A${i + 3}`)
+    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.INFORMATION_SHEET}${i + 3}`)
     await cell.setValue(m)
   })
 
