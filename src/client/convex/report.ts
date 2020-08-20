@@ -13,7 +13,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   // キャルのメッセージはコマンド実行しない
   if (msg.member?.user.username === 'キャル') return
 
-  // 凸報告チャンネルでなければ終了
+  // #凸報告でなければ終了
   if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
 
   // クラバトの日じゃない場合は終了

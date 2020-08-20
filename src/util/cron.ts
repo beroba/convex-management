@@ -5,6 +5,7 @@ import {Client} from '../index'
 import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as date from '../client/convex/date'
+import * as lapAndBoss from '../client/convex/lapAndBoss'
 
 /**
  * クーロンで操作する関数一覧
@@ -52,6 +53,11 @@ const fullConvexReport = () => {
 
     // 全凸している場合は終了
     if (await convexConfirm()) return
+
+    // #進行に報告をする
+    await convexSituationReport()
+
+    console.log('Convex situation report')
   })
 
   // 最終日
@@ -62,6 +68,11 @@ const fullConvexReport = () => {
 
     // 全凸している場合は終了
     if (await convexConfirm()) return
+
+    // #進行に報告をする
+    await convexSituationReport()
+
+    console.log('Convex situation report')
   })
 }
 
@@ -80,5 +91,28 @@ const convexConfirm = async (): Promise<boolean> => {
   const col = await date.GetColumn(2)
   const n = (await manageSheet.getCell(`${col}1`)).getValue()
 
+  // 比較結果を返す
   return Number(n) === cells.filter(v => v).length
+}
+
+/**
+ * 全凸終了報告を行う
+ */
+const convexSituationReport = async () => {
+  // 全凸終了処理を行う
+  const day = await date.GetDay()
+  const state = await lapAndBoss.GetCurrent()
+
+  // 凸残したユーザー一覧を取得
+  const guild = Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
+  const 凸残 = guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)?.members.map(m => `<@!${m.user.id}>`)
+
+  // 進行に報告をする
+  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.PROGRESS_ID)
+  channel.send(
+    `${day}日目の凸状況報告よ！\n` +
+      `今日の凸残りは ${凸残?.join(' ')} よ\n` +
+      `\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
+      `お疲れ様！次も頑張りなさい`
+  )
 }

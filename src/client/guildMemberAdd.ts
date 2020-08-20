@@ -14,9 +14,10 @@ export const GuildMemberAdd = (member: Discord.GuildMember | Discord.PartialGuil
   // ウェルカムチャンネルに催促メッセージを送信
   const channel = util.GetTextChannel(Settings.WELCOME_CHANNEL.CHAT_ID)
 
-  const firstLine = `<@!${member.user?.id}> まずは <#${Settings.WELCOME_CHANNEL.POLICY_ID}> を確認しなさい！`
-  const secondLine = `ちゃんと <#${Settings.WELCOME_CHANNEL.INTRODUCTION_ID}> も書くことね`
-  channel.send(`${firstLine}\n${secondLine}`)
+  channel.send(
+    `<@!${member.user?.id}> まずは <#${Settings.WELCOME_CHANNEL.POLICY_ID}> を確認しなさい！\n` +
+      `ちゃんと <#${Settings.WELCOME_CHANNEL.INTRODUCTION_ID}> も書くことね`
+  )
 
   console.log(`I’m ${member.user?.username}, a new member.`)
 }

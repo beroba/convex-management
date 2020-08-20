@@ -124,36 +124,39 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var pad0, time, day, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a, _b;
+    var p0, time, day, getUserList, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                pad0 = function (n) { return (n + '').padStart(2, '0'); };
+                p0 = function (n) { return (n + '').padStart(2, '0'); };
                 time = (function (d) {
-                    return pad0(d.getMonth() + 1) + "/" + pad0(d.getDate()) + " " + pad0(d.getHours()) + ":" + pad0(d.getMinutes());
+                    return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
                 })(new Date());
                 return [4, date.GetDay()];
             case 1:
                 day = (_c.sent()) + "\u65E5\u76EE";
-                未凸 = list.filter(function (l) { return l[1] === 0; }).map(function (l) { return l[0]; });
-                持越1 = list.filter(function (l) { return l[1] === 1; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
-                凸1 = list.filter(function (l) { return l[1] === 1; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
-                持越2 = list.filter(function (l) { return l[1] === 2; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
-                凸2 = list.filter(function (l) { return l[1] === 2; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
-                持越3 = list.filter(function (l) { return l[1] === 3; }).filter(function (l) { return l[2] === 1; }).map(function (l) { return l[0]; });
-                凸3 = list.filter(function (l) { return l[1] === 3; }).filter(function (l) { return l[2] === 0; }).map(function (l) { return l[0]; });
+                getUserList = function (list, a, b) {
+                    return list.filter(function (l) { return l[1] === a; }).filter(function (l) { return l[2] === b; }).map(function (l) { return l[0]; }).join(', ');
+                };
+                未凸 = getUserList(list, 0, 0);
+                持越1 = getUserList(list, 1, 1);
+                凸1 = getUserList(list, 1, 0);
+                持越2 = getUserList(list, 2, 1);
+                凸2 = getUserList(list, 2, 0);
+                持越3 = getUserList(list, 3, 1);
+                凸3 = getUserList(list, 3, 0);
                 _a = "`" + time + "` " + day + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
                     '```\n' +
-                    ("\u672A\u51F8: " + 未凸.toString().replace(/,/g, ', ') + "\n") +
+                    ("\u672A\u51F8: " + 未凸 + "\n") +
                     '\n' +
-                    ("\u6301\u8D8A: " + 持越1.toString().replace(/,/g, ', ') + "\n") +
-                    ("1\u51F8 : " + 凸1.toString().replace(/,/g, ', ') + "\n") +
+                    ("\u6301\u8D8A: " + 持越1 + "\n") +
+                    ("1\u51F8 : " + 凸1 + "\n") +
                     '\n' +
-                    ("\u6301\u8D8A: " + 持越2.toString().replace(/,/g, ', ') + "\n") +
-                    ("2\u51F8 : " + 凸2.toString().replace(/,/g, ', ') + "\n") +
+                    ("\u6301\u8D8A: " + 持越2 + "\n") +
+                    ("2\u51F8 : " + 凸2 + "\n") +
                     '\n' +
-                    ("\u6301\u8D8A: " + 持越3.toString().replace(/,/g, ', ') + "\n") +
-                    ("3\u51F8 : " + 凸3.toString().replace(/,/g, ', ') + "\n") +
+                    ("\u6301\u8D8A: " + 持越3 + "\n") +
+                    ("3\u51F8 : " + 凸3 + "\n") +
                     '\n' +
                     '```\n';
                 _b = "";

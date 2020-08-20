@@ -171,7 +171,7 @@ var reaction = function (before, msg) {
     });
 };
 var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, num, c, over, _a, _b, cell, n, day, state, channel;
+    var manageSheet, cells, col, num, c, over, _a, _b, cell, n;
     var _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -216,17 +216,28 @@ var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, f
                 msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
                 if (Number(n) !== cells.filter(function (v) { return v; }).length)
                     return [2];
-                return [4, date.GetDay()];
+                return [4, allConvexReport()];
             case 13:
-                day = _d.sent();
+                _d.sent();
+                console.log('Complete convex end report');
+                return [2];
+        }
+    });
+}); };
+var allConvexReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var day, state, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _a.sent();
                 return [4, lapAndBoss.GetCurrent()];
-            case 14:
-                state = _d.sent();
+            case 2:
+                state = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.PROGRESS_ID);
-                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u3088\uFF01\n" +
+                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
                     ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
                     "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                console.log('Complete convex end report');
                 return [2];
         }
     });

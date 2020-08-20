@@ -27,6 +27,7 @@ export const Report = async () => {
     .map((v, i) => [members[i], ...v])
     .filter(v => v[0] !== '')
 
+  // #凸状況に報告
   const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.SITUATION_ID)
   channel.send(await createMessage(list))
 
@@ -39,33 +40,39 @@ export const Report = async () => {
  * @param list 凸状況一覧
  */
 const createMessage = async (list: (string | number)[][]): Promise<string> => {
-  const pad0 = (n: number): string => (n + '').padStart(2, '0')
+  // 現在の日付と時刻を取得
+  const p0 = (n: number): string => (n + '').padStart(2, '0')
   const time = (d =>
-    `${pad0(d.getMonth() + 1)}/${pad0(d.getDate())} ${pad0(d.getHours())}:${pad0(d.getMinutes())}`
+    `${p0(d.getMonth() + 1)}/${p0(d.getDate())} ${p0(d.getHours())}:${p0(d.getMinutes())}`
   )(new Date())
+
+  // クラバトの日数を取得
   const day = `${await date.GetDay()}日目`
 
-  const 未凸  = list.filter(l => l[1] === 0).map(l => l[0])
-  const 持越1 = list.filter(l => l[1] === 1).filter(l => l[2] === 1).map(l => l[0])
-  const 凸1   = list.filter(l => l[1] === 1).filter(l => l[2] === 0).map(l => l[0])
-  const 持越2 = list.filter(l => l[1] === 2).filter(l => l[2] === 1).map(l => l[0])
-  const 凸2   = list.filter(l => l[1] === 2).filter(l => l[2] === 0).map(l => l[0])
-  const 持越3 = list.filter(l => l[1] === 3).filter(l => l[2] === 1).map(l => l[0])
-  const 凸3   = list.filter(l => l[1] === 3).filter(l => l[2] === 0).map(l => l[0])
+  // 全員の凸状況を見て振り分ける
+  const getUserList = (list: (string | number)[][], a: number, b: number): string =>
+    list.filter(l => l[1] === a).filter(l => l[2] === b).map(l => l[0]).join(', ')
+  const 未凸  = getUserList(list, 0, 0)
+  const 持越1 = getUserList(list, 1, 1)
+  const 凸1   = getUserList(list, 1, 0)
+  const 持越2 = getUserList(list, 2, 1)
+  const 凸2   = getUserList(list, 2, 0)
+  const 持越3 = getUserList(list, 3, 1)
+  const 凸3   = getUserList(list, 3, 0)
 
   return (
     `\`${time}\` ${day} 凸状況一覧\n` +
     '```\n' +
-    `未凸: ${未凸.toString().replace(/,/g, ', ')}\n` +
+    `未凸: ${未凸}\n` +
     '\n' +
-    `持越: ${持越1.toString().replace(/,/g, ', ')}\n` +
-    `1凸 : ${凸1.toString().replace(/,/g, ', ')}\n` +
+    `持越: ${持越1}\n` +
+    `1凸 : ${凸1}\n` +
     '\n' +
-    `持越: ${持越2.toString().replace(/,/g, ', ')}\n` +
-    `2凸 : ${凸2.toString().replace(/,/g, ', ')}\n` +
+    `持越: ${持越2}\n` +
+    `2凸 : ${凸2}\n` +
     '\n' +
-    `持越: ${持越3.toString().replace(/,/g, ', ')}\n` +
-    `3凸 : ${凸3.toString().replace(/,/g, ', ')}\n` +
+    `持越: ${持越3}\n` +
+    `3凸 : ${凸3}\n` +
     '\n' +
     '```\n' +
     `${await lapAndBoss.CurrentMessage()}`
