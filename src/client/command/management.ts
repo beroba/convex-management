@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
+import * as category from './category'
 
 /**
  * 運営管理者用のコマンド
@@ -17,14 +18,20 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   switch (true) {
     case /cb manage create category/.test(command): {
       const arg = command.replace('/cb manage create category', '')
-      createCategory(arg, msg)
+      category.Create(arg, msg)
       return 'Create ClanBattle category'
     }
 
     case /cb manage delete category/.test(command): {
       const arg = command.replace('/cb manage delete category', '')
-      deleteCategory(arg, msg)
+      category.Delete(arg, msg)
       return 'Delete ClanBattle category'
+    }
+
+    case /cb manage set days/.test(command): {
+      const arg = command.replace('/cb manage set days ', '')
+      setDate(arg, msg)
+      return 'Update convex management members'
     }
 
     case /cb manage update members/.test(command): {
@@ -40,114 +47,24 @@ export const Management = (command: string, msg: Discord.Message): Option<string
 }
 
 /**
- * クラバト用のカテゴリーとチャンネルを作成する
- * 引数がある場合は引数の年と日で作成し、ない場合は現在の年と日で作成する
- * @param arg 作成する年と月
+ * クランバトルの日付を引数に渡された開始日から設定する
+ * @param arg 開始日の日付
  * @param msg DiscordからのMessage
  */
-const createCategory = async (arg: string, msg: Discord.Message) => {
-  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と日を代入
-  const [year, day] = arg ? arg.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
+const setDate = async (arg: string, msg: Discord.Message) => {
+  // 開始日から順番に日付の配列を作成
+  const days = Array.from(Array(5), (_, i) => `${arg.split('/')[0]}/${Number(arg.split('/')[1]) + i}`)
 
-  // カテゴリーの作成
-  const channel = await msg.guild?.channels.create(`${year}年${day}月クラバト`, {
-    type: 'category',
-    position: 4,
-    permissionOverwrites: settingPermissions(msg),
-  })
-
-  // チャンネルの作成し初回メッセージを送信
-  ;(await channelNameList()).forEach(async name => {
-    const c = await msg.guild?.channels.create(name, {type: 'text', parent: channel?.id})
-    c?.send(name)
-  })
-
-  msg.reply(`${year}年${day}月のカテゴリーを作成したわよ！`)
-}
-
-/**
- * クラバト用カテゴリーの権限を設定
- * @param msg
- * @return 設定した権限
- */
-const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[] => {
-  // 各ロールがあるか確認
-  const leader = msg.guild?.roles.cache.get(Settings.ROLE_ID.LEADER)
-  if (!leader) return []
-  const subLeader = msg.guild?.roles.cache.get(Settings.ROLE_ID.SUB_LEADER)
-  if (!subLeader) return []
-  const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-  if (!clanMembers) return []
-  const everyone = msg.guild?.roles.everyone
-  if (!everyone) return []
-
-  // カテゴリーの権限を設定
-  return [
-    {
-      id: leader.id,
-      allow: ['MENTION_EVERYONE'],
-    },
-    {
-      id: subLeader.id,
-      allow: ['MANAGE_MESSAGES'],
-    },
-    {
-      id: clanMembers.id,
-      allow: ['VIEW_CHANNEL'],
-    },
-    {
-      id: everyone.id,
-      deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE'],
-    },
-  ]
-}
-
-/**
- * 作成するチャンネル名のリストを返す。
- * ボスの名前はスプレッドシートから取得する
- * @return チャンネル名のリスト
- */
-const channelNameList = async (): Promise<string[]> => {
   // スプレッドシートから情報を取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
-  // ボスの名前を取得
-  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = util.PiecesEach(cells, 2).map(v => v[1])
+  // 日付を更新
+  days.forEach(async (d, i) => {
+    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.DATE_COLUMN}${i + 3}`)
+    await cell.setValue(d)
+  })
 
-  // prettier-ignore
-  return [
-    '検証総合', '凸ルート相談',
-    `${a}模擬`, 'ⓐtl',
-    `${b}模擬`, 'ⓑtl',
-    `${c}模擬`, 'ⓒtl',
-    `${d}模擬`, 'ⓓtl',
-    `${e}模擬`, 'ⓔtl',
-  ]
-}
-
-/**
- * 不要になったクラバト用のカテゴリーとチャンネルを削除する
- * @param arg 削除する年と月
- * @param msg DiscordからのMessage
- */
-const deleteCategory = (arg: string, msg: Discord.Message) => {
-  // 年と月がない場合終了
-  const [year, day] = arg.split('/').map(Number)
-  if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
-
-  // カテゴリーが見つからなかった場合終了
-  const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
-  if (!category) return msg.reply(`${year}年${day}月クラバトなんてないんだけど！`)
-
-  const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
-
-  // カテゴリとチャンネルを削除
-  category?.delete()
-  // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
-  channels?.forEach(c => setTimeout(() => c.delete(), 1000))
-
-  msg.reply(`${year}年${day}月のカテゴリーを削除したわ`)
+  msg.reply('クランバトルの日付を設定したわよ！')
 }
 
 /**
@@ -166,7 +83,7 @@ const updateMembers = async (msg: Discord.Message) => {
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {
-    const cell = await infoSheet.getCell(`A${i + 3}`)
+    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.INFORMATION_SHEET}${i + 3}`)
     await cell.setValue(m)
   })
 
