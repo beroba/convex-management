@@ -118,7 +118,6 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   if (msg.content !== '3') {
     const c = await date.GetColumn(1)
     const over = await manageSheet.getCell(`${c}${num}`)
-    console.log(await over.getValue())
     // 持ち越しが発生していたら終了
     if (await over.getValue()) return
   }
@@ -137,17 +136,23 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   // 全凸終了していない場合は終了
   if (Number(n) !== cells.filter(v => v).length) return
 
-  // 全凸終了処理を行う
+  await allConvexReport()
+
+  console.log('Complete convex end report')
+}
+
+/**
+ * 全凸終了報告を行う
+ */
+const allConvexReport = async () => {
   const day = await date.GetDay()
   const state = await lapAndBoss.GetCurrent()
 
   // 進行に報告をする
   const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.PROGRESS_ID)
   channel.send(
-    `${day}日目の全凸終了よ！\n` +
+    `${day}日目の全凸終了報告よ！\n` +
       `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
       `お疲れ様！次も頑張りなさい`
   )
-
-  console.log('Complete convex end report')
 }

@@ -64,7 +64,9 @@ var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
+var spreadsheet = __importStar(require("../util/spreadsheet"));
 var date = __importStar(require("../client/convex/date"));
+var lapAndBoss = __importStar(require("../client/convex/lapAndBoss"));
 exports.CronOperation = function () {
     setRemainConvex();
     fullConvexReport();
@@ -99,10 +101,16 @@ var fullConvexReport = function () {
                 case 0: return [4, date.GetDay()];
                 case 1:
                     day = _a.sent();
-                    if (!day)
+                    if (!day || day === '5')
                         return [2];
-                    if (day === '5')
+                    return [4, convexConfirm()];
+                case 2:
+                    if (_a.sent())
                         return [2];
+                    return [4, convexSituationReport()];
+                case 3:
+                    _a.sent();
+                    console.log('Convex situation report');
                     return [2];
             }
         });
@@ -114,12 +122,60 @@ var fullConvexReport = function () {
                 case 0: return [4, date.GetDay()];
                 case 1:
                     day = _a.sent();
-                    if (!day)
+                    if (!day || day !== '5')
                         return [2];
-                    if (day !== '5')
+                    return [4, convexConfirm()];
+                case 2:
+                    if (_a.sent())
                         return [2];
+                    return [4, convexSituationReport()];
+                case 3:
+                    _a.sent();
+                    console.log('Convex situation report');
                     return [2];
             }
         });
     }); });
 };
+var convexConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var manageSheet, cells, col, n;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 1:
+                manageSheet = _a.sent();
+                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                cells = _a.sent();
+                return [4, date.GetColumn(2)];
+            case 3:
+                col = _a.sent();
+                return [4, manageSheet.getCell(col + "1")];
+            case 4:
+                n = (_a.sent()).getValue();
+                return [2, Number(n) === cells.filter(function (v) { return v; }).length];
+        }
+    });
+}); };
+var convexSituationReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var day, state, guild, 凸残, channel;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _b.sent();
+                return [4, lapAndBoss.GetCurrent()];
+            case 2:
+                state = _b.sent();
+                guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
+                凸残 = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return "<@!" + m.user.id + ">"; });
+                channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.PROGRESS_ID);
+                channel.send(day + "\u65E5\u76EE\u306E\u51F8\u72B6\u6CC1\u5831\u544A\u3088\uFF01\n" +
+                    ("\u4ECA\u65E5\u306E\u51F8\u6B8B\u308A\u306F " + (凸残 === null || 凸残 === void 0 ? void 0 : 凸残.join(' ')) + " \u3088\n") +
+                    ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
+                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
+                return [2];
+        }
+    });
+}); };

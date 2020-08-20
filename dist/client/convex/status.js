@@ -171,62 +171,69 @@ var reaction = function (before, msg) {
     });
 };
 var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, num, c, over, _a, _b, cell, n, day, state, channel;
-    var _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var manageSheet, cells, col, num, c, over, cell, n;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _d.sent();
+                manageSheet = _b.sent();
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                cells = _d.sent();
+                cells = _b.sent();
                 return [4, date.GetColumn(2)];
             case 3:
-                col = _d.sent();
+                col = _b.sent();
                 num = cells.indexOf(util.GetUserName(msg.member)) + 3;
-                if (!(msg.content !== '3')) return [3, 8];
+                if (!(msg.content !== '3')) return [3, 7];
                 return [4, date.GetColumn(1)];
             case 4:
-                c = _d.sent();
+                c = _b.sent();
                 return [4, manageSheet.getCell("" + c + num)];
             case 5:
-                over = _d.sent();
-                _b = (_a = console).log;
+                over = _b.sent();
                 return [4, over.getValue()];
             case 6:
-                _b.apply(_a, [_d.sent()]);
-                return [4, over.getValue()];
-            case 7:
-                if (_d.sent())
+                if (_b.sent())
                     return [2];
-                _d.label = 8;
-            case 8: return [4, manageSheet.getCell("" + col + num)];
-            case 9:
-                cell = _d.sent();
+                _b.label = 7;
+            case 7: return [4, manageSheet.getCell("" + col + num)];
+            case 8:
+                cell = _b.sent();
                 return [4, cell.setValue(1)];
+            case 9:
+                _b.sent();
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 10:
-                _d.sent();
-                return [4, ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
-            case 11:
-                _d.sent();
+                _b.sent();
                 return [4, manageSheet.getCell(col + "1")];
-            case 12:
-                n = (_d.sent()).getValue();
+            case 11:
+                n = (_b.sent()).getValue();
                 msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
                 if (Number(n) !== cells.filter(function (v) { return v; }).length)
                     return [2];
-                return [4, date.GetDay()];
-            case 13:
-                day = _d.sent();
+                return [4, allConvexReport()];
+            case 12:
+                _b.sent();
+                console.log('Complete convex end report');
+                return [2];
+        }
+    });
+}); };
+var allConvexReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var day, state, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _a.sent();
                 return [4, lapAndBoss.GetCurrent()];
-            case 14:
-                state = _d.sent();
+            case 2:
+                state = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.PROGRESS_ID);
-                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u3088\uFF01\n" +
+                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
                     ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
                     "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                console.log('Complete convex end report');
                 return [2];
         }
     });
