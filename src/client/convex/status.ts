@@ -18,13 +18,14 @@ export const Update = async (msg: Discord.Message) => {
   reaction(before, msg)
 
   // 3凸終了者の処理を実行
-  if (msg.content === '3') await threeConvexEnd(msg)
+  if (msg.content.charAt(0) === '3') await threeConvexEnd(msg)
 
   // 現在の周回数とボスを凸報告に送信
   const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.REPORT_ID)
   channel.send(await lapAndBoss.CurrentMessage())
 
-  situation.Report()
+  // 凸状況を報告
+  await situation.Report()
 }
 
 /**
@@ -48,16 +49,22 @@ const cellUpdate = async (content: string, msg: Discord.Message): Promise<string
   const before: string = await convex_cell.getValue()
   await convex_cell.setValue(val[0])
 
-  // 持ち越しがない場合は終了
-  if (val.length === 1) return before
+  // 持ち越し状況を取得
+  const over_cell = await manageSheet.getCell(`${await date.GetColumn(1)}${num}`)
+  const over = await over_cell.getValue()
+
+  // 敵を倒さなかった場合の処理
+  if (val.length === 1) {
+    // 持ち越しがあったら消去する
+    if (over) await over_cell.setValue()
+    return before
+  }
+
+  // 敵を倒した場合の処理
 
   // 次のボスに進める
-  lapAndBoss.Next()
+  await lapAndBoss.Next()
 
-  // 持ち越しがある場合の処理
-  const over_cell = await manageSheet.getCell(`${await date.GetColumn(1)}${num}`)
-
-  const over = await over_cell.getValue()
   if (over) {
     // 前回持ち越しがあった場合
     await over_cell.setValue()
@@ -107,20 +114,30 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   const col = await date.GetColumn(2)
   const num = cells.indexOf(util.GetUserName(msg.member)) + 3
 
+  // 敵を倒した場合の処理
+  if (msg.content !== '3') {
+    const c = await date.GetColumn(1)
+    const over = await manageSheet.getCell(`${c}${num}`)
+    console.log(await over.getValue())
+    // 持ち越しが発生していたら終了
+    if (await over.getValue()) return
+  }
+
   // 凸終了の目印をつける
   const cell = await manageSheet.getCell(`${col}${num}`)
   await cell.setValue(1)
 
   // 凸残ロールを削除する
-  msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
+  await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何番目の終了者なのかを報告
   const n = (await manageSheet.getCell(`${col}1`)).getValue()
   msg.reply(`${n}人目の3凸終了者よ！`)
 
-  // 全凸終了処理を行う
+  // 全凸終了していない場合は終了
   if (Number(n) !== cells.filter(v => v).length) return
 
+  // 全凸終了処理を行う
   const day = await date.GetDay()
   const state = await lapAndBoss.GetCurrent()
 
@@ -131,5 +148,6 @@ const threeConvexEnd = async (msg: Discord.Message) => {
       `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
       `お疲れ様！次も頑張りなさい`
   )
+
   console.log('Complete convex end report')
 }
