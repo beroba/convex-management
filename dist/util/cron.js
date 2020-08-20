@@ -94,7 +94,7 @@ var setRemainConvex = function () {
     }); });
 };
 var fullConvexReport = function () {
-    cron.schedule('0 */10 * * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+    cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
         var day;
         return __generator(this, function (_a) {
             switch (_a.label) {
