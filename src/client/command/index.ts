@@ -8,8 +8,8 @@ import {ClanBattle} from './clanbattle'
  * @param msg DiscordからのMessage
  */
 export const Command = (msg: Discord.Message) => {
-  // キャルのメッセージはコマンド実行しない
-  if (msg.member?.user.username === 'キャル') return
+  // botのメッセージはコマンド実行しない
+  if (msg.member?.user.bot) return
 
   let comment: Option<string>
 
