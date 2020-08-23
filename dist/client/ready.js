@@ -30,9 +30,5 @@ exports.Ready = function () {
     var _a;
     var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
     channel.send('きゃるきゃるーん');
-    var c = util.GetTextChannel('745817773552304159');
-    c.send('**プロフィール**の**スクショ**をこのチャンネルに送信して下さい。\n' +
-        'このチャンネルはメッセージを一度送信すると閲覧できなくなります（別のチャンネルに移るまで一時的に見えます）。\n' +
-        '間違えた場合、もう一度**id送信チャンネル**でリアクションをして下さい。');
     console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
 };
