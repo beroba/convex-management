@@ -70,7 +70,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
             case 0:
                 if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
                     return [2];
-                if (msg.channel.id !== const_settings_1["default"].CONVEX_CHANNEL.REPORT_ID)
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
                 return [4, date.GetDay()];
             case 1:

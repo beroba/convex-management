@@ -31,13 +31,13 @@ const setRemainConvex = () => {
     const clanMembers = guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)?.members.map(m => m)
 
     // クランメンバーに凸残ロールを付与する
-    clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
+    clanMembers?.forEach(m => m?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
 
     // bot-notifyに通知をする
-    const channel = util.GetTextChannel(Settings.STARTUP.CHANNEL_ID)
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
     channel.send('クランメンバーに凸残ロールを付与したわ')
 
-    console.log('Add convex roll')
+    console.log('Add convex role')
   })
 }
 
@@ -108,7 +108,7 @@ const convexSituationReport = async () => {
   const 凸残 = guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)?.members.map(m => `<@!${m.user.id}>`)
 
   // 進行に報告をする
-  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.PROGRESS_ID)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(
     `${day}日目の凸状況報告よ！\n` +
       `今日の凸残りは ${凸残?.join(' ')} よ\n` +

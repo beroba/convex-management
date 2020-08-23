@@ -7,7 +7,7 @@ import {Command} from './command'
 import {ConvexReport} from './convex/report'
 
 /**
- * 入力されたメッセージに応じて適切なコマンドを実行する
+ * 入力されたメッセージに応じて適切な処理を実行する
  * @param msg DiscordからのMessage
  */
 export const Message = async (msg: Discord.Message) => {

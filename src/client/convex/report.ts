@@ -14,7 +14,7 @@ export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>
   if (msg.member?.user.username === 'キャル') return
 
   // #凸報告でなければ終了
-  if (msg.channel.id !== Settings.CONVEX_CHANNEL.REPORT_ID) return
+  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
 
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
