@@ -41,7 +41,7 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   // #プレイヤーidリストにメッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)
   // 画像がある場合は画像も送信
-  await channel.send(msg.content, url ? {files: [url]} : {})
+  await channel.send(`${util.GetUserName(msg.member)}\n${msg.content}`, url ? {files: [url]} : {})
 
   // 元のメッセージを削除
   await msg.delete()
