@@ -58,56 +58,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Message = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
+exports.Save = exports.RoleGrant = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../util"));
-var playerID = __importStar(require("./etc/playerID"));
-var command_1 = require("./command");
-var report_1 = require("./convex/report");
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
+var util = __importStar(require("../../util"));
+exports.RoleGrant = function (react, user) {
+    var _a;
+    if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT)
+        return;
+    var member = (_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m; }).filter(function (m) { return m.user.id === user.id; })[0];
+    member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND);
+    return 'Grant player id send role';
+};
+exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var url, channel;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_SEND)
                     return [2];
-                if (msg.content.charAt(0) === '/')
-                    return [2, command_1.Command(msg)];
-                return [4, report_1.ConvexReport(msg)];
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND))];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, playerID.Save(msg)];
+                _b.sent();
+                url = msg.attachments.map(function (a) { return a.url; })[0];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
+                return [4, channel.send(msg.content, url ? { files: [url] } : {})];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = sendYabaiImage(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = sendYuiKusano(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
+                _b.sent();
+                return [4, msg["delete"]()];
+            case 3:
+                _b.sent();
+                return [2, 'Save player id'];
         }
     });
 }); };
-var sendYabaiImage = function (msg) {
-    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
-        return;
-    var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
-    if (!match)
-        return;
-    msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
-    return 'Send Yabai Image';
-};
-var sendYuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'Send Yui Kusano';
-};

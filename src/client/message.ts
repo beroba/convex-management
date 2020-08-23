@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
+import * as playerID from './etc/playerID'
 import {Command} from './command'
 import {ConvexReport} from './convex/report'
 
@@ -21,6 +22,10 @@ export const Message = async (msg: Discord.Message) => {
 
   // 凸報告の処理を行う
   comment = await ConvexReport(msg)
+  if (comment) return console.log(comment)
+
+  // プレイヤーIDの保存処理を行う
+  comment = await playerID.Save(msg)
   if (comment) return console.log(comment)
 
   // ヤバイの文字がある場合に画像を送信
