@@ -21,7 +21,7 @@ export const Update = async (msg: Discord.Message) => {
   if (msg.content.charAt(0) === '3') await threeConvexEnd(msg)
 
   // 現在の周回数とボスを凸報告に送信
-  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.REPORT_ID)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   channel.send(await lapAndBoss.CurrentMessage())
 
   // 凸状況を報告
@@ -149,7 +149,7 @@ const allConvexReport = async () => {
   const state = await lapAndBoss.GetCurrent()
 
   // 進行に報告をする
-  const channel = util.GetTextChannel(Settings.CONVEX_CHANNEL.PROGRESS_ID)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(
     `${day}日目の全凸終了報告よ！\n` +
       `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +

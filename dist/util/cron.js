@@ -84,10 +84,10 @@ var setRemainConvex = function () {
                         return [2];
                     guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
                     clanMembers = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
-                    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
-                    channel = util.GetTextChannel(const_settings_1["default"].STARTUP.CHANNEL_ID);
+                    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
+                    channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
                     channel.send('クランメンバーに凸残ロールを付与したわ');
-                    console.log('Add convex roll');
+                    console.log('Add convex role');
                     return [2];
             }
         });
@@ -170,7 +170,7 @@ var convexSituationReport = function () { return __awaiter(void 0, void 0, void 
                 state = _b.sent();
                 guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
                 凸残 = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return "<@!" + m.user.id + ">"; });
-                channel = util.GetTextChannel(const_settings_1["default"].CONVEX_CHANNEL.PROGRESS_ID);
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send(day + "\u65E5\u76EE\u306E\u51F8\u72B6\u6CC1\u5831\u544A\u3088\uFF01\n" +
                     ("\u4ECA\u65E5\u306E\u51F8\u6B8B\u308A\u306F " + (凸残 === null || 凸残 === void 0 ? void 0 : 凸残.join(' ')) + " \u3088\n") +
                     ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
