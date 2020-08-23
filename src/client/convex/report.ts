@@ -10,8 +10,8 @@ import * as date from './date'
  * @return 凸報告の実行結果
  */
 export const ConvexReport = async (msg: Discord.Message): Promise<Option<string>> => {
-  // キャルのメッセージはコマンド実行しない
-  if (msg.member?.user.username === 'キャル') return
+  // botのメッセージはコマンド実行しない
+  if (msg.member?.user.bot) return
 
   // #凸報告でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return

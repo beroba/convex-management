@@ -68,7 +68,7 @@ exports.ConvexReport = function (msg) { return __awaiter(void 0, void 0, void 0,
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.username) === 'キャル')
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
