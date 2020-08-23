@@ -20,6 +20,11 @@ Client.on('guildMemberUpdate', (_, member) => GuildMemberUpdate(member))
 // メッセージが送信された際に実行
 Client.on('message', msg => Message(msg))
 
+Client.on('messageReactionAdd', (reaction, user) => {
+  if (reaction.message.channel.id === '') return
+  console.log(user)
+})
+
 // クーロンの内容
 CronOperation()
 

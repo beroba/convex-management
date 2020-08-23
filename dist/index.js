@@ -35,5 +35,9 @@ exports.Client.on('ready', function () { return ready_1.Ready(); });
 exports.Client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.GuildMemberAdd(member); });
 exports.Client.on('guildMemberUpdate', function (_, member) { return guildMemberUpdate_1.GuildMemberUpdate(member); });
 exports.Client.on('message', function (msg) { return message_1.Message(msg); });
+exports.Client.on('messageReactionAdd', function (reaction, user) {
+    console.log(reaction);
+    console.log(user);
+});
 cron_1.CronOperation();
 exports.Client.login(throw_env_1["default"]('CAL_TOKEN'));
