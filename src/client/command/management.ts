@@ -55,7 +55,7 @@ const setDate = async (arg: string, msg: Discord.Message) => {
   // 開始日から順番に日付の配列を作成
   const days = Array.from(Array(5), (_, i) => `${arg.split('/')[0]}/${Number(arg.split('/')[1]) + i}`)
 
-  // スプレッドシートから情報を取得
+  // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 日付を更新
@@ -78,7 +78,7 @@ const updateMembers = async (msg: Discord.Message) => {
     ?.members.map(m => util.GetUserName(m))
     .sort()
 
-  // スプレッドシートから情報を取得
+  // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // メンバー一覧を更新

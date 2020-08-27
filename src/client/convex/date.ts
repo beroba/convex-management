@@ -8,17 +8,17 @@ import * as spreadsheet from '../../util/spreadsheet'
  * @return n日目かの値
  */
 export const GetDay = async (): Promise<Option<string>> => {
-  const cell = await checkCalnBattle()
+  const cell = await CheckCalnBattle()
   return cell ? cell[0] : null
 }
 
 /**
  * 指定された右隣の列名を取得
  * @param n 何個目かの数字
- * @return 列名
+ * @param days 日付の情報
+ * @return 取得した列名
  */
-export const GetColumn = async (n: number): Promise<string> => {
-  const cell = await checkCalnBattle()
+export const GetColumn = (n: number, cell: string[]): string => {
   return String.fromCharCode(cell[2].charCodeAt(0) + n)
 }
 
@@ -27,8 +27,8 @@ export const GetColumn = async (n: number): Promise<string> => {
  * あった場合は日付の情報を返す
  * @return 日付の情報
  */
-const checkCalnBattle = async (): Promise<string[]> => {
-  // スプレッドシートから情報を取得
+export const CheckCalnBattle = async (): Promise<string[]> => {
+  // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 

@@ -1,10 +1,13 @@
 import * as Discord from 'discord.js'
-import Settings from 'const-settings'
 import Option from 'type-of-option'
+import ThrowEnv from 'throw-env'
+import Settings from 'const-settings'
+import {Client} from '../../index'
 import * as util from '../../util'
-import * as status from './status'
 import * as date from './date'
 import * as lapAndBoss from './lapAndBoss'
+import * as situation from './situation'
+import * as status from './status'
 
 /**
  * 凸報告の管理を行う
@@ -27,6 +30,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // 凸状況を更新
   await status.Update(msg)
+
+  // 凸状況に報告
+  situation.Report()
+
   return 'Update status'
 }
 
@@ -46,4 +53,26 @@ export const AllConvex = async () => {
   )
 
   console.log('Complete convex end report')
+}
+
+/**
+ * 全凸終了報告を行う
+ * @param n日目かの値
+ */
+export const Unevenness = async (day: string | number) => {
+  // 全凸終了処理を行う
+  const state = await lapAndBoss.GetCurrent()
+
+  // 凸残したユーザー一覧を取得
+  const guild = Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
+  const 凸残 = guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)?.members.map(m => `<@!${m.user.id}>`)
+
+  // 進行に報告をする
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+  channel.send(
+    `${day}日目の凸状況報告よ！\n` +
+      `今日の凸残りは ${凸残?.join(' ')} よ\n` +
+      `\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
+      `お疲れ様！次も頑張りなさい`
+  )
 }
