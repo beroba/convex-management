@@ -24,6 +24,7 @@ export const Update = async (msg: Discord.Message) => {
   const num_cell = await getCell(0, row, sheet)
   const over_cell = await getCell(1, row, sheet)
   const end_cell = await getCell(2, row, sheet)
+  const people_cell = await getCell(2, 1, sheet)
 
   // 既に3凸している人は終了する
   if (await end_cell.getValue()) return msg.reply('もう3凸してるわ')
@@ -37,7 +38,7 @@ export const Update = async (msg: Discord.Message) => {
   // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸状況を報告
   const end = await isThreeConvex(num_cell, over_cell)
   if (end) {
-    await convexEndProcess(end_cell, members, sheet, msg)
+    await convexEndProcess(end_cell, people_cell, members, msg)
   } else {
     await situationReport(num_cell, over_cell, msg)
   }
@@ -134,7 +135,7 @@ const isThreeConvex = async (num_cell: any, over_cell: any): Promise<boolean> =>
  * @param sheet 凸報告のシート
  * @param msg DiscordからのMessage
  */
-const convexEndProcess = async (end_cell: any, members: string[], sheet: any, msg: Discord.Message) => {
+const convexEndProcess = async (end_cell: any, people_cell: any, members: string[], msg: Discord.Message) => {
   // 3凸終了のフラグを立てる
   await end_cell.setValue(1)
 
@@ -142,7 +143,6 @@ const convexEndProcess = async (end_cell: any, members: string[], sheet: any, ms
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const people_cell = await getCell(2, 1, sheet)
   const n = await people_cell.getValue()
   await msg.reply(`3凸目 終了\nおめでとう！\`${n}\`人目の3凸終了よ`)
 
@@ -163,3 +163,5 @@ const situationReport = async (num_cell: any, over_cell: any, msg: Discord.Messa
 
   await msg.reply(`${num}凸目${over ? ' 持ち越し' : '終了'}`)
 }
+
+// const saveHistory = async (num_cell: any, over_cell: any, sheet: any) => {}
