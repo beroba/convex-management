@@ -65,24 +65,28 @@ var util = __importStar(require("../util"));
 var playerID = __importStar(require("./etc/playerID"));
 var command_1 = require("./command");
 var report_1 = require("./convex/report");
+var index_1 = require("../index");
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var guild, clanMembers, comment;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
+                guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
+                clanMembers = (_b = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
+                clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
                 return [4, report_1.ConvexReport(msg)];
             case 1:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
             case 2:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = sendYabaiImage(msg);

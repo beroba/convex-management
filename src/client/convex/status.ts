@@ -5,17 +5,35 @@ import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
 import * as situation from './situation'
 import * as date from './date'
+import Option from 'type-of-option'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
  */
 export const Update = async (msg: Discord.Message) => {
-  // データの更新を実行
-  const before = await cellUpdate(msg.content, msg)
+  // 凸報告のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
-  // リアクションの処理を実行
-  reaction(before, msg)
+  // メンバーのセル一覧から凸報告者の行を取得
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const row = getMemberRow(cells, msg.member)
+
+  // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
+  const num_cell = await getCell(0, row, sheet)
+  const over_cell = await getCell(1, row, sheet)
+  const end_cell = await getCell(2, row, sheet)
+  // const hist_cell = await getCell(3, row, sheet)
+
+  // 既に3凸している人は終了する
+  const end = await end_cell.getValue()
+  if (end) return msg.reply('もう3凸してるわ、お疲れ様')
+
+  // 凸数と持ち越しの状態を更新する
+  await statusUpdate(num_cell, over_cell, msg)
+
+  // 凸報告に❌のスタンプをつける
+  await msg.react('❌')
 
   // 3凸終了者の処理を実行
   if (msg.content.charAt(0) === '3') await threeConvexEnd(msg)
@@ -29,76 +47,60 @@ export const Update = async (msg: Discord.Message) => {
 }
 
 /**
- * セルの更新を行う
- * @param val 更新する内容
- * @param msg DiscordからのMessage
+ * メンバー一覧から指定したメンバーの行を取得
+ * @param cells メンバー一覧のcell
+ * @param member 取得したいメンバー
  */
-const cellUpdate = async (content: string, msg: Discord.Message): Promise<string> => {
-  const val = content.replace('　', ' ').split(' ')
+const getMemberRow = (cells: string[], member: Option<Discord.GuildMember>): number =>
+  cells.indexOf(util.GetUserName(member)) + 3
 
-  // スプレッドシートから情報を取得
-  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // 変更するセルの場所
-  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const col = await date.GetColumn(0)
-  const num = cells.indexOf(util.GetUserName(msg.member)) + 3
-
-  // 凸数の更新を行う
-  const convex_cell = await manageSheet.getCell(`${col}${num}`)
-  const before: string = await convex_cell.getValue()
-  await convex_cell.setValue(val[0])
-
-  // 持ち越し状況を取得
-  const over_cell = await manageSheet.getCell(`${await date.GetColumn(1)}${num}`)
-  const over = await over_cell.getValue()
-
-  // 敵を倒さなかった場合の処理
-  if (val.length === 1) {
-    // 持ち越しがあったら消去する
-    if (over) await over_cell.setValue()
-    return before
-  }
-
-  // 敵を倒した場合の処理
-
-  // 次のボスに進める
-  await lapAndBoss.Next()
-
-  if (over) {
-    // 前回持ち越しがあった場合
-    await over_cell.setValue()
-    return `${before} 1`
-  } else {
-    // なかった場合
-    await over_cell.setValue(1)
-    return before
-  }
+/**
+ * 指定した列と行のセルを取得する。
+ * 列は右にどれだけずらすかを指定する
+ * @param n 基準の列から右にずらす数
+ * @param row 凸報告の行
+ * @param sheet 凸報告のシート
+ */
+const getCell = async (n = 0, row: number, sheet: any): Promise<any> => {
+  const col = await date.GetColumn(n)
+  return sheet.getCell(`${col}${row}`)
 }
 
 /**
- * 凸報告にリアクションをつける。
- * 取り消しの処理も行う
- * @param before 取り消す前の値
+ * 凸数と持ち越しの状態を変更する
+ * @param num_cell 凸数のセル
+ * @param over_cell 持ち越しのセル
  * @param msg DiscordからのMessage
  */
-const reaction = (before: string, msg: Discord.Message) => {
-  // 凸報告に❌のスタンプをつける
-  msg.react('❌')
+const statusUpdate = async (num_cell: any, over_cell: any, msg: Discord.Message) => {
+  // セルの値を取得
+  const num = Number(await num_cell.getValue())
+  const over = await over_cell.getValue()
 
-  // ❌スタンプを押した際にデータの取り消しを行う
-  msg.awaitReactions((react, user) => {
-    ;(async () => {
-      // 送信者が❌スタンプ押した場合以外は終了
-      if (user.id !== msg.author.id || react.emoji.name !== '❌') return
+  // ボスを倒した場合はTrue、倒していない場合はFalse
+  if (/^kill/.test(msg.content)) {
+    // 次のボスに進める
+    await lapAndBoss.Next()
 
-      // データの更新を行う
-      const after = await cellUpdate(before, msg)
-      msg.reply(`\`${after}\` を取り消したわ`)
-      console.log('Convex cancel')
-    })()
-    return true
-  })
+    // 持ち越しフラグが立っていたらTrue
+    if (over) {
+      // 凸数を増やす
+      await num_cell.setValue(num + 1)
+      // 持ち越しフラグを折る
+      await over_cell.setValue()
+    } else {
+      // 持ち越しフラグを立てる
+      await over_cell.setValue(1)
+    }
+  } else {
+    // 凸数を増やす
+    await num_cell.setValue(num + 1)
+
+    // 持ち越しがあったら消去する
+    if (over) {
+      await over_cell.setValue()
+    }
+  }
 }
 
 /**
@@ -112,18 +114,18 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   // 変更するセルの場所
   const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const col = await date.GetColumn(2)
-  const num = cells.indexOf(util.GetUserName(msg.member)) + 3
+  const row = getMemberRow(cells, msg.member)
 
   // 敵を倒した場合の処理
   if (msg.content !== '3') {
     const c = await date.GetColumn(1)
-    const over = await manageSheet.getCell(`${c}${num}`)
+    const over = await manageSheet.getCell(`${c}${row}`)
     // 持ち越しが発生していたら終了
     if (await over.getValue()) return
   }
 
   // 凸終了の目印をつける
-  const cell = await manageSheet.getCell(`${col}${num}`)
+  const cell = await manageSheet.getCell(`${col}${row}`)
   await cell.setValue(1)
 
   // 凸残ロールを削除する
