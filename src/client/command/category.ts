@@ -72,7 +72,7 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
  * @return チャンネル名のリスト
  */
 const channelNameList = async (): Promise<string[]> => {
-  // スプレッドシートから情報を取得
+  // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 

@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetColumn = exports.GetDay = void 0;
+exports.CheckCalnBattle = exports.GetColumn = exports.GetDay = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -66,25 +66,17 @@ exports.GetDay = function () { return __awaiter(void 0, void 0, void 0, function
     var cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, checkCalnBattle()];
+            case 0: return [4, exports.CheckCalnBattle()];
             case 1:
                 cell = _a.sent();
                 return [2, cell ? cell[0] : null];
         }
     });
 }); };
-exports.GetColumn = function (n) { return __awaiter(void 0, void 0, void 0, function () {
-    var cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, checkCalnBattle()];
-            case 1:
-                cell = _a.sent();
-                return [2, String.fromCharCode(cell[2].charCodeAt(0) + n)];
-        }
-    });
-}); };
-var checkCalnBattle = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.GetColumn = function (n, cell) {
+    return String.fromCharCode(cell[2].charCodeAt(0) + n);
+};
+exports.CheckCalnBattle = function () { return __awaiter(void 0, void 0, void 0, function () {
     var infoSheet, cells;
     return __generator(this, function (_a) {
         switch (_a.label) {

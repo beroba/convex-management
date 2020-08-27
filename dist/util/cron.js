@@ -107,7 +107,7 @@ var fullConvexReport = function () {
                 case 2:
                     if (_a.sent())
                         return [2];
-                    return [4, convexSituationReport()];
+                    return [4, convexSituationReport(day)];
                 case 3:
                     _a.sent();
                     console.log('Convex situation report');
@@ -128,7 +128,7 @@ var fullConvexReport = function () {
                 case 2:
                     if (_a.sent())
                         return [2];
-                    return [4, convexSituationReport()];
+                    return [4, convexSituationReport(day)];
                 case 3:
                     _a.sent();
                     console.log('Convex situation report');
@@ -138,35 +138,34 @@ var fullConvexReport = function () {
     }); });
 };
 var convexConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, n;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var manageSheet, members, col, _a, _b, _c, n;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _a.sent();
+                manageSheet = _d.sent();
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                cells = _a.sent();
-                return [4, date.GetColumn(2)];
+                members = (_d.sent()).filter(function (v) { return v; });
+                _b = (_a = date).GetColumn;
+                _c = [2];
+                return [4, date.CheckCalnBattle()];
             case 3:
-                col = _a.sent();
+                col = _b.apply(_a, _c.concat([_d.sent()]));
                 return [4, manageSheet.getCell(col + "1")];
             case 4:
-                n = (_a.sent()).getValue();
-                return [2, Number(n) === cells.filter(function (v) { return v; }).length];
+                n = (_d.sent()).getValue();
+                return [2, Number(n) === members.length];
         }
     });
 }); };
-var convexSituationReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var day, state, guild, 凸残, channel;
+var convexSituationReport = function (day) { return __awaiter(void 0, void 0, void 0, function () {
+    var state, guild, 凸残, channel;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4, date.GetDay()];
+            case 0: return [4, lapAndBoss.GetCurrent()];
             case 1:
-                day = _b.sent();
-                return [4, lapAndBoss.GetCurrent()];
-            case 2:
                 state = _b.sent();
                 guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
                 凸残 = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return "<@!" + m.user.id + ">"; });

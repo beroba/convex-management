@@ -37,4 +37,4 @@ export const GetValue = async (cell: any): Promise<any> => (await cell).getValue
  * @param cell 対象のセル
  * @param v 設定する値
  */
-export const SetValue = async <T>(cell: any, v: T): Promise<void> => (await cell).setValue(v)
+export const SetValue = async <T>(cell: any, v: T) => (await cell).setValue(v)

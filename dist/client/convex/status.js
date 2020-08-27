@@ -63,10 +63,11 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
+var situation = __importStar(require("./situation"));
 var date = __importStar(require("./date"));
 var report = __importStar(require("./report"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, members, row, num_cell, over_cell, end_cell, people_cell, end;
+    var sheet, members, row, days, num_cell, over_cell, end_cell, end;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
@@ -76,163 +77,125 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 2:
                 members = (_a.sent()).filter(function (v) { return v; });
                 row = getMemberRow(members, msg.member);
-                return [4, getCell(0, row, sheet)];
+                return [4, date.CheckCalnBattle()];
             case 3:
-                num_cell = _a.sent();
-                return [4, getCell(1, row, sheet)];
+                days = _a.sent();
+                return [4, getCell(0, row, sheet, days)];
             case 4:
-                over_cell = _a.sent();
-                return [4, getCell(2, row, sheet)];
+                num_cell = _a.sent();
+                return [4, getCell(1, row, sheet, days)];
             case 5:
-                end_cell = _a.sent();
-                return [4, getCell(2, 1, sheet)];
+                over_cell = _a.sent();
+                return [4, getCell(2, row, sheet, days)];
             case 6:
-                people_cell = _a.sent();
-                return [4, end_cell.getValue()];
-            case 7:
-                if (_a.sent())
+                end_cell = _a.sent();
+                if (end_cell.getValue())
                     return [2, msg.reply('もう3凸してるわ')];
-                return [4, statusUpdate(num_cell, over_cell, msg.content)];
+                statusUpdate(num_cell, over_cell, msg.content);
+                msg.react('❌');
+                return [4, isThreeConvex(num_cell, over_cell)];
+            case 7:
+                end = _a.sent();
+                if (end) {
+                    convexEndProcess(end_cell, members, sheet, msg);
+                }
+                else {
+                    situationReport(num_cell, over_cell, msg);
+                }
+                return [4, situation.Report()];
             case 8:
                 _a.sent();
-                return [4, msg.react('❌')];
-            case 9:
-                _a.sent();
-                return [4, isThreeConvex(num_cell, over_cell)];
-            case 10:
-                end = _a.sent();
-                if (!end) return [3, 12];
-                return [4, convexEndProcess(end_cell, people_cell, members, msg)];
-            case 11:
-                _a.sent();
-                return [3, 14];
-            case 12: return [4, situationReport(num_cell, over_cell, msg)];
-            case 13:
-                _a.sent();
-                _a.label = 14;
-            case 14: return [2];
+                return [2];
         }
     });
 }); };
 var getMemberRow = function (cells, member) {
     return cells.indexOf(util.GetUserName(member)) + 3;
 };
-var getCell = function (n, row, sheet) {
+var getCell = function (n, row, sheet, days) {
     if (n === void 0) { n = 0; }
     return __awaiter(void 0, void 0, void 0, function () {
         var col;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, date.GetColumn(n)];
-                case 1:
-                    col = _a.sent();
-                    return [2, sheet.getCell("" + col + row)];
-            }
+            col = date.GetColumn(n, days);
+            return [2, sheet.getCell("" + col + row)];
         });
     });
 };
-var statusUpdate = function (num_cell, over_cell, content) { return __awaiter(void 0, void 0, void 0, function () {
-    var num, _a, over;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = Number;
-                return [4, num_cell.getValue()];
-            case 1:
-                num = _a.apply(void 0, [_b.sent()]);
-                return [4, over_cell.getValue()];
-            case 2:
-                over = _b.sent();
-                if (!/^kill/.test(content)) return [3, 9];
-                return [4, lapAndBoss.Next()];
-            case 3:
-                _b.sent();
-                if (!over) return [3, 5];
-                return [4, over_cell.setValue()];
-            case 4:
-                _b.sent();
-                return [3, 8];
-            case 5: return [4, num_cell.setValue(num + 1)];
-            case 6:
-                _b.sent();
-                return [4, over_cell.setValue(1)];
-            case 7:
-                _b.sent();
-                _b.label = 8;
-            case 8: return [3, 13];
-            case 9:
-                if (!over) return [3, 11];
-                return [4, over_cell.setValue()];
-            case 10:
-                _b.sent();
-                return [3, 13];
-            case 11: return [4, num_cell.setValue(num + 1)];
-            case 12:
-                _b.sent();
-                _b.label = 13;
-            case 13: return [2];
+var statusUpdate = function (num_cell, over_cell, content) {
+    var num = Number(num_cell.getValue());
+    var over = over_cell.getValue();
+    if (/^kill/.test(content)) {
+        lapAndBoss.Next();
+        if (over) {
+            over_cell.setValue();
         }
-    });
-}); };
+        else {
+            num_cell.setValue(num + 1);
+            over_cell.setValue(1);
+        }
+    }
+    else {
+        if (over) {
+            over_cell.setValue();
+        }
+        else {
+            num_cell.setValue(num + 1);
+        }
+    }
+};
 var isThreeConvex = function (num_cell, over_cell) { return __awaiter(void 0, void 0, void 0, function () {
     var num, over;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, num_cell.getValue()];
-            case 1:
-                num = _a.sent();
-                if (num !== '3')
-                    return [2, false];
-                return [4, over_cell.getValue()];
-            case 2:
-                over = _a.sent();
-                if (over)
-                    return [2, false];
-                return [2, true];
-        }
+        num = num_cell.getValue();
+        if (num !== '3')
+            return [2, false];
+        over = over_cell.getValue();
+        if (over)
+            return [2, false];
+        return [2, true];
     });
 }); };
-var convexEndProcess = function (end_cell, people_cell, members, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var n;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+var convexEndProcess = function (end_cell, members, sheet, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var people_cell, _a, _b, n;
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0: return [4, end_cell.setValue(1)];
             case 1:
-                _b.sent();
-                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+                _d.sent();
+                return [4, ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 2:
-                _b.sent();
-                return [4, people_cell.getValue()];
-            case 3:
-                n = _b.sent();
-                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n\u304A\u3081\u3067\u3068\u3046\uFF01`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088")];
+                _d.sent();
+                _a = getCell;
+                _b = [2, 1, sheet];
+                return [4, date.CheckCalnBattle()];
+            case 3: return [4, _a.apply(void 0, _b.concat([_d.sent()]))];
             case 4:
-                _b.sent();
-                if (!(Number(n) === members.length)) return [3, 6];
-                return [4, report.AllConvex()];
+                people_cell = _d.sent();
+                n = people_cell.getValue();
+                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n\u304A\u3081\u3067\u3068\u3046\uFF01`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088")];
             case 5:
-                _b.sent();
-                _b.label = 6;
-            case 6: return [2];
+                _d.sent();
+                if (!(Number(n) === members.length)) return [3, 7];
+                return [4, report.AllConvex()];
+            case 6:
+                _d.sent();
+                _d.label = 7;
+            case 7: return [2];
         }
     });
 }); };
 var situationReport = function (num_cell, over_cell, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var num, _a, over;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var num, over;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _a = Number;
-                return [4, num_cell.getValue()];
+                num = Number(num_cell.getValue());
+                over = over_cell.getValue();
+                return [4, msg.reply(num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了'))];
             case 1:
-                num = _a.apply(void 0, [_b.sent()]);
-                return [4, over_cell.getValue()];
-            case 2:
-                over = _b.sent();
-                return [4, msg.reply(num + "\u51F8\u76EE" + (over ? ' 持ち越し' : '終了'))];
-            case 3:
-                _b.sent();
+                _a.sent();
                 return [2];
         }
     });

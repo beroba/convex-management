@@ -85,39 +85,32 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
 var date = __importStar(require("./date"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var day, manageSheet, range, _a, status, members, list, channel, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0: return [4, date.GetDay()];
+    var manageSheet, days, range, status, members, list, channel, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                day = _d.sent();
-                if (!day)
-                    return [2];
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+                manageSheet = _c.sent();
+                return [4, date.CheckCalnBattle()];
             case 2:
-                manageSheet = _d.sent();
-                return [4, date.GetColumn(0)];
-            case 3:
-                _a = (_d.sent()) + "3:";
-                return [4, date.GetColumn(1)];
-            case 4:
-                range = _a + (_d.sent()) + "32";
+                days = _c.sent();
+                range = date.GetColumn(0, days) + "3:" + date.GetColumn(1, days) + "32";
                 return [4, spreadsheet.GetCells(manageSheet, range)];
-            case 5:
-                status = _d.sent();
+            case 3:
+                status = _c.sent();
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 6:
-                members = _d.sent();
+            case 4:
+                members = _c.sent();
                 list = util
                     .PiecesEach(status, 2)
                     .map(function (v) { return v.map(Number); })
                     .map(function (v, i) { return __spread([members[i]], v); })
                     .filter(function (v) { return v[0] !== ''; });
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
-                _c = (_b = channel).send;
+                _b = (_a = channel).send;
                 return [4, createMessage(list)];
-            case 7:
-                _c.apply(_b, [_d.sent()]);
+            case 5:
+                _b.apply(_a, [_c.sent()]);
                 console.log('Report convex situation');
                 return [2];
         }
