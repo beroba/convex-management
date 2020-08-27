@@ -5,6 +5,7 @@ import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
 import * as situation from './situation'
 import * as date from './date'
+import * as report from './report'
 import Option from 'type-of-option'
 
 /**
@@ -34,14 +35,11 @@ export const Update = async (msg: Discord.Message) => {
   // 凸報告に❌のスタンプをつける
   await msg.react('❌')
 
+  // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸数を報告
   const end = await isThreeConvex(num_cell, over_cell)
-
-  // 3凸終了者の処理を実行
-  if (msg.content.charAt(0) === '3') await threeConvexEnd(msg)
-
-  // 現在の周回数とボスを凸報告に送信
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
-  channel.send(await lapAndBoss.CurrentMessage())
+  if (end) {
+    await convexEndProcess(msg)
+  }
 
   // 凸状況を報告
   await situation.Report()
@@ -128,7 +126,7 @@ const isThreeConvex = async (num_cell: any, over_cell: any): Promise<boolean> =>
  * 3凸終了した際に凸残ロールを削除し何人目の3凸終了者か報告をする
  * @param msg DiscordからのMessage
  */
-const threeConvexEnd = async (msg: Discord.Message) => {
+const convexEndProcess = async (msg: Discord.Message) => {
   // スプレッドシートから情報を取得
   const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
@@ -159,23 +157,5 @@ const threeConvexEnd = async (msg: Discord.Message) => {
   // 全凸終了していない場合は終了
   if (Number(n) !== cells.filter(v => v).length) return
 
-  await allConvexReport()
-
-  console.log('Complete convex end report')
-}
-
-/**
- * 全凸終了報告を行う
- */
-const allConvexReport = async () => {
-  const day = await date.GetDay()
-  const state = await lapAndBoss.GetCurrent()
-
-  // 進行に報告をする
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(
-    `${day}日目の全凸終了報告よ！\n` +
-      `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
-      `お疲れ様！次も頑張りなさい`
-  )
+  await report.AllConvex()
 }

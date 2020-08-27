@@ -5,7 +5,7 @@ import Settings from 'const-settings'
 import * as util from '../util'
 import * as playerID from './etc/playerID'
 import {Command} from './command'
-import {ConvexReport} from './convex/report'
+import * as report from './convex/report'
 
 /**
  * 入力されたメッセージに応じて適切な処理を実行する
@@ -21,7 +21,7 @@ export const Message = async (msg: Discord.Message) => {
   let comment: Option<string>
 
   // 凸報告の処理を行う
-  comment = await ConvexReport(msg)
+  comment = await report.Convex(msg)
   if (comment) return console.log(comment)
 
   // プレイヤーIDの保存処理を行う
