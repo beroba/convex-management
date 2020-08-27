@@ -60,11 +60,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Message = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
-var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../util"));
-var playerID = __importStar(require("./etc/playerID"));
 var command_1 = require("./command");
-var report_1 = require("./convex/report");
+var report = __importStar(require("./convex/report"));
+var playerID = __importStar(require("./etc/playerID"));
+var send = __importStar(require("./etc/send"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
@@ -75,7 +74,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                     return [2];
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
-                return [4, report_1.ConvexReport(msg)];
+                return [4, report.Convex(msg)];
             case 1:
                 comment = _b.sent();
                 if (comment)
@@ -85,29 +84,13 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                comment = sendYabaiImage(msg);
+                comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                comment = sendYuiKusano(msg);
+                comment = send.YuiKusano(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 return [2];
         }
     });
 }); };
-var sendYabaiImage = function (msg) {
-    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
-        return;
-    var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
-    if (!match)
-        return;
-    msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
-    return 'Send Yabai Image';
-};
-var sendYuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'Send Yui Kusano';
-};

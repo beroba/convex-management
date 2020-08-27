@@ -84,7 +84,7 @@ exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, functio
                 _c.sent();
                 url = msg.attachments.map(function (a) { return a.url; })[0];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
-                return [4, channel.send(msg.content, url ? { files: [url] } : {})];
+                return [4, channel.send(util.GetUserName(msg.member) + "\n" + msg.content, url ? { files: [url] } : {})];
             case 2:
                 _c.sent();
                 return [4, msg["delete"]()];

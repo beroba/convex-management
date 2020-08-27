@@ -46,7 +46,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 }
 
 /**
- * 同時凸時の持ち越し計算を行う
+ * 同時凸の持ち越し計算を行う
  * @param arg HPとダメージA・B
  * @param msg DiscordからのMessage
  */
