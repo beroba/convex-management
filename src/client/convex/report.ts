@@ -2,9 +2,10 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import Option from 'type-of-option'
 import * as util from '../../util'
-import * as status from './status'
 import * as date from './date'
 import * as lapAndBoss from './lapAndBoss'
+import * as situation from './situation'
+import * as status from './status'
 
 /**
  * 凸報告の管理を行う
@@ -27,6 +28,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // 凸状況を更新
   await status.Update(msg)
+
+  // 凸状況に報告
+  situation.Report()
+
   return 'Update status'
 }
 

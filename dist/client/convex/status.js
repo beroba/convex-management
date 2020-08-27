@@ -62,12 +62,11 @@ exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
 var date = __importStar(require("./date"));
+var lapAndBoss = __importStar(require("./lapAndBoss"));
 var report = __importStar(require("./report"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, members, row, days, num_cell, over_cell, end_cell, end;
+    var sheet, members, row, days, num_cell, over_cell, end_cell, end, hist_cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
@@ -97,14 +96,15 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 7:
                 end = _a.sent();
                 if (end) {
-                    convexEndProcess(end_cell, members, sheet, msg);
+                    convexEndProcess(end_cell, members, sheet, days, msg);
                 }
                 else {
                     situationReport(num_cell, over_cell, msg);
                 }
-                return [4, situation.Report()];
+                return [4, getCell(3, row, sheet, days)];
             case 8:
-                _a.sent();
+                hist_cell = _a.sent();
+                saveHistory(num_cell, over_cell, hist_cell);
                 return [2];
         }
     });
@@ -156,33 +156,30 @@ var isThreeConvex = function (num_cell, over_cell) { return __awaiter(void 0, vo
         return [2, true];
     });
 }); };
-var convexEndProcess = function (end_cell, members, sheet, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var people_cell, _a, _b, n;
-    var _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+var convexEndProcess = function (end_cell, members, sheet, days, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var people_cell, n;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4, end_cell.setValue(1)];
             case 1:
-                _d.sent();
-                return [4, ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+                _b.sent();
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 2:
-                _d.sent();
-                _a = getCell;
-                _b = [2, 1, sheet];
-                return [4, date.CheckCalnBattle()];
-            case 3: return [4, _a.apply(void 0, _b.concat([_d.sent()]))];
-            case 4:
-                people_cell = _d.sent();
+                _b.sent();
+                return [4, getCell(2, 1, sheet, days)];
+            case 3:
+                people_cell = _b.sent();
                 n = people_cell.getValue();
-                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n\u304A\u3081\u3067\u3068\u3046\uFF01`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088")];
-            case 5:
-                _d.sent();
-                if (!(Number(n) === members.length)) return [3, 7];
+                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
+            case 4:
+                _b.sent();
+                if (!(Number(n) === members.length)) return [3, 6];
                 return [4, report.AllConvex()];
-            case 6:
-                _d.sent();
-                _d.label = 7;
-            case 7: return [2];
+            case 5:
+                _b.sent();
+                _b.label = 6;
+            case 6: return [2];
         }
     });
 }); };
@@ -198,5 +195,14 @@ var situationReport = function (num_cell, over_cell, msg) { return __awaiter(voi
                 _a.sent();
                 return [2];
         }
+    });
+}); };
+var saveHistory = function (num_cell, over_cell, hist_cell) { return __awaiter(void 0, void 0, void 0, function () {
+    var num, over;
+    return __generator(this, function (_a) {
+        num = num_cell.getValue();
+        over = over_cell.getValue();
+        hist_cell.setValue("" + num + (over ? "," + over : ''));
+        return [2];
     });
 }); };
