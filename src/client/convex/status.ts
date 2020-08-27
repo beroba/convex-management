@@ -86,7 +86,7 @@ const statusUpdate = (num_cell: any, over_cell: any, content: string) => {
     // 次のボスに進める
     lapAndBoss.Next()
 
-    // 持ち越しフラグが立っていたらTrue
+    // 持ち越しフラグが立っていたらtrue
     if (over) {
       // 持ち越しフラグを折る
       over_cell.setValue()
@@ -97,7 +97,7 @@ const statusUpdate = (num_cell: any, over_cell: any, content: string) => {
       over_cell.setValue(1)
     }
   } else {
-    // 持ち越しフラグが立っていたらTrue
+    // 持ち越しフラグが立っていたらtrue
     if (over) {
       // 持ち越しフラグを折る
       over_cell.setValue()
