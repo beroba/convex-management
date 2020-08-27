@@ -60,58 +60,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Message = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
-var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../util"));
-var playerID = __importStar(require("./etc/playerID"));
 var command_1 = require("./command");
-var report_1 = require("./convex/report");
-var index_1 = require("../index");
+var report = __importStar(require("./convex/report"));
+var playerID = __importStar(require("./etc/playerID"));
+var send = __importStar(require("./etc/send"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var guild, clanMembers, comment;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var comment;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
-                clanMembers = (_b = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
-                clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
-                return [4, report_1.ConvexReport(msg)];
+                return [4, report.Convex(msg)];
             case 1:
-                comment = _c.sent();
+                comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
             case 2:
-                comment = _c.sent();
+                comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                comment = sendYabaiImage(msg);
+                comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                comment = sendYuiKusano(msg);
+                comment = send.YuiKusano(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 return [2];
         }
     });
 }); };
-var sendYabaiImage = function (msg) {
-    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
-        return;
-    var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
-    if (!match)
-        return;
-    msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
-    return 'Send Yabai Image';
-};
-var sendYuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'Send Yui Kusano';
-};

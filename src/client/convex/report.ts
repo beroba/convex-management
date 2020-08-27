@@ -25,17 +25,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return "It's not ClanBattle days"
   }
 
-  switch (true) {
-    case /[1-3]/.test(msg.content.charAt(0)): {
-      status.Update(msg)
-      return 'Update status'
-    }
-
-    default: {
-      msg.reply('形式が違うわ、やりなおし！')
-      return 'Different format'
-    }
-  }
+  // 凸状況を更新
+  await status.Update(msg)
+  return 'Update status'
 }
 
 /**

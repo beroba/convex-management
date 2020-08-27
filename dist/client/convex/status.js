@@ -63,185 +63,176 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
 var date = __importStar(require("./date"));
+var report = __importStar(require("./report"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, cellUpdate(msg.content, msg)];
+    var sheet, members, row, num_cell, over_cell, end_cell, end;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                _c.sent();
-                return [4, msg.react('❌')];
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                _c.sent();
-                if (!(msg.content.charAt(0) === '3')) return [3, 4];
-                return [4, threeConvexEnd(msg)];
+                members = (_a.sent()).filter(function (v) { return v; });
+                row = getMemberRow(members, msg.member);
+                return [4, getCell(0, row, sheet)];
             case 3:
-                _c.sent();
-                _c.label = 4;
+                num_cell = _a.sent();
+                return [4, getCell(1, row, sheet)];
             case 4:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
-                _b = (_a = channel).send;
-                return [4, lapAndBoss.CurrentMessage()];
+                over_cell = _a.sent();
+                return [4, getCell(2, row, sheet)];
             case 5:
-                _b.apply(_a, [_c.sent()]);
-                return [4, situation.Report()];
+                end_cell = _a.sent();
+                return [4, end_cell.getValue()];
             case 6:
-                _c.sent();
-                return [2];
+                if (_a.sent())
+                    return [2, msg.reply('もう3凸してるわ、お疲れ様')];
+                return [4, statusUpdate(num_cell, over_cell, msg.content)];
+            case 7:
+                _a.sent();
+                return [4, msg.react('❌')];
+            case 8:
+                _a.sent();
+                return [4, isThreeConvex(num_cell, over_cell)];
+            case 9:
+                end = _a.sent();
+                if (!end) return [3, 11];
+                return [4, convexEndProcess(end_cell, members, sheet, msg)];
+            case 10:
+                _a.sent();
+                return [3, 13];
+            case 11: return [4, situationReport(num_cell, over_cell, msg)];
+            case 12:
+                _a.sent();
+                _a.label = 13;
+            case 13: return [2];
         }
     });
 }); };
 var getMemberRow = function (cells, member) {
     return cells.indexOf(util.GetUserName(member)) + 3;
 };
-var updateCellValue = function (sheet, col, row, val) {
-    if (val === void 0) { val = ''; }
+var getCell = function (n, row, sheet) {
+    if (n === void 0) { n = 0; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var cell;
+        var col;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4, sheet.getCell("" + col + row)];
+                case 0: return [4, date.GetColumn(n)];
                 case 1:
-                    cell = _a.sent();
-                    return [4, cell.setValue(val)];
-                case 2:
-                    _a.sent();
-                    return [2];
+                    col = _a.sent();
+                    return [2, sheet.getCell("" + col + row)];
             }
         });
     });
 };
-var fetchCellValue = function (sheet, col, row) { return __awaiter(void 0, void 0, void 0, function () {
-    var cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, sheet.getCell("" + col + row)];
-            case 1:
-                cell = _a.sent();
-                return [2, cell.getValue()];
-        }
-    });
-}); };
-var cellUpdate = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var val, manageSheet, cells, num_col, over_col, hist_col, row, over;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var statusUpdate = function (num_cell, over_cell, content) { return __awaiter(void 0, void 0, void 0, function () {
+    var num, _a, over;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                val = content.replace('　', ' ').split(' ');
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+                _a = Number;
+                return [4, num_cell.getValue()];
             case 1:
-                manageSheet = _a.sent();
-                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+                num = _a.apply(void 0, [_b.sent()]);
+                return [4, over_cell.getValue()];
             case 2:
-                cells = _a.sent();
-                return [4, date.GetColumn(0)];
+                over = _b.sent();
+                if (!/^kill/.test(content)) return [3, 9];
+                return [4, lapAndBoss.Next()];
             case 3:
-                num_col = _a.sent();
-                return [4, date.GetColumn(1)];
+                _b.sent();
+                if (!over) return [3, 5];
+                return [4, over_cell.setValue()];
             case 4:
-                over_col = _a.sent();
-                return [4, date.GetColumn(2)];
-            case 5:
-                hist_col = _a.sent();
-                row = getMemberRow(cells, msg.member);
-                return [4, updateCellValue(manageSheet, hist_col, row, content)];
+                _b.sent();
+                return [3, 8];
+            case 5: return [4, num_cell.setValue(num + 1)];
             case 6:
-                _a.sent();
-                return [4, updateCellValue(manageSheet, num_col, row, val[0])];
+                _b.sent();
+                return [4, over_cell.setValue(1)];
             case 7:
-                _a.sent();
-                return [4, fetchCellValue(manageSheet, over_col, row)];
-            case 8:
-                over = _a.sent();
-                if (!(val.length === 1)) return [3, 11];
-                if (!over) return [3, 10];
-                return [4, updateCellValue(manageSheet, over_col, row)];
+                _b.sent();
+                _b.label = 8;
+            case 8: return [3, 13];
             case 9:
-                _a.sent();
-                _a.label = 10;
-            case 10: return [2];
-            case 11: return [4, lapAndBoss.Next()];
+                if (!over) return [3, 11];
+                return [4, over_cell.setValue()];
+            case 10:
+                _b.sent();
+                return [3, 13];
+            case 11: return [4, num_cell.setValue(num + 1)];
             case 12:
-                _a.sent();
-                if (!over) return [3, 14];
-                return [4, updateCellValue(manageSheet, over_col, row)];
-            case 13:
-                _a.sent();
-                return [3, 16];
-            case 14: return [4, updateCellValue(manageSheet, over_col, row, 1)];
-            case 15:
-                _a.sent();
-                _a.label = 16;
-            case 16: return [2];
+                _b.sent();
+                _b.label = 13;
+            case 13: return [2];
         }
     });
 }); };
-var threeConvexEnd = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, cells, col, row, c, over, cell, n;
+var isThreeConvex = function (num_cell, over_cell) { return __awaiter(void 0, void 0, void 0, function () {
+    var num, over;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, num_cell.getValue()];
+            case 1:
+                num = _a.sent();
+                if (num !== '3')
+                    return [2, false];
+                return [4, over_cell.getValue()];
+            case 2:
+                over = _a.sent();
+                if (over)
+                    return [2, false];
+                return [2, true];
+        }
+    });
+}); };
+var convexEndProcess = function (end_cell, members, sheet, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var people_cell, n;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 0: return [4, end_cell.setValue(1)];
             case 1:
-                manageSheet = _b.sent();
-                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                cells = _b.sent();
-                return [4, date.GetColumn(2)];
-            case 3:
-                col = _b.sent();
-                row = getMemberRow(cells, msg.member);
-                if (!(msg.content !== '3')) return [3, 7];
-                return [4, date.GetColumn(1)];
-            case 4:
-                c = _b.sent();
-                return [4, manageSheet.getCell("" + c + row)];
-            case 5:
-                over = _b.sent();
-                return [4, over.getValue()];
-            case 6:
-                if (_b.sent())
-                    return [2];
-                _b.label = 7;
-            case 7: return [4, manageSheet.getCell("" + col + row)];
-            case 8:
-                cell = _b.sent();
-                return [4, cell.setValue(1)];
-            case 9:
                 _b.sent();
                 return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
-            case 10:
+            case 2:
                 _b.sent();
-                return [4, manageSheet.getCell(col + "1")];
-            case 11:
-                n = (_b.sent()).getValue();
-                msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01");
-                if (Number(n) !== cells.filter(function (v) { return v; }).length)
-                    return [2];
-                return [4, allConvexReport()];
-            case 12:
+                return [4, getCell(2, 1, sheet)];
+            case 3:
+                people_cell = _b.sent();
+                return [4, people_cell.getValue()];
+            case 4:
+                n = _b.sent();
+                return [4, msg.reply(n + "\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u8005\u3088\uFF01")];
+            case 5:
                 _b.sent();
-                console.log('Complete convex end report');
-                return [2];
+                if (!(Number(n) === members.length)) return [3, 7];
+                return [4, report.AllConvex()];
+            case 6:
+                _b.sent();
+                _b.label = 7;
+            case 7: return [2];
         }
     });
 }); };
-var allConvexReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var day, state, channel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+var situationReport = function (num_cell, over_cell, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var num, _a, over;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = Number;
+                return [4, num_cell.getValue()];
             case 1:
-                day = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                num = _a.apply(void 0, [_b.sent()]);
+                return [4, over_cell.getValue()];
             case 2:
-                state = _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
+                over = _b.sent();
+                return [4, msg.reply(num + "\u51F8\u76EE" + (over ? ' 持ち越し' : ''))];
+            case 3:
+                _b.sent();
                 return [2];
         }
     });
