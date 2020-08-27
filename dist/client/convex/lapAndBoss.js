@@ -74,14 +74,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Practice = exports.Next = exports.CurrentMessage = exports.GetCurrent = exports.Update = void 0;
+exports.CurrentMessage = exports.GetCurrent = exports.Practice = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap, num, infoSheet, boss, _b, lap_cell, boss_cell, num_cell, _c, _d;
-    return __generator(this, function (_e) {
-        switch (_e.label) {
+    var _a, lap, num, infoSheet, boss, _b, lap_cell, boss_cell, num_cell;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 _a = __read(arg.replace('　', ' ').split(' '), 2), lap = _a[0], num = _a[1];
                 if (!/\d/.test(lap))
@@ -90,24 +90,68 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _e.sent();
+                infoSheet = _c.sent();
                 return [4, readBossName(infoSheet, num)];
             case 2:
-                boss = _e.sent();
+                boss = _c.sent();
                 _b = __read(readCurrentCell(infoSheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
             case 3:
-                _e.sent();
+                _c.sent();
                 return [4, spreadsheet.SetValue(boss_cell, boss)];
             case 4:
-                _e.sent();
+                _c.sent();
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
-                _e.sent();
-                _d = (_c = msg).reply;
-                return [4, exports.CurrentMessage()];
-            case 6:
-                _d.apply(_c, [_e.sent()]);
+                _c.sent();
+                return [2];
+        }
+    });
+}); };
+exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _c.sent();
+                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, readForwardDate(lap_cell, num_cell, infoSheet)];
+            case 2:
+                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
+                return [4, spreadsheet.SetValue(lap_cell, lap)];
+            case 3:
+                _c.sent();
+                return [4, spreadsheet.SetValue(boss_cell, boss)];
+            case 4:
+                _c.sent();
+                return [4, spreadsheet.SetValue(num_cell, num)];
+            case 5:
+                _c.sent();
+                return [2];
+        }
+    });
+}); };
+exports.Practice = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _c.sent();
+                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, readReturnDate(lap_cell, num_cell, infoSheet)];
+            case 2:
+                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
+                return [4, spreadsheet.SetValue(lap_cell, lap)];
+            case 3:
+                _c.sent();
+                return [4, spreadsheet.SetValue(boss_cell, boss)];
+            case 4:
+                _c.sent();
+                return [4, spreadsheet.SetValue(num_cell, num)];
+            case 5:
+                _c.sent();
                 return [2];
         }
     });
@@ -138,54 +182,6 @@ exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _c.sent();
-                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readForwardDate(infoSheet)];
-            case 2:
-                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
-                return [4, spreadsheet.SetValue(lap_cell, lap)];
-            case 3:
-                _c.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss)];
-            case 4:
-                _c.sent();
-                return [4, spreadsheet.SetValue(num_cell, num)];
-            case 5:
-                _c.sent();
-                return [2];
-        }
-    });
-}); };
-exports.Practice = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _c.sent();
-                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readReturnDate(infoSheet)];
-            case 2:
-                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
-                return [4, spreadsheet.SetValue(lap_cell, lap)];
-            case 3:
-                _c.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss)];
-            case 4:
-                _c.sent();
-                return [4, spreadsheet.SetValue(num_cell, num)];
-            case 5:
-                _c.sent();
-                return [2];
-        }
-    });
-}); };
 var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
     var cells;
     return __generator(this, function (_a) {
@@ -200,44 +196,40 @@ var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, 
 var readCurrentCell = function (infoSheet) {
     return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return infoSheet.getCell(cell); });
 };
-var readForwardDate = function (infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap_cell, num_cell, lap, num, numberList, n, boss;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], num_cell = _a[2];
-                return [4, spreadsheet.GetValue(lap_cell)];
+var readForwardDate = function (lap_cell, num_cell, infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var lap, num, numberList, n, boss;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetValue(lap_cell)];
             case 1:
-                lap = _b.sent();
+                lap = _a.sent();
                 return [4, spreadsheet.GetValue(num_cell)];
             case 2:
-                num = _b.sent();
+                num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
                 return [4, readBossName(infoSheet, numberList[n])];
             case 3:
-                boss = _b.sent();
+                boss = _a.sent();
                 return [2, [n ? lap : Number(lap) + 1, boss, numberList[n]]];
         }
     });
 }); };
-var readReturnDate = function (infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap_cell, num_cell, lap, num, numberList, n, boss;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], num_cell = _a[2];
-                return [4, spreadsheet.GetValue(lap_cell)];
+var readReturnDate = function (lap_cell, num_cell, infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var lap, num, numberList, n, boss;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetValue(lap_cell)];
             case 1:
-                lap = _b.sent();
+                lap = _a.sent();
                 return [4, spreadsheet.GetValue(num_cell)];
             case 2:
-                num = _b.sent();
+                num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 0 ? 4 : n - 1); })(numberList.indexOf(num));
                 return [4, readBossName(infoSheet, numberList[n])];
             case 3:
-                boss = _b.sent();
+                boss = _a.sent();
                 return [2, [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]];
         }
     });

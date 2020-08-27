@@ -156,15 +156,21 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var day, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0: return [4, date.GetDay()];
             case 1:
-                day = _a.sent();
+                day = _c.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                lapAndBoss.Update(arg, msg);
+                return [4, lapAndBoss.Update(arg, msg)];
+            case 2:
+                _c.sent();
+                _b = (_a = msg).reply;
+                return [4, lapAndBoss.CurrentMessage()];
+            case 3:
+                _b.apply(_a, [_c.sent()]);
                 situation.Report();
                 return [2];
         }

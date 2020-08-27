@@ -102,6 +102,7 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
   const day = await date.GetDay()
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
-  lapAndBoss.Update(arg, msg)
+  await lapAndBoss.Update(arg, msg)
+  msg.reply(await lapAndBoss.CurrentMessage())
   situation.Report()
 }

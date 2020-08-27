@@ -6,6 +6,7 @@ import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as date from '../client/convex/date'
 import * as lapAndBoss from '../client/convex/lapAndBoss'
+import Option from 'type-of-option'
 
 /**
  * クーロンで操作する関数一覧
@@ -55,7 +56,7 @@ const fullConvexReport = () => {
     if (await convexConfirm()) return
 
     // #進行に報告をする
-    await convexSituationReport()
+    await convexSituationReport(day)
 
     console.log('Convex situation report')
   })
@@ -70,7 +71,7 @@ const fullConvexReport = () => {
     if (await convexConfirm()) return
 
     // #進行に報告をする
-    await convexSituationReport()
+    await convexSituationReport(day)
 
     console.log('Convex situation report')
   })
@@ -81,26 +82,28 @@ const fullConvexReport = () => {
  * @return 真偽値
  */
 const convexConfirm = async (): Promise<boolean> => {
-  // スプレッドシートから情報を取得
+  // 凸報告のシートを取得
   const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // クランメンバー一覧を取得
-  const cells: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const members: string[] = (await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)).filter(
+    v => v
+  )
 
   // 現在の3凸数を取得
-  const col = await date.GetColumn(2)
+  const col = date.GetColumn(2, await date.CheckCalnBattle())
   const n = (await manageSheet.getCell(`${col}1`)).getValue()
 
   // 比較結果を返す
-  return Number(n) === cells.filter(v => v).length
+  return Number(n) === members.length
 }
 
 /**
  * 全凸終了報告を行う
+ * @param n日目かの値
  */
-const convexSituationReport = async () => {
+const convexSituationReport = async (day: Option<string>) => {
   // 全凸終了処理を行う
-  const day = await date.GetDay()
   const state = await lapAndBoss.GetCurrent()
 
   // 凸残したユーザー一覧を取得
