@@ -26,14 +26,15 @@ export const Update = async (msg: Discord.Message) => {
   // const hist_cell = await getCell(3, row, sheet)
 
   // 既に3凸している人は終了する
-  const end = await end_cell.getValue()
-  if (end) return msg.reply('もう3凸してるわ、お疲れ様')
+  if (await end_cell.getValue()) return msg.reply('もう3凸してるわ、お疲れ様')
 
   // 凸数と持ち越しの状態を更新する
   await statusUpdate(num_cell, over_cell, msg)
 
   // 凸報告に❌のスタンプをつける
   await msg.react('❌')
+
+  const end = await isThreeConvex(num_cell, over_cell)
 
   // 3凸終了者の処理を実行
   if (msg.content.charAt(0) === '3') await threeConvexEnd(msg)
@@ -77,7 +78,7 @@ const statusUpdate = async (num_cell: any, over_cell: any, msg: Discord.Message)
   const num = Number(await num_cell.getValue())
   const over = await over_cell.getValue()
 
-  // ボスを倒した場合はTrue、倒していない場合はFalse
+  // ボスを倒した場合はtrue、倒していない場合はfalse
   if (/^kill/.test(msg.content)) {
     // 次のボスに進める
     await lapAndBoss.Next()
@@ -101,6 +102,26 @@ const statusUpdate = async (num_cell: any, over_cell: any, msg: Discord.Message)
       await over_cell.setValue()
     }
   }
+}
+
+/**
+ * 3凸終了しているかの真偽値を返す。
+ * @param num_cell 凸数のセル
+ * @param over_cell 持ち越しのセル
+ * @param end_cell 3凸終了のセル
+ * @return 3凸しているかの真偽値
+ */
+const isThreeConvex = async (num_cell: any, over_cell: any): Promise<boolean> => {
+  // 3凸目じゃなければfalse
+  const num = await num_cell.getValue()
+  if (num !== '3') return false
+
+  // 持ち越し状態があればfalse
+  const over = await over_cell.getValue()
+  if (over) return false
+
+  // 3凸目で持ち越しがなければ3凸終了者なのでtrue
+  return true
 }
 
 /**
