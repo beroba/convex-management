@@ -58,39 +58,83 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Save = exports.RoleGrant = void 0;
+exports.Cancel = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-exports.RoleGrant = function (react, user) {
-    var _a;
-    if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT)
-        return;
-    var member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-    member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND);
-    return 'Grant player id send role';
-};
-exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, channel;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+var date = __importStar(require("./date"));
+var status = __importStar(require("./status"));
+exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var day;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if (user.bot)
                     return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_SEND)
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                return [4, ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.remove(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND))];
+                return [4, date.GetDay()];
             case 1:
-                _c.sent();
-                url = msg.attachments.map(function (a) { return a.url; })[0];
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
-                return [4, channel.send(util.GetUserName(msg.member) + "\n" + msg.content, url ? { files: [url] } : {})];
+                day = _a.sent();
+                if (!day)
+                    return [2];
+                return [4, statusRestore(react, user)];
             case 2:
-                _c.sent();
-                return [4, msg["delete"]()];
-            case 3:
-                _c.sent();
-                return [2, 'Save player id'];
+                _a.sent();
+                return [2, 'Convex cancellation'];
         }
     });
 }); };
+var statusRestore = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, members, member, row, days, num_cell, over_cell, end_cell, hist_cell;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _b.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                members = (_b.sent()).filter(function (v) { return v; });
+                member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
+                row = status.GetMemberRow(members, member);
+                return [4, date.CheckCalnBattle()];
+            case 3:
+                days = _b.sent();
+                return [4, status.GetCell(0, row, sheet, days)];
+            case 4:
+                num_cell = _b.sent();
+                return [4, status.GetCell(1, row, sheet, days)];
+            case 5:
+                over_cell = _b.sent();
+                return [4, status.GetCell(2, row, sheet, days)];
+            case 6:
+                end_cell = _b.sent();
+                return [4, status.GetCell(3, row, sheet, days)];
+            case 7:
+                hist_cell = _b.sent();
+                rollback(num_cell, over_cell, hist_cell);
+                endConfirm(end_cell, member);
+                feedback(num_cell, over_cell, user);
+                return [2];
+        }
+    });
+}); };
+var rollback = function (num_cell, over_cell, hist_cell) {
+    var hist = hist_cell.getValue().split(',');
+    num_cell.setValue(hist[0]);
+    over_cell.setValue(hist[1]);
+};
+var endConfirm = function (end_cell, member) {
+    var end = end_cell.getValue();
+    if (!end)
+        return;
+    end_cell.setValue();
+    member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+};
+var feedback = function (num_cell, over_cell, user) {
+    var num = Number(num_cell.getValue());
+    var over = over_cell.getValue();
+    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
+    channel.send("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n<@!" + user.id + ">, " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
+};

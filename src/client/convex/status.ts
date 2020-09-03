@@ -17,22 +17,26 @@ export const Update = async (msg: Discord.Message) => {
 
   // メンバーのセル一覧から凸報告者の行を取得
   const members: string[] = (await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)).filter(v => v)
-  const row = getMemberRow(members, msg.member)
+  const row = GetMemberRow(members, msg.member)
 
-  // 凸数、持ち越し、3凸終了、セルを取得
+  // 凸数、持ち越し、3凸終了のセルを取得
   const days = await date.CheckCalnBattle()
-  const num_cell = await getCell(0, row, sheet, days)
-  const over_cell = await getCell(1, row, sheet, days)
-  const end_cell = await getCell(2, row, sheet, days)
+  const num_cell = await GetCell(0, row, sheet, days)
+  const over_cell = await GetCell(1, row, sheet, days)
+  const end_cell = await GetCell(2, row, sheet, days)
+  const hist_cell = await GetCell(3, row, sheet, days)
 
   // 既に3凸している人は終了する
   if (end_cell.getValue()) return msg.reply('もう3凸してるわ')
 
+  // 現在の凸状況を履歴に残しておく
+  saveHistory(num_cell, over_cell, hist_cell)
+
   // 凸数と持ち越しの状態を更新する
   statusUpdate(num_cell, over_cell, msg.content)
 
-  // 凸報告に❌のスタンプをつける
-  msg.react('❌')
+  // 凸報告に取消のスタンプをつける
+  msg.react(Settings.EMOJI_ID.TORIKESHI)
 
   // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸状況を報告
   const end = await isThreeConvex(num_cell, over_cell)
@@ -41,10 +45,6 @@ export const Update = async (msg: Discord.Message) => {
   } else {
     situationReport(num_cell, over_cell, msg)
   }
-
-  // 現在の凸状況を履歴に残しておく
-  const hist_cell = await getCell(3, row, sheet, days)
-  saveHistory(num_cell, over_cell, hist_cell)
 }
 
 /**
@@ -53,7 +53,7 @@ export const Update = async (msg: Discord.Message) => {
  * @param member 取得したいメンバー
  * @return 取得した行番号
  */
-const getMemberRow = (cells: string[], member: Option<Discord.GuildMember>): number =>
+export const GetMemberRow = (cells: string[], member: Option<Discord.GuildMember>): number =>
   cells.indexOf(util.GetUserName(member)) + 3
 
 /**
@@ -65,9 +65,22 @@ const getMemberRow = (cells: string[], member: Option<Discord.GuildMember>): num
  * @param days クラバトの日付情報
  * @return 取得したセル
  */
-const getCell = async (n = 0, row: number, sheet: any, days: string[]): Promise<any> => {
+export const GetCell = async (n = 0, row: number, sheet: any, days: string[]): Promise<any> => {
   const col = date.GetColumn(n, days)
   return sheet.getCell(`${col}${row}`)
+}
+
+/**
+ * 現在の凸状況を履歴に残す
+ * @param num_cell 凸数のセル
+ * @param over_cell 持ち越しのセル
+ * @param hist_cell 履歴のセル
+ */
+const saveHistory = async (num_cell: any, over_cell: any, hist_cell: any) => {
+  const num = num_cell.getValue()
+  const over = over_cell.getValue()
+
+  hist_cell.setValue(`${num}${over ? `,${over}` : ''}`)
 }
 
 /**
@@ -145,7 +158,7 @@ const convexEndProcess = async (end_cell: any, members: string[], sheet: any, da
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const people_cell = await getCell(2, 1, sheet, days)
+  const people_cell = await GetCell(2, 1, sheet, days)
   const n = people_cell.getValue()
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
 
@@ -165,17 +178,4 @@ const situationReport = async (num_cell: any, over_cell: any, msg: Discord.Messa
   const over = over_cell.getValue()
 
   await msg.reply(`${num}凸目 ${over ? '持ち越し' : '終了'}`)
-}
-
-/**
- * 現在の凸状況を履歴に残す
- * @param num_cell 凸数のセル
- * @param over_cell 持ち越しのセル
- * @param hist_cell 履歴のセル
- */
-const saveHistory = async (num_cell: any, over_cell: any, hist_cell: any) => {
-  const num = num_cell.getValue()
-  const over = over_cell.getValue()
-
-  hist_cell.setValue(`${num}${over ? `,${over}` : ''}`)
 }
