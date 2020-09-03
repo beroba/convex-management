@@ -5,6 +5,7 @@ import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 import * as date from './date'
 import * as lapAndBoss from './lapAndBoss'
+import * as situation from './situation'
 import * as status from './status'
 
 /**
@@ -26,6 +27,9 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
 
   // 凸状況を元に戻す
   await statusRestore(react, user)
+
+  // 凸状況に報告
+  situation.Report()
 
   return 'Convex cancellation'
 }
