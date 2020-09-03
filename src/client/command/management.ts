@@ -83,8 +83,8 @@ const updateMembers = async (msg: Discord.Message) => {
 
   // メンバー一覧を更新
   clanMembers?.forEach(async (m, i) => {
-    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.INFORMATION_SHEET}${i + 3}`)
-    await cell.setValue(m)
+    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.MEMBER_COLUMN}${i + 3}`)
+    cell.setValue(m)
   })
 
   msg.reply('クランメンバー一覧を更新したわよ！')

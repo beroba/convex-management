@@ -134,12 +134,11 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     var cell;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, infoSheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.INFORMATION_SHEET + (i + 3))];
+                            case 0: return [4, infoSheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN + (i + 3))];
                             case 1:
                                 cell = _a.sent();
-                                return [4, cell.setValue(m)];
-                            case 2:
-                                _a.sent();
+                                console.log(cell);
+                                cell.setValue(m);
                                 return [2];
                         }
                     });
