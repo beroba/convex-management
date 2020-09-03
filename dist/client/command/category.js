@@ -113,7 +113,7 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var settingPermissions = function (msg) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     var leader = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.LEADER);
     if (!leader)
         return [];
@@ -123,7 +123,10 @@ var settingPermissions = function (msg) {
     var clanMembers = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
     if (!clanMembers)
         return [];
-    var everyone = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.everyone;
+    var tomodachi = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.TOMODACHI);
+    if (!tomodachi)
+        return [];
+    var everyone = (_e = msg.guild) === null || _e === void 0 ? void 0 : _e.roles.everyone;
     if (!everyone)
         return [];
     return [
@@ -137,6 +140,10 @@ var settingPermissions = function (msg) {
         },
         {
             id: clanMembers.id,
+            allow: ['VIEW_CHANNEL']
+        },
+        {
+            id: tomodachi.id,
             allow: ['VIEW_CHANNEL']
         },
         {
@@ -158,16 +165,12 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
                 _a = __read(util.PiecesEach(cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
                 return [2, [
                         '検証総合', '凸ルート相談',
-                        a + "\u6A21\u64EC",
-                        'ⓐtl',
-                        b + "\u6A21\u64EC",
-                        'ⓑtl',
-                        c + "\u6A21\u64EC",
-                        'ⓒtl',
-                        d + "\u6A21\u64EC",
-                        'ⓓtl',
-                        e + "\u6A21\u64EC",
-                        'ⓔtl',
+                        a + "\u7269\u7406", a + "\u9B54\u6CD5",
+                        b + "\u7269\u7406", b + "\u9B54\u6CD5",
+                        c + "\u7269\u7406", c + "\u9B54\u6CD5",
+                        d + "\u7269\u7406", d + "\u9B54\u6CD5",
+                        e + "\u7269\u7406", e + "\u9B54\u6CD5",
+                        '持ち越し置き場',
                     ]];
         }
     });
