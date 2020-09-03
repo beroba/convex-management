@@ -65,7 +65,7 @@ var util = __importStar(require("../../util"));
 var date = __importStar(require("./date"));
 var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
+    var channel, day;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -73,6 +73,9 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
+                channel.messages.fetch(react.message.id);
+                console.log(react.message.content);
                 return [4, date.GetDay()];
             case 1:
                 day = _a.sent();
