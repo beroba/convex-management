@@ -42,6 +42,8 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
   if (!subLeader) return []
   const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
   if (!clanMembers) return []
+  const tomodachi = msg.guild?.roles.cache.get(Settings.ROLE_ID.TOMODACHI)
+  if (!tomodachi) return []
   const everyone = msg.guild?.roles.everyone
   if (!everyone) return []
 
@@ -57,6 +59,10 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
     },
     {
       id: clanMembers.id,
+      allow: ['VIEW_CHANNEL'],
+    },
+    {
+      id: tomodachi.id,
       allow: ['VIEW_CHANNEL'],
     },
     {
