@@ -42,6 +42,8 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
   if (!subLeader) return []
   const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
   if (!clanMembers) return []
+  const tomodachi = msg.guild?.roles.cache.get(Settings.ROLE_ID.TOMODACHI)
+  if (!tomodachi) return []
   const everyone = msg.guild?.roles.everyone
   if (!everyone) return []
 
@@ -57,6 +59,10 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
     },
     {
       id: clanMembers.id,
+      allow: ['VIEW_CHANNEL'],
+    },
+    {
+      id: tomodachi.id,
       allow: ['VIEW_CHANNEL'],
     },
     {
@@ -82,11 +88,12 @@ const channelNameList = async (): Promise<string[]> => {
   // prettier-ignore
   return [
     '検証総合', '凸ルート相談',
-    `${a}模擬`, 'ⓐtl',
-    `${b}模擬`, 'ⓑtl',
-    `${c}模擬`, 'ⓒtl',
-    `${d}模擬`, 'ⓓtl',
-    `${e}模擬`, 'ⓔtl',
+    `${a}物理`, `${a}魔法`,
+    `${b}物理`, `${b}魔法`,
+    `${c}物理`, `${c}魔法`,
+    `${d}物理`, `${d}魔法`,
+    `${e}物理`, `${e}魔法`,
+    '持ち越し置き場',
   ]
 }
 
