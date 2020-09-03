@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 import * as date from './date'
+import * as lapAndBoss from './lapAndBoss'
 import * as status from './status'
 
 /**
@@ -56,6 +57,8 @@ const statusRestore = async (react: Discord.MessageReaction, user: Discord.User)
   endConfirm(end_cell, member)
   // 凸状況を報告
   feedback(num_cell, over_cell, user)
+  // ボス倒していたかを判別
+  killConfirm(react)
 }
 
 /**
@@ -104,4 +107,20 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
   // 凸報告に凸状況を報告
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   channel.send(`取消を行ったわよ\n<@!${user.id}>, ` + (num ? `${num}凸目 ${over ? '持ち越し' : '終了'}` : '未凸'))
+}
+
+/**
+ * ボスを倒していた場合、前のボスに戻す
+ * @param react DiscordからのReaction
+ */
+const killConfirm = async (react: Discord.MessageReaction) => {
+  // メッセージをキャッシュする
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
+  await channel.messages.fetch(react.message.id)
+
+  // ボスを倒していなければ終了
+  if (!/^kill/.test(react.message.content)) return
+
+  // 前のボスに戻す
+  lapAndBoss.Practice()
 }
