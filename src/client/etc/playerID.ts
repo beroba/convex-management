@@ -14,7 +14,7 @@ export const RoleGrant = (react: Discord.MessageReaction, user: Discord.User): O
   if (react.message.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT) return
 
   // idスクショ送信のロールを付与する
-  const member = react.message.guild?.members.cache.map(m => m).filter(m => m.user.id === user.id)[0]
+  const member = util.GetMembersFromUser(react.message.guild?.members, user)
   member?.roles.add(Settings.ROLE_ID.PLAYER_ID_SEND)
 
   return 'Grant player id send role'

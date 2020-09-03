@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Update = void 0;
+exports.GetCell = exports.GetMemberRow = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -66,7 +66,7 @@ var date = __importStar(require("./date"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
 var report = __importStar(require("./report"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, members, row, days, num_cell, over_cell, end_cell, end, hist_cell;
+    var sheet, members, row, days, num_cell, over_cell, end_cell, hist_cell, end;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
@@ -75,25 +75,29 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
                 members = (_a.sent()).filter(function (v) { return v; });
-                row = getMemberRow(members, msg.member);
+                row = exports.GetMemberRow(members, msg.member);
                 return [4, date.CheckCalnBattle()];
             case 3:
                 days = _a.sent();
-                return [4, getCell(0, row, sheet, days)];
+                return [4, exports.GetCell(0, row, sheet, days)];
             case 4:
                 num_cell = _a.sent();
-                return [4, getCell(1, row, sheet, days)];
+                return [4, exports.GetCell(1, row, sheet, days)];
             case 5:
                 over_cell = _a.sent();
-                return [4, getCell(2, row, sheet, days)];
+                return [4, exports.GetCell(2, row, sheet, days)];
             case 6:
                 end_cell = _a.sent();
+                return [4, exports.GetCell(3, row, sheet, days)];
+            case 7:
+                hist_cell = _a.sent();
                 if (end_cell.getValue())
                     return [2, msg.reply('もう3凸してるわ')];
+                saveHistory(num_cell, over_cell, hist_cell);
                 statusUpdate(num_cell, over_cell, msg.content);
-                msg.react('❌');
+                msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
                 return [4, isThreeConvex(num_cell, over_cell)];
-            case 7:
+            case 8:
                 end = _a.sent();
                 if (end) {
                     convexEndProcess(end_cell, members, sheet, days, msg);
@@ -101,18 +105,14 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 else {
                     situationReport(num_cell, over_cell, msg);
                 }
-                return [4, getCell(3, row, sheet, days)];
-            case 8:
-                hist_cell = _a.sent();
-                saveHistory(num_cell, over_cell, hist_cell);
                 return [2];
         }
     });
 }); };
-var getMemberRow = function (cells, member) {
+exports.GetMemberRow = function (cells, member) {
     return cells.indexOf(util.GetUserName(member)) + 3;
 };
-var getCell = function (n, row, sheet, days) {
+exports.GetCell = function (n, row, sheet, days) {
     if (n === void 0) { n = 0; }
     return __awaiter(void 0, void 0, void 0, function () {
         var col;
@@ -122,6 +122,15 @@ var getCell = function (n, row, sheet, days) {
         });
     });
 };
+var saveHistory = function (num_cell, over_cell, hist_cell) { return __awaiter(void 0, void 0, void 0, function () {
+    var num, over;
+    return __generator(this, function (_a) {
+        num = num_cell.getValue();
+        over = over_cell.getValue();
+        hist_cell.setValue("" + num + (over ? "," + over : ''));
+        return [2];
+    });
+}); };
 var statusUpdate = function (num_cell, over_cell, content) {
     var num = Number(num_cell.getValue());
     var over = over_cell.getValue();
@@ -167,7 +176,7 @@ var convexEndProcess = function (end_cell, members, sheet, days, msg) { return _
                 return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 2:
                 _b.sent();
-                return [4, getCell(2, 1, sheet, days)];
+                return [4, exports.GetCell(2, 1, sheet, days)];
             case 3:
                 people_cell = _b.sent();
                 n = people_cell.getValue();
@@ -195,14 +204,5 @@ var situationReport = function (num_cell, over_cell, msg) { return __awaiter(voi
                 _a.sent();
                 return [2];
         }
-    });
-}); };
-var saveHistory = function (num_cell, over_cell, hist_cell) { return __awaiter(void 0, void 0, void 0, function () {
-    var num, over;
-    return __generator(this, function (_a) {
-        num = num_cell.getValue();
-        over = over_cell.getValue();
-        hist_cell.setValue("" + num + (over ? "," + over : ''));
-        return [2];
     });
 }); };

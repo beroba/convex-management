@@ -21,6 +21,19 @@ export const GetUserName = (m: Option<Discord.GuildMember>): string =>
   m?.nickname ? m?.nickname : m?.user.username || ''
 
 /**
+ * Membersから指定されたUserのMemberを返す
+ * @param member メンバー一覧
+ * @param user Userの情報
+ * @return 指定されたmember
+ */
+export const GetMembersFromUser = (
+  member: Option<Discord.GuildMemberManager>,
+  user: Discord.User
+): Option<Discord.GuildMember> => {
+  return member?.cache.map(m => m).filter(m => m.user.id === user.id)[0]
+}
+
+/**
  * 渡されたidのTextChannelを取得する
  * @param id チャンネルのid
  */
