@@ -63,9 +63,10 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 var date = __importStar(require("./date"));
+var lapAndBoss = __importStar(require("./lapAndBoss"));
 var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, day;
+    var day;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -73,9 +74,6 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
-                channel.messages.fetch(react.message.id);
-                console.log(react.message.content);
                 return [4, date.GetDay()];
             case 1:
                 day = _a.sent();
@@ -119,6 +117,7 @@ var statusRestore = function (react, user) { return __awaiter(void 0, void 0, vo
                 rollback(num_cell, over_cell, hist_cell);
                 endConfirm(end_cell, member);
                 feedback(num_cell, over_cell, user);
+                killConfirm(react);
                 return [2];
         }
     });
@@ -141,3 +140,19 @@ var feedback = function (num_cell, over_cell, user) {
     var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
     channel.send("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n<@!" + user.id + ">, " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
 };
+var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
+                return [4, channel.messages.fetch(react.message.id)];
+            case 1:
+                _a.sent();
+                if (!/^kill/.test(react.message.content))
+                    return [2];
+                lapAndBoss.Practice();
+                return [2];
+        }
+    });
+}); };
