@@ -117,9 +117,9 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var p0, time, day, getUserList, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var p0, time, day, getUserList, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 p0 = function (n) { return (n + '').padStart(2, '0'); };
                 time = (function (d) {
@@ -127,7 +127,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 })(new Date());
                 return [4, date.GetDay()];
             case 1:
-                day = (_c.sent()) + "\u65E5\u76EE";
+                day = (_b.sent()) + "\u65E5\u76EE";
                 getUserList = function (list, a, b) {
                     return list.filter(function (l) { return l[1] === a; }).filter(function (l) { return l[2] === b; }).map(function (l) { return l[0]; }).join(', ');
                 };
@@ -138,7 +138,10 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 凸2 = getUserList(list, 2, 0);
                 持越3 = getUserList(list, 3, 1);
                 凸3 = getUserList(list, 3, 0);
-                _a = "`" + time + "` " + day + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                _a = "`" + time + "` " + day + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n";
+                return [4, lapAndBoss.CurrentMessage()];
+            case 2: return [2, (_a +
+                    ((_b.sent()) + "\n") +
                     '```\n' +
                     ("\u672A\u51F8: " + 未凸 + "\n") +
                     '\n' +
@@ -151,11 +154,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                     ("\u6301\u8D8A: " + 持越3 + "\n") +
                     ("3\u51F8 : " + 凸3 + "\n") +
                     '\n' +
-                    '```\n';
-                _b = "";
-                return [4, lapAndBoss.CurrentMessage()];
-            case 2: return [2, (_a +
-                    (_b + (_c.sent())))];
+                    '```')];
         }
     });
 }); };

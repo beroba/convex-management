@@ -126,5 +126,5 @@ const killConfirm = async (react: Discord.MessageReaction) => {
   if (!/^kill/.test(react.message.content)) return
 
   // 前のボスに戻す
-  lapAndBoss.Practice()
+  lapAndBoss.Previous()
 }

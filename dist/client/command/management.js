@@ -137,7 +137,6 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                             case 0: return [4, infoSheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN + (i + 3))];
                             case 1:
                                 cell = _a.sent();
-                                console.log(cell);
                                 cell.setValue(m);
                                 return [2];
                         }

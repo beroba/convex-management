@@ -64,6 +64,7 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 var date = __importStar(require("./date"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
+var situation = __importStar(require("./situation"));
 var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
@@ -82,6 +83,7 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                 return [4, statusRestore(react, user)];
             case 2:
                 _a.sent();
+                situation.Report();
                 return [2, 'Convex cancellation'];
         }
     });
@@ -151,7 +153,7 @@ var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, fu
                 _a.sent();
                 if (!/^kill/.test(react.message.content))
                     return [2];
-                lapAndBoss.Practice();
+                lapAndBoss.Previous();
                 return [2];
         }
     });

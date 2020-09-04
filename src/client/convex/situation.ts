@@ -59,6 +59,7 @@ const createMessage = async (list: (string | number)[][]): Promise<string> => {
 
   return (
     `\`${time}\` ${day} 凸状況一覧\n` +
+    `${await lapAndBoss.CurrentMessage()}\n` +
     '```\n' +
     `未凸: ${未凸}\n` +
     '\n' +
@@ -71,7 +72,6 @@ const createMessage = async (list: (string | number)[][]): Promise<string> => {
     `持越: ${持越3}\n` +
     `3凸 : ${凸3}\n` +
     '\n' +
-    '```\n' +
-    `${await lapAndBoss.CurrentMessage()}`
+    '```'
   )
 }
