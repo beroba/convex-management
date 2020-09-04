@@ -73,8 +73,9 @@ const moveForward = async (msg: Discord.Message) => {
   const day = await date.GetDay()
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
+  // 次のボスに進める
   await lapAndBoss.Next()
-  msg.reply(await lapAndBoss.CurrentMessage())
+  // 凸状況に報告
   situation.Report()
 }
 
@@ -87,8 +88,9 @@ const moveReturn = async (msg: Discord.Message) => {
   const day = await date.GetDay()
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
-  await lapAndBoss.Practice()
-  msg.reply(await lapAndBoss.CurrentMessage())
+  // 前のボスに戻す
+  await lapAndBoss.Previous()
+  // 凸状況に報告
   situation.Report()
 }
 
@@ -102,7 +104,10 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
   const day = await date.GetDay()
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
-  await lapAndBoss.Update(arg, msg)
-  msg.reply(await lapAndBoss.CurrentMessage())
+  // 任意のボスへ移動させる
+  const bool = await lapAndBoss.Update(arg)
+  if (!bool) return msg.reply('形式が違うわ、やりなおし！')
+
+  // 凸状況に報告
   situation.Report()
 }

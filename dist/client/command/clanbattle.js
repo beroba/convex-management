@@ -114,63 +114,53 @@ var simultConvexCalc = function (arg, msg) {
     msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3059\u3053\u3068\u306D");
 };
 var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var day;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0: return [4, date.GetDay()];
             case 1:
-                day = _c.sent();
+                day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
                 return [4, lapAndBoss.Next()];
             case 2:
-                _c.sent();
-                _b = (_a = msg).reply;
-                return [4, lapAndBoss.CurrentMessage()];
-            case 3:
-                _b.apply(_a, [_c.sent()]);
+                _a.sent();
                 situation.Report();
                 return [2];
         }
     });
 }); };
 var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var day;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0: return [4, date.GetDay()];
             case 1:
-                day = _c.sent();
+                day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                return [4, lapAndBoss.Practice()];
+                return [4, lapAndBoss.Previous()];
             case 2:
-                _c.sent();
-                _b = (_a = msg).reply;
-                return [4, lapAndBoss.CurrentMessage()];
-            case 3:
-                _b.apply(_a, [_c.sent()]);
+                _a.sent();
                 situation.Report();
                 return [2];
         }
     });
 }); };
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var day, bool;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0: return [4, date.GetDay()];
             case 1:
-                day = _c.sent();
+                day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                return [4, lapAndBoss.Update(arg, msg)];
+                return [4, lapAndBoss.Update(arg)];
             case 2:
-                _c.sent();
-                _b = (_a = msg).reply;
-                return [4, lapAndBoss.CurrentMessage()];
-            case 3:
-                _b.apply(_a, [_c.sent()]);
+                bool = _a.sent();
+                if (!bool)
+                    return [2, msg.reply('形式が違うわ、やりなおし！')];
                 situation.Report();
                 return [2];
         }
