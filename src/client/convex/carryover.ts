@@ -3,6 +3,12 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 
+/**
+ * 持ち越し状況の自分のメッセージに完了の絵文字をつけたら削除する
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 削除処理の実行結果
+ */
 export const Delete = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
   // botのリアクションは実行しない
   if (user.bot) return
@@ -19,6 +25,11 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
 
   // 送信者と同じ人で無ければ終了
   if (react.message.author.id !== user.id) return
+
+  // メッセージを削除する
+  react.message.delete()
+
+  return 'Delete completed message'
 }
 
 /**

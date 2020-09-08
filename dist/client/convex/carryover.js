@@ -78,7 +78,8 @@ exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 
                 _a.sent();
                 if (react.message.author.id !== user.id)
                     return [2];
-                return [2];
+                react.message["delete"]();
+                return [2, 'Delete completed message'];
         }
     });
 }); };
