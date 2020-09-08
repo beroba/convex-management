@@ -83,6 +83,10 @@ SEND_IMAGE_CHANNEL:
   - vc用
   - bot-test
 
+# クラバトカテゴリーの場所
+CATEGORY:
+  POSITION: 4
+
 # URL一覧
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png

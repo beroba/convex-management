@@ -87,7 +87,7 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 _a = __read(arg ? arg.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], day = _a[1];
                 return [4, ((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.channels.create(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8", {
                         type: 'category',
-                        position: 4,
+                        position: const_settings_1["default"].CATEGORY.POSITION,
                         permissionOverwrites: settingPermissions(msg)
                     }))];
             case 1:
