@@ -39,5 +39,5 @@ exports.YuiKusano = function (msg) {
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'Send Yui Kusano';
+    return 'React Yui Kusano';
 };

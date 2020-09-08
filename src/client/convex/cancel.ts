@@ -21,6 +21,16 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   // #凸報告でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
 
+  // 完了の絵文字で無ければ終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TORIKESHI) return
+
+  // メッセージをキャッシュする
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
+  await channel.messages.fetch(react.message.id)
+
+  // 送信者と同じ人で無ければ終了
+  if (react.message.author.id !== user.id) return
+
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) return
@@ -118,10 +128,6 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
  * @param react DiscordからのReaction
  */
 const killConfirm = async (react: Discord.MessageReaction) => {
-  // メッセージをキャッシュする
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
-  await channel.messages.fetch(react.message.id)
-
   // ボスを倒していなければ終了
   if (!/^kill/.test(react.message.content)) return
 
