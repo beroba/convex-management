@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import {Command} from './command'
 import * as report from './convex/report'
+import * as carryover from './convex/carryover'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
 
@@ -23,6 +24,10 @@ export const Message = async (msg: Discord.Message) => {
   comment = await report.Convex(msg)
   if (comment) return console.log(comment)
 
+  // 持ち越し状況に絵文字をつける
+  comment = carryover.React(msg)
+  if (comment) return console.log(comment)
+
   // プレイヤーIDの保存処理を行う
   comment = await playerID.Save(msg)
   if (comment) return console.log(comment)
@@ -31,7 +36,7 @@ export const Message = async (msg: Discord.Message) => {
   comment = send.YabaiImage(msg)
   if (comment) return console.log(comment)
 
-  // ユイの文字がある場合にスタンプをつける
+  // ユイの文字がある場合に絵文字をつける
   comment = send.YuiKusano(msg)
   if (comment) return console.log(comment)
 }

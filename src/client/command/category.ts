@@ -16,7 +16,7 @@ export const Create = async (arg: string, msg: Discord.Message) => {
   // カテゴリーの作成
   const channel = await msg.guild?.channels.create(`${year}年${day}月クラバト`, {
     type: 'category',
-    position: 4,
+    position: Settings.CATEGORY.POSITION,
     permissionOverwrites: settingPermissions(msg),
   })
 

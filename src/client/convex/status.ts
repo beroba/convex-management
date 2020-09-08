@@ -35,7 +35,7 @@ export const Update = async (msg: Discord.Message) => {
   // 凸数と持ち越しの状態を更新する
   statusUpdate(num_cell, over_cell, msg.content)
 
-  // 凸報告に取消のスタンプをつける
+  // 凸報告に取消の絵文字をつける
   msg.react(Settings.EMOJI_ID.TORIKESHI)
 
   // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸状況を報告

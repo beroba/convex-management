@@ -58,103 +58,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Cancel = void 0;
+exports.React = exports.Delete = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-var date = __importStar(require("./date"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
-var status = __importStar(require("./status"));
-exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, day;
+exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 if (user.bot)
                     return [2];
-                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
                     return [2];
-                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.TORIKESHI)
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KANRYOU)
                     return [2];
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
                 return [4, channel.messages.fetch(react.message.id)];
             case 1:
                 _a.sent();
                 if (react.message.author.id !== user.id)
                     return [2];
-                return [4, date.GetDay()];
-            case 2:
-                day = _a.sent();
-                if (!day)
-                    return [2];
-                return [4, statusRestore(react, user)];
-            case 3:
-                _a.sent();
-                situation.Report();
-                return [2, 'Convex cancellation'];
+                react.message["delete"]();
+                return [2, 'Delete completed message'];
         }
     });
 }); };
-var statusRestore = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, members, member, row, days, num_cell, over_cell, end_cell, hist_cell;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _b.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                members = (_b.sent()).filter(function (v) { return v; });
-                member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-                row = status.GetMemberRow(members, member);
-                return [4, date.CheckCalnBattle()];
-            case 3:
-                days = _b.sent();
-                return [4, status.GetCell(0, row, sheet, days)];
-            case 4:
-                num_cell = _b.sent();
-                return [4, status.GetCell(1, row, sheet, days)];
-            case 5:
-                over_cell = _b.sent();
-                return [4, status.GetCell(2, row, sheet, days)];
-            case 6:
-                end_cell = _b.sent();
-                return [4, status.GetCell(3, row, sheet, days)];
-            case 7:
-                hist_cell = _b.sent();
-                rollback(num_cell, over_cell, hist_cell);
-                endConfirm(end_cell, member);
-                feedback(num_cell, over_cell, user);
-                killConfirm(react);
-                return [2];
-        }
-    });
-}); };
-var rollback = function (num_cell, over_cell, hist_cell) {
-    var hist = hist_cell.getValue().split(',');
-    num_cell.setValue(hist[0]);
-    over_cell.setValue(hist[1]);
-};
-var endConfirm = function (end_cell, member) {
-    var end = end_cell.getValue();
-    if (!end)
+exports.React = function (msg) {
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
         return;
-    end_cell.setValue();
-    member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+    msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+    return 'React Kanryou';
 };
-var feedback = function (num_cell, over_cell, user) {
-    var num = Number(num_cell.getValue());
-    var over = over_cell.getValue();
-    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
-    channel.send("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n<@!" + user.id + ">, " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
-};
-var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        if (!/^kill/.test(react.message.content))
-            return [2];
-        lapAndBoss.Previous();
-        return [2];
-    });
-}); };
