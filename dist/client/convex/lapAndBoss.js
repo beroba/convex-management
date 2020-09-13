@@ -74,20 +74,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CurrentMessage = exports.GetCurrent = exports.Practice = exports.Next = exports.Update = void 0;
+exports.CurrentMessage = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, num, infoSheet, boss, _b, lap_cell, boss_cell, num_cell;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _a = __read(arg.replace('　', ' ').split(' '), 2), lap = _a[0], num = _a[1];
                 if (!/\d/.test(lap))
-                    return [2, msg.reply('形式が違うわ、やりなおし！')];
+                    return [2, false];
                 if (!/[a-e]|[A-E]/.test(num))
-                    return [2, msg.reply('形式が違うわ、やりなおし！')];
+                    return [2, false];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 infoSheet = _c.sent();
@@ -104,7 +104,8 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                return [2];
+                progressReport();
+                return [2, true];
         }
     });
 }); };
@@ -128,11 +129,12 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
+                progressReport();
                 return [2];
         }
     });
 }); };
-exports.Practice = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Previous = function () { return __awaiter(void 0, void 0, void 0, function () {
     var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -152,6 +154,7 @@ exports.Practice = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
+                progressReport();
                 return [2];
         }
     });
@@ -178,7 +181,7 @@ exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, 
             case 0: return [4, exports.GetCurrent()];
             case 1:
                 state = _a.sent();
-                return [2, "\u73FE\u5728\u3001`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u3088"];
+                return [2, "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`"];
         }
     });
 }); };
@@ -190,6 +193,20 @@ var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, 
             case 1:
                 cells = _a.sent();
                 return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+        }
+    });
+}); };
+var progressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                _b = (_a = channel).send;
+                return [4, exports.CurrentMessage()];
+            case 1:
+                _b.apply(_a, [_c.sent()]);
+                return [2];
         }
     });
 }); };

@@ -1,8 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
+import * as convex from './convex/cancel'
+import * as carryover from './convex/carryover'
 import * as playerID from './etc/playerID'
-import {Cancel} from './convex/cancel'
 
 /**
  * リアクションのイベントに応じて適切な処理を実行する
@@ -15,8 +16,12 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
 
   let comment: Option<string>
 
-  // プレイヤーid送信ロールの付与を行う
-  comment = await Cancel(react, user as Discord.User)
+  // 凸報告を取り消しを行う
+  comment = await convex.Cancel(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 持ち越し状況の削除を行う
+  comment = await carryover.Delete(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // プレイヤーid送信ロールの付与を行う

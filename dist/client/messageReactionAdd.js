@@ -60,8 +60,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.MessageReactionAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
+var convex = __importStar(require("./convex/cancel"));
+var carryover = __importStar(require("./convex/carryover"));
 var playerID = __importStar(require("./etc/playerID"));
-var cancel_1 = require("./convex/cancel");
 exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
@@ -70,8 +71,13 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
             case 0:
                 if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                return [4, cancel_1.Cancel(react, user)];
+                return [4, convex.Cancel(react, user)];
             case 1:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, carryover.Delete(react, user)];
+            case 2:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

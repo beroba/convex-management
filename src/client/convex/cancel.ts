@@ -4,6 +4,8 @@ import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 import * as date from './date'
+import * as lapAndBoss from './lapAndBoss'
+import * as situation from './situation'
 import * as status from './status'
 
 /**
@@ -19,12 +21,25 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   // #凸報告でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
 
+  // 完了の絵文字で無ければ終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TORIKESHI) return
+
+  // メッセージをキャッシュする
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
+  await channel.messages.fetch(react.message.id)
+
+  // 送信者と同じ人で無ければ終了
+  if (react.message.author.id !== user.id) return
+
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) return
 
   // 凸状況を元に戻す
   await statusRestore(react, user)
+
+  // 凸状況に報告
+  situation.Report()
 
   return 'Convex cancellation'
 }
@@ -56,6 +71,8 @@ const statusRestore = async (react: Discord.MessageReaction, user: Discord.User)
   endConfirm(end_cell, member)
   // 凸状況を報告
   feedback(num_cell, over_cell, user)
+  // ボス倒していたかを判別
+  killConfirm(react)
 }
 
 /**
@@ -104,4 +121,16 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
   // 凸報告に凸状況を報告
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   channel.send(`取消を行ったわよ\n<@!${user.id}>, ` + (num ? `${num}凸目 ${over ? '持ち越し' : '終了'}` : '未凸'))
+}
+
+/**
+ * ボスを倒していた場合、前のボスに戻す
+ * @param react DiscordからのReaction
+ */
+const killConfirm = async (react: Discord.MessageReaction) => {
+  // ボスを倒していなければ終了
+  if (!/^kill/.test(react.message.content)) return
+
+  // 前のボスに戻す
+  lapAndBoss.Previous()
 }
