@@ -51,6 +51,8 @@ const fullConvexReport = () => {
   const convexConfirm = (): boolean => {
     // べろばあのクランメンバー一覧を取得
     const guild = Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
+
+    // 凸残ロールがついている人が居るか確認
     const remain = guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)?.members.map(m => m)
     return remain?.length ? true : false
   }

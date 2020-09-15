@@ -152,7 +152,7 @@ var feedback = function (num_cell, over_cell, user) {
 };
 var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        if (!/^kill/.test(react.message.content))
+        if (!/^kill/i.test(react.message.content))
             return [2];
         lapAndBoss.Previous();
         return [2];
