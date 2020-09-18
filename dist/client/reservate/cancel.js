@@ -82,26 +82,27 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
             case 2:
                 sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.PERSON_CELLS)];
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.RESERVATE_CELLS)];
             case 3:
                 cells = _a.sent();
                 messageDelete(cells, react.message);
                 convexComplete(sheet, cells, react.message);
+                deleteBossRole(cells, react.message);
                 return [2, 'Delete completed message'];
         }
     });
 }); };
-var messageDelete = function (cells, mes) { return __awaiter(void 0, void 0, void 0, function () {
+var messageDelete = function (cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var id, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                id = util.PiecesEach(cells, 3).filter(function (v) { return v[1] === mes.id; })[0][2];
+                id = util.PiecesEach(cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
                 return [4, channel.messages.fetch(id)];
             case 1:
                 (_a.sent())["delete"]();
-                mes["delete"]();
+                msg["delete"]();
                 return [2];
         }
     });
@@ -112,7 +113,7 @@ var convexComplete = function (sheet, cells, mes) { return __awaiter(void 0, voi
         switch (_a.label) {
             case 0:
                 row = util
-                    .PiecesEach(cells, 3)
+                    .PiecesEach(cells, 8)
                     .map(function (v) { return v[1]; })
                     .indexOf(mes.id) + 3;
                 return [4, sheet.getCell("A" + row)];
@@ -123,3 +124,8 @@ var convexComplete = function (sheet, cells, mes) { return __awaiter(void 0, voi
         }
     });
 }); };
+var deleteBossRole = function (cells, msg) {
+    var _a;
+    var num = util.PiecesEach(cells, 8).filter(function (v) { return v[1] === msg.id; })[0][4];
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[Number(num) - 1]);
+};

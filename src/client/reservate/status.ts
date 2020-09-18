@@ -33,6 +33,9 @@ export const Update = async (msg: Discord.Message) => {
 
   // 完了の絵文字をつける
   msg.react(Settings.EMOJI_ID.KANRYOU)
+
+  // ボス番号のロールを付与
+  msg.member?.roles.add(Settings.BOSS_ROLE_ID[Number(res.num) - 1])
 }
 
 /**
@@ -79,13 +82,12 @@ const setReservate = async (res: Reservate) => {
   // 凸予約のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.RESERVATE_SHEET.SHEET_NAME)
   const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.RESERVATE_SHEET.PERSON_CELLS)).filter(v => v)
-  const len = util.PiecesEach(cells, 3).length
 
   // スプレッドシートを更新
   Object.values(res).forEach(async (v, i) => {
     // 順番に列を取得
     const col = String.fromCharCode('A'.charCodeAt(0) + 1 + i)
-    const cell = await sheet.getCell(`${col}${len + 3}`)
+    const cell = await sheet.getCell(`${col}${cells.length + 3}`)
     cell.setValue(v)
   })
 }

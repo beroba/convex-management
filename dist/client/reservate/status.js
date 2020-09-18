@@ -64,22 +64,24 @@ var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var res, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 res = reservateObject(msg);
                 _a = res;
                 return [4, GetBossName(res.num)];
             case 1:
-                _a.boss = _c.sent();
+                _a.boss = _d.sent();
                 _b = res;
                 return [4, msg.reply(res.boss + "\u3092\u4E88\u7D04\u3057\u305F\u308F\u3088\uFF01")];
             case 2:
-                _b.cal = (_c.sent()).id;
+                _b.cal = (_d.sent()).id;
                 return [4, setReservate(res)];
             case 3:
-                _c.sent();
+                _d.sent();
                 msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+                (_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.add(const_settings_1["default"].BOSS_ROLE_ID[Number(res.num) - 1]);
                 return [2];
         }
     });
@@ -113,7 +115,7 @@ var GetBossName = function (num) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var setReservate = function (res) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, len;
+    var sheet, cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
@@ -122,14 +124,13 @@ var setReservate = function (res) { return __awaiter(void 0, void 0, void 0, fun
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.PERSON_CELLS)];
             case 2:
                 cells = (_a.sent()).filter(function (v) { return v; });
-                len = util.PiecesEach(cells, 3).length;
                 Object.values(res).forEach(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
                     var col, cell;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 col = String.fromCharCode('A'.charCodeAt(0) + 1 + i);
-                                return [4, sheet.getCell("" + col + (len + 3))];
+                                return [4, sheet.getCell("" + col + (cells.length + 3))];
                             case 1:
                                 cell = _a.sent();
                                 cell.setValue(v);
