@@ -37,9 +37,5 @@ exports.Client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.
 exports.Client.on('guildMemberUpdate', function (_, member) { return guildMemberUpdate_1.GuildMemberUpdate(member); });
 exports.Client.on('message', function (msg) { return message_1.Message(msg); });
 exports.Client.on('messageReactionAdd', function (react, user) { return messageReactionAdd_1.MessageReactionAdd(react, user); });
-exports.Client.on('messageUpdate', function (oldMes, newMes) {
-    console.log(oldMes.content);
-    console.log(newMes.content);
-});
 cron_1.CronOperation();
 exports.Client.login(throw_env_1["default"]('CAL_TOKEN'));
