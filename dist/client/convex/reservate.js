@@ -58,13 +58,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Unevenness = exports.AllConvex = exports.Convex = void 0;
+exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var date = __importStar(require("./date"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
-var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     var _a;
@@ -73,8 +71,12 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 0:
                 if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
+                if (!formatConfirm(msg)) {
+                    msg.reply('書式が違うから予約できないわ');
+                    return [2, 'The format of the boss number is different'];
+                }
                 return [4, date.GetDay()];
             case 1:
                 day = _b.sent();
@@ -82,48 +84,85 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     msg.reply('今日はクラバトの日じゃないわ');
                     return [2, "It's not ClanBattle days"];
                 }
-                return [4, status.Update(msg)];
-            case 2:
-                _b.sent();
-                situation.Report();
-                return [2, 'Update status'];
+                statusUpdate(msg);
+                return [2, 'Make a convex reservation'];
         }
     });
 }); };
-exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var day, state, channel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+var formatConfirm = function (msg) {
+    var arr = msg.content.replace(/　/g, ' ').split(' ');
+    return /[1-5]|[１-５]/.test(arr[0]);
+};
+var statusUpdate = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var res, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                res = reservateObject(msg);
+                _a = res;
+                return [4, GetBossName(res.num)];
             case 1:
-                day = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                _a.boss = _c.sent();
+                _b = res;
+                return [4, msg.reply(res.boss + "\u3092\u4E88\u7D04\u3057\u305F\u308F\u3088\uFF01")];
             case 2:
-                state = _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                console.log('Complete convex end report');
+                _b.cal = (_c.sent()).id;
+                setReservate(res);
+                msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
                 return [2];
         }
     });
 }); };
-exports.Unevenness = function (day) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, 凸残, channel;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, lapAndBoss.GetCurrent()];
+var reservateObject = function (msg) {
+    var arr = msg.content.replace(/　/g, ' ').split(' ');
+    var member = util.GetUserName(msg.member);
+    return {
+        person: msg.id,
+        cal: '',
+        member: member,
+        num: arr[0],
+        boss: '',
+        damage: arr[1],
+        remarks: arr[2]
+    };
+};
+var GetBossName = function (num) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, n;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                state = _c.sent();
-                凸残 = (_b = (_a = util
-                    .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return "<@!" + m.user.id + ">"; });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u51F8\u72B6\u6CC1\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306E\u51F8\u6B8B\u308A\u306F " + (凸残 === null || 凸残 === void 0 ? void 0 : 凸残.join(' ')) + " \u3088\n") +
-                    ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 2:
+                cells = _a.sent();
+                n = String.fromCharCode('A'.charCodeAt(0) + Number(num) - 1);
+                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === n.toLowerCase(); })[0][1]];
+        }
+    });
+}); };
+var setReservate = function (res) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, list;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                list = (_a.sent()).filter(function (v) { return v; });
+                Object.values(res).forEach(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                    var cell;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, sheet.getCell("" + String.fromCharCode('A'.charCodeAt(0) + i) + (list.length + 3))];
+                            case 1:
+                                cell = _a.sent();
+                                cell.setValue(v);
+                                return [2];
+                        }
+                    });
+                }); });
                 return [2];
         }
     });

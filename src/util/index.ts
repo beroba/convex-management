@@ -1,6 +1,13 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
+import ThrowEnv from 'throw-env'
 import {Client} from '../index'
+
+/**
+ * クランサーバーのguildを取得する
+ * @return クランサーバーのguild
+ */
+export const GetGuild = (): Option<Discord.Guild> => Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
 
 /**
  * 配列の中に確認用のチャンネルがあるか確認する

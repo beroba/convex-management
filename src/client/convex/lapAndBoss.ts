@@ -9,7 +9,7 @@ import * as util from '../../util'
  */
 export const Update = async (arg: string): Promise<boolean> => {
   // 周回数とボス番号を取得
-  const [lap, num] = arg.replace('　', ' ').split(' ')
+  const [lap, num] = arg.replace(/　/g, ' ').split(' ')
 
   // 書式が違う場合は終了
   if (!/\d/.test(lap)) return false

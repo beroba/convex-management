@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as convex from './convex/cancel'
+import * as convex from './report/cancel'
 import * as carryover from './convex/carryover'
 import * as playerID from './etc/playerID'
 

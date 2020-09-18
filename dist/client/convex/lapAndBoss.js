@@ -83,7 +83,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = __read(arg.replace('　', ' ').split(' '), 2), lap = _a[0], num = _a[1];
+                _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], num = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
                 if (!/[a-e]|[A-E]/.test(num))

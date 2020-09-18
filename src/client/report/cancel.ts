@@ -3,9 +3,9 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
-import * as date from './date'
-import * as lapAndBoss from './lapAndBoss'
-import * as situation from './situation'
+import * as date from '../convex/date'
+import * as lapAndBoss from '../convex/lapAndBoss'
+import * as situation from '../convex/situation'
 import * as status from './status'
 
 /**

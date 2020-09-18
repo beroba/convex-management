@@ -1,7 +1,5 @@
 import * as cron from 'node-cron'
-import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
-import {Client} from '../index'
 import * as util from '../util'
 import * as date from '../client/convex/date'
 import * as report from '../client/convex/report'
@@ -26,8 +24,10 @@ const setRemainConvex = () => {
     if (!day) return
 
     // べろばあのクランメンバー一覧を取得
-    const guild = Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
-    const clanMembers = guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)?.members.map(m => m)
+    const clanMembers = util
+      .GetGuild()
+      ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+      ?.members.map(m => m)
 
     // クランメンバーに凸残ロールを付与する
     clanMembers?.forEach(m => m?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
@@ -49,11 +49,12 @@ const fullConvexReport = () => {
    * @return 真偽値
    */
   const convexConfirm = (): boolean => {
-    // べろばあのクランメンバー一覧を取得
-    const guild = Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
-
     // 凸残ロールがついている人が居るか確認
-    const remain = guild?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)?.members.map(m => m)
+    const remain = util
+      .GetGuild()
+      ?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)
+      ?.members.map(m => m)
+
     return remain?.length ? true : false
   }
 

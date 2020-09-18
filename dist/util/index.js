@@ -1,7 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
-exports.PiecesEach = exports.GetTextChannel = exports.GetMembersFromUser = exports.GetUserName = exports.IsChannel = void 0;
+exports.PiecesEach = exports.GetTextChannel = exports.GetMembersFromUser = exports.GetUserName = exports.IsChannel = exports.GetGuild = void 0;
+var throw_env_1 = __importDefault(require("throw-env"));
 var index_1 = require("../index");
+exports.GetGuild = function () { return index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID')); };
 exports.IsChannel = function (array, channel) {
     return array.some(function (c) { return c === channel.name; });
 };
