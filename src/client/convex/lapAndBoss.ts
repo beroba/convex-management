@@ -2,6 +2,12 @@ import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 
+type Current = {
+  lap: string
+  boss: string
+  num: string
+}
+
 /**
  * 現在の周回数とボスを変更する
  * @param arg 変更したい周回数とボス番号
@@ -75,23 +81,19 @@ export const Previous = async () => {
  * 現在の周回数とボスをオブジェクトで返す
  * @return 現在の周回数とボス
  */
-export const GetCurrent = async (): Promise<{lap: string; boss: string}> => {
+export const GetCurrent = async (): Promise<Current> => {
   // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 範囲を指定して現在の周回数とボスを取得
   const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
   const [lap, boss] = await spreadsheet.GetCells(infoSheet, `${range[0]}:${range[1]}`)
-  return {lap: lap, boss: boss}
-}
 
-/**
- * 現在の周回数とボスをメッセージで返す
- * @return 現在の周回数とボスのメッセージ
- */
-export const CurrentMessage = async (): Promise<string> => {
-  const state = await GetCurrent()
-  return `\`${state.lap}\`周目の\`${state.boss}\``
+  // ボス番号の取得
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+  const num = util.PiecesEach(cells, 2).filter(v => v[1] === boss)[0][0]
+
+  return {lap: lap, boss: boss, num: num}
 }
 
 /**
@@ -109,8 +111,15 @@ const readBossName = async (infoSheet: any, num: string): Promise<string> => {
  * 現在の周回数とボスを#進行に報告
  */
 const progressReport = async () => {
+  // 現在の周回数とボスを取得
+  const state = await GetCurrent()
+
+  // ボスのロールを取得
+  const num = state.num.charCodeAt(0) - 97
+  const role = Settings.BOSS_ROLE_ID[Number(num)]
+
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(await CurrentMessage())
+  channel.send(`<@&${role}> \`${state.lap}\`周目の\`${state.boss}\``)
 }
 
 /**

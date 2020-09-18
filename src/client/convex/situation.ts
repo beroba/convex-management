@@ -46,6 +46,10 @@ const createMessage = async (list: (string | number)[][]): Promise<string> => {
   // クラバトの日数を取得
   const day = `${await date.GetDay()}日目`
 
+  // 現在の周回数とボスを取得
+  const state = await lapAndBoss.GetCurrent()
+  const current = `\`${state.lap}\`周目の\`${state.boss}\``
+
   // 全員の凸状況を見て振り分ける
   const getUserList = (list: (string | number)[][], a: number, b: number): string =>
     list.filter(l => l[1] === a).filter(l => l[2] === b).map(l => l[0]).join(', ')
@@ -59,7 +63,7 @@ const createMessage = async (list: (string | number)[][]): Promise<string> => {
 
   return (
     `\`${time}\` ${day} 凸状況一覧\n` +
-    `${await lapAndBoss.CurrentMessage()}\n` +
+    `${current}\n` +
     '```\n' +
     `未凸: ${未凸}\n` +
     '\n' +
