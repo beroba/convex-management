@@ -58,38 +58,85 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageReactionAdd = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var report = __importStar(require("./report/cancel"));
-var reservate = __importStar(require("./reservate/cancel"));
-var carryover = __importStar(require("./convex/carryover"));
-var playerID = __importStar(require("./etc/playerID"));
-exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+exports.Update = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var res, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
-                    return [2];
-                return [4, report.Cancel(react, user)];
+                res = reservateObject(msg);
+                _a = res;
+                return [4, GetBossName(res.num)];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, reservate.Already(react, user)];
+                _a.boss = _c.sent();
+                _b = res;
+                return [4, msg.reply(res.boss + "\u3092\u4E88\u7D04\u3057\u305F\u308F\u3088\uFF01")];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, carryover.Delete(react, user)];
+                _b.cal = (_c.sent()).id;
+                return [4, setReservate(res)];
             case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = playerID.RoleGrant(react, user);
-                if (comment)
-                    return [2, console.log(comment)];
+                _c.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+                return [2];
+        }
+    });
+}); };
+var reservateObject = function (msg) {
+    var arr = msg.content.replace(/　/g, ' ').split(' ');
+    var member = util.GetUserName(msg.member);
+    return {
+        person: msg.id,
+        cal: '',
+        member: member,
+        num: arr[0],
+        boss: '',
+        damage: arr[1],
+        remarks: arr[2]
+    };
+};
+var GetBossName = function (num) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, n;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 2:
+                cells = _a.sent();
+                n = String.fromCharCode('A'.charCodeAt(0) + Number(num) - 1);
+                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === n.toLowerCase(); })[0][1]];
+        }
+    });
+}); };
+var setReservate = function (res) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, len;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.PERSON_CELLS)];
+            case 2:
+                cells = (_a.sent()).filter(function (v) { return v; });
+                len = util.PiecesEach(cells, 3).length;
+                Object.values(res).forEach(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                    var col, cell;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                col = String.fromCharCode('A'.charCodeAt(0) + 1 + i);
+                                return [4, sheet.getCell("" + col + (len + 3))];
+                            case 1:
+                                cell = _a.sent();
+                                cell.setValue(v);
+                                return [2];
+                        }
+                    });
+                }); });
                 return [2];
         }
     });

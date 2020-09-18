@@ -13,7 +13,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージはコマンド実行しない
   if (msg.member?.user.bot) return
 
-  // #予約でなければ終了
+  // #凸予約でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
 
   // ボス番号が書式通りか確認する

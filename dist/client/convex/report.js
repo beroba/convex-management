@@ -58,38 +58,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Unevenness = exports.AllConvex = exports.Convex = void 0;
+exports.Unevenness = exports.AllConvex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var date = __importStar(require("./date"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
-var status = __importStar(require("./status"));
-exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
-                    return [2];
-                return [4, date.GetDay()];
-            case 1:
-                day = _b.sent();
-                if (!day) {
-                    msg.reply('今日はクラバトの日じゃないわ');
-                    return [2, "It's not ClanBattle days"];
-                }
-                return [4, status.Update(msg)];
-            case 2:
-                _b.sent();
-                situation.Report();
-                return [2, 'Update status'];
-        }
-    });
-}); };
 exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
     var day, state, channel;
     return __generator(this, function (_a) {

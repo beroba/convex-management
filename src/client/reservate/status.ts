@@ -60,10 +60,11 @@ const reservateObject = (msg: Discord.Message): Reservate => {
  * @return ボス名
  */
 const GetBossName = async (num: string): Promise<string> => {
-  // 凸予約のシートを取得
+  // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
+  // ボス番号を数字から英語に変換
   const n = String.fromCharCode('A'.charCodeAt(0) + Number(num) - 1)
 
   // ボス名を返す
@@ -77,10 +78,14 @@ const GetBossName = async (num: string): Promise<string> => {
 const setReservate = async (res: Reservate) => {
   // 凸予約のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.RESERVATE_SHEET.SHEET_NAME)
-  const list: string[] = (await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)).filter(v => v)
+  const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.RESERVATE_SHEET.PERSON_CELLS)).filter(v => v)
+  const len = util.PiecesEach(cells, 3).length
 
+  // スプレッドシートを更新
   Object.values(res).forEach(async (v, i) => {
-    const cell = await sheet.getCell(`${String.fromCharCode('A'.charCodeAt(0) + i)}${list.length + 3}`)
+    // 順番に列を取得
+    const col = String.fromCharCode('A'.charCodeAt(0) + 1 + i)
+    const cell = await sheet.getCell(`${col}${len + 3}`)
     cell.setValue(v)
   })
 }
