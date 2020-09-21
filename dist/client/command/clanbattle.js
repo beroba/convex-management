@@ -89,11 +89,6 @@ exports.ClanBattle = function (command, msg) {
     if (!isRole)
         return;
     switch (true) {
-        case /cb over/.test(command): {
-            var arg = command.replace('/cb over ', '');
-            simultConvexCalc(arg, msg);
-            return 'Simultaneous convex carryover calculation';
-        }
         case /cb boss next/.test(command): {
             moveForward(msg);
             return 'Advance to next lap and boss';
@@ -111,6 +106,11 @@ exports.ClanBattle = function (command, msg) {
             var arg = command.replace('/cb rev ', '');
             reservateList(arg, msg);
             return 'Display convex reservation list';
+        }
+        case /cb over/.test(command): {
+            var arg = command.replace('/cb over ', '');
+            simultConvexCalc(arg, msg);
+            return 'Simultaneous convex carryover calculation';
         }
     }
 };

@@ -22,12 +22,6 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
   if (!isRole) return
 
   switch (true) {
-    case /cb over/.test(command): {
-      const arg = command.replace('/cb over ', '')
-      simultConvexCalc(arg, msg)
-      return 'Simultaneous convex carryover calculation'
-    }
-
     case /cb boss next/.test(command): {
       moveForward(msg)
       return 'Advance to next lap and boss'
@@ -48,6 +42,12 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       const arg = command.replace('/cb rev ', '')
       reservateList(arg, msg)
       return 'Display convex reservation list'
+    }
+
+    case /cb over/.test(command): {
+      const arg = command.replace('/cb over ', '')
+      simultConvexCalc(arg, msg)
+      return 'Simultaneous convex carryover calculation'
     }
   }
 }

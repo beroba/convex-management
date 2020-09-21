@@ -76,7 +76,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, msg.reply('書式が違うから予約できないわ')];
             case 1:
                 cal_1 = _b.sent();
-                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 10000);
+                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 30000);
                 return [2, 'The format of the boss number is different'];
             case 2: return [4, date.GetDay()];
             case 3:
