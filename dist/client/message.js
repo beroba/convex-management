@@ -61,7 +61,8 @@ exports.__esModule = true;
 exports.Message = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var command_1 = require("./command");
-var report = __importStar(require("./convex/report"));
+var report = __importStar(require("./report"));
+var reservate = __importStar(require("./reservate"));
 var carryover = __importStar(require("./convex/carryover"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
@@ -80,11 +81,16 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
+                return [4, reservate.Convex(msg)];
+            case 2:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
                 comment = carryover.React(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
-            case 2:
+            case 3:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

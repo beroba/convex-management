@@ -3,9 +3,9 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import * as date from './date'
-import * as lapAndBoss from './lapAndBoss'
-import * as report from './report'
+import * as date from '../convex/date'
+import * as lapAndBoss from '../convex/lapAndBoss'
+import * as report from '../convex/report'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする

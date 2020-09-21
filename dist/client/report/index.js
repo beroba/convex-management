@@ -58,39 +58,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageReactionAdd = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var report = __importStar(require("./report/cancel"));
-var reservate = __importStar(require("./reservate/cancel"));
-var carryover = __importStar(require("./convex/carryover"));
-var playerID = __importStar(require("./etc/playerID"));
-exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
+exports.Convex = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var date = __importStar(require("../convex/date"));
+var situation = __importStar(require("../convex/situation"));
+var status = __importStar(require("./status"));
+exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var day;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
-                return [4, report.Cancel(react, user)];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
+                    return [2];
+                return [4, date.GetDay()];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, reservate.Already(react, user)];
+                day = _b.sent();
+                if (!day) {
+                    msg.reply('今日はクラバトの日じゃないわ');
+                    return [2, "It's not ClanBattle days"];
+                }
+                return [4, status.Update(msg)];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, carryover.Delete(react, user)];
-            case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = playerID.RoleGrant(react, user);
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
+                _b.sent();
+                situation.Report();
+                return [2, 'Update status'];
         }
     });
 }); };

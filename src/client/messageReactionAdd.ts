@@ -1,7 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as convex from './convex/cancel'
+import * as report from './report/cancel'
+import * as reservate from './reservate/cancel'
 import * as carryover from './convex/carryover'
 import * as playerID from './etc/playerID'
 
@@ -17,7 +18,11 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   let comment: Option<string>
 
   // 凸報告を取り消しを行う
-  comment = await convex.Cancel(react, user as Discord.User)
+  comment = await report.Cancel(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 凸予約を削除を行う
+  comment = await reservate.Already(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // 持ち越し状況の削除を行う

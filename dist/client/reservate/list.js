@@ -58,39 +58,85 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageReactionAdd = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var report = __importStar(require("./report/cancel"));
-var reservate = __importStar(require("./reservate/cancel"));
-var carryover = __importStar(require("./convex/carryover"));
-var playerID = __importStar(require("./etc/playerID"));
-exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
-                    return [2];
-                return [4, report.Cancel(react, user)];
+exports.AllOutput = exports.Output = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.Output = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+    var list, table, boss, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, readReservateList()];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, reservate.Already(react, user)];
+                list = _a.sent();
+                return [4, readBossTable()];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, carryover.Delete(react, user)];
-            case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = playerID.RoleGrant(react, user);
-                if (comment)
-                    return [2, console.log(comment)];
+                table = _a.sent();
+                boss = takeBossName(arg, table);
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send(boss + "\n" + '```\n' + (createLerevateList(arg, list) + "\n") + '```\n');
                 return [2];
         }
     });
 }); };
+exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var list, table, text, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, readReservateList()];
+            case 1:
+                list = _a.sent();
+                return [4, readBossTable()];
+            case 2:
+                table = _a.sent();
+                text = 'abcde'.split('').map(function (c) {
+                    var boss = takeBossName(c, table);
+                    return boss + "\n" + '```\n' + (createLerevateList(c, list) + "\n") + '```';
+                });
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send(text);
+                return [2];
+        }
+    });
+}); };
+var readReservateList = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.RESERVATE_CELLS)];
+            case 2:
+                cells = _a.sent();
+                return [2, util
+                        .PiecesEach(cells, 8)
+                        .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                        .filter(function (v) { return !v[0]; })];
+        }
+    });
+}); };
+var readBossTable = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 2:
+                cells = _a.sent();
+                return [2, util.PiecesEach(cells, 2).filter(function (v) { return !/^,+$/.test(v.toString()); })];
+        }
+    });
+}); };
+var takeBossName = function (num, table) {
+    return table.filter(function (v) { return v[0] === num.toLowerCase(); })[0][1];
+};
+var createLerevateList = function (num, list) {
+    var text = list
+        .filter(function (l) { return l[4] === num; })
+        .map(function (l) { return l[3] + " " + l[6] + " " + l[7]; })
+        .join('\n');
+    return text ? text : '予約者なし';
+};

@@ -5,6 +5,7 @@ import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 import * as date from '../convex/date'
+import * as list from '../reservate/list'
 
 /**
  * クラバト用のコマンド
@@ -21,12 +22,6 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
   if (!isRole) return
 
   switch (true) {
-    case /cb over/.test(command): {
-      const arg = command.replace('/cb over ', '')
-      simultConvexCalc(arg, msg)
-      return 'Simultaneous convex carryover calculation'
-    }
-
     case /cb boss next/.test(command): {
       moveForward(msg)
       return 'Advance to next lap and boss'
@@ -41,6 +36,18 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       const arg = command.replace('/cb boss ', '')
       changeBoss(arg, msg)
       return 'Change laps and boss'
+    }
+
+    case /cb rev/.test(command): {
+      const arg = command.replace('/cb rev ', '')
+      reservateList(arg, msg)
+      return 'Display convex reservation list'
+    }
+
+    case /cb over/.test(command): {
+      const arg = command.replace('/cb over ', '')
+      simultConvexCalc(arg, msg)
+      return 'Simultaneous convex carryover calculation'
     }
   }
 }
@@ -60,7 +67,7 @@ const simultConvexCalc = (arg: string, msg: Discord.Message) => {
    */
   const overCalc = (a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
 
-  const [HP, A, B] = arg.replace('　', ' ').split(' ').map(Number)
+  const [HP, A, B] = arg.replace(/　/g, ' ').split(' ').map(Number)
   msg.reply(`\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`ダメージの高い方を先に通すことね`)
 }
 
@@ -110,4 +117,25 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
 
   // 凸状況に報告
   situation.Report()
+}
+
+/**
+ * 凸予約一覧を表示する。
+ * 引数にボス番号がある場合、そのボスの予約一覧を表示する
+ * @param arg ボス番号
+ * @param msg DiscordからのMessage
+ */
+const reservateList = async (arg: string, msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
+  // 引数にボス番号があるか確認
+  if (/^(a|b|c|d|e)$/i.test(arg)) {
+    // ボス番号の凸予約一覧を表示
+    list.Output(arg)
+  } else {
+    // 凸予約一覧を全て表示
+    list.AllOutput()
+  }
 }

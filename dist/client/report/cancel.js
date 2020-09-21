@@ -62,9 +62,9 @@ exports.Cancel = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-var date = __importStar(require("./date"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
+var date = __importStar(require("../convex/date"));
+var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, day;

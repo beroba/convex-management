@@ -62,9 +62,9 @@ exports.GetCell = exports.GetMemberRow = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var date = __importStar(require("./date"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-var report = __importStar(require("./report"));
+var date = __importStar(require("../convex/date"));
+var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var report = __importStar(require("../convex/report"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, members, row, days, num_cell, over_cell, end_cell, hist_cell, end;
     return __generator(this, function (_a) {

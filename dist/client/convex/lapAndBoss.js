@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CurrentMessage = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
+exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
@@ -83,7 +83,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = __read(arg.replace('　', ' ').split(' '), 2), lap = _a[0], num = _a[1];
+                _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], num = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
                 if (!/[a-e]|[A-E]/.test(num))
@@ -160,7 +160,7 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, range, _a, lap, boss;
+    var infoSheet, range, _a, lap, boss, cells, num;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
@@ -170,18 +170,11 @@ exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, func
                 return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[1])];
             case 2:
                 _a = __read.apply(void 0, [_b.sent(), 2]), lap = _a[0], boss = _a[1];
-                return [2, { lap: lap, boss: boss }];
-        }
-    });
-}); };
-exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.GetCurrent()];
-            case 1:
-                state = _a.sent();
-                return [2, "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`"];
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 3:
+                cells = _b.sent();
+                num = util.PiecesEach(cells, 2).filter(function (v) { return v[1] === boss; })[0][0];
+                return [2, { lap: lap, boss: boss, num: num }];
         }
     });
 }); };
@@ -197,15 +190,16 @@ var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, 
     });
 }); };
 var progressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                _b = (_a = channel).send;
-                return [4, exports.CurrentMessage()];
+    var state, num, role, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.GetCurrent()];
             case 1:
-                _b.apply(_a, [_c.sent()]);
+                state = _a.sent();
+                num = state.num.charCodeAt(0) - 97;
+                role = const_settings_1["default"].BOSS_ROLE_ID[Number(num)];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send("<@&" + role + "> `" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`");
                 return [2];
         }
     });
