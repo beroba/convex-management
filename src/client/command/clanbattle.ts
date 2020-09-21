@@ -22,6 +22,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
   if (!isRole) return
 
   switch (true) {
+    case /cb boss now/.test(command): {
+      currentBossNow(msg)
+      return 'Show ckurrent boss'
+    }
+
     case /cb boss next/.test(command): {
       moveForward(msg)
       return 'Advance to next lap and boss'
@@ -50,6 +55,19 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Simultaneous convex carryover calculation'
     }
   }
+}
+
+/**
+ * #進行に現在の周回数とボスを報告
+ * @param msg DiscordからのMessage
+ */
+const currentBossNow = async (msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
+  // #進行に現在の周回数とボスを報告
+  lapAndBoss.ProgressReport()
 }
 
 /**

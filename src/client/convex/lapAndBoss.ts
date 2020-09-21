@@ -32,7 +32,7 @@ export const Update = async (arg: string): Promise<boolean> => {
   await spreadsheet.SetValue(num_cell, num)
 
   // 進行に現在のボスと周回数を報告
-  progressReport()
+  ProgressReport()
 
   return true
 }
@@ -54,7 +54,7 @@ export const Next = async () => {
   await spreadsheet.SetValue(num_cell, num)
 
   // 進行に現在のボスと周回数を報告
-  progressReport()
+  ProgressReport()
 }
 
 /**
@@ -74,7 +74,7 @@ export const Previous = async () => {
   await spreadsheet.SetValue(num_cell, num)
 
   // 進行に現在のボスと周回数を報告
-  progressReport()
+  ProgressReport()
 }
 
 /**
@@ -108,18 +108,17 @@ const readBossName = async (infoSheet: any, num: string): Promise<string> => {
 }
 
 /**
- * 現在の周回数とボスを#進行に報告
+ * #進行に現在の周回数とボスを報告
  */
-const progressReport = async () => {
+export const ProgressReport = async () => {
   // 現在の周回数とボスを取得
   const state = await GetCurrent()
 
   // ボスのロールを取得
-  const num = state.num.charCodeAt(0) - 97
-  const role = Settings.BOSS_ROLE_ID[Number(num)]
+  const role = Settings.BOSS_ROLE_ID[state.num]
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`<@&${role}> \`${state.lap}\`周目の\`${state.boss}\``)
+  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
 }
 
 /**
