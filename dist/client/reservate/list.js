@@ -133,9 +133,9 @@ var readBossTable = function () { return __awaiter(void 0, void 0, void 0, funct
 var takeBossName = function (num, table) {
     return table.filter(function (v) { return v[0] === num.toLowerCase(); })[0][1];
 };
-var createLerevateList = function (arg, list) {
+var createLerevateList = function (num, list) {
     var text = list
-        .filter(function (l) { return l[4] === arg; })
+        .filter(function (l) { return l[4] === num; })
         .map(function (l) { return l[3] + " " + l[6] + " " + l[7]; })
         .join('\n');
     return text ? text : '予約者なし';
