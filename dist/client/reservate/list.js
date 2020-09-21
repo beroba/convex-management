@@ -62,31 +62,41 @@ exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.Output = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var list, table, boss;
+exports.Output = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+    var list, table, boss, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                list = readReservateList();
-                list;
-                return [4, readBossTable()];
+            case 0: return [4, readReservateList()];
             case 1:
+                list = _a.sent();
+                return [4, readBossTable()];
+            case 2:
                 table = _a.sent();
                 boss = takeBossName(arg, table);
-                boss;
-                arg;
-                msg;
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send(boss + "\n" + '```\n' + (createLerevateList(arg, list) + "\n") + '```\n');
                 return [2];
         }
     });
 }); };
-exports.AllOutput = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var list;
+exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var list, table, text, channel;
     return __generator(this, function (_a) {
-        list = readReservateList();
-        list;
-        msg;
-        return [2];
+        switch (_a.label) {
+            case 0: return [4, readReservateList()];
+            case 1:
+                list = _a.sent();
+                return [4, readBossTable()];
+            case 2:
+                table = _a.sent();
+                text = 'abcde'.split('').map(function (c) {
+                    var boss = takeBossName(c, table);
+                    return boss + "\n" + '```\n' + (createLerevateList(c, list) + "\n") + '```';
+                });
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send(text);
+                return [2];
+        }
     });
 }); };
 var readReservateList = function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -122,4 +132,11 @@ var readBossTable = function () { return __awaiter(void 0, void 0, void 0, funct
 }); };
 var takeBossName = function (num, table) {
     return table.filter(function (v) { return v[0] === num.toLowerCase(); })[0][1];
+};
+var createLerevateList = function (arg, list) {
+    var text = list
+        .filter(function (l) { return l[4] === arg; })
+        .map(function (l) { return l[3] + " " + l[6] + " " + l[7]; })
+        .join('\n');
+    return text ? text : '予約者なし';
 };

@@ -181,11 +181,11 @@ var reservateList = function (arg, msg) { return __awaiter(void 0, void 0, void 
                 day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                if (/a|b|c|d|e/i.test(arg)) {
-                    list.Output(arg, msg);
+                if (/^(a|b|c|d|e)$/i.test(arg)) {
+                    list.Output(arg);
                 }
                 else {
-                    list.AllOutput(msg);
+                    list.AllOutput();
                 }
                 return [2];
         }

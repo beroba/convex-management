@@ -130,11 +130,12 @@ const reservateList = async (arg: string, msg: Discord.Message) => {
   const day = await date.GetDay()
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
-  if (/a|b|c|d|e/i.test(arg)) {
+  // 引数にボス番号があるか確認
+  if (/^(a|b|c|d|e)$/i.test(arg)) {
     // ボス番号の凸予約一覧を表示
-    list.Output(arg, msg)
+    list.Output(arg)
   } else {
     // 凸予約一覧を全て表示
-    list.AllOutput(msg)
+    list.AllOutput()
   }
 }
