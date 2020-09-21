@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var date = __importStar(require("../convex/date"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
+    var cal_1, day;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -72,12 +72,14 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
-                if (!formatConfirm(msg)) {
-                    msg.reply('書式が違うから予約できないわ');
-                    return [2, 'The format of the boss number is different'];
-                }
-                return [4, date.GetDay()];
+                if (!!formatConfirm(msg)) return [3, 2];
+                return [4, msg.reply('書式が違うから予約できないわ')];
             case 1:
+                cal_1 = _b.sent();
+                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 10000);
+                return [2, 'The format of the boss number is different'];
+            case 2: return [4, date.GetDay()];
+            case 3:
                 day = _b.sent();
                 if (!day) {
                     msg.reply('今日はクラバトの日じゃないわ');
