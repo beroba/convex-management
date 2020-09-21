@@ -79,5 +79,7 @@ const createLerevateList = (num: string, list: string[][]): string => {
     .filter(l => l[4] === num)
     .map(l => `${l[3]} ${l[6]} ${l[7]}`)
     .join('\n')
+
+  // 予約者が居ない場合は予約書なしと返す
   return text ? text : '予約者なし'
 }
