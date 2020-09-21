@@ -89,6 +89,10 @@ exports.ClanBattle = function (command, msg) {
     if (!isRole)
         return;
     switch (true) {
+        case /cb boss now/.test(command): {
+            currentBossNow(msg);
+            return 'Show ckurrent boss';
+        }
         case /cb boss next/.test(command): {
             moveForward(msg);
             return 'Advance to next lap and boss';
@@ -114,6 +118,20 @@ exports.ClanBattle = function (command, msg) {
         }
     }
 };
+var currentBossNow = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var day;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _a.sent();
+                if (!day)
+                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
+                lapAndBoss.ProgressReport();
+                return [2];
+        }
+    });
+}); };
 var simultConvexCalc = function (arg, msg) {
     var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
     var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];

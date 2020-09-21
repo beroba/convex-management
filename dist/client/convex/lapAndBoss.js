@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
+exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
@@ -104,7 +104,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                progressReport();
+                exports.ProgressReport();
                 return [2, true];
         }
     });
@@ -129,7 +129,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                progressReport();
+                exports.ProgressReport();
                 return [2];
         }
     });
@@ -154,7 +154,7 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                progressReport();
+                exports.ProgressReport();
                 return [2];
         }
     });
@@ -189,17 +189,16 @@ var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
-var progressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, num, role, channel;
+exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var state, role, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.GetCurrent()];
             case 1:
                 state = _a.sent();
-                num = state.num.charCodeAt(0) - 97;
-                role = const_settings_1["default"].BOSS_ROLE_ID[Number(num)];
+                role = const_settings_1["default"].BOSS_ROLE_ID[state.num];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send("<@&" + role + "> `" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`");
+                channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "`");
                 return [2];
         }
     });
