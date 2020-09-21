@@ -63,13 +63,13 @@ const messageDelete = async (cells: string[], msg: Discord.Message) => {
  * @param cells 凸予約の一覧
  * @param msg DiscordからのMessage
  */
-const convexComplete = async (sheet: any, cells: string[], mes: Discord.Message) => {
+const convexComplete = async (sheet: any, cells: string[], msg: Discord.Message) => {
   // 行を取得
   const row =
     util
       .PiecesEach(cells, 8)
       .map(v => v[1])
-      .indexOf(mes.id) + 3
+      .indexOf(msg.id) + 3
 
   // 値の更新
   const cell = await sheet.getCell(`A${row}`)
@@ -86,5 +86,5 @@ const deleteBossRole = (cells: string[], msg: Discord.Message) => {
   const num = util.PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][4]
 
   // ボス番号のロールを付与
-  msg.member?.roles.remove(Settings.BOSS_ROLE_ID[Number(num) - 1])
+  msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
 }

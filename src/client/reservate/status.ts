@@ -29,13 +29,13 @@ export const Update = async (msg: Discord.Message) => {
   res.cal = (await msg.reply(`${res.boss}を予約したわよ！`)).id
 
   // 凸予約シートの値を更新
-  await setReservate(res)
+  await fetchReservate(res)
 
   // 完了の絵文字をつける
   msg.react(Settings.EMOJI_ID.KANRYOU)
 
   // ボス番号のロールを付与
-  msg.member?.roles.add(Settings.BOSS_ROLE_ID[Number(res.num) - 1])
+  msg.member?.roles.add(Settings.BOSS_ROLE_ID[res.num])
 }
 
 /**
@@ -46,11 +46,15 @@ export const Update = async (msg: Discord.Message) => {
 const reservateObject = (msg: Discord.Message): Reservate => {
   const arr = msg.content.replace(/　/g, ' ').split(' ')
   const member = util.GetUserName(msg.member)
+
+  // ボス番号を数字から英語に変換
+  const num = String.fromCharCode('a'.charCodeAt(0) + Number(arr[0]) - 1)
+
   return {
     person: msg.id,
     cal: '',
     member: member,
-    num: arr[0],
+    num: num,
     boss: '',
     damage: arr[1],
     remarks: arr[2],
@@ -67,18 +71,15 @@ const GetBossName = async (num: string): Promise<string> => {
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
-  // ボス番号を数字から英語に変換
-  const n = String.fromCharCode('A'.charCodeAt(0) + Number(num) - 1)
-
   // ボス名を返す
-  return util.PiecesEach(cells, 2).filter(v => v[0] === n.toLowerCase())[0][1]
+  return util.PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
 }
 
 /**
  * 凸予約シートの中身を更新する
  * @param res 凸予約のオブジェクト
  */
-const setReservate = async (res: Reservate) => {
+const fetchReservate = async (res: Reservate) => {
   // 凸予約のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.RESERVATE_SHEET.SHEET_NAME)
   const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.RESERVATE_SHEET.PERSON_CELLS)).filter(v => v)

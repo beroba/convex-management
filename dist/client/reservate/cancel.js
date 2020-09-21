@@ -107,7 +107,7 @@ var messageDelete = function (cells, msg) { return __awaiter(void 0, void 0, voi
         }
     });
 }); };
-var convexComplete = function (sheet, cells, mes) { return __awaiter(void 0, void 0, void 0, function () {
+var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var row, cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -115,7 +115,7 @@ var convexComplete = function (sheet, cells, mes) { return __awaiter(void 0, voi
                 row = util
                     .PiecesEach(cells, 8)
                     .map(function (v) { return v[1]; })
-                    .indexOf(mes.id) + 3;
+                    .indexOf(msg.id) + 3;
                 return [4, sheet.getCell("A" + row)];
             case 1:
                 cell = _a.sent();
@@ -127,5 +127,5 @@ var convexComplete = function (sheet, cells, mes) { return __awaiter(void 0, voi
 var deleteBossRole = function (cells, msg) {
     var _a;
     var num = util.PiecesEach(cells, 8).filter(function (v) { return v[1] === msg.id; })[0][4];
-    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[Number(num) - 1]);
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
 };

@@ -58,49 +58,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Update = void 0;
+exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var res, _a, _b;
-    var _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+exports.Output = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var list, table, boss;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                res = reservateObject(msg);
-                _a = res;
-                return [4, GetBossName(res.num)];
+                list = readReservateList();
+                list;
+                return [4, readBossTable()];
             case 1:
-                _a.boss = _d.sent();
-                _b = res;
-                return [4, msg.reply(res.boss + "\u3092\u4E88\u7D04\u3057\u305F\u308F\u3088\uFF01")];
-            case 2:
-                _b.cal = (_d.sent()).id;
-                return [4, fetchReservate(res)];
-            case 3:
-                _d.sent();
-                msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
-                (_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.add(const_settings_1["default"].BOSS_ROLE_ID[res.num]);
+                table = _a.sent();
+                boss = takeBossName(arg, table);
+                boss;
+                arg;
+                msg;
                 return [2];
         }
     });
 }); };
-var reservateObject = function (msg) {
-    var arr = msg.content.replace(/　/g, ' ').split(' ');
-    var member = util.GetUserName(msg.member);
-    var num = String.fromCharCode('a'.charCodeAt(0) + Number(arr[0]) - 1);
-    return {
-        person: msg.id,
-        cal: '',
-        member: member,
-        num: num,
-        boss: '',
-        damage: arr[1],
-        remarks: arr[2]
-    };
-};
-var GetBossName = function (num) { return __awaiter(void 0, void 0, void 0, function () {
+exports.AllOutput = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var list;
+    return __generator(this, function (_a) {
+        list = readReservateList();
+        list;
+        msg;
+        return [2];
+    });
+}); };
+var readReservateList = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.RESERVATE_CELLS)];
+            case 2:
+                cells = _a.sent();
+                return [2, util
+                        .PiecesEach(cells, 8)
+                        .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                        .filter(function (v) { return !v[0]; })];
+        }
+    });
+}); };
+var readBossTable = function () { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -110,35 +116,10 @@ var GetBossName = function (num) { return __awaiter(void 0, void 0, void 0, func
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+                return [2, util.PiecesEach(cells, 2).filter(function (v) { return !/^,+$/.test(v.toString()); })];
         }
     });
 }); };
-var fetchReservate = function (res) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].RESERVATE_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.PERSON_CELLS)];
-            case 2:
-                cells = (_a.sent()).filter(function (v) { return v; });
-                Object.values(res).forEach(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var col, cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                col = String.fromCharCode('A'.charCodeAt(0) + 1 + i);
-                                return [4, sheet.getCell("" + col + (cells.length + 3))];
-                            case 1:
-                                cell = _a.sent();
-                                cell.setValue(v);
-                                return [2];
-                        }
-                    });
-                }); });
-                return [2];
-        }
-    });
-}); };
+var takeBossName = function (num, table) {
+    return table.filter(function (v) { return v[0] === num.toLowerCase(); })[0][1];
+};

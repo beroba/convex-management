@@ -5,6 +5,7 @@ import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 import * as date from '../convex/date'
+import * as list from '../reservate/list'
 
 /**
  * クラバト用のコマンド
@@ -41,6 +42,12 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       const arg = command.replace('/cb boss ', '')
       changeBoss(arg, msg)
       return 'Change laps and boss'
+    }
+
+    case /cb rev/.test(command): {
+      const arg = command.replace('/cb rev ', '')
+      reservateList(arg, msg)
+      return 'Display convex reservation list'
     }
   }
 }
@@ -110,4 +117,24 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
 
   // 凸状況に報告
   situation.Report()
+}
+
+/**
+ * 凸予約一覧を表示する。
+ * 引数にボス番号がある場合、そのボスの予約一覧を表示する
+ * @param arg ボス番号
+ * @param msg DiscordからのMessage
+ */
+const reservateList = async (arg: string, msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
+  if (/a|b|c|d|e/i.test(arg)) {
+    // ボス番号の凸予約一覧を表示
+    list.Output(arg, msg)
+  } else {
+    // 凸予約一覧を全て表示
+    list.AllOutput(msg)
+  }
 }
