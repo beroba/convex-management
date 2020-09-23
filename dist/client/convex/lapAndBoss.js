@@ -78,6 +78,7 @@ exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = 
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
+var list = __importStar(require("../reservate/list"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, num, infoSheet, boss, _b, lap_cell, boss_cell, num_cell;
     return __generator(this, function (_c) {
@@ -199,6 +200,7 @@ exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, 
                 role = const_settings_1["default"].BOSS_ROLE_ID[state.num];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "`");
+                list.RevOnly(state.num);
                 return [2];
         }
     });

@@ -30,6 +30,17 @@ export const AllOutput = async () => {
 }
 
 /**
+ * 引数で渡されたボス番号の凸予約一覧を出力
+ * @param arg ボス番号
+ */
+export const RevOnly = async (arg: string) => {
+  const list = await readReservateList()
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+  channel.send('```\n' + `${createLerevateList(arg, list)}\n` + '```\n')
+}
+
+/**
  * 完了していない凸予約一覧を取得
  * @return 完了していない凸予約一覧
  */
