@@ -62,7 +62,7 @@ exports.RevOnly = exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.Output = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Output = function (num) { return __awaiter(void 0, void 0, void 0, function () {
     var list, table, boss, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -72,9 +72,9 @@ exports.Output = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, readBossTable()];
             case 2:
                 table = _a.sent();
-                boss = takeBossName(arg, table);
+                boss = takeBossName(num, table);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(boss + "\n" + '```\n' + (createLerevateList(arg, list) + "\n") + '```\n');
+                channel.send(boss + "\n" + '```\n' + (createLerevateList(num, list) + "\n") + '```');
                 return [2];
         }
     });
@@ -99,7 +99,7 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-exports.RevOnly = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.RevOnly = function (num) { return __awaiter(void 0, void 0, void 0, function () {
     var list, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -107,7 +107,7 @@ exports.RevOnly = function (arg) { return __awaiter(void 0, void 0, void 0, func
             case 1:
                 list = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send('```\n' + (createLerevateList(arg, list) + "\n") + '```\n');
+                channel.send('```\n' + (createLerevateList(num, list) + "\n") + '```');
                 return [2];
         }
     });
