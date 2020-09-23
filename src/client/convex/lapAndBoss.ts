@@ -1,6 +1,7 @@
 import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
+import * as list from '../reservate/list'
 
 type Current = {
   lap: string
@@ -119,6 +120,7 @@ export const ProgressReport = async () => {
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
+  list.RevOnly(state.num)
 }
 
 /**

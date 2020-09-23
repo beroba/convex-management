@@ -4,15 +4,15 @@ import * as spreadsheet from '../../util/spreadsheet'
 
 /**
  * 引数で渡されたボス番号の凸予約一覧を出力
- * @param arg ボス番号
+ * @param num ボス番号
  */
-export const Output = async (arg: string) => {
+export const Output = async (num: string) => {
   const list = await readReservateList()
   const table = await readBossTable()
-  const boss = takeBossName(arg, table)
+  const boss = takeBossName(num, table)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`${boss}\n` + '```\n' + `${createLerevateList(arg, list)}\n` + '```\n')
+  channel.send(`${boss}\n` + '```\n' + `${createLerevateList(num, list)}\n` + '```')
 }
 
 /**
@@ -27,6 +27,18 @@ export const AllOutput = async () => {
   })
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(text)
+}
+
+/**
+ * 引数で渡されたボス番号の凸予約一覧を出力。
+ * ボス名は表示しない
+ * @param num ボス番号
+ */
+export const RevOnly = async (num: string) => {
+  const list = await readReservateList()
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+  channel.send('```\n' + `${createLerevateList(num, list)}\n` + '```')
 }
 
 /**
