@@ -6,32 +6,33 @@ import * as status from './status'
 const moji = require('moji')
 
 /**
- * 凸予約を行う
+ * 凸予定を行う
  * @param msg DiscordからのMessage
- * @return 凸予約の実行結果
+ * @return 凸予定の実行結果
  */
 export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージはコマンド実行しない
   if (msg.member?.user.bot) return
 
-  // #凸予約でなければ終了
+  // #凸予定でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
 
   // ボス番号が書式通りか確認する
   if (!formatConfirm(msg)) {
-    const cal = await msg.reply('書式が違うから予約できないわ')
-    setTimeout(() => (msg.delete(), cal.delete()), 30000)
+    const cal = await msg.reply('書式が違うから予定できないわ')
+    setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return 'The format of the boss number is different'
   }
 
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) {
-    msg.reply('今日はクラバトの日じゃないわ')
+    const cal = await msg.reply('今日はクラバトの日じゃないわ')
+    setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return "It's not ClanBattle days"
   }
 
-  // 凸予約を更新
+  // 凸予定を更新
   status.Update(msg)
 
   return 'Make a convex reservation'

@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import {Command} from './command'
 import * as report from './report'
-import * as reservate from './reservate'
+import * as plan from './plan'
 import * as carryover from './convex/carryover'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
@@ -25,8 +25,8 @@ export const Message = async (msg: Discord.Message) => {
   comment = await report.Convex(msg)
   if (comment) return console.log(comment)
 
-  // 凸予約の処理を行う
-  comment = await reservate.Convex(msg)
+  // 凸予定の処理を行う
+  comment = await plan.Convex(msg)
   if (comment) return console.log(comment)
 
   // 持ち越し状況に絵文字をつける

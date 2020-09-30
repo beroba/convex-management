@@ -13,7 +13,7 @@ CHANNEL_ID:
   INTRODUCTION: '714358491707473950'
   # 凸報告のチャンネル
   CONVEX_REPORT: '735190970760429648'
-  # 凸予約のチャンネル
+  # 凸予定のチャンネル
   CONVEX_RESERVATE: '720767289070321764'
   # 凸状況のチャンネル
   CONVEX_SITUATION: '735186004238925824'
@@ -77,9 +77,9 @@ COMMAND_CHANNEL:
   CLAN_BATTLE:
     - 進行
     - bot-test
-  # 凸予約コマンドが入力できるチャンネル
+  # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
-    - 凸予約
+    - 凸予定
     - bot-test
   # 管理コマンドが入力できるチャンネル
   MANAGEMENT:
@@ -106,11 +106,11 @@ MANAGEMENT_SHEET:
   SHEET_NAME: 凸管理
   MEMBER_CELLS: A3:A32
 
-# 凸予約のシート情報
-RESERVATE_SHEET:
-  SHEET_NAME: 凸予約
+# 凸予定のシート情報
+PLAN_SHEET:
+  SHEET_NAME: 凸予定
   PERSON_CELLS: B3:B102
-  RESERVATE_CELLS: A3:H302
+  PLAN_CELLS: A3:H302
 
 # 情報のシート情報
 INFORMATION_SHEET:

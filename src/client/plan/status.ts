@@ -5,8 +5,8 @@ import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 const moji = require('moji')
 
-// 凸予約の形式
-type Reservate = {
+// 凸予定の形式
+type Plan = {
   person: string
   cal: string
   member: string
@@ -17,21 +17,21 @@ type Reservate = {
 }
 
 /**
- * 凸予約を更新する
+ * 凸予定を更新する
  * @param msg DiscordからのMessage
  */
 export const Update = async (msg: Discord.Message) => {
-  // 凸予約のオブジェクトを作成
-  const res = reservateObject(msg)
+  // 凸予定のオブジェクトを作成
+  const res = planObject(msg)
 
   // ボス番号からボス名を取得
   res.boss = await GetBossName(res.num)
 
-  // 予約したボスを報告し、報告したキャルのメッセージIDを取得
-  res.cal = (await msg.reply(`${res.boss}を予約したわよ！`)).id
+  // 予定したボスを報告し、報告したキャルのメッセージIDを取得
+  res.cal = (await msg.reply(`${res.boss}を予定したわよ！`)).id
 
-  // 凸予約シートの値を更新
-  await fetchReservate(res)
+  // 凸予定シートの値を更新
+  await fetchPlan(res)
 
   // 完了の絵文字をつける
   msg.react(Settings.EMOJI_ID.KANRYOU)
@@ -41,11 +41,11 @@ export const Update = async (msg: Discord.Message) => {
 }
 
 /**
- * 凸予約のオブジェクトを作成する
+ * 凸予定のオブジェクトを作成する
  * @param msg DiscordからのMessage
- * @return 凸予約のオブジェクト
+ * @return 凸予定のオブジェクト
  */
-const reservateObject = (msg: Discord.Message): Reservate => {
+const planObject = (msg: Discord.Message): Plan => {
   // prettier-ignore
   const arr = moji(msg.content)
     .convert('ZE', 'HE')
@@ -83,13 +83,13 @@ const GetBossName = async (num: string): Promise<string> => {
 }
 
 /**
- * 凸予約シートの中身を更新する
- * @param res 凸予約のオブジェクト
+ * 凸予定シートの中身を更新する
+ * @param res 凸予定のオブジェクト
  */
-const fetchReservate = async (res: Reservate) => {
-  // 凸予約のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.RESERVATE_SHEET.SHEET_NAME)
-  const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.RESERVATE_SHEET.PERSON_CELLS)).filter(v => v)
+const fetchPlan = async (res: Plan) => {
+  // 凸予定のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
+  const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PERSON_CELLS)).filter(v => v)
 
   // スプレッドシートを更新
   Object.values(res).forEach(async (v, i) => {

@@ -80,7 +80,7 @@ var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 var date = __importStar(require("../convex/date"));
-var list = __importStar(require("../reservate/list"));
+var list = __importStar(require("../plan/list"));
 exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
         return;
@@ -102,10 +102,10 @@ exports.ClanBattle = function (command, msg) {
             changeBoss(arg, msg);
             return 'Change laps and boss';
         }
-        case /cb rev/.test(command): {
-            var arg = command.replace('/cb rev ', '');
-            reservateList(arg, msg);
-            return 'Display convex reservation list';
+        case /cb plan/.test(command): {
+            var arg = command.replace('/cb plan ', '');
+            planList(arg, msg);
+            return 'Display convex plan list';
         }
         case /cb over/.test(command): {
             var arg = command.replace('/cb over ', '');
@@ -186,7 +186,7 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var reservateList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var planList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -195,7 +195,7 @@ var reservateList = function (arg, msg) { return __awaiter(void 0, void 0, void 
                 day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                if (/^(a|b|c|d|e)$/i.test(arg)) {
+                if (/^[a-e]$/i.test(arg)) {
                     list.Output(arg);
                 }
                 else {
