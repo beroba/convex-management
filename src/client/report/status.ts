@@ -6,6 +6,7 @@ import * as spreadsheet from '../../util/spreadsheet'
 import * as date from '../convex/date'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as report from '../convex/report'
+const moji = require('moji')
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
@@ -33,7 +34,8 @@ export const Update = async (msg: Discord.Message) => {
   saveHistory(num_cell, over_cell, hist_cell)
 
   // 凸数と持ち越しの状態を更新する
-  statusUpdate(num_cell, over_cell, msg.content)
+  const content = moji(msg.content).convert('ZE', 'HE').toString()
+  statusUpdate(num_cell, over_cell, content)
 
   // 凸報告に取消の絵文字をつける
   msg.react(Settings.EMOJI_ID.TORIKESHI)
@@ -95,7 +97,7 @@ const statusUpdate = (num_cell: any, over_cell: any, content: string) => {
   const over = over_cell.getValue()
 
   // ボスを倒した場合はtrue、倒していない場合はfalse
-  if (/^(k|ｋ)/i.test(content)) {
+  if (/^k/i.test(content)) {
     // 次のボスに進める
     lapAndBoss.Next()
 

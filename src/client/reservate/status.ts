@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
+const moji = require('moji')
 
 // 凸予約の形式
 type Reservate = {
@@ -44,7 +45,12 @@ export const Update = async (msg: Discord.Message) => {
  * @return 凸予約のオブジェクト
  */
 const reservateObject = (msg: Discord.Message): Reservate => {
-  const arr = msg.content.replace(/　/g, ' ').split(' ')
+  // prettier-ignore
+  const arr = moji(msg.content)
+    .convert('ZE', 'HE')
+    .convert('ZS', 'HS')
+    .toString()
+    .split(' ')
   const member = util.GetUserName(msg.member)
 
   // ボス番号を数字から英語に変換

@@ -7,6 +7,7 @@ import * as date from '../convex/date'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 import * as status from './status'
+const moji = require('moji')
 
 /**
  * 凸報告を取り消す
@@ -128,8 +129,9 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
  * @param react DiscordからのReaction
  */
 const killConfirm = async (react: Discord.MessageReaction) => {
+  const content = moji(react.message.content).convert('ZE', 'HE').toString()
   // ボスを倒していなければ終了
-  if (!/^(k|ｋ)/i.test(react.message.content)) return
+  if (!/^k/i.test(content)) return
 
   // 前のボスに戻す
   lapAndBoss.Previous()

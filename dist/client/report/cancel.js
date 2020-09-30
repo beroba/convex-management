@@ -66,6 +66,7 @@ var date = __importStar(require("../convex/date"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
+var moji = require('moji');
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, day;
     return __generator(this, function (_a) {
@@ -151,8 +152,10 @@ var feedback = function (num_cell, over_cell, user) {
     channel.send("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n<@!" + user.id + ">, " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
 };
 var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
+    var content;
     return __generator(this, function (_a) {
-        if (!/^(k|ｋ)/i.test(react.message.content))
+        content = moji(react.message.content).convert('ZE', 'HE').toString();
+        if (!/^k/i.test(content))
             return [2];
         lapAndBoss.Previous();
         return [2];

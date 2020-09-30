@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as date from '../convex/date'
 import * as status from './status'
+const moji = require('moji')
 
 /**
  * 凸予約を行う
@@ -42,6 +43,11 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  * @return 真偽値
  */
 const formatConfirm = (msg: Discord.Message): boolean => {
-  const arr = msg.content.replace(/　/g, ' ').split(' ')
-  return /[1-5]|[１-５]/.test(arr[0])
+  // prettier-ignore
+  const num = moji(msg.content)
+    .convert('ZE', 'HE')
+    .convert('ZS', 'HS')
+    .toString()
+    .split(' ')[0]
+  return /[1-5]/.test(num)
 }

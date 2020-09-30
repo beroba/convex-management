@@ -62,6 +62,7 @@ exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var moji = require('moji');
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var res, _a, _b;
     var _c;
@@ -87,7 +88,11 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var reservateObject = function (msg) {
-    var arr = msg.content.replace(/　/g, ' ').split(' ');
+    var arr = moji(msg.content)
+        .convert('ZE', 'HE')
+        .convert('ZS', 'HS')
+        .toString()
+        .split(' ');
     var member = util.GetUserName(msg.member);
     var num = String.fromCharCode('a'.charCodeAt(0) + Number(arr[0]) - 1);
     return {
