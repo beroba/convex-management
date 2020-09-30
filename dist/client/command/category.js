@@ -164,11 +164,13 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
                 cells = _g.sent();
                 _a = __read(pieces_each_1["default"](cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
                 return [2, [
-                        '検証総合', '凸ルート案', '編成質問・相談',
-                        a + "\u7DE8\u6210", b + "\u7DE8\u6210",
-                        c + "\u7DE8\u6210", d + "\u7DE8\u6210",
-                        e + "\u7DE8\u6210",
-                        '持ち越し編成',
+                        '検証総合', '凸ルート案', '編成・tl質問',
+                        "" + a, a + "-\u30AA\u30FC\u30C8",
+                        "" + b, b + "-\u30AA\u30FC\u30C8",
+                        "" + c, c + "-\u30AA\u30FC\u30C8",
+                        "" + d, d + "-\u30AA\u30FC\u30C8",
+                        "" + e, e + "-\u30AA\u30FC\u30C8",
+                        '持ち越し用',
                     ]];
         }
     });
