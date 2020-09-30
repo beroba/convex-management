@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 const moji = require('moji')
@@ -78,7 +79,7 @@ const GetBossName = async (num: string): Promise<string> => {
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // ボス名を返す
-  return util.PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
+  return PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
 }
 
 /**

@@ -1,4 +1,5 @@
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
@@ -51,8 +52,7 @@ const readReservateList = async (): Promise<string[][]> => {
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.RESERVATE_SHEET.RESERVATE_CELLS)
 
   // 空の値と完了済みの値を省いて返す
-  return util
-    .PiecesEach(cells, 8)
+  return PiecesEach(cells, 8)
     .filter(v => !/^,+$/.test(v.toString()))
     .filter(v => !v[0])
 }
@@ -67,7 +67,7 @@ const readBossTable = async (): Promise<string[][]> => {
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // 空の値を省いて返す
-  return util.PiecesEach(cells, 2).filter(v => !/^,+$/.test(v.toString()))
+  return PiecesEach(cells, 2).filter(v => !/^,+$/.test(v.toString()))
 }
 
 /**

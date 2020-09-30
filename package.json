@@ -26,6 +26,7 @@
     "google-spreadsheet-as-promised": "^0.2.12",
     "moji": "^0.5.1",
     "node-cron": "^2.0.3",
+    "pieces-each": "^1.0.0",
     "throw-env": "^1.0.1",
     "type-of-option": "^1.0.1",
     "typescript": "^3.9.5"

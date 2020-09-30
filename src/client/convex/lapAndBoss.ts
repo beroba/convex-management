@@ -1,4 +1,5 @@
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 import * as list from '../reservate/list'
@@ -20,7 +21,7 @@ export const Update = async (arg: string): Promise<boolean> => {
 
   // 書式が違う場合は終了
   if (!/\d/.test(lap)) return false
-  if (!/[a-e]|[A-E]/.test(num)) return false
+  if (!/[a-e]/i.test(num)) return false
 
   // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
@@ -92,7 +93,7 @@ export const GetCurrent = async (): Promise<Current> => {
 
   // ボス番号の取得
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-  const num = util.PiecesEach(cells, 2).filter(v => v[1] === boss)[0][0]
+  const num = PiecesEach(cells, 2).filter(v => v[1] === boss)[0][0]
 
   return {lap: lap, boss: boss, num: num}
 }
@@ -105,7 +106,7 @@ export const GetCurrent = async (): Promise<Current> => {
  */
 const readBossName = async (infoSheet: any, num: string): Promise<string> => {
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-  return util.PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
+  return PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
 }
 
 /**

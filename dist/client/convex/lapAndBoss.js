@@ -76,6 +76,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 var list = __importStar(require("../reservate/list"));
@@ -87,7 +88,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], num = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
-                if (!/[a-e]|[A-E]/.test(num))
+                if (!/[a-e]/i.test(num))
                     return [2, false];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
@@ -174,7 +175,7 @@ exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, func
                 return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 3:
                 cells = _b.sent();
-                num = util.PiecesEach(cells, 2).filter(function (v) { return v[1] === boss; })[0][0];
+                num = pieces_each_1["default"](cells, 2).filter(function (v) { return v[1] === boss; })[0][0];
                 return [2, { lap: lap, boss: boss, num: num }];
         }
     });
@@ -186,7 +187,7 @@ var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, 
             case 0: return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 1:
                 cells = _a.sent();
-                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
         }
     });
 }); };

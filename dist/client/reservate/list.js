@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.RevOnly = exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Output = function (num) { return __awaiter(void 0, void 0, void 0, function () {
@@ -122,8 +123,7 @@ var readReservateList = function () { return __awaiter(void 0, void 0, void 0, f
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].RESERVATE_SHEET.RESERVATE_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [2, util
-                        .PiecesEach(cells, 8)
+                return [2, pieces_each_1["default"](cells, 8)
                         .filter(function (v) { return !/^,+$/.test(v.toString()); })
                         .filter(function (v) { return !v[0]; })];
         }
@@ -139,7 +139,7 @@ var readBossTable = function () { return __awaiter(void 0, void 0, void 0, funct
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [2, util.PiecesEach(cells, 2).filter(function (v) { return !/^,+$/.test(v.toString()); })];
+                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return !/^,+$/.test(v.toString()); })];
         }
     });
 }); };

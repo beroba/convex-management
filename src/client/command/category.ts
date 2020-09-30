@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
@@ -83,7 +83,7 @@ const channelNameList = async (): Promise<string[]> => {
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // ボスの名前を取得
-  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = util.PiecesEach(cells, 2).map(v => v[1])
+  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = PiecesEach(cells, 2).map(v => v[1])
 
   // prettier-ignore
   return [

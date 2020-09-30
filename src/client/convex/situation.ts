@@ -1,4 +1,5 @@
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
@@ -18,8 +19,7 @@ export const Report = async () => {
   const members: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
 
   // 1つにマージする
-  const list: (string | number)[][] = util
-    .PiecesEach(status, 2)
+  const list: (string | number)[][] = PiecesEach(status, 2)
     .map(v => v.map(Number))
     .map((v, i) => [members[i], ...v])
     .filter(v => v[0] !== '')
