@@ -102,10 +102,10 @@ exports.ClanBattle = function (command, msg) {
             changeBoss(arg, msg);
             return 'Change laps and boss';
         }
-        case /cb rev/.test(command): {
-            var arg = command.replace('/cb rev ', '');
-            reservateList(arg, msg);
-            return 'Display convex reservation list';
+        case /cb plan/.test(command): {
+            var arg = command.replace('/cb plan ', '');
+            planList(arg, msg);
+            return 'Display convex plan list';
         }
         case /cb over/.test(command): {
             var arg = command.replace('/cb over ', '');
@@ -186,7 +186,7 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var reservateList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var planList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     return __generator(this, function (_a) {
         switch (_a.label) {
