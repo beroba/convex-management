@@ -20,14 +20,15 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // ボス番号が書式通りか確認する
   if (!formatConfirm(msg)) {
     const cal = await msg.reply('書式が違うから予定できないわ')
-    setTimeout(() => (msg.delete(), cal.delete()), 30000)
+    setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return 'The format of the boss number is different'
   }
 
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) {
-    msg.reply('今日はクラバトの日じゃないわ')
+    const cal = await msg.reply('今日はクラバトの日じゃないわ')
+    setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return "It's not ClanBattle days"
   }
 

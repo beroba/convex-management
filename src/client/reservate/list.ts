@@ -8,23 +8,23 @@ import * as spreadsheet from '../../util/spreadsheet'
  * @param num ボス番号
  */
 export const Output = async (num: string) => {
-  const list = await readReservateList()
+  const list = await readPlanList()
   const table = await readBossTable()
   const boss = takeBossName(num, table)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`${boss}\n` + '```\n' + `${createLerevateList(num, list)}\n` + '```')
+  channel.send(`${boss}\n` + '```\n' + `${createPlanList(num, list)}\n` + '```')
 }
 
 /**
  * 全凸予定一覧を出力
  */
 export const AllOutput = async () => {
-  const list = await readReservateList()
+  const list = await readPlanList()
   const table = await readBossTable()
   const text = 'abcde'.split('').map(c => {
     const boss = takeBossName(c, table)
-    return `${boss}\n` + '```\n' + `${createLerevateList(c, list)}\n` + '```'
+    return `${boss}\n` + '```\n' + `${createPlanList(c, list)}\n` + '```'
   })
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(text)
@@ -36,17 +36,17 @@ export const AllOutput = async () => {
  * @param num ボス番号
  */
 export const RevOnly = async (num: string) => {
-  const list = await readReservateList()
+  const list = await readPlanList()
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send('```\n' + `${createLerevateList(num, list)}\n` + '```')
+  channel.send('```\n' + `${createPlanList(num, list)}\n` + '```')
 }
 
 /**
  * 完了していない凸予定一覧を取得
  * @return 完了していない凸予定一覧
  */
-const readReservateList = async (): Promise<string[][]> => {
+const readPlanList = async (): Promise<string[][]> => {
   // 凸予定のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
@@ -86,7 +86,7 @@ const takeBossName = (num: string, table: string[][]): string =>
  * @param list 凸予定一覧
  * @return 予定者一覧のテキスト
  */
-const createLerevateList = (num: string, list: string[][]): string => {
+const createPlanList = (num: string, list: string[][]): string => {
   const text = list
     .filter(l => l[4] === num)
     .map(l => `${l[3]} ${l[6]} ${l[7]}`)

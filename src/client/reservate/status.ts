@@ -6,7 +6,7 @@ import * as spreadsheet from '../../util/spreadsheet'
 const moji = require('moji')
 
 // 凸予定の形式
-type Reservate = {
+type Plan = {
   person: string
   cal: string
   member: string
@@ -22,7 +22,7 @@ type Reservate = {
  */
 export const Update = async (msg: Discord.Message) => {
   // 凸予定のオブジェクトを作成
-  const res = reservateObject(msg)
+  const res = planObject(msg)
 
   // ボス番号からボス名を取得
   res.boss = await GetBossName(res.num)
@@ -45,7 +45,7 @@ export const Update = async (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  * @return 凸予定のオブジェクト
  */
-const reservateObject = (msg: Discord.Message): Reservate => {
+const planObject = (msg: Discord.Message): Plan => {
   // prettier-ignore
   const arr = moji(msg.content)
     .convert('ZE', 'HE')
@@ -86,7 +86,7 @@ const GetBossName = async (num: string): Promise<string> => {
  * 凸予定シートの中身を更新する
  * @param res 凸予定のオブジェクト
  */
-const fetchReservate = async (res: Reservate) => {
+const fetchReservate = async (res: Plan) => {
   // 凸予定のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
   const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PERSON_CELLS)).filter(v => v)
