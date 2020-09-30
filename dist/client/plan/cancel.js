@@ -58,49 +58,74 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Message = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var command_1 = require("./command");
-var report = __importStar(require("./report"));
-var plan = __importStar(require("./plan"));
-var carryover = __importStar(require("./convex/carryover"));
-var playerID = __importStar(require("./etc/playerID"));
-var send = __importStar(require("./etc/send"));
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+exports.Already = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, sheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if (user.bot)
                     return [2];
-                if (msg.content.charAt(0) === '/')
-                    return [2, command_1.Command(msg)];
-                return [4, report.Convex(msg)];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
+                    return [2];
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KANRYOU)
+                    return [2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, plan.Convex(msg)];
+                _a.sent();
+                if (react.message.author.id !== user.id)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = carryover.React(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, playerID.Save(msg)];
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = send.YabaiImage(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = send.YuiKusano(msg);
-                if (comment)
-                    return [2, console.log(comment)];
+                cells = _a.sent();
+                messageDelete(cells, react.message);
+                convexComplete(sheet, cells, react.message);
+                deleteBossRole(cells, react.message);
+                return [2, 'Delete completed message'];
+        }
+    });
+}); };
+var messageDelete = function (cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.messages.fetch(id)];
+            case 1:
+                (_a.sent())["delete"]();
+                msg["delete"]();
                 return [2];
         }
     });
 }); };
+var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var row, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                row = pieces_each_1["default"](cells, 8)
+                    .map(function (v) { return v[1]; })
+                    .indexOf(msg.id) + 3;
+                return [4, sheet.getCell("A" + row)];
+            case 1:
+                cell = _a.sent();
+                cell.setValue('1');
+                return [2];
+        }
+    });
+}); };
+var deleteBossRole = function (cells, msg) {
+    var _a;
+    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][4];
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+};

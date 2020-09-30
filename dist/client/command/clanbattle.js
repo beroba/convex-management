@@ -80,7 +80,7 @@ var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 var date = __importStar(require("../convex/date"));
-var list = __importStar(require("../reservate/list"));
+var list = __importStar(require("../plan/list"));
 exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
         return;
@@ -195,7 +195,7 @@ var reservateList = function (arg, msg) { return __awaiter(void 0, void 0, void 
                 day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                if (/^(a|b|c|d|e)$/i.test(arg)) {
+                if (/^[a-e]$/i.test(arg)) {
                     list.Output(arg);
                 }
                 else {

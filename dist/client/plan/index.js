@@ -58,49 +58,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Message = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var command_1 = require("./command");
-var report = __importStar(require("./report"));
-var plan = __importStar(require("./plan"));
-var carryover = __importStar(require("./convex/carryover"));
-var playerID = __importStar(require("./etc/playerID"));
-var send = __importStar(require("./etc/send"));
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
+exports.Convex = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var date = __importStar(require("../convex/date"));
+var status = __importStar(require("./status"));
+var moji = require('moji');
+exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var cal_1, day, cal_2;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
-                if (msg.content.charAt(0) === '/')
-                    return [2, command_1.Command(msg)];
-                return [4, report.Convex(msg)];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
+                    return [2];
+                if (!!formatConfirm(msg)) return [3, 2];
+                return [4, msg.reply('書式が違うから予定できないわ')];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, plan.Convex(msg)];
-            case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = carryover.React(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, playerID.Save(msg)];
+                cal_1 = _b.sent();
+                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 15000);
+                return [2, 'The format of the boss number is different'];
+            case 2: return [4, date.GetDay()];
             case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = send.YabaiImage(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                comment = send.YuiKusano(msg);
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
+                day = _b.sent();
+                if (!!day) return [3, 5];
+                return [4, msg.reply('今日はクラバトの日じゃないわ')];
+            case 4:
+                cal_2 = _b.sent();
+                setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 15000);
+                return [2, "It's not ClanBattle days"];
+            case 5:
+                status.Update(msg);
+                return [2, 'Make a convex reservation'];
         }
     });
 }); };
+var formatConfirm = function (msg) {
+    var num = moji(msg.content)
+        .convert('ZE', 'HE')
+        .convert('ZS', 'HS')
+        .toString()
+        .split(' ')[0];
+    return /[1-5]/.test(num);
+};

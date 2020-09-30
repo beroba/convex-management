@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.MessageReactionAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var report = __importStar(require("./report/cancel"));
-var reservate = __importStar(require("./reservate/cancel"));
+var plan = __importStar(require("./plan/cancel"));
 var carryover = __importStar(require("./convex/carryover"));
 var playerID = __importStar(require("./etc/playerID"));
 exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
@@ -77,7 +77,7 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, reservate.Already(react, user)];
+                return [4, plan.Already(react, user)];
             case 2:
                 comment = _b.sent();
                 if (comment)

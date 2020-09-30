@@ -35,7 +35,7 @@ export const AllOutput = async () => {
  * ボス名は表示しない
  * @param num ボス番号
  */
-export const RevOnly = async (num: string) => {
+export const PlanOnly = async (num: string) => {
   const list = await readPlanList()
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)

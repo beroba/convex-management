@@ -31,7 +31,7 @@ export const Update = async (msg: Discord.Message) => {
   res.cal = (await msg.reply(`${res.boss}を予定したわよ！`)).id
 
   // 凸予定シートの値を更新
-  await fetchReservate(res)
+  await fetchPlan(res)
 
   // 完了の絵文字をつける
   msg.react(Settings.EMOJI_ID.KANRYOU)
@@ -86,7 +86,7 @@ const GetBossName = async (num: string): Promise<string> => {
  * 凸予定シートの中身を更新する
  * @param res 凸予定のオブジェクト
  */
-const fetchReservate = async (res: Plan) => {
+const fetchPlan = async (res: Plan) => {
   // 凸予定のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
   const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PERSON_CELLS)).filter(v => v)
