@@ -25,7 +25,7 @@ export const Message = async (msg: Discord.Message) => {
   comment = await report.Convex(msg)
   if (comment) return console.log(comment)
 
-  // 凸予約の処理を行う
+  // 凸予定の処理を行う
   comment = await reservate.Convex(msg)
   if (comment) return console.log(comment)
 

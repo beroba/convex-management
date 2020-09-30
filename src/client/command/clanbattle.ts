@@ -134,8 +134,8 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
 }
 
 /**
- * 凸予約一覧を表示する。
- * 引数にボス番号がある場合、そのボスの予約一覧を表示する
+ * 凸予定一覧を表示する。
+ * 引数にボス番号がある場合、そのボスの予定一覧を表示する
  * @param arg ボス番号
  * @param msg DiscordからのMessage
  */
@@ -146,10 +146,10 @@ const reservateList = async (arg: string, msg: Discord.Message) => {
 
   // 引数にボス番号があるか確認
   if (/^(a|b|c|d|e)$/i.test(arg)) {
-    // ボス番号の凸予約一覧を表示
+    // ボス番号の凸予定一覧を表示
     list.Output(arg)
   } else {
-    // 凸予約一覧を全て表示
+    // 凸予定一覧を全て表示
     list.AllOutput()
   }
 }

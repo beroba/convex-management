@@ -21,7 +21,7 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   comment = await report.Cancel(react, user as Discord.User)
   if (comment) return console.log(comment)
 
-  // 凸予約を削除を行う
+  // 凸予定を削除を行う
   comment = await reservate.Already(react, user as Discord.User)
   if (comment) return console.log(comment)
 
