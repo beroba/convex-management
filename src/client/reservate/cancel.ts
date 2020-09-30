@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
@@ -49,7 +50,7 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
  * @param msg DiscordからのMessage
  */
 const messageDelete = async (cells: string[], msg: Discord.Message) => {
-  const id = util.PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][2]
+  const id = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][2]
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
 
   // メッセージを削除する
@@ -66,8 +67,7 @@ const messageDelete = async (cells: string[], msg: Discord.Message) => {
 const convexComplete = async (sheet: any, cells: string[], msg: Discord.Message) => {
   // 行を取得
   const row =
-    util
-      .PiecesEach(cells, 8)
+    PiecesEach(cells, 8)
       .map(v => v[1])
       .indexOf(msg.id) + 3
 
@@ -83,7 +83,7 @@ const convexComplete = async (sheet: any, cells: string[], msg: Discord.Message)
  */
 const deleteBossRole = (cells: string[], msg: Discord.Message) => {
   // メッセージのボス番号を取得
-  const num = util.PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][4]
+  const num = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][4]
 
   // ボス番号のロールを付与
   msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])

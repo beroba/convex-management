@@ -80,6 +80,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
@@ -101,8 +102,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
                 return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 4:
                 members = _c.sent();
-                list = util
-                    .PiecesEach(status, 2)
+                list = pieces_each_1["default"](status, 2)
                     .map(function (v) { return v.map(Number); })
                     .map(function (v, i) { return __spread([members[i]], v); })
                     .filter(function (v) { return v[0] !== ''; });

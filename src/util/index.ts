@@ -45,14 +45,3 @@ export const GetMembersFromUser = (
  * @param id チャンネルのid
  */
 export const GetTextChannel = (id: string): Discord.TextChannel => Client.channels.cache.get(id) as Discord.TextChannel
-
-/**
- * 配列をn個づつの塊にして作り直す
- * @param array 元になる配列
- * @param n 塊としてまとめる数
- * @return 作り直した配列
- */
-export const PiecesEach = <T>(array: T[], n: number): T[][] => {
-  const l = Array(Math.ceil(array.length / n))
-  return Array.from(l, (_, i) => i).map((_, i) => array.slice(i * n, (i + 1) * n))
-}

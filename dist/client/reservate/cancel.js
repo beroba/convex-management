@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
@@ -97,7 +98,7 @@ var messageDelete = function (cells, msg) { return __awaiter(void 0, void 0, voi
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                id = util.PiecesEach(cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
+                id = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
                 return [4, channel.messages.fetch(id)];
             case 1:
@@ -112,8 +113,7 @@ var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, voi
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                row = util
-                    .PiecesEach(cells, 8)
+                row = pieces_each_1["default"](cells, 8)
                     .map(function (v) { return v[1]; })
                     .indexOf(msg.id) + 3;
                 return [4, sheet.getCell("A" + row)];
@@ -126,6 +126,6 @@ var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, voi
 }); };
 var deleteBossRole = function (cells, msg) {
     var _a;
-    var num = util.PiecesEach(cells, 8).filter(function (v) { return v[1] === msg.id; })[0][4];
+    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][4];
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
 };

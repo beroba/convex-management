@@ -1,6 +1,6 @@
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
@@ -33,8 +33,7 @@ export const CheckCalnBattle = async (): Promise<string[]> => {
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
   // クラバトの日かどうか確認
-  return util
-    .PiecesEach(cells, 3)
+  return PiecesEach(cells, 3)
     .map(v => [v[0], v[1].split('/').map(Number).join('/'), v[2]])
     .filter(v => v[1] === mmdd())[0]
 }

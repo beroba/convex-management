@@ -60,7 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.CheckCalnBattle = exports.GetColumn = exports.GetDay = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.GetDay = function () { return __awaiter(void 0, void 0, void 0, function () {
     var cell;
@@ -86,8 +86,7 @@ exports.CheckCalnBattle = function () { return __awaiter(void 0, void 0, void 0,
                 return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [2, util
-                        .PiecesEach(cells, 3)
+                return [2, pieces_each_1["default"](cells, 3)
                         .map(function (v) { return [v[0], v[1].split('/').map(Number).join('/'), v[2]]; })
                         .filter(function (v) { return v[1] === mmdd(); })[0]];
         }
