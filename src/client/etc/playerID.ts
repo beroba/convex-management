@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
+const moji = require('moji')
 
 /**
  * #id送信ロール付与いリアクションしたユーザーに、idスクショ送信のロールを付与する
@@ -41,7 +42,8 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   // #プレイヤーidリストにメッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)
   // 画像がある場合は画像も送信
-  await channel.send(`${util.GetUserName(msg.member)}\n${msg.content}`, url ? {files: [url]} : {})
+  const content = moji(msg.content).convert('ZE', 'HE').convert('ZS', 'HS').toString()
+  await channel.send(`${util.GetUserName(msg.member)}\n${content}`, url ? {files: [url]} : {})
 
   // 元のメッセージを削除
   await msg.delete()

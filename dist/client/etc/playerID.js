@@ -61,6 +61,7 @@ exports.__esModule = true;
 exports.Save = exports.RoleGrant = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var moji = require('moji');
 exports.RoleGrant = function (react, user) {
     var _a;
     if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT)
@@ -70,7 +71,7 @@ exports.RoleGrant = function (react, user) {
     return 'Grant player id send role';
 };
 exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, channel;
+    var url, channel, content;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -84,7 +85,8 @@ exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, functio
                 _c.sent();
                 url = msg.attachments.map(function (a) { return a.url; })[0];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
-                return [4, channel.send(util.GetUserName(msg.member) + "\n" + msg.content, url ? { files: [url] } : {})];
+                content = moji(msg.content).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+                return [4, channel.send(util.GetUserName(msg.member) + "\n" + content, url ? { files: [url] } : {})];
             case 2:
                 _c.sent();
                 return [4, msg["delete"]()];
