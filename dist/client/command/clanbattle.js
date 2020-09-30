@@ -82,11 +82,7 @@ var situation = __importStar(require("../convex/situation"));
 var date = __importStar(require("../convex/date"));
 var list = __importStar(require("../reservate/list"));
 exports.ClanBattle = function (command, msg) {
-    var _a;
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
-        return;
-    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return const_settings_1["default"].COMMAND_ROLE.some(function (v) { return v === r.id; }); });
-    if (!isRole)
         return;
     switch (true) {
         case /cb boss now/.test(command): {

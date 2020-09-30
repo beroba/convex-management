@@ -15,6 +15,10 @@ export const Management = (command: string, msg: Discord.Message): Option<string
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
+  // コマンド実行ユーザーかどうかを確認
+  const isRole = msg.member?.roles.cache.some(r => Settings.COMMAND_ROLE.some((v: string) => v === r.id))
+  if (!isRole) return
+
   switch (true) {
     case /cb manage create category/.test(command): {
       const arg = command.replace('/cb manage create category', '')
