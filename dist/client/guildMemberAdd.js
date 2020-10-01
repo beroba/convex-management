@@ -32,7 +32,7 @@ exports.GuildMemberAdd = function (member) {
         return;
     var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CHAT);
     channel.send("<@!" + ((_a = member.user) === null || _a === void 0 ? void 0 : _a.id) + "> \u307E\u305A\u306F <#" + const_settings_1["default"].CHANNEL_ID.CHANNEL_POLICY + "> \u3092\u78BA\u8A8D\u3057\u306A\u3055\u3044\uFF01\n" +
-        ("\u3061\u3083\u3093\u3068 <#" + const_settings_1["default"].CHANNEL_ID.INTRODUCTION + "> \u3082\u66F8\u304F\u3053\u3068\u306D") +
+        ("\u3061\u3083\u3093\u3068 <#" + const_settings_1["default"].CHANNEL_ID.INTRODUCTION + "> \u3082\u66F8\u304F\u3053\u3068\u306D\n") +
         ("\u30AF\u30E9\u30F3\u306B\u5165\u308B\u4EBA\u306F <#" + const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT + "> \u3092\u898B\u3066\u6307\u793A\u901A\u308A\u306B\u3057\u305F\u304C\u3063\u3066\u306D"));
     console.log("I\u2019m " + ((_b = member.user) === null || _b === void 0 ? void 0 : _b.username) + ", a new member.");
 };
