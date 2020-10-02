@@ -6,7 +6,9 @@ import {NtoA, AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
-// 凸予定の形式
+/**
+ * 凸予定の形式
+ */
 type Plan = {
   person: string
   cal: string
