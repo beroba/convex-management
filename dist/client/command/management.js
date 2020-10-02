@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
@@ -125,30 +126,45 @@ var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fun
     });
 }); };
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var clanMembers, infoSheet;
+    var members, sheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return util.GetUserName(m); }).sort();
+                members = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
+                    name: util.GetUserName(m),
+                    id: m.id
+                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _c.sent();
-                clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, infoSheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN + (i + 3))];
-                            case 1:
-                                cell = _a.sent();
-                                cell.setValue(m);
-                                return [2];
-                        }
-                    });
-                }); });
+                sheet = _c.sent();
+                fetchNameAndId(members, sheet);
                 msg.reply('クランメンバー一覧を更新したわよ！');
                 return [2];
         }
+    });
+}); };
+var fetchNameAndId = function (members, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        members === null || members === void 0 ? void 0 : members.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
+            var col, name_cell, id_cell;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
+                        return [4, sheet.getCell("" + col + (i + 3))];
+                    case 1:
+                        name_cell = _a.sent();
+                        name_cell.setValue(m.name);
+                        return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
+                    case 2:
+                        id_cell = _a.sent();
+                        id_cell.setValue(m.id);
+                        return [2];
+                }
+            });
+        }); });
+        return [2];
     });
 }); };
 var spreadsheetLink = function (msg) {
