@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Option from 'type-of-option'
 import {Management} from './management'
 import {ClanBattle} from './clanbattle'
-const moji = require('moji')
 
 /**
  * `/`から始まるコマンドの処理をする

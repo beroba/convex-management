@@ -59,11 +59,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Update = void 0;
+var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var moji = require('moji');
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var res, _a, _b;
     var _c;
@@ -89,18 +90,17 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var planObject = function (msg) {
-    var arr = moji(msg.content)
+    var arr = moji_1["default"](msg.content)
         .convert('ZE', 'HE')
         .convert('ZS', 'HS')
         .toString()
         .split(' ');
     var member = util.GetUserName(msg.member);
-    var num = String.fromCharCode('a'.charCodeAt(0) + Number(arr[0]) - 1);
     return {
         person: msg.id,
         cal: '',
         member: member,
-        num: num,
+        num: alphabet_to_number_1.NtoA(arr[0]),
         boss: '',
         damage: arr[1],
         remarks: arr[2]
@@ -131,12 +131,10 @@ var fetchPlan = function (res) { return __awaiter(void 0, void 0, void 0, functi
             case 2:
                 cells = (_a.sent()).filter(function (v) { return v; });
                 Object.values(res).forEach(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var col, cell;
+                    var cell;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0:
-                                col = String.fromCharCode('A'.charCodeAt(0) + 1 + i);
-                                return [4, sheet.getCell("" + col + (cells.length + 3))];
+                            case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('B', i) + (cells.length + 3))];
                             case 1:
                                 cell = _a.sent();
                                 cell.setValue(v);

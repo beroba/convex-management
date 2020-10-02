@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
@@ -7,7 +8,6 @@ import * as date from '../convex/date'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 import * as status from './status'
-const moji = require('moji')
 
 /**
  * 凸報告を取り消す
@@ -31,6 +31,10 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
 
   // 送信者と同じ人で無ければ終了
   if (react.message.author.id !== user.id) return
+
+  // クランメンバーじゃなければ終了
+  const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) return
 
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()

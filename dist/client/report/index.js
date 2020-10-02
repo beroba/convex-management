@@ -64,25 +64,30 @@ var date = __importStar(require("../convex/date"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var isRole, day;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
+                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                if (!isRole) {
+                    msg.reply('クランメンバーじゃないわ');
+                    return [2, 'Not a clan member'];
+                }
                 return [4, date.GetDay()];
             case 1:
-                day = _b.sent();
+                day = _c.sent();
                 if (!day) {
                     msg.reply('今日はクラバトの日じゃないわ');
                     return [2, "It's not ClanBattle days"];
                 }
                 return [4, status.Update(msg)];
             case 2:
-                _b.sent();
+                _c.sent();
                 situation.Report();
                 return [2, 'Update status'];
         }

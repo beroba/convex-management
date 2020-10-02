@@ -81,6 +81,7 @@ exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
@@ -95,7 +96,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
                 return [4, date.CheckCalnBattle()];
             case 2:
                 days = _c.sent();
-                range = date.GetColumn(0, days) + "3:" + date.GetColumn(1, days) + "32";
+                range = days[2] + "3:" + alphabet_to_number_1.AtoA(days[2], 1) + "32";
                 return [4, spreadsheet.GetCells(manageSheet, range)];
             case 3:
                 status = _c.sent();

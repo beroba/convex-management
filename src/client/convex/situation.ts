@@ -1,5 +1,6 @@
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
@@ -14,7 +15,7 @@ export const Report = async () => {
 
   // メンバー一覧と凸状況を取得
   const days = await date.CheckCalnBattle()
-  const range = `${date.GetColumn(0, days)}3:${date.GetColumn(1, days)}32`
+  const range = `${days[2]}3:${AtoA(days[2], 1)}32`
   const status: string[] = await spreadsheet.GetCells(manageSheet, range)
   const members: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
 

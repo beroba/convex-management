@@ -17,6 +17,13 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // #凸報告でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
 
+  // クランメンバーじゃなければ終了
+  const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) {
+    msg.reply('クランメンバーじゃないわ')
+    return 'Not a clan member'
+  }
+
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) {

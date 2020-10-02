@@ -59,43 +59,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Convex = void 0;
+var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var date = __importStar(require("../convex/date"));
 var status = __importStar(require("./status"));
-var moji = require('moji');
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var cal_1, day, cal_2;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var isRole, cal_1, cal_2, day, cal_3;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
-                if (!!formatConfirm(msg)) return [3, 2];
-                return [4, msg.reply('書式が違うから予定できないわ')];
+                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                if (!!isRole) return [3, 2];
+                return [4, msg.reply('クランメンバーじゃないわ')];
             case 1:
-                cal_1 = _b.sent();
+                cal_1 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 15000);
-                return [2, 'The format of the boss number is different'];
-            case 2: return [4, date.GetDay()];
+                return [2, 'Not a clan member'];
+            case 2:
+                if (!!formatConfirm(msg)) return [3, 4];
+                return [4, msg.reply('書式が違うから予定できないわ')];
             case 3:
-                day = _b.sent();
-                if (!!day) return [3, 5];
-                return [4, msg.reply('今日はクラバトの日じゃないわ')];
-            case 4:
-                cal_2 = _b.sent();
+                cal_2 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 15000);
-                return [2, "It's not ClanBattle days"];
+                return [2, 'The format of the boss number is different'];
+            case 4: return [4, date.GetDay()];
             case 5:
+                day = _c.sent();
+                if (!!day) return [3, 7];
+                return [4, msg.reply('今日はクラバトの日じゃないわ')];
+            case 6:
+                cal_3 = _c.sent();
+                setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 15000);
+                return [2, "It's not ClanBattle days"];
+            case 7:
                 status.Update(msg);
                 return [2, 'Make a convex reservation'];
         }
     });
 }); };
 var formatConfirm = function (msg) {
-    var num = moji(msg.content)
+    var num = moji_1["default"](msg.content)
         .convert('ZE', 'HE')
         .convert('ZS', 'HS')
         .toString()

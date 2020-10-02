@@ -59,13 +59,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.GetCell = exports.GetMemberRow = exports.Update = void 0;
+var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var date = __importStar(require("../convex/date"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var report = __importStar(require("../convex/report"));
-var moji = require('moji');
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, members, row, days, num_cell, over_cell, end_cell, hist_cell, content, end;
     return __generator(this, function (_a) {
@@ -95,7 +96,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 if (end_cell.getValue())
                     return [2, msg.reply('もう3凸してるわ')];
                 saveHistory(num_cell, over_cell, hist_cell);
-                content = moji(msg.content).convert('ZE', 'HE').toString();
+                content = moji_1["default"](msg.content).convert('ZE', 'HE').toString();
                 statusUpdate(num_cell, over_cell, content);
                 msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
                 return [4, isThreeConvex(num_cell, over_cell)];
@@ -119,7 +120,7 @@ exports.GetCell = function (n, row, sheet, days) {
     return __awaiter(void 0, void 0, void 0, function () {
         var col;
         return __generator(this, function (_a) {
-            col = date.GetColumn(n, days);
+            col = alphabet_to_number_1.AtoA(days[2], n);
             return [2, sheet.getCell("" + col + row)];
         });
     });
