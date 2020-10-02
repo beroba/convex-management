@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-const moji = require('moji')
 
 /**
  * #id送信ロール付与いリアクションしたユーザーに、idスクショ送信のロールを付与する

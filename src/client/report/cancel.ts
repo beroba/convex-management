@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as spreadsheet from '../../util/spreadsheet'
@@ -7,7 +8,6 @@ import * as date from '../convex/date'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 import * as status from './status'
-const moji = require('moji')
 
 /**
  * 凸報告を取り消す

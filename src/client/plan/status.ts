@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-const moji = require('moji')
 
 // 凸予定の形式
 type Plan = {

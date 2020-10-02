@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/smicle/convex-management#readme",
   "dependencies": {
+    "@types/moji": "^0.5.0",
     "@types/node-cron": "^2.0.3",
     "@types/ws": "^7.2.5",
     "const-settings": "^1.0.0",
