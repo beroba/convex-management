@@ -61,6 +61,7 @@ exports.__esModule = true;
 exports.GetCell = exports.GetMemberRow = exports.Update = void 0;
 var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var date = __importStar(require("../convex/date"));
@@ -119,7 +120,7 @@ exports.GetCell = function (n, row, sheet, days) {
     return __awaiter(void 0, void 0, void 0, function () {
         var col;
         return __generator(this, function (_a) {
-            col = date.GetColumn(n, days);
+            col = alphabet_to_number_1.AtoA(days[2], n);
             return [2, sheet.getCell("" + col + row)];
         });
     });

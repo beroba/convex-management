@@ -13,16 +13,6 @@ export const GetDay = async (): Promise<Option<string>> => {
 }
 
 /**
- * 指定された右隣の列名を取得
- * @param n 何個目かの数字
- * @param days 日付の情報
- * @return 取得した列名
- */
-export const GetColumn = (n: number, cell: string[]): string => {
-  return String.fromCharCode(cell[2].charCodeAt(0) + n)
-}
-
-/**
  * クラバトがあるかを確認する。
  * あった場合は日付の情報を返す
  * @return 日付の情報

@@ -28,6 +28,10 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
   // 送信者と同じ人で無ければ終了
   if (react.message.author.id !== user.id) return
 
+  // クランメンバーじゃなければ終了
+  const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) return
+
   // 凸予定のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)

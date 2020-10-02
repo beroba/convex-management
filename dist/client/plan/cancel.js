@@ -64,9 +64,10 @@ var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, sheet, cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var channel, isRole, sheet, cells;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 if (user.bot)
                     return [2];
@@ -77,15 +78,18 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
                 return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                _a.sent();
+                _b.sent();
                 if (react.message.author.id !== user.id)
+                    return [2];
+                isRole = (_a = react.message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                if (!isRole)
                     return [2];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 2:
-                sheet = _a.sent();
+                sheet = _b.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
-                cells = _a.sent();
+                cells = _b.sent();
                 messageDelete(cells, react.message);
                 convexComplete(sheet, cells, react.message);
                 deleteBossRole(cells, react.message);

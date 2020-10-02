@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as date from '../convex/date'
@@ -68,7 +69,7 @@ export const GetMemberRow = (cells: string[], member: Option<Discord.GuildMember
  * @return 取得したセル
  */
 export const GetCell = async (n = 0, row: number, sheet: any, days: string[]): Promise<any> => {
-  const col = date.GetColumn(n, days)
+  const col = AtoA(days[2], n)
   return sheet.getCell(`${col}${row}`)
 }
 

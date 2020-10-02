@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import moji from 'moji'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import {NtoA, AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
@@ -54,14 +55,11 @@ const planObject = (msg: Discord.Message): Plan => {
     .split(' ')
   const member = util.GetUserName(msg.member)
 
-  // ボス番号を数字から英語に変換
-  const num = String.fromCharCode('a'.charCodeAt(0) + Number(arr[0]) - 1)
-
   return {
     person: msg.id,
     cal: '',
     member: member,
-    num: num,
+    num: NtoA(arr[0]),
     boss: '',
     damage: arr[1],
     remarks: arr[2],
@@ -93,9 +91,8 @@ const fetchPlan = async (res: Plan) => {
 
   // スプレッドシートを更新
   Object.values(res).forEach(async (v, i) => {
-    // 順番に列を取得
-    const col = String.fromCharCode('A'.charCodeAt(0) + 1 + i)
-    const cell = await sheet.getCell(`${col}${cells.length + 3}`)
+    // 順番にセルを取得
+    const cell = await sheet.getCell(`${AtoA('B', i)}${cells.length + 3}`)
     cell.setValue(v)
   })
 }
