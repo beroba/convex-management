@@ -32,6 +32,10 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   // 送信者と同じ人で無ければ終了
   if (react.message.author.id !== user.id) return
 
+  // クランメンバーじゃなければ終了
+  const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) return
+
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) return

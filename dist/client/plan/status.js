@@ -59,11 +59,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Update = void 0;
+var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var moji = require('moji');
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var res, _a, _b;
     var _c;
@@ -89,7 +89,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var planObject = function (msg) {
-    var arr = moji(msg.content)
+    var arr = moji_1["default"](msg.content)
         .convert('ZE', 'HE')
         .convert('ZS', 'HS')
         .toString()

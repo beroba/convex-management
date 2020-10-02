@@ -17,6 +17,14 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // #凸予定でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
 
+  // クランメンバーじゃなければ終了
+  const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) {
+    const cal = await msg.reply('クランメンバーじゃないわ')
+    setTimeout(() => (msg.delete(), cal.delete()), 15000)
+    return 'Not a clan member'
+  }
+
   // ボス番号が書式通りか確認する
   if (!formatConfirm(msg)) {
     const cal = await msg.reply('書式が違うから予定できないわ')

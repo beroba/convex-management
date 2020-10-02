@@ -59,6 +59,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Cancel = void 0;
+var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
@@ -66,11 +67,11 @@ var date = __importStar(require("../convex/date"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
-var moji = require('moji');
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, day;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var channel, isRole, day;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 if (user.bot)
                     return [2];
@@ -81,17 +82,20 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
                 return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                _a.sent();
+                _b.sent();
                 if (react.message.author.id !== user.id)
+                    return [2];
+                isRole = (_a = react.message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                if (!isRole)
                     return [2];
                 return [4, date.GetDay()];
             case 2:
-                day = _a.sent();
+                day = _b.sent();
                 if (!day)
                     return [2];
                 return [4, statusRestore(react, user)];
             case 3:
-                _a.sent();
+                _b.sent();
                 situation.Report();
                 return [2, 'Convex cancellation'];
         }
@@ -154,7 +158,7 @@ var feedback = function (num_cell, over_cell, user) {
 var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
-        content = moji(react.message.content).convert('ZE', 'HE').toString();
+        content = moji_1["default"](react.message.content).convert('ZE', 'HE').toString();
         if (!/^k/i.test(content))
             return [2];
         lapAndBoss.Previous();
