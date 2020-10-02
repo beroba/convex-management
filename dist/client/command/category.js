@@ -113,7 +113,7 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var settingPermissions = function (msg) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     var leader = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.LEADER);
     if (!leader)
         return [];
@@ -123,10 +123,13 @@ var settingPermissions = function (msg) {
     var clanMembers = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
     if (!clanMembers)
         return [];
-    var tomodachi = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.TOMODACHI);
+    var sistarMembers = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTAR_MEMBERS);
+    if (!sistarMembers)
+        return [];
+    var tomodachi = (_e = msg.guild) === null || _e === void 0 ? void 0 : _e.roles.cache.get(const_settings_1["default"].ROLE_ID.TOMODACHI);
     if (!tomodachi)
         return [];
-    var everyone = (_e = msg.guild) === null || _e === void 0 ? void 0 : _e.roles.everyone;
+    var everyone = (_f = msg.guild) === null || _f === void 0 ? void 0 : _f.roles.everyone;
     if (!everyone)
         return [];
     return [
@@ -140,6 +143,10 @@ var settingPermissions = function (msg) {
         },
         {
             id: clanMembers.id,
+            allow: ['VIEW_CHANNEL']
+        },
+        {
+            id: sistarMembers.id,
             allow: ['VIEW_CHANNEL']
         },
         {
