@@ -9,13 +9,18 @@ import * as util from '../../util'
  * @param user リアクションしたユーザー
  * @return ロール付与の実行結果
  */
-export const RoleGrant = (react: Discord.MessageReaction, user: Discord.User): Option<string> => {
+export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
   // #id送信ロール付与でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT) return
 
   // idスクショ送信のロールを付与する
   const member = util.GetMembersFromUser(react.message.guild?.members, user)
   member?.roles.add(Settings.ROLE_ID.PLAYER_ID_SEND)
+
+  const msg = await react.message.reply(
+    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！`
+  )
+  setTimeout(() => msg.delete(), 15000)
 
   return 'Grant player id send role'
 }
