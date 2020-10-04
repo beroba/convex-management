@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 import * as date from '../convex/date'
@@ -59,9 +60,10 @@ const statusRestore = async (react: Discord.MessageReaction, user: Discord.User)
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバーのセル一覧から凸報告者の行を取得
-  const members: string[] = (await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)).filter(v => v)
+  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
   const member = util.GetMembersFromUser(react.message.guild?.members, user)
-  const row = status.GetMemberRow(members, member)
+  const row = status.GetMemberRow(members, user.id)
 
   // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
   const days = await date.CheckCalnBattle()

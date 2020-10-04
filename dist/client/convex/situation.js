@@ -87,25 +87,26 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
 var date = __importStar(require("./date"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, days, range, status, members, list, channel, _a, _b;
+    var sheet, days, range, status, cells, members, list, channel, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _c.sent();
+                sheet = _c.sent();
                 return [4, date.CheckCalnBattle()];
             case 2:
                 days = _c.sent();
                 range = days[2] + "3:" + alphabet_to_number_1.AtoA(days[2], 1) + "32";
-                return [4, spreadsheet.GetCells(manageSheet, range)];
+                return [4, spreadsheet.GetCells(sheet, range)];
             case 3:
                 status = _c.sent();
-                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 4:
-                members = _c.sent();
+                cells = _c.sent();
+                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 list = pieces_each_1["default"](status, 2)
                     .map(function (v) { return v.map(Number); })
-                    .map(function (v, i) { return __spread([members[i]], v); })
+                    .map(function (v, i) { return __spread([members[i][0]], v); })
                     .filter(function (v) { return v[0] !== ''; });
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
                 _b = (_a = channel).send;
