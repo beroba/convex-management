@@ -59,10 +59,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.GetCell = exports.GetMemberRow = exports.Update = void 0;
-var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var date = __importStar(require("../convex/date"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
@@ -98,7 +98,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 if (end_cell.getValue())
                     return [2, msg.reply('もう3凸してるわ')];
                 saveHistory(num_cell, over_cell, hist_cell);
-                content = moji_1["default"](msg.content).convert('ZE', 'HE').toString();
+                content = util.Format(msg.content);
                 statusUpdate(num_cell, over_cell, content);
                 msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
                 return [4, isThreeConvex(num_cell, over_cell)];

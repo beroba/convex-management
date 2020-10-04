@@ -59,8 +59,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Convex = void 0;
-var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
 var date = __importStar(require("../convex/date"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -103,10 +103,6 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var formatConfirm = function (msg) {
-    var num = moji_1["default"](msg.content)
-        .convert('ZE', 'HE')
-        .convert('ZS', 'HS')
-        .toString()
-        .split(' ')[0];
+    var num = util.Format(msg.content).split(' ')[0];
     return /[1-5]/.test(num);
 };

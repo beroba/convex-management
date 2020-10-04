@@ -148,8 +148,8 @@ var takeBossName = function (num, table) {
 };
 var createPlanList = function (num, list) {
     var text = list
-        .filter(function (l) { return l[4] === num; })
-        .map(function (l) { return l[3] + " " + l[6] + " " + l[7]; })
+        .filter(function (l) { return l[5] === num; })
+        .map(function (l) { return l[3] + " " + l[7]; })
         .join('\n');
     return text ? text : '予定者なし';
 };

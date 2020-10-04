@@ -1,7 +1,16 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import {Client} from '../index'
+
+/**
+ * 文字列を半角にし、連続したスペースを1つにする
+ * @param str 文字列
+ * @return 整形した文字列
+ */
+export const Format = (str: string): string =>
+  moji(str).convert('ZE', 'HE').convert('ZS', 'HS').toString().replace(/\s+/g, ' ')
 
 /**
  * クランサーバーのguildを取得する

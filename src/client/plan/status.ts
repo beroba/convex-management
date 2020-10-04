@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import moji from 'moji'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {NtoA, AtoA} from 'alphabet-to-number'
@@ -13,10 +12,10 @@ type Plan = {
   person: string
   cal: string
   member: string
+  id: string
   num: string
   boss: string
-  damage: string
-  remarks: string
+  message: string
 }
 
 /**
@@ -50,21 +49,16 @@ export const Update = async (msg: Discord.Message) => {
  */
 const planObject = (msg: Discord.Message): Plan => {
   // prettier-ignore
-  const arr = moji(msg.content)
-    .convert('ZE', 'HE')
-    .convert('ZS', 'HS')
-    .toString()
-    .split(' ')
-  const member = util.GetUserName(msg.member)
+  const content = util.Format(msg.content)
 
   return {
     person: msg.id,
     cal: '',
-    member: member,
-    num: NtoA(arr[0]),
+    member: util.GetUserName(msg.member),
+    id: msg.member?.id || '',
+    num: NtoA(content[0]),
     boss: '',
-    damage: arr[1],
-    remarks: arr[2],
+    message: content.slice(1).trim(),
   }
 }
 

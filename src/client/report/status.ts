@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
-import moji from 'moji'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
+import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as date from '../convex/date'
 import * as lapAndBoss from '../convex/lapAndBoss'
@@ -35,7 +35,7 @@ export const Update = async (msg: Discord.Message) => {
   saveHistory(num_cell, over_cell, hist_cell)
 
   // 凸数と持ち越しの状態を更新する
-  const content = moji(msg.content).convert('ZE', 'HE').toString()
+  const content = util.Format(msg.content)
   statusUpdate(num_cell, over_cell, content)
 
   // 凸報告に取消の絵文字をつける

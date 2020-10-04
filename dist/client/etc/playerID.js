@@ -59,7 +59,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Save = exports.RoleGrant = void 0;
-var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.RoleGrant = function (react, user) {
@@ -85,7 +84,7 @@ exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, functio
                 _c.sent();
                 url = msg.attachments.map(function (a) { return a.url; })[0];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
-                content = moji_1["default"](msg.content).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+                content = util.Format(msg.content);
                 return [4, channel.send(util.GetUserName(msg.member) + "\n" + content, url ? { files: [url] } : {})];
             case 2:
                 _c.sent();
