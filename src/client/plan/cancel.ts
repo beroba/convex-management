@@ -87,7 +87,7 @@ const convexComplete = async (sheet: any, cells: string[], msg: Discord.Message)
  */
 const deleteBossRole = (cells: string[], msg: Discord.Message) => {
   // メッセージのボス番号を取得
-  const num = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][4]
+  const num = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][5]
 
   // ボス番号のロールを付与
   msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])

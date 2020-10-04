@@ -88,8 +88,8 @@ const takeBossName = (num: string, table: string[][]): string =>
  */
 const createPlanList = (num: string, list: string[][]): string => {
   const text = list
-    .filter(l => l[4] === num)
-    .map(l => `${l[3]} ${l[6]} ${l[7]}`)
+    .filter(l => l[5] === num)
+    .map(l => `${l[3]} ${l[7]}`)
     .join('\n')
 
   // 予定者が居ない場合は予定書なしと返す

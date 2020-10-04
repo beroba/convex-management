@@ -130,6 +130,6 @@ var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, voi
 }); };
 var deleteBossRole = function (cells, msg) {
     var _a;
-    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][4];
+    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
 };
