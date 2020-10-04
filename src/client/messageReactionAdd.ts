@@ -30,6 +30,6 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   if (comment) return console.log(comment)
 
   // プレイヤーid送信ロールの付与を行う
-  comment = playerID.RoleGrant(react, user as Discord.User)
+  comment = await playerID.RoleGrant(react, user as Discord.User)
   if (comment) return console.log(comment)
 }
