@@ -61,6 +61,7 @@ exports.__esModule = true;
 exports.Cancel = void 0;
 var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 var date = __importStar(require("../convex/date"));
@@ -102,7 +103,7 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
     });
 }); };
 var statusRestore = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, members, member, row, days, num_cell, over_cell, end_cell, hist_cell;
+    var sheet, cells, members, member, row, days, num_cell, over_cell, end_cell, hist_cell;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -111,9 +112,10 @@ var statusRestore = function (react, user) { return __awaiter(void 0, void 0, vo
                 sheet = _b.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                members = (_b.sent()).filter(function (v) { return v; });
+                cells = _b.sent();
+                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-                row = status.GetMemberRow(members, member);
+                row = status.GetMemberRow(members, user.id);
                 return [4, date.CheckCalnBattle()];
             case 3:
                 days = _b.sent();

@@ -11,18 +11,19 @@ import * as date from './date'
  */
 export const Report = async () => {
   // 凸報告のシートを取得
-  const manageSheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバー一覧と凸状況を取得
   const days = await date.CheckCalnBattle()
   const range = `${days[2]}3:${AtoA(days[2], 1)}32`
-  const status: string[] = await spreadsheet.GetCells(manageSheet, range)
-  const members: string[] = await spreadsheet.GetCells(manageSheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const status: string[] = await spreadsheet.GetCells(sheet, range)
+  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
 
   // 1つにマージする
   const list: (string | number)[][] = PiecesEach(status, 2)
     .map(v => v.map(Number))
-    .map((v, i) => [members[i], ...v])
+    .map((v, i) => [members[i][0], ...v])
     .filter(v => v[0] !== '')
 
   // #凸状況に報告

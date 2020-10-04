@@ -106,7 +106,7 @@ URL:
 # 凸管理のシート情報
 MANAGEMENT_SHEET:
   SHEET_NAME: 凸管理
-  MEMBER_CELLS: A3:A32
+  MEMBER_CELLS: A3:B32
 
 # 凸予定のシート情報
 PLAN_SHEET:
