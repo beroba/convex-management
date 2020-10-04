@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import moji from 'moji'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {NtoA, AtoA} from 'alphabet-to-number'
@@ -50,11 +49,7 @@ export const Update = async (msg: Discord.Message) => {
  */
 const planObject = (msg: Discord.Message): Plan => {
   // prettier-ignore
-  const content = moji(msg.content)
-    .convert('ZE', 'HE')
-    .convert('ZS', 'HS')
-    .toString()
-    .replace(/\s+/g, ' ')
+  const content = util.Format(msg.content)
 
   return {
     person: msg.id,

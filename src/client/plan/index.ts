@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
-import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as util from '../../util'
 import * as date from '../convex/date'
 import * as status from './status'
 
@@ -53,10 +53,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 const formatConfirm = (msg: Discord.Message): boolean => {
   // prettier-ignore
-  const num = moji(msg.content)
-    .convert('ZE', 'HE')
-    .convert('ZS', 'HS')
-    .toString()
-    .split(' ')[0]
+  const num = util.Format(msg.content).split(' ')[0]
   return /[1-5]/.test(num)
 }

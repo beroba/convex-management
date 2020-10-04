@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
-import moji from 'moji'
 import Option from 'type-of-option'
+import * as util from '../../util'
 import {Management} from './management'
 import {ClanBattle} from './clanbattle'
 
@@ -12,7 +12,7 @@ export const Command = (msg: Discord.Message) => {
   // botのメッセージはコマンド実行しない
   if (msg.member?.user.bot) return
 
-  const content = moji(msg.content).convert('ZE', 'HE').convert('ZS', 'HS').toString()
+  const content = util.Format(msg.content)
 
   let comment: Option<string>
 

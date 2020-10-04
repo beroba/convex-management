@@ -59,7 +59,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Cancel = void 0;
-var moji_1 = __importDefault(require("moji"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -160,7 +159,7 @@ var feedback = function (num_cell, over_cell, user) {
 var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
-        content = moji_1["default"](react.message.content).convert('ZE', 'HE').toString();
+        content = util.Format(react.message.content);
         if (!/^k/i.test(content))
             return [2];
         lapAndBoss.Previous();

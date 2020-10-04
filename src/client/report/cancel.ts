@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
@@ -135,7 +134,7 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
  * @param react DiscordからのReaction
  */
 const killConfirm = async (react: Discord.MessageReaction) => {
-  const content = moji(react.message.content).convert('ZE', 'HE').toString()
+  const content = util.Format(react.message.content)
   // ボスを倒していなければ終了
   if (!/^k/i.test(content)) return
 

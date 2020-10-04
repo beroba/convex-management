@@ -3,9 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetTextChannel = exports.GetMembersFromUser = exports.GetUserName = exports.IsChannel = exports.GetGuild = void 0;
+exports.GetTextChannel = exports.GetMembersFromUser = exports.GetUserName = exports.IsChannel = exports.GetGuild = exports.Format = void 0;
+var moji_1 = __importDefault(require("moji"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var index_1 = require("../index");
+exports.Format = function (str) {
+    return moji_1["default"](str).convert('ZE', 'HE').convert('ZS', 'HS').toString().replace(/\s+/g, ' ');
+};
 exports.GetGuild = function () { return index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID')); };
 exports.IsChannel = function (array, channel) {
     return array.some(function (c) { return c === channel.name; });
