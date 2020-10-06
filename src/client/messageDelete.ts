@@ -3,6 +3,11 @@ import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import * as plan from './plan/cancel'
 
+/**
+ * メッセージ削除のイベントに応じて適切な処理を実行する
+ * @param react DiscordからのReaction
+ * @param msg DiscordからのMessage
+ */
 export const MessageDelete = async (msg: Discord.Message | Discord.PartialMessage) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
