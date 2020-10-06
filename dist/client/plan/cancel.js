@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Already = void 0;
+exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
@@ -90,14 +90,51 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
                 cells = _b.sent();
-                messageDelete(cells, react.message);
-                convexComplete(sheet, cells, react.message);
+                return [4, convexComplete(sheet, cells, react.message)];
+            case 4:
+                _b.sent();
+                react.message["delete"]();
+                msgCalDelete(cells, react.message);
                 deleteBossRole(cells, react.message);
                 return [2, 'Delete completed message'];
         }
     });
 }); };
-var messageDelete = function (cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+            case 2:
+                cells = _a.sent();
+                if (!isConvexPlan(cells, msg))
+                    return [2];
+                return [4, convexComplete(sheet, cells, msg)];
+            case 3:
+                _a.sent();
+                msgCalDelete(cells, msg);
+                deleteBossRole(cells, msg);
+                return [2, 'Delete completed message'];
+        }
+    });
+}); };
+var isConvexPlan = function (cells, msg) {
+    var list = pieces_each_1["default"](cells, 8)
+        .map(function (c) { return [c[0], c[1], c[2]]; })
+        .filter(function (c) { return c.some(function (v) { return v === msg.id; }); });
+    if (list.length === 0)
+        return false;
+    if (list[0][0] === '1')
+        return false;
+    return true;
+};
+var msgCalDelete = function (cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var id, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -107,7 +144,6 @@ var messageDelete = function (cells, msg) { return __awaiter(void 0, void 0, voi
                 return [4, channel.messages.fetch(id)];
             case 1:
                 (_a.sent())["delete"]();
-                msg["delete"]();
                 return [2];
         }
     });

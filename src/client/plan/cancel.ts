@@ -36,11 +36,12 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
 
-  // メッセージを削除
-  messageDelete(cells, react.message)
-
   // 凸予定の完了を付ける
-  convexComplete(sheet, cells, react.message)
+  await convexComplete(sheet, cells, react.message)
+
+  // メッセージを削除
+  react.message.delete()
+  msgCalDelete(cells, react.message)
 
   // ボスのロールを外す
   deleteBossRole(cells, react.message)
@@ -49,17 +50,64 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
 }
 
 /**
- * 送信者とキャルのメッセージを削除する
+ * 凸予定のメッセージを削除した際に完了処理を実行
+ * @param msg DiscordからのMessage
+ * @return 削除処理の実行結果
+ */
+export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
+  // #凸予定でなければ終了
+  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
+
+  // 凸予定のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
+
+  // 凸予定が完了しているか確認
+  if (!isConvexPlan(cells, msg)) return
+
+  // 凸予定の完了を付ける
+  await convexComplete(sheet, cells, msg)
+
+  // メッセージを削除
+  msgCalDelete(cells, msg)
+
+  // ボスのロールを外す
+  deleteBossRole(cells, msg)
+
+  return 'Delete completed message'
+}
+
+/**
+ * 凸予定が完了していなければture、でなければfalse
+ * @param cells 凸予定の一覧
+ * @param msg DiscordからのMessage
+ * @return 結果の真偽値
+ */
+const isConvexPlan = (cells: string[], msg: Discord.Message): boolean => {
+  // 凸予定に削除したメッセージのidがあるか確認
+  const list = PiecesEach(cells, 8)
+    .map(c => [c[0], c[1], c[2]])
+    .filter(c => c.some(v => v === msg.id))
+
+  // なければfalse
+  if (list.length === 0) return false
+  // 凸予定が完了してたらfalse
+  if (list[0][0] === '1') return false
+  // 凸予定があって完了してなければtrue
+  return true
+}
+
+/**
+ * キャルのメッセージを削除する
  * @param cells 凸予定の一覧
  * @param msg DiscordからのMessage
  */
-const messageDelete = async (cells: string[], msg: Discord.Message) => {
+const msgCalDelete = async (cells: string[], msg: Discord.Message) => {
   const id = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][2]
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
 
   // メッセージを削除する
   ;(await channel.messages.fetch(id)).delete()
-  msg.delete()
 }
 
 /**
