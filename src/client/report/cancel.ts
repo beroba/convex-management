@@ -41,7 +41,38 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   if (!day) return
 
   // 凸状況を元に戻す
-  await statusRestore(react, user)
+  await statusRestore(react.message, user)
+
+  // 凸状況に報告
+  situation.Report()
+
+  return 'Convex cancellation'
+}
+
+/**
+ * 凸報告を取り消す
+ * @param msg DiscordからのMessage
+ * @return 取り消し処理の実行結果
+ */
+export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
+  // botのメッセージは実行しない
+  if (msg.member?.user.bot) return
+
+  // #凸報告でなければ終了
+  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
+
+  // クランメンバーじゃなければ終了
+  const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) return
+
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return
+
+  // 凸状況を元に戻す
+  const user = msg.member?.user
+  if (!user) return
+  await statusRestore(msg, user)
 
   // 凸状況に報告
   situation.Report()
@@ -51,17 +82,17 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
 
 /**
  * 凸状況を元に戻す
- * @param react DiscordからのReaction
+ * @param msg DiscordからのMessage
  * @param user リアクションしたユーザー
  */
-const statusRestore = async (react: Discord.MessageReaction, user: Discord.User) => {
+const statusRestore = async (msg: Discord.Message, user: Discord.User) => {
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバーのセル一覧から凸報告者の行を取得
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const member = util.GetMembersFromUser(react.message.guild?.members, user)
+  const member = util.GetMembersFromUser(msg.guild?.members, user)
   const row = status.GetMemberRow(members, user.id)
 
   // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
@@ -78,7 +109,7 @@ const statusRestore = async (react: Discord.MessageReaction, user: Discord.User)
   // 凸状況を報告
   feedback(num_cell, over_cell, user)
   // ボス倒していたかを判別
-  killConfirm(react)
+  killConfirm(msg)
 }
 
 /**
@@ -131,10 +162,10 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
 
 /**
  * ボスを倒していた場合、前のボスに戻す
- * @param react DiscordからのReaction
+ * @param msg DiscordからのMessage
  */
-const killConfirm = async (react: Discord.MessageReaction) => {
-  const content = util.Format(react.message.content)
+const killConfirm = async (msg: Discord.Message) => {
+  const content = util.Format(msg.content)
   // ボスを倒していなければ終了
   if (!/^k/i.test(content)) return
 
