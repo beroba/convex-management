@@ -86,7 +86,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 const isConvexPlan = (cells: string[], msg: Discord.Message): boolean => {
   // 凸予定に削除したメッセージのidがあるか確認
   const list = PiecesEach(cells, 8)
-    .map(c => [c[0], c[1], c[2]])
+    .map(c => c.slice(0, 3))
     .filter(c => c.some(v => v === msg.id))
 
   // なければfalse
