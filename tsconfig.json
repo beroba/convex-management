@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "removeComments": true,
