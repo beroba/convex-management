@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Cancel = void 0;
+exports.Delete = exports.Cancel = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -93,7 +93,7 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                 day = _b.sent();
                 if (!day)
                     return [2];
-                return [4, statusRestore(react, user)];
+                return [4, statusRestore(react.message, user)];
             case 3:
                 _b.sent();
                 situation.Report();
@@ -101,7 +101,36 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
-var statusRestore = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var isRole, day, user;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                    return [2];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
+                    return [2];
+                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                if (!isRole)
+                    return [2];
+                return [4, date.GetDay()];
+            case 1:
+                day = _d.sent();
+                if (!day)
+                    return [2];
+                user = (_c = msg.member) === null || _c === void 0 ? void 0 : _c.user;
+                if (!user)
+                    return [2];
+                return [4, statusRestore(msg, user)];
+            case 2:
+                _d.sent();
+                situation.Report();
+                return [2, 'Convex cancellation'];
+        }
+    });
+}); };
+var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, members, member, row, days, num_cell, over_cell, end_cell, hist_cell;
     var _a;
     return __generator(this, function (_b) {
@@ -113,7 +142,7 @@ var statusRestore = function (react, user) { return __awaiter(void 0, void 0, vo
             case 2:
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
+                member = util.GetMembersFromUser((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members, user);
                 row = status.GetMemberRow(members, user.id);
                 return [4, date.CheckCalnBattle()];
             case 3:
@@ -133,7 +162,7 @@ var statusRestore = function (react, user) { return __awaiter(void 0, void 0, vo
                 rollback(num_cell, over_cell, hist_cell);
                 endConfirm(end_cell, member);
                 feedback(num_cell, over_cell, user);
-                killConfirm(react);
+                killConfirm(msg);
                 return [2];
         }
     });
@@ -156,10 +185,10 @@ var feedback = function (num_cell, over_cell, user) {
     var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
     channel.send("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n<@!" + user.id + ">, " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
 };
-var killConfirm = function (react) { return __awaiter(void 0, void 0, void 0, function () {
+var killConfirm = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
-        content = util.Format(react.message.content);
+        content = util.Format(msg.content);
         if (!/^k/i.test(content))
             return [2];
         lapAndBoss.Previous();

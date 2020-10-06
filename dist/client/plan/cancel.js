@@ -126,7 +126,7 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
 }); };
 var isConvexPlan = function (cells, msg) {
     var list = pieces_each_1["default"](cells, 8)
-        .map(function (c) { return [c[0], c[1], c[2]]; })
+        .map(function (c) { return c.slice(0, 3); })
         .filter(function (c) { return c.some(function (v) { return v === msg.id; }); });
     if (list.length === 0)
         return false;
