@@ -27,7 +27,7 @@ export const Report = async () => {
     .filter(v => v[0] !== '')
 
   // #凸状況に報告
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
   channel.send(await createMessage(list))
 
   console.log('Report convex situation')

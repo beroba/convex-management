@@ -108,7 +108,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
                     .map(function (v) { return v.map(Number); })
                     .map(function (v, i) { return __spread([members[i][0]], v); })
                     .filter(function (v) { return v[0] !== ''; });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
                 _b = (_a = channel).send;
                 return [4, createMessage(list)];
             case 5:
