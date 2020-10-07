@@ -87,32 +87,37 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
 var date = __importStar(require("./date"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, days, range, status, cells, members, list, channel, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var sheet, days, range, status, cells, members, list, currentText, situation, msg, history;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _c.sent();
+                sheet = _a.sent();
                 return [4, date.CheckCalnBattle()];
             case 2:
-                days = _c.sent();
+                days = _a.sent();
                 range = days[2] + "3:" + alphabet_to_number_1.AtoA(days[2], 1) + "32";
                 return [4, spreadsheet.GetCells(sheet, range)];
             case 3:
-                status = _c.sent();
+                status = _a.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 4:
-                cells = _c.sent();
+                cells = _a.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 list = pieces_each_1["default"](status, 2)
                     .map(function (v) { return v.map(Number); })
                     .map(function (v, i) { return __spread([members[i][0]], v); })
                     .filter(function (v) { return v[0] !== ''; });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
-                _b = (_a = channel).send;
                 return [4, createMessage(list)];
             case 5:
-                _b.apply(_a, [_c.sent()]);
+                currentText = _a.sent();
+                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
+                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
+            case 6:
+                msg = _a.sent();
+                msg.edit(currentText);
+                history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
+                history.send(currentText);
                 console.log('Report convex situation');
                 return [2];
         }
