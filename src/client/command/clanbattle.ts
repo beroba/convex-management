@@ -50,6 +50,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       simultConvexCalc(arg, msg)
       return 'Simultaneous convex carryover calculation'
     }
+
+    case /cb help/.test(command): {
+      msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
+      return 'Show help'
+    }
   }
 }
 
