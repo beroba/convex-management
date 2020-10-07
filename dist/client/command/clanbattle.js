@@ -112,6 +112,10 @@ exports.ClanBattle = function (command, msg) {
             simultConvexCalc(arg, msg);
             return 'Simultaneous convex carryover calculation';
         }
+        case /cb help/.test(command): {
+            msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
+            return 'Show help';
+        }
     }
 };
 var currentBossNow = function (msg) { return __awaiter(void 0, void 0, void 0, function () {

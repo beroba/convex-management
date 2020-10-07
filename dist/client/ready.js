@@ -30,7 +30,5 @@ exports.Ready = function () {
     var _a;
     var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
     channel.send('きゃるきゃるーん');
-    util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION).send('凸状況');
-    util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION).send('凸予定');
     console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
 };
