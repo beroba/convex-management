@@ -26,9 +26,17 @@ export const Report = async () => {
     .map((v, i) => [members[i][0], ...v])
     .filter(v => v[0] !== '')
 
-  // #凸状況に報告
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
-  channel.send(await createMessage(list))
+  // 現在の凸状況を取得
+  const currentText = await createMessage(list)
+
+  // 凸状況を更新
+  const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  const msg = await situation.messages.fetch(Settings.CONVEX_MESSAGE_ID.SITUATION)
+  msg.edit(currentText)
+
+  // #凸状況履歴に報告
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
+  history.send(currentText)
 
   console.log('Report convex situation')
 }
