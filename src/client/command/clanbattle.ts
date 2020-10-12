@@ -6,6 +6,7 @@ import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 import * as date from '../convex/date'
 import * as list from '../plan/list'
+import {NtoA} from 'alphabet-to-number'
 
 /**
  * クラバト用のコマンド
@@ -153,6 +154,9 @@ const planList = async (arg: string, msg: Discord.Message) => {
   if (/^[a-e]$/i.test(arg)) {
     // ボス番号の凸予定一覧を表示
     list.Output(arg)
+  } else if (/^[1-5]$/i.test(arg)) {
+    // ボス番号の凸予定一覧を表示
+    list.Output(NtoA(arg))
   } else {
     // 凸予定一覧を全て表示
     list.AllOutput()
