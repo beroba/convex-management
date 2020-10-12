@@ -35,7 +35,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const over = await status.Update(msg)
   if (over === undefined) {
     msg.reply('もう3凸してるわ')
-    return
+    return '3 Convex is finished'
   }
 
   // 凸状況に報告
