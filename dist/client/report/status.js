@@ -95,10 +95,8 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, exports.GetCell(3, row, sheet, days)];
             case 7:
                 hist_cell = _b.sent();
-                if (end_cell.getValue()) {
-                    msg.reply('もう3凸してるわ');
+                if (end_cell.getValue())
                     return [2];
-                }
                 over = !!over_cell.getValue();
                 saveHistory(num_cell, over_cell, hist_cell);
                 content = util.Format(msg.content);

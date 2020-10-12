@@ -72,7 +72,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 0:
                 res = planObject(msg);
                 _a = res;
-                return [4, GetBossName(res.num)];
+                return [4, getBossName(res.num)];
             case 1:
                 _a.boss = _d.sent();
                 _b = res;
@@ -101,7 +101,7 @@ var planObject = function (msg) {
         message: content.slice(1).trim()
     };
 };
-var GetBossName = function (num) { return __awaiter(void 0, void 0, void 0, function () {
+var getBossName = function (num) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells;
     return __generator(this, function (_a) {
         switch (_a.label) {

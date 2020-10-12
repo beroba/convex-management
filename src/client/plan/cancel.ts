@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from './list'
@@ -85,6 +86,34 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
+ * 凸報告のメッセージにボス名またはボス番号があった場合、先頭の凸報告を完了する
+ * @param msg DiscordからのMessage
+ */
+export const Report = async (msg: Discord.Message) => {
+  // ボス番号を取得
+  const content = util.Format(msg.content)
+  const num = await checkBossNumber(content)
+
+  // ボス番号がなければ終了
+  if (!num) return
+
+  // 凸予定のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
+
+  // 報告者の凸予定一覧を取得
+  const list = PiecesEach(cells, 8)
+    .filter(c => c[4] === msg.author.id)
+    .filter(c => !c[0])
+
+  // 凸予定から先頭のボス番号のインデックスを取得
+  const index = list.findIndex(v => v[5] === num)
+
+  // 凸予定が無ければ終了
+  if (~index) return
+}
+
+/**
  * 凸予定が完了していなければture、でなければfalse
  * @param cells 凸予定の一覧
  * @param msg DiscordからのMessage
@@ -102,6 +131,38 @@ const isConvexPlan = (cells: string[], msg: Discord.Message): boolean => {
   if (list[0][0] === '1') return false
   // 凸予定があって完了してなければtrue
   return true
+}
+
+/**
+ * 凸報告のメッセージからボス番号を取得。
+ * ボス名の完全一致またはkillを除いた先頭文字がボス番号(1-5|a-e)の場合ボス番号を返す
+ * @param content 凸報告のメッセージ
+ * @return ボス番号
+ */
+const checkBossNumber = async (content: string): Promise<Option<string>> => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+
+  // ボス名に一致するか確認
+  const name = PiecesEach(cells, 2)
+    .filter(v => !/^,+$/.test(v.toString()))
+    .filter(v => ~content.indexOf(v[1]))
+
+  // 一致していればボス番号を返す
+  if (name.length) return name[0][0]
+
+  // /^k|kill/を取り除いた先頭文字
+  const num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0]
+
+  // 先頭文字がボス番号(1-5)なら(a-e)に変換して返す
+  if (/[1-5]/.test(num)) return NtoA(num)
+
+  // 先頭文字がボス番号(a-e)ならそのまま返す
+  if (/[a-e]/i.test(num)) return num
+
+  // 一致しなければundefinedを返す
+  return
 }
 
 /**

@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
@@ -13,7 +14,7 @@ import * as report from '../convex/report'
  * @param msg DiscordからのMessage
  * @return 持ち越しかどうかの真偽値
  */
-export const Update = async (msg: Discord.Message): Promise<Boolean | undefined> => {
+export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => {
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 

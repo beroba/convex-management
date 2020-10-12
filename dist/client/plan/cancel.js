@@ -58,9 +58,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Delete = exports.Already = void 0;
+exports.Report = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
@@ -124,6 +125,56 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 deleteBossRole(cells, msg);
                 list.SituationEdit();
                 return [2, 'Delete completed message'];
+        }
+    });
+}); };
+exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var content, num, sheet, cells, list, index;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                content = util.Format(msg.content);
+                return [4, checkBossNumber(content)];
+            case 1:
+                num = _a.sent();
+                if (!num)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 2:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+            case 3:
+                cells = _a.sent();
+                list = pieces_each_1["default"](cells, 8)
+                    .filter(function (c) { return c[4] === msg.author.id; })
+                    .filter(function (c) { return !c[0]; });
+                index = list.findIndex(function (v) { return v[5] === num; });
+                console.log(index);
+                return [2];
+        }
+    });
+}); };
+var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, name, num;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 2:
+                cells = _a.sent();
+                name = pieces_each_1["default"](cells, 2)
+                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                    .filter(function (v) { return ~content.indexOf(v[1]); });
+                if (name.length)
+                    return [2, name[0][0]];
+                num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0];
+                if (/[1-5]/.test(num))
+                    return [2, alphabet_to_number_1.NtoA(num)];
+                if (/[a-e]/i.test(num))
+                    return [2, num];
+                return [2];
         }
     });
 }); };

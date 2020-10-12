@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as date from '../convex/date'
 import * as situation from '../convex/situation'
 import * as status from './status'
+import * as cancel from '../plan/cancel'
 
 /**
  * 凸報告の管理を行う
@@ -40,6 +41,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // 凸状況に報告
   situation.Report()
+  cancel.Report(msg)
 
   return 'Update status'
 }
