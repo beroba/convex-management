@@ -156,6 +156,7 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 msgCalDelete(cells, id);
                 plans = pieces_each_1["default"](cells, 8)
                     .filter(function (c) { return c[4] === msg.author.id; })
+                    .filter(function (v) { return v[5] === num; })
                     .filter(function (c) { return !c[0]; });
                 if (plans.length <= 1) {
                     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
@@ -225,6 +226,7 @@ var deleteBossRole = function (cells, msg) {
     var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
     var plans = pieces_each_1["default"](cells, 8)
         .filter(function (c) { return c[4] === msg.author.id; })
+        .filter(function (v) { return v[5] === num; })
         .filter(function (c) { return !c[0]; });
     if (plans.length > 1)
         return;

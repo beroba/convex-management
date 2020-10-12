@@ -112,12 +112,13 @@ export const Report = async (msg: Discord.Message) => {
   msgUserDelete(cells, id)
   msgCalDelete(cells, id)
 
+  // ボスのロールを外す
   const plans = PiecesEach(cells, 8)
     .filter(c => c[4] === msg.author.id)
+    .filter(v => v[5] === num)
     .filter(c => !c[0])
   // 凸予定が残り1つ以下だったら実行
   if (plans.length <= 1) {
-    // ボスのロールを外す
     msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
   }
 
@@ -203,6 +204,7 @@ const deleteBossRole = (cells: string[], msg: Discord.Message) => {
   // 凸予定が残り2つ以上だった場合は終了
   const plans = PiecesEach(cells, 8)
     .filter(c => c[4] === msg.author.id)
+    .filter(v => v[5] === num)
     .filter(c => !c[0])
   if (plans.length > 1) return
 
