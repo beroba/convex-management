@@ -21,14 +21,14 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // クランメンバーじゃなければ終了
   const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
   if (!isRole) {
-    const cal = await msg.reply('クランメンバーじゃないわ')
+    const cal = await msg.reply('クランメンバーじゃないわ\n※15秒にこのメッセージは消えます')
     setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return 'Not a clan member'
   }
 
   // ボス番号が書式通りか確認する
   if (!formatConfirm(msg)) {
-    const cal = await msg.reply('書式が違うから予定できないわ')
+    const cal = await msg.reply('書式が違うから予定できないわ\n※15秒にこのメッセージは消えます')
     setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return 'The format of the boss number is different'
   }
@@ -36,7 +36,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) {
-    const cal = await msg.reply('今日はクラバトの日じゃないわ')
+    const cal = await msg.reply('今日はクラバトの日じゃないわ\n※15秒にこのメッセージは消えます')
     setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return "It's not ClanBattle days"
   }

@@ -19,7 +19,7 @@ export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.Us
 
   // #id送信チャンネルへの誘導をする
   const msg = await react.message.reply(
-    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！`
+    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！\n※15秒にこのメッセージは消えます`
   )
   // 15秒したらメッセージを削除する
   setTimeout(() => msg.delete(), 15000)
