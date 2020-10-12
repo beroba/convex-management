@@ -76,14 +76,14 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
                 if (!!isRole) return [3, 2];
-                return [4, msg.reply('クランメンバーじゃないわ')];
+                return [4, msg.reply('クランメンバーじゃないわ\n※15秒にこのメッセージは消えます')];
             case 1:
                 cal_1 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 15000);
                 return [2, 'Not a clan member'];
             case 2:
                 if (!!formatConfirm(msg)) return [3, 4];
-                return [4, msg.reply('書式が違うから予定できないわ')];
+                return [4, msg.reply('書式が違うから予定できないわ\n※15秒にこのメッセージは消えます')];
             case 3:
                 cal_2 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 15000);
@@ -92,7 +92,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 5:
                 day = _c.sent();
                 if (!!day) return [3, 7];
-                return [4, msg.reply('今日はクラバトの日じゃないわ')];
+                return [4, msg.reply('今日はクラバトの日じゃないわ\n※15秒にこのメッセージは消えます')];
             case 6:
                 cal_3 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 15000);
