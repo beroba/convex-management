@@ -81,6 +81,7 @@ var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 var date = __importStar(require("../convex/date"));
 var list = __importStar(require("../plan/list"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
         return;
@@ -201,6 +202,9 @@ var planList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fu
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
                 if (/^[a-e]$/i.test(arg)) {
                     list.Output(arg);
+                }
+                else if (/^[1-5]$/i.test(arg)) {
+                    list.Output(alphabet_to_number_1.NtoA(arg));
                 }
                 else {
                     list.AllOutput();
