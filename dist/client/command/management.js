@@ -87,6 +87,10 @@ exports.Management = function (command, msg) {
             setDate(arg, msg);
             return 'Update convex management members';
         }
+        case /cb manage remove role/.test(command): {
+            removeRole(msg);
+            return 'Release all remaining convex rolls';
+        }
         case /cb manage update members/.test(command): {
             updateMembers(msg);
             return 'Update convex management members';
@@ -129,6 +133,13 @@ var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+var removeRole = function (msg) {
+    var _a, _b;
+    var clanMembers = (_b = (_a = util
+        .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
+    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
+    msg.reply('凸残ロール全て外したわよ！');
+};
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var members, sheet;
     var _a, _b;

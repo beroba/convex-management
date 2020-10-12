@@ -39,6 +39,11 @@ export const Management = (command: string, msg: Discord.Message): Option<string
       return 'Update convex management members'
     }
 
+    case /cb manage remove role/.test(command): {
+      removeRole(msg)
+      return 'Release all remaining convex rolls'
+    }
+
     case /cb manage update members/.test(command): {
       updateMembers(msg)
       return 'Update convex management members'
@@ -75,6 +80,23 @@ const setDate = async (arg: string, msg: Discord.Message) => {
   })
 
   msg.reply('クランバトルの日付を設定したわよ！')
+}
+
+/**
+ * 凸残ロールを全て外す
+ * @param msg DiscordからのMessage
+ */
+const removeRole = (msg: Discord.Message) => {
+  // べろばあのクランメンバー一覧を取得
+  const clanMembers = util
+    .GetGuild()
+    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+    ?.members.map(m => m)
+
+  // クランメンバーに凸残ロールを付与する
+  clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
+
+  msg.reply('凸残ロール全て外したわよ！')
 }
 
 /**
