@@ -31,10 +31,7 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   const hist_cell = await GetCell(3, row, sheet, days)
 
   // 既に3凸している人は終了する
-  if (end_cell.getValue()) return
-
-  // 持ち越し状況を記憶
-  const over = !!over_cell.getValue()
+  if (end_cell.getValue()) return true
 
   // 現在の凸状況を履歴に残しておく
   saveHistory(num_cell, over_cell, hist_cell)
@@ -54,8 +51,7 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
     situationReport(num_cell, over_cell, msg)
   }
 
-  // 持ち越し状況を返す
-  return over
+  return
 }
 
 /**

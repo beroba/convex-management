@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as carryover from '../convex/carryover'
 import * as date from '../convex/date'
 import * as situation from '../convex/situation'
 import * as status from './status'
@@ -33,11 +34,16 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 凸状況を更新
-  const over = await status.Update(msg)
-  if (over === undefined) {
+  const bool = await status.Update(msg)
+
+  // 3凸していた場合は終了
+  if (bool) {
     msg.reply('もう3凸してるわ')
     return '3 Convex is finished'
   }
+
+  // 持ち越し状況を削除
+  carryover.AllDelete(msg)
 
   // 凸状況に報告
   situation.Report()

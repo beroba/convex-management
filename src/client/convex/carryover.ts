@@ -46,3 +46,17 @@ export const React = (msg: Discord.Message): Option<string> => {
 
   return 'React Kanryou'
 }
+
+/**
+ * メッセージ送信者の持ち越し状況を全て削除する
+ * @param msg DiscordからのMessage
+ */
+export const AllDelete = async (msg: Discord.Message) => {
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
+  ;(await channel.messages.fetch())
+    .map(v => v)
+    .filter(m => m.author.id === msg.author.id)
+    .forEach(m => m.delete())
+
+  console.log('Delete carryover message')
+}
