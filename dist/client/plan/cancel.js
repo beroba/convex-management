@@ -92,11 +92,11 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
                 cells = _b.sent();
-                return [4, convexComplete(sheet, cells, react.message)];
+                return [4, convexComplete(sheet, cells, react.message.id)];
             case 4:
                 _b.sent();
                 react.message["delete"]();
-                msgCalDelete(cells, react.message);
+                msgCalDelete(cells, react.message.id);
                 deleteBossRole(cells, react.message);
                 list.SituationEdit();
                 return [2, 'Delete completed message'];
@@ -118,10 +118,10 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 cells = _a.sent();
                 if (!isConvexPlan(cells, msg))
                     return [2];
-                return [4, convexComplete(sheet, cells, msg)];
+                return [4, convexComplete(sheet, cells, msg.id)];
             case 3:
                 _a.sent();
-                msgCalDelete(cells, msg);
+                msgCalDelete(cells, msg.id);
                 deleteBossRole(cells, msg);
                 list.SituationEdit();
                 return [2, 'Delete completed message'];
@@ -129,31 +129,97 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, num, sheet, cells, list, index;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var content, num, sheet, cells, id;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 content = util.Format(msg.content);
                 return [4, checkBossNumber(content)];
             case 1:
-                num = _a.sent();
+                num = _b.sent();
                 if (!num)
                     return [2];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 2:
-                sheet = _a.sent();
+                sheet = _b.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
-                cells = _a.sent();
-                list = pieces_each_1["default"](cells, 8)
-                    .filter(function (c) { return c[4] === msg.author.id; })
-                    .filter(function (c) { return !c[0]; });
-                index = list.findIndex(function (v) { return v[5] === num; });
-                console.log(index);
+                cells = _b.sent();
+                id = readPlanMessageId(cells, msg.author.id, num);
+                if (!id)
+                    return [2];
+                return [4, convexComplete(sheet, cells, id)];
+            case 4:
+                _b.sent();
+                msgUserDelete(cells, id);
+                msgCalDelete(cells, id);
+                (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+                list.SituationEdit();
+                console.log('Delete completed message');
                 return [2];
         }
     });
 }); };
+var isConvexPlan = function (cells, msg) {
+    var list = pieces_each_1["default"](cells, 8)
+        .map(function (c) { return c.slice(0, 3); })
+        .filter(function (c) { return c.some(function (v) { return v === msg.id; }); });
+    if (list.length === 0)
+        return false;
+    if (list[0][0] === '1')
+        return false;
+    return true;
+};
+var msgUserDelete = function (cells, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var msgid, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                msgid = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === id; })[0][1];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.messages.fetch(msgid)];
+            case 1:
+                (_a.sent())["delete"]();
+                return [2];
+        }
+    });
+}); };
+var msgCalDelete = function (cells, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var msgid, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                msgid = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === id; })[0][2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.messages.fetch(msgid)];
+            case 1:
+                (_a.sent())["delete"]();
+                return [2];
+        }
+    });
+}); };
+var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var row, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                row = pieces_each_1["default"](cells, 8)
+                    .map(function (v) { return v[1]; })
+                    .indexOf(id) + 3;
+                return [4, sheet.getCell("A" + row)];
+            case 1:
+                cell = _a.sent();
+                cell.setValue('1');
+                return [2];
+        }
+    });
+}); };
+var deleteBossRole = function (cells, msg) {
+    var _a;
+    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+};
 var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, name, num;
     return __generator(this, function (_a) {
@@ -178,48 +244,12 @@ var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-var isConvexPlan = function (cells, msg) {
-    var list = pieces_each_1["default"](cells, 8)
-        .map(function (c) { return c.slice(0, 3); })
-        .filter(function (c) { return c.some(function (v) { return v === msg.id; }); });
-    if (list.length === 0)
-        return false;
-    if (list[0][0] === '1')
-        return false;
-    return true;
-};
-var msgCalDelete = function (cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, channel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                id = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
-                return [4, channel.messages.fetch(id)];
-            case 1:
-                (_a.sent())["delete"]();
-                return [2];
-        }
-    });
-}); };
-var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var row, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                row = pieces_each_1["default"](cells, 8)
-                    .map(function (v) { return v[1]; })
-                    .indexOf(msg.id) + 3;
-                return [4, sheet.getCell("A" + row)];
-            case 1:
-                cell = _a.sent();
-                cell.setValue('1');
-                return [2];
-        }
-    });
-}); };
-var deleteBossRole = function (cells, msg) {
-    var _a;
-    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
-    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+var readPlanMessageId = function (cells, id, num) {
+    var plans = pieces_each_1["default"](cells, 8)
+        .filter(function (c) { return c[4] === id; })
+        .filter(function (c) { return !c[0]; });
+    var index = plans.findIndex(function (v) { return v[5] === num; });
+    if (index === -1)
+        return;
+    return plans[index][1];
 };
