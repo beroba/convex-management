@@ -86,7 +86,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 凸報告のメッセージにボス名またはボス番号があった場合、先頭の凸報告を完了する
+ * 凸報告のメッセージにボス名またはボス番号があった場合、先頭の凸報告を削除する
  * @param msg DiscordからのMessage
  */
 export const Report = async (msg: Discord.Message) => {
