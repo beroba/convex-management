@@ -67,7 +67,7 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
 var date = __importStar(require("./date"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, days, range, status, _a, cells, members, list, currentText, situation, msg, history;
+    var sheet, days, range, status, _a, cells, members, list, text, situation, msg, history;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
@@ -88,14 +88,14 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
                 list = mergeList(status, members);
                 return [4, createMessage(list)];
             case 5:
-                currentText = _b.sent();
+                text = _b.sent();
                 situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
                 return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
             case 6:
                 msg = _b.sent();
-                msg.edit(currentText);
+                msg.edit(text);
                 history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
-                history.send(currentText);
+                history.send(text);
                 console.log('Report convex situation');
                 return [2];
         }

@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
+import * as list from './list'
 
 /**
  * 凸予定の自分のメッセージに完了の絵文字をつけたら削除する
@@ -46,6 +47,9 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
   // ボスのロールを外す
   deleteBossRole(cells, react.message)
 
+  // 凸状況を更新
+  list.SituationEdit()
+
   return 'Delete completed message'
 }
 
@@ -73,6 +77,9 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // ボスのロールを外す
   deleteBossRole(cells, msg)
+
+  // 凸状況を更新
+  list.SituationEdit()
 
   return 'Delete completed message'
 }

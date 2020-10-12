@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.PlanOnly = exports.AllOutput = exports.Output = void 0;
+exports.PlanOnly = exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
@@ -81,7 +81,37 @@ exports.Output = function (num) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var list, table, text, channel;
+    var text, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, createAllPlanText()];
+            case 1:
+                text = _a.sent();
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send(text);
+                return [2];
+        }
+    });
+}); };
+exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var text, situation, msg;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, createAllPlanText()];
+            case 1:
+                text = _a.sent();
+                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
+                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.PLAN)];
+            case 2:
+                msg = _a.sent();
+                msg.edit(text);
+                console.log('Edit the convex schedule of the convex situation');
+                return [2];
+        }
+    });
+}); };
+var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var list, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, readPlanList()];
@@ -90,13 +120,13 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
                 return [4, readBossTable()];
             case 2:
                 table = _a.sent();
-                text = 'abcde'.split('').map(function (c) {
-                    var boss = takeBossName(c, table);
-                    return boss + "\n" + '```\n' + (createPlanList(c, list) + "\n") + '```';
-                });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(text);
-                return [2];
+                return [2, 'abcde'
+                        .split('')
+                        .map(function (c) {
+                        var boss = takeBossName(c, table);
+                        return boss + "\n" + '```\n' + (createPlanList(c, list) + "\n") + '```';
+                    })
+                        .join('')];
         }
     });
 }); };

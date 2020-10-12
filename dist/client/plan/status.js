@@ -125,18 +125,20 @@ var fetchPlan = function (res) { return __awaiter(void 0, void 0, void 0, functi
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PERSON_CELLS)];
             case 2:
                 cells = (_a.sent()).filter(function (v) { return v; });
-                Object.values(res).forEach(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('B', i) + (cells.length + 3))];
-                            case 1:
-                                cell = _a.sent();
-                                cell.setValue(v);
-                                return [2];
-                        }
-                    });
-                }); });
+                return [4, Promise.all(Object.values(res).map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('B', i) + (cells.length + 3))];
+                                case 1:
+                                    cell = _a.sent();
+                                    cell.setValue(v);
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 3:
+                _a.sent();
                 return [2];
         }
     });

@@ -62,6 +62,7 @@ exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var date = __importStar(require("../convex/date"));
+var list = __importStar(require("./list"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, cal_1, cal_2, day, cal_3;
@@ -96,8 +97,10 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 cal_3 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 15000);
                 return [2, "It's not ClanBattle days"];
-            case 7:
-                status.Update(msg);
+            case 7: return [4, status.Update(msg)];
+            case 8:
+                _c.sent();
+                list.SituationEdit();
                 return [2, 'Make a convex reservation'];
         }
     });
