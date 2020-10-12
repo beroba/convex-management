@@ -64,7 +64,7 @@ var date = __importStar(require("../convex/date"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, day;
+    var isRole, day, over;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -87,7 +87,12 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 }
                 return [4, status.Update(msg)];
             case 2:
-                _c.sent();
+                over = _c.sent();
+                console.log(over);
+                if (over === undefined) {
+                    console.log(1);
+                    return [2];
+                }
                 situation.Report();
                 return [2, 'Update status'];
         }

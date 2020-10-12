@@ -11,8 +11,9 @@ import * as report from '../convex/report'
 /**
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
+ * @return 持ち越しかどうかの真偽値
  */
-export const Update = async (msg: Discord.Message) => {
+export const Update = async (msg: Discord.Message): Promise<Boolean | undefined> => {
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
@@ -29,7 +30,10 @@ export const Update = async (msg: Discord.Message) => {
   const hist_cell = await GetCell(3, row, sheet, days)
 
   // 既に3凸している人は終了する
-  if (end_cell.getValue()) return msg.reply('もう3凸してるわ')
+  if (end_cell.getValue()) return
+
+  // 持ち越し状況を記憶
+  const over = !!over_cell.getValue()
 
   // 現在の凸状況を履歴に残しておく
   saveHistory(num_cell, over_cell, hist_cell)
@@ -48,6 +52,9 @@ export const Update = async (msg: Discord.Message) => {
   } else {
     situationReport(num_cell, over_cell, msg)
   }
+
+  // 持ち越し状況を返す
+  return over
 }
 
 /**
