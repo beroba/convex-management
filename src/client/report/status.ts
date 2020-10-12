@@ -97,7 +97,7 @@ const statusUpdate = (num_cell: any, over_cell: any, content: string) => {
   const over = over_cell.getValue()
 
   // ボスを倒した場合はtrue、倒していない場合はfalse
-  if (/^k/i.test(content)) {
+  if (/^k|kill/i.test(content)) {
     // 次のボスに進める
     lapAndBoss.Next()
 

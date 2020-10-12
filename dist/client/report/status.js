@@ -137,7 +137,7 @@ var saveHistory = function (num_cell, over_cell, hist_cell) { return __awaiter(v
 var statusUpdate = function (num_cell, over_cell, content) {
     var num = Number(num_cell.getValue());
     var over = over_cell.getValue();
-    if (/^k/i.test(content)) {
+    if (/^k|kill/i.test(content)) {
         lapAndBoss.Next();
         if (over) {
             over_cell.setValue();

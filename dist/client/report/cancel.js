@@ -189,7 +189,7 @@ var killConfirm = function (msg) { return __awaiter(void 0, void 0, void 0, func
     var content;
     return __generator(this, function (_a) {
         content = util.Format(msg.content);
-        if (!/^k/i.test(content))
+        if (!/^k|kill/i.test(content))
             return [2];
         lapAndBoss.Previous();
         return [2];
