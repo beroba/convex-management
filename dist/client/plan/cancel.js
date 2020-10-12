@@ -63,6 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var list = __importStar(require("./list"));
 exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, isRole, sheet, cells;
     var _a;
@@ -96,6 +97,7 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
                 react.message["delete"]();
                 msgCalDelete(cells, react.message);
                 deleteBossRole(cells, react.message);
+                list.SituationEdit();
                 return [2, 'Delete completed message'];
         }
     });
@@ -120,6 +122,7 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 _a.sent();
                 msgCalDelete(cells, msg);
                 deleteBossRole(cells, msg);
+                list.SituationEdit();
                 return [2, 'Delete completed message'];
         }
     });

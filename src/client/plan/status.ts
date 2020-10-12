@@ -86,9 +86,11 @@ const fetchPlan = async (res: Plan) => {
   const cells: string[] = (await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PERSON_CELLS)).filter(v => v)
 
   // スプレッドシートを更新
-  Object.values(res).forEach(async (v, i) => {
-    // 順番にセルを取得
-    const cell = await sheet.getCell(`${AtoA('B', i)}${cells.length + 3}`)
-    cell.setValue(v)
-  })
+  await Promise.all(
+    Object.values(res).map(async (v, i) => {
+      // 順番にセルを取得
+      const cell = await sheet.getCell(`${AtoA('B', i)}${cells.length + 3}`)
+      cell.setValue(v)
+    })
+  )
 }

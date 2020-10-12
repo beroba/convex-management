@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as date from '../convex/date'
+import * as list from './list'
 import * as status from './status'
 
 /**
@@ -41,7 +42,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 凸予定を更新
-  status.Update(msg)
+  await status.Update(msg)
+
+  // 凸状況を更新
+  list.SituationEdit()
 
   return 'Make a convex reservation'
 }

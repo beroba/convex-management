@@ -20,14 +20,41 @@ export const Output = async (num: string) => {
  * 全凸予定一覧を出力
  */
 export const AllOutput = async () => {
-  const list = await readPlanList()
-  const table = await readBossTable()
-  const text = 'abcde'.split('').map(c => {
-    const boss = takeBossName(c, table)
-    return `${boss}\n` + '```\n' + `${createPlanList(c, list)}\n` + '```'
-  })
+  const text = await createAllPlanText()
+
+  // 凸予定一覧を出力
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(text)
+}
+
+/**
+ * #凸状況の凸予定を編集
+ */
+export const SituationEdit = async () => {
+  const text = await createAllPlanText()
+
+  // 凸状況を更新
+  const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  const msg = await situation.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
+  msg.edit(text)
+
+  console.log('Edit the convex schedule of the convex situation')
+}
+
+/**
+ * 全凸予定の一覧のテキストを作成
+ * @return 作成したテキスト
+ */
+const createAllPlanText = async (): Promise<string> => {
+  const list = await readPlanList()
+  const table = await readBossTable()
+  return 'abcde'
+    .split('')
+    .map(c => {
+      const boss = takeBossName(c, table)
+      return `${boss}\n` + '```\n' + `${createPlanList(c, list)}\n` + '```'
+    })
+    .join('')
 }
 
 /**
