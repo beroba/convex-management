@@ -27,7 +27,7 @@ export const Update = async (msg: Discord.Message) => {
   const res = planObject(msg)
 
   // ボス番号からボス名を取得
-  res.boss = await GetBossName(res.num)
+  res.boss = await getBossName(res.num)
 
   // 予定したボスを報告し、報告したキャルのメッセージIDを取得
   res.cal = (await msg.reply(`${res.boss}を予定したわよ！`)).id
@@ -67,7 +67,7 @@ const planObject = (msg: Discord.Message): Plan => {
  * @param num ボス番号
  * @return ボス名
  */
-const GetBossName = async (num: string): Promise<string> => {
+const getBossName = async (num: string): Promise<string> => {
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)

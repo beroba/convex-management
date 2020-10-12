@@ -63,8 +63,9 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var date = __importStar(require("../convex/date"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
+var cancel = __importStar(require("../plan/cancel"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, day;
+    var isRole, day, over;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -87,8 +88,13 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 }
                 return [4, status.Update(msg)];
             case 2:
-                _c.sent();
+                over = _c.sent();
+                if (over === undefined) {
+                    msg.reply('もう3凸してるわ');
+                    return [2, '3 Convex is finished'];
+                }
                 situation.Report();
+                cancel.Report(msg);
                 return [2, 'Update status'];
         }
     });

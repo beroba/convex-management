@@ -58,9 +58,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Delete = exports.Already = void 0;
+exports.Report = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
@@ -91,11 +92,11 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
                 cells = _b.sent();
-                return [4, convexComplete(sheet, cells, react.message)];
+                return [4, convexComplete(sheet, cells, react.message.id)];
             case 4:
                 _b.sent();
                 react.message["delete"]();
-                msgCalDelete(cells, react.message);
+                msgCalDelete(cells, react.message.id);
                 deleteBossRole(cells, react.message);
                 list.SituationEdit();
                 return [2, 'Delete completed message'];
@@ -117,13 +118,46 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 cells = _a.sent();
                 if (!isConvexPlan(cells, msg))
                     return [2];
-                return [4, convexComplete(sheet, cells, msg)];
+                return [4, convexComplete(sheet, cells, msg.id)];
             case 3:
                 _a.sent();
-                msgCalDelete(cells, msg);
+                msgCalDelete(cells, msg.id);
                 deleteBossRole(cells, msg);
                 list.SituationEdit();
                 return [2, 'Delete completed message'];
+        }
+    });
+}); };
+exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var content, num, sheet, cells, id;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                content = util.Format(msg.content);
+                return [4, checkBossNumber(content)];
+            case 1:
+                num = _b.sent();
+                if (!num)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 2:
+                sheet = _b.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+            case 3:
+                cells = _b.sent();
+                id = readPlanMessageId(cells, msg.author.id, num);
+                if (!id)
+                    return [2];
+                return [4, convexComplete(sheet, cells, id)];
+            case 4:
+                _b.sent();
+                msgUserDelete(cells, id);
+                msgCalDelete(cells, id);
+                (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+                list.SituationEdit();
+                console.log('Delete completed message');
+                return [2];
         }
     });
 }); };
@@ -137,28 +171,42 @@ var isConvexPlan = function (cells, msg) {
         return false;
     return true;
 };
-var msgCalDelete = function (cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, channel;
+var msgUserDelete = function (cells, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var msgid, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                id = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
+                msgid = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === id; })[0][1];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
-                return [4, channel.messages.fetch(id)];
+                return [4, channel.messages.fetch(msgid)];
             case 1:
                 (_a.sent())["delete"]();
                 return [2];
         }
     });
 }); };
-var convexComplete = function (sheet, cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var msgCalDelete = function (cells, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var msgid, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                msgid = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === id; })[0][2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.messages.fetch(msgid)];
+            case 1:
+                (_a.sent())["delete"]();
+                return [2];
+        }
+    });
+}); };
+var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void 0, void 0, function () {
     var row, cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 row = pieces_each_1["default"](cells, 8)
                     .map(function (v) { return v[1]; })
-                    .indexOf(msg.id) + 3;
+                    .indexOf(id) + 3;
                 return [4, sheet.getCell("A" + row)];
             case 1:
                 cell = _a.sent();
@@ -171,4 +219,37 @@ var deleteBossRole = function (cells, msg) {
     var _a;
     var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+};
+var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, name, num;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 2:
+                cells = _a.sent();
+                name = pieces_each_1["default"](cells, 2)
+                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                    .filter(function (v) { return ~content.indexOf(v[1]); });
+                if (name.length)
+                    return [2, name[0][0]];
+                num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0];
+                if (/[1-5]/.test(num))
+                    return [2, alphabet_to_number_1.NtoA(num)];
+                if (/[a-e]/i.test(num))
+                    return [2, num];
+                return [2];
+        }
+    });
+}); };
+var readPlanMessageId = function (cells, id, num) {
+    var plans = pieces_each_1["default"](cells, 8)
+        .filter(function (c) { return c[4] === id; })
+        .filter(function (c) { return !c[0]; });
+    var index = plans.findIndex(function (v) { return v[5] === num; });
+    if (index === -1)
+        return;
+    return plans[index][1];
 };

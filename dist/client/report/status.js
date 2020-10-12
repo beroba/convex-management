@@ -68,7 +68,7 @@ var date = __importStar(require("../convex/date"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var report = __importStar(require("../convex/report"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, members, row, days, num_cell, over_cell, end_cell, hist_cell, content, end;
+    var sheet, cells, members, row, days, num_cell, over_cell, end_cell, hist_cell, over, content, end;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -96,7 +96,8 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 7:
                 hist_cell = _b.sent();
                 if (end_cell.getValue())
-                    return [2, msg.reply('もう3凸してるわ')];
+                    return [2];
+                over = !!over_cell.getValue();
                 saveHistory(num_cell, over_cell, hist_cell);
                 content = util.Format(msg.content);
                 statusUpdate(num_cell, over_cell, content);
@@ -110,7 +111,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 else {
                     situationReport(num_cell, over_cell, msg);
                 }
-                return [2];
+                return [2, over];
         }
     });
 }); };
