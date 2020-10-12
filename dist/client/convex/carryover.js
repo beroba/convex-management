@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.React = exports.Delete = void 0;
+exports.AllDelete = exports.React = exports.Delete = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
@@ -89,3 +89,20 @@ exports.React = function (msg) {
     msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
     return 'React Kanryou';
 };
+exports.AllDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
+                return [4, channel.messages.fetch()];
+            case 1:
+                (_a.sent())
+                    .map(function (v) { return v; })
+                    .filter(function (m) { return m.author.id === msg.author.id; })
+                    .forEach(function (m) { return m["delete"](); });
+                console.log('Delete carryover message');
+                return [2];
+        }
+    });
+}); };
