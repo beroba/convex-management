@@ -86,7 +86,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 凸報告のメッセージにボス名またはボス番号があった場合、先頭の凸報告を完了する
+ * 凸報告のメッセージにボス名またはボス番号があった場合、先頭の凸報告を削除する
  * @param msg DiscordからのMessage
  */
 export const Report = async (msg: Discord.Message) => {
@@ -112,8 +112,14 @@ export const Report = async (msg: Discord.Message) => {
   msgUserDelete(cells, id)
   msgCalDelete(cells, id)
 
-  // ボスのロールを外す
-  msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
+  const plans = PiecesEach(cells, 8)
+    .filter(c => c[4] === msg.author.id)
+    .filter(c => !c[0])
+  // 凸予定が残り1つ以下だったら実行
+  if (plans.length <= 1) {
+    // ボスのロールを外す
+    msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
+  }
 
   // 凸状況を更新
   list.SituationEdit()
@@ -194,7 +200,13 @@ const deleteBossRole = (cells: string[], msg: Discord.Message) => {
   // メッセージのボス番号を取得
   const num = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][5]
 
-  // ボス番号のロールを付与
+  // 凸予定が残り2つ以上だった場合は終了
+  const plans = PiecesEach(cells, 8)
+    .filter(c => c[4] === msg.author.id)
+    .filter(c => !c[0])
+  if (plans.length > 1) return
+
+  // ボス番号のロールを削除
   msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
 }
 

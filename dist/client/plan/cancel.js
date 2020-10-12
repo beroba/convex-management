@@ -129,7 +129,7 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, num, sheet, cells, id;
+    var content, num, sheet, cells, id, plans;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -154,7 +154,12 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 _b.sent();
                 msgUserDelete(cells, id);
                 msgCalDelete(cells, id);
-                (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+                plans = pieces_each_1["default"](cells, 8)
+                    .filter(function (c) { return c[4] === msg.author.id; })
+                    .filter(function (c) { return !c[0]; });
+                if (plans.length <= 1) {
+                    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
+                }
                 list.SituationEdit();
                 console.log('Delete completed message');
                 return [2];
@@ -218,6 +223,11 @@ var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void
 var deleteBossRole = function (cells, msg) {
     var _a;
     var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
+    var plans = pieces_each_1["default"](cells, 8)
+        .filter(function (c) { return c[4] === msg.author.id; })
+        .filter(function (c) { return !c[0]; });
+    if (plans.length > 1)
+        return;
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
 };
 var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
