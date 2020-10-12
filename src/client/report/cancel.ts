@@ -41,7 +41,9 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   if (!day) return
 
   // 凸状況を元に戻す
-  await statusRestore(react.message, user)
+  const bool = await statusRestore(react.message, user)
+  // 失敗したら終了
+  if (!bool) return
 
   // 凸状況に報告
   situation.Report()
@@ -72,7 +74,10 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // 凸状況を元に戻す
   const user = msg.member?.user
   if (!user) return
-  await statusRestore(msg, user)
+
+  const bool = await statusRestore(msg, user)
+  // 失敗したら終了
+  if (!bool) return
 
   // 凸状況に報告
   situation.Report()
@@ -84,8 +89,9 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
  * 凸状況を元に戻す
  * @param msg DiscordからのMessage
  * @param user リアクションしたユーザー
+ * @return 成功したかの真偽値
  */
-const statusRestore = async (msg: Discord.Message, user: Discord.User) => {
+const statusRestore = async (msg: Discord.Message, user: Discord.User): Promise<boolean> => {
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
@@ -102,6 +108,11 @@ const statusRestore = async (msg: Discord.Message, user: Discord.User) => {
   const end_cell = await status.GetCell(2, row, sheet, days)
   const hist_cell = await status.GetCell(3, row, sheet, days)
 
+  // 2回キャンセルしてないか確認
+  const bool = checkCancelTwice(num_cell, over_cell, hist_cell)
+  // キャンセルしていた場合は終了
+  if (bool) return false
+
   // 凸状況を1つ前に戻す
   rollback(num_cell, over_cell, hist_cell)
   // 3凸時の処理
@@ -110,6 +121,22 @@ const statusRestore = async (msg: Discord.Message, user: Discord.User) => {
   feedback(num_cell, over_cell, user)
   // ボス倒していたかを判別
   killConfirm(msg)
+
+  return true
+}
+
+/**
+ * 2回キャンセルしてないか確認
+ * @param num_cell 凸数のセル
+ * @param over_cell 持ち越しのセル
+ * @param hist_cell 履歴のセル
+ * @return キャンセルしていたかの真偽値
+ */
+const checkCancelTwice = (num_cell: any, over_cell: any, hist_cell: any): boolean => {
+  const num = num_cell.getValue()
+  const over = over_cell.getValue()
+  const hist = hist_cell.getValue()
+  return num + over === hist.replace(',', '')
 }
 
 /**
