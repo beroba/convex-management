@@ -167,7 +167,7 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
 const killConfirm = async (msg: Discord.Message) => {
   const content = util.Format(msg.content)
   // ボスを倒していなければ終了
-  if (!/^k/i.test(content)) return
+  if (!/^k|kill/i.test(content)) return
 
   // 前のボスに戻す
   lapAndBoss.Previous()
