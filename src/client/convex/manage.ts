@@ -15,7 +15,7 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   const [id, convex] = util.Format(arg).split(' ')
 
   // 凸状況の書式がおかしい場合は終了
-  if (convexFormatConfirm(convex)) {
+  if (!convexFormatConfirm(convex)) {
     msg.reply('凸状況の書式が違うわ')
     return false
   }
@@ -47,7 +47,7 @@ const convexFormatConfirm = (convex: string): boolean => {
   if (convex[0] === '0') return convex.length === 1 ? true : false
 
   // 1-3以外の凸数は存在しないのでfalse
-  if (/^[1-3]/.test(convex[0])) return false
+  if (!/^[1-3]/.test(convex[0])) return false
 
   return true
 }

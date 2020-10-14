@@ -66,7 +66,7 @@ var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 var cancel = __importStar(require("../plan/cancel"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, day, bool;
+    var isRole, day, result;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -89,8 +89,8 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 }
                 return [4, status.Update(msg)];
             case 2:
-                bool = _c.sent();
-                if (bool) {
+                result = _c.sent();
+                if (result) {
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];
                 }

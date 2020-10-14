@@ -86,8 +86,10 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         switch (_b.label) {
             case 0:
                 _a = __read(util.Format(arg).split(' '), 2), id = _a[0], convex = _a[1];
-                if (!/^[0-3]/.test(convex[0]))
-                    return [2, console.log(false)];
+                if (!convexFormatConfirm(convex)) {
+                    msg.reply('凸状況の書式が違うわ');
+                    return [2, false];
+                }
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _b.sent();
@@ -96,11 +98,20 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 row = status.GetMemberRow(members, id || '');
-                if (row === 2)
-                    return [2];
-                msg;
-                convex;
-                return [2];
+                if (row === 2) {
+                    msg.reply('クランメンバーにそのidの人は居なかったわよ');
+                    return [2, false];
+                }
+                return [2, true];
         }
     });
 }); };
+var convexFormatConfirm = function (convex) {
+    if (convex[0] === '0')
+        return convex.length === 1 ? true : false;
+    console.log(convex[0]);
+    console.log(/^[1-3]/.test(convex[0]));
+    if (!/^[1-3]/.test(convex[0]))
+        return false;
+    return true;
+};

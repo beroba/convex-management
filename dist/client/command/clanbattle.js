@@ -126,7 +126,7 @@ exports.ClanBattle = function (command, msg) {
     }
 };
 var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
+    var day, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, date.GetDay()];
@@ -134,7 +134,11 @@ var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0
                 day = _a.sent();
                 if (!day)
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                manage.Update(arg, msg);
+                return [4, manage.Update(arg, msg)];
+            case 2:
+                result = _a.sent();
+                if (!result)
+                    return [2];
                 situation.Report();
                 return [2];
         }
@@ -189,7 +193,7 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, bool;
+    var day, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, date.GetDay()];
@@ -199,8 +203,8 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
                 return [4, lapAndBoss.Update(arg)];
             case 2:
-                bool = _a.sent();
-                if (!bool)
+                result = _a.sent();
+                if (!result)
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
                 situation.Report();
                 return [2];
