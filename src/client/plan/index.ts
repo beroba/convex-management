@@ -33,6 +33,13 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'The format of the boss number is different'
   }
 
+  // 予想ダメージを書いて居ない場合は終了
+  if (msg.content.length === 1) {
+    const cal = await msg.reply('予想ダメージが書いてないと動かないわ\n※15秒にこのメッセージは消えます')
+    setTimeout(() => (msg.delete(), cal.delete()), 15000)
+    return "I didn't write the expected damage"
+  }
+
   // クラバトの日じゃない場合は終了
   const day = await date.GetDay()
   if (!day) {
