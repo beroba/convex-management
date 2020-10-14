@@ -86,6 +86,8 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         switch (_b.label) {
             case 0:
                 _a = __read(util.Format(arg).split(' '), 2), id = _a[0], convex = _a[1];
+                if (!/^[0-3]/.test(convex[0]))
+                    return [2, console.log(false)];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _b.sent();

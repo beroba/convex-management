@@ -76,7 +76,9 @@ const changeConvex = async (arg: string, msg: Discord.Message) => {
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
   // 凸状況を更新
-  manage.Update(arg, msg)
+  const result = await manage.Update(arg, msg)
+  if (!result) return
+
   // 凸状況に報告
   situation.Report()
 }
@@ -135,8 +137,8 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
   if (!day) return msg.reply('今日はクラバトの日じゃないわ')
 
   // 任意のボスへ移動させる
-  const bool = await lapAndBoss.Update(arg)
-  if (!bool) return msg.reply('形式が違うわ、やりなおし！')
+  const result = await lapAndBoss.Update(arg)
+  if (!result) return msg.reply('形式が違うわ、やりなおし！')
 
   // 凸状況に報告
   situation.Report()

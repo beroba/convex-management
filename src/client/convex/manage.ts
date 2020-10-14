@@ -10,12 +10,15 @@ import * as status from '../report/status'
  * @param arg プレイヤーidと凸状況
  * @param msg DiscordからのMessage
  */
-export const Update = async (arg: string, msg: Discord.Message) => {
+export const Update = async (arg: string, msg: Discord.Message): Promise<boolean> => {
   // idと凸状況を取得
   const [id, convex] = util.Format(arg).split(' ')
 
   // 凸状況の書式がおかしい場合は終了
-  if (!/^[0-3]/.test(convex[0])) return
+  if (convexFormatConfirm(convex)) {
+    msg.reply('凸状況の書式が違うわ')
+    return false
+  }
 
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
@@ -26,8 +29,25 @@ export const Update = async (arg: string, msg: Discord.Message) => {
   const row = status.GetMemberRow(members, id || '')
 
   // ユーザーidが存在しない場合は終了
-  if (row === 2) return
+  if (row === 2) {
+    msg.reply('クランメンバーにそのidの人は居なかったわよ')
+    return false
+  }
 
-  msg
-  convex
+  return true
+}
+
+/**
+ * 凸状況の書式が正しいか判別
+ * @param convex 凸状況
+ * @return 真偽値
+ */
+const convexFormatConfirm = (convex: string): boolean => {
+  // 未凸の場合は持ち越しが発生しないので、長さが1の場合のみtrue
+  if (convex[0] === '0') return convex.length === 1 ? true : false
+
+  // 1-3以外の凸数は存在しないのでfalse
+  if (/^[1-3]/.test(convex[0])) return false
+
+  return true
 }
