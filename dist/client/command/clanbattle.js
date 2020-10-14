@@ -154,11 +154,6 @@ var currentBossNow = function (msg) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-var simultConvexCalc = function (arg, msg) {
-    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
-    var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
-    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3057\u305F\u65B9\u304C\u6301\u3061\u8D8A\u3057\u6642\u9593\u304C\u9577\u304F\u306A\u308B\u308F\u3088\uFF01");
-};
 var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     return __generator(this, function (_a) {
@@ -234,3 +229,8 @@ var planList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+var simultConvexCalc = function (arg, msg) {
+    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
+    var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
+    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3057\u305F\u65B9\u304C\u6301\u3061\u8D8A\u3057\u6642\u9593\u304C\u9577\u304F\u306A\u308B\u308F\u3088\uFF01");
+};
