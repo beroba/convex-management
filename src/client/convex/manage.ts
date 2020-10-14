@@ -44,14 +44,8 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
     const days = await date.CheckCalnBattle()
     const people_cell = await status.GetCell(2, 1, sheet, days)
     convexEndProcess(await readCells(row, sheet), people_cell, name)
-
-    // 凸残ロールを削除
-    msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
   } else {
     updateProcess(await readCells(row, sheet), convex, name)
-
-    // 凸残ロールを付与
-    msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
   }
 
   return true

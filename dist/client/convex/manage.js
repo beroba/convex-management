@@ -87,9 +87,8 @@ var date = __importStar(require("./date"));
 var status = __importStar(require("../report/status"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, id, convex, sheet, cells, members, row, name, days, people_cell, _b, _c;
-    var _d, _e;
-    return __generator(this, function (_f) {
-        switch (_f.label) {
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 _a = __read(util.Format(arg).split(' '), 2), id = _a[0], convex = _a[1];
                 if (!convexFormatConfirm(convex)) {
@@ -98,10 +97,10 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 }
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _f.sent();
+                sheet = _d.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                cells = _f.sent();
+                cells = _d.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 row = status.GetMemberRow(members, id || '');
                 if (row === 2) {
@@ -112,23 +111,21 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 if (!(convex === '3')) return [3, 6];
                 return [4, date.CheckCalnBattle()];
             case 3:
-                days = _f.sent();
+                days = _d.sent();
                 return [4, status.GetCell(2, 1, sheet, days)];
             case 4:
-                people_cell = _f.sent();
+                people_cell = _d.sent();
                 _b = convexEndProcess;
                 return [4, readCells(row, sheet)];
             case 5:
-                _b.apply(void 0, [_f.sent(), people_cell, name]);
-                (_d = msg.member) === null || _d === void 0 ? void 0 : _d.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+                _b.apply(void 0, [_d.sent(), people_cell, name]);
                 return [3, 8];
             case 6:
                 _c = updateProcess;
                 return [4, readCells(row, sheet)];
             case 7:
-                _c.apply(void 0, [_f.sent(), convex, name]);
-                (_e = msg.member) === null || _e === void 0 ? void 0 : _e.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
-                _f.label = 8;
+                _c.apply(void 0, [_d.sent(), convex, name]);
+                _d.label = 8;
             case 8: return [2, true];
         }
     });
