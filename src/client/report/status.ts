@@ -48,7 +48,7 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   if (end) {
     convexEndProcess(end_cell, members.length, sheet, days, msg)
   } else {
-    situationReport(num_cell, over_cell, msg)
+    updateProcess(num_cell, over_cell, msg)
   }
 
   return
@@ -160,7 +160,7 @@ const convexEndProcess = async (end_cell: any, people: number, sheet: any, days:
   // 3凸終了のフラグを立てる
   await end_cell.setValue(1)
 
-  // 凸残ロールを削除する
+  // 凸残ロールを削除
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
@@ -178,10 +178,11 @@ const convexEndProcess = async (end_cell: any, people: number, sheet: any, days:
  * @param over_cell 持ち越しのセル
  * @param msg DiscordからのMessage
  */
-const situationReport = async (num_cell: any, over_cell: any, msg: Discord.Message) => {
+const updateProcess = async (num_cell: any, over_cell: any, msg: Discord.Message) => {
   // セルの値を取得
   const num = Number(num_cell.getValue())
   const over = over_cell.getValue()
 
+  // 凸状況を報告する
   await msg.reply(`${num}凸目 ${over ? '持ち越し' : '終了'}`)
 }

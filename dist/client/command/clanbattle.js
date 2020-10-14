@@ -78,6 +78,7 @@ exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var date = __importStar(require("../convex/date"));
 var list = __importStar(require("../plan/list"));
@@ -86,6 +87,11 @@ exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
         return;
     switch (true) {
+        case /cb convex/.test(command): {
+            var arg = command.replace('/cb convex ', '');
+            changeConvex(arg, msg);
+            return 'Change of convex management';
+        }
         case /cb boss now/.test(command): {
             currentBossNow(msg);
             return 'Show ckurrent boss';
@@ -119,6 +125,25 @@ exports.ClanBattle = function (command, msg) {
         }
     }
 };
+var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var day, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _a.sent();
+                if (!day)
+                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
+                return [4, manage.Update(arg, msg)];
+            case 2:
+                result = _a.sent();
+                if (!result)
+                    return [2];
+                situation.Report();
+                return [2];
+        }
+    });
+}); };
 var currentBossNow = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     return __generator(this, function (_a) {
@@ -133,11 +158,6 @@ var currentBossNow = function (msg) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-var simultConvexCalc = function (arg, msg) {
-    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
-    var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
-    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3057\u305F\u65B9\u304C\u6301\u3061\u8D8A\u3057\u6642\u9593\u304C\u9577\u304F\u306A\u308B\u308F\u3088\uFF01");
-};
 var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     return __generator(this, function (_a) {
@@ -173,7 +193,7 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, bool;
+    var day, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, date.GetDay()];
@@ -183,8 +203,8 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     return [2, msg.reply('今日はクラバトの日じゃないわ')];
                 return [4, lapAndBoss.Update(arg)];
             case 2:
-                bool = _a.sent();
-                if (!bool)
+                result = _a.sent();
+                if (!result)
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
                 situation.Report();
                 return [2];
@@ -213,3 +233,8 @@ var planList = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+var simultConvexCalc = function (arg, msg) {
+    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
+    var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
+    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3057\u305F\u65B9\u304C\u6301\u3061\u8D8A\u3057\u6642\u9593\u304C\u9577\u304F\u306A\u308B\u308F\u3088\uFF01");
+};

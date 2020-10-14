@@ -213,6 +213,8 @@ var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void
                 row = pieces_each_1["default"](cells, 8)
                     .map(function (v) { return v[1]; })
                     .indexOf(id) + 3;
+                if (row === 2)
+                    return [2];
                 return [4, sheet.getCell("A" + row)];
             case 1:
                 cell = _a.sent();

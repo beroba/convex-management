@@ -187,6 +187,9 @@ const convexComplete = async (sheet: any, cells: string[], id: string) => {
       .map(v => v[1])
       .indexOf(id) + 3
 
+  // idが存在しなければ終了
+  if (row === 2) return
+
   // 値の更新
   const cell = await sheet.getCell(`A${row}`)
   cell.setValue('1')

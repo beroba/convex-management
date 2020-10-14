@@ -41,9 +41,9 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   if (!day) return
 
   // 凸状況を元に戻す
-  const bool = await statusRestore(react.message, user)
+  const result = await statusRestore(react.message, user)
   // 失敗したら終了
-  if (!bool) return
+  if (!result) return
 
   // 凸状況に報告
   situation.Report()
@@ -75,9 +75,9 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   const user = msg.member?.user
   if (!user) return
 
-  const bool = await statusRestore(msg, user)
+  const result = await statusRestore(msg, user)
   // 失敗したら終了
-  if (!bool) return
+  if (!result) return
 
   // 凸状況に報告
   situation.Report()
@@ -109,9 +109,9 @@ const statusRestore = async (msg: Discord.Message, user: Discord.User): Promise<
   const hist_cell = await status.GetCell(3, row, sheet, days)
 
   // 2回キャンセルしてないか確認
-  const bool = checkCancelTwice(num_cell, over_cell, hist_cell)
+  const result = checkCancelTwice(num_cell, over_cell, hist_cell)
   // キャンセルしていた場合は終了
-  if (bool) return false
+  if (result) return false
 
   // 凸状況を1つ前に戻す
   rollback(num_cell, over_cell, hist_cell)

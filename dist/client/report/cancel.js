@@ -68,7 +68,7 @@ var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, isRole, day, bool;
+    var channel, isRole, day, result;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -95,8 +95,8 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                     return [2];
                 return [4, statusRestore(react.message, user)];
             case 3:
-                bool = _b.sent();
-                if (!bool)
+                result = _b.sent();
+                if (!result)
                     return [2];
                 situation.Report();
                 return [2, 'Convex cancellation'];
@@ -104,7 +104,7 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, day, user, bool;
+    var isRole, day, user, result;
     var _a, _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -126,8 +126,8 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 return [4, statusRestore(msg, user)];
             case 2:
-                bool = _d.sent();
-                if (!bool)
+                result = _d.sent();
+                if (!result)
                     return [2];
                 situation.Report();
                 return [2, 'Convex cancellation'];
@@ -135,7 +135,7 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, members, member, row, days, num_cell, over_cell, end_cell, hist_cell, bool;
+    var sheet, cells, members, member, row, days, num_cell, over_cell, end_cell, hist_cell, result;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -163,8 +163,8 @@ var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void
                 return [4, status.GetCell(3, row, sheet, days)];
             case 7:
                 hist_cell = _b.sent();
-                bool = checkCancelTwice(num_cell, over_cell, hist_cell);
-                if (bool)
+                result = checkCancelTwice(num_cell, over_cell, hist_cell);
+                if (result)
                     return [2, false];
                 rollback(num_cell, over_cell, hist_cell);
                 endConfirm(end_cell, member);
