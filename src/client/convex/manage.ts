@@ -14,6 +14,9 @@ export const Update = async (arg: string, msg: Discord.Message) => {
   // idと凸状況を取得
   const [id, convex] = util.Format(arg).split(' ')
 
+  // 凸状況の書式がおかしい場合は終了
+  if (!/^[0-3]/.test(convex[0])) return
+
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
