@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
 import * as date from '../convex/date'
 import * as list from '../plan/list'
@@ -19,6 +20,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)) return
 
   switch (true) {
+    case /cb convex/.test(command): {
+      const arg = command.replace('/cb convex ', '')
+      changeConvex(arg, msg)
+      return 'Change of convex management'
+    }
     case /cb boss now/.test(command): {
       currentBossNow(msg)
       return 'Show ckurrent boss'
@@ -60,6 +66,22 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 }
 
 /**
+ * 引数で渡されたプレイヤーidの凸状況を変更する
+ * @param arg プレイヤーidと凸状況
+ * @param msg DiscordからのMessage
+ */
+const changeConvex = async (arg: string, msg: Discord.Message) => {
+  // クラバトの日じゃない場合は終了
+  const day = await date.GetDay()
+  if (!day) return msg.reply('今日はクラバトの日じゃないわ')
+
+  // 凸状況を更新
+  manage.Update(arg, msg)
+  // 凸状況に報告
+  situation.Report()
+}
+
+/**
  * #進行に現在の周回数とボスを報告
  * @param msg DiscordからのMessage
  */
@@ -70,27 +92,6 @@ const currentBossNow = async (msg: Discord.Message) => {
 
   // #進行に現在の周回数とボスを報告
   lapAndBoss.ProgressReport()
-}
-
-/**
- * 同時凸の持ち越し計算を行う
- * @param arg HPとダメージA・B
- * @param msg DiscordからのMessage
- */
-const simultConvexCalc = (arg: string, msg: Discord.Message) => {
-  /**
-   * 持ち越しの計算をする
-   * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
-   * @param a AのHP
-   * @param b BのHP
-   * @return 計算結果
-   */
-  const overCalc = (a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
-
-  const [HP, A, B] = arg.replace(/　/g, ' ').split(' ').map(Number)
-  msg.reply(
-    `\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！`
-  )
 }
 
 /**
@@ -163,4 +164,25 @@ const planList = async (arg: string, msg: Discord.Message) => {
     // 凸予定一覧を全て表示
     list.AllOutput()
   }
+}
+
+/**
+ * 同時凸の持ち越し計算を行う
+ * @param arg HPとダメージA・B
+ * @param msg DiscordからのMessage
+ */
+const simultConvexCalc = (arg: string, msg: Discord.Message) => {
+  /**
+   * 持ち越しの計算をする
+   * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
+   * @param a AのHP
+   * @param b BのHP
+   * @return 計算結果
+   */
+  const overCalc = (a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
+
+  const [HP, A, B] = arg.replace(/　/g, ' ').split(' ').map(Number)
+  msg.reply(
+    `\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！`
+  )
 }

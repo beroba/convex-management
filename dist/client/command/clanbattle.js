@@ -78,6 +78,7 @@ exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var date = __importStar(require("../convex/date"));
 var list = __importStar(require("../plan/list"));
@@ -86,6 +87,11 @@ exports.ClanBattle = function (command, msg) {
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
         return;
     switch (true) {
+        case /cb convex/.test(command): {
+            var arg = command.replace('/cb convex ', '');
+            changeConvex(arg, msg);
+            return 'Change of convex management';
+        }
         case /cb boss now/.test(command): {
             currentBossNow(msg);
             return 'Show ckurrent boss';
@@ -119,6 +125,21 @@ exports.ClanBattle = function (command, msg) {
         }
     }
 };
+var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var day;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, date.GetDay()];
+            case 1:
+                day = _a.sent();
+                if (!day)
+                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
+                manage.Update(arg, msg);
+                situation.Report();
+                return [2];
+        }
+    });
+}); };
 var currentBossNow = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var day;
     return __generator(this, function (_a) {
