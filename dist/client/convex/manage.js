@@ -109,9 +109,5 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
 var convexFormatConfirm = function (convex) {
     if (convex[0] === '0')
         return convex.length === 1 ? true : false;
-    console.log(convex[0]);
-    console.log(/^[1-3]/.test(convex[0]));
-    if (!/^[1-3]/.test(convex[0]))
-        return false;
-    return true;
+    return /^[1-3]/.test(convex[0]);
 };

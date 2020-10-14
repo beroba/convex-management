@@ -43,11 +43,9 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
  * @return 真偽値
  */
 const convexFormatConfirm = (convex: string): boolean => {
-  // 未凸の場合は持ち越しが発生しないので、長さが1の場合のみtrue
+  // 未凸の場合は持ち越しが発生しないので長さが1の場合のみtrue、それ以外はfalse
   if (convex[0] === '0') return convex.length === 1 ? true : false
 
-  // 1-3以外の凸数は存在しないのでfalse
-  if (!/^[1-3]/.test(convex[0])) return false
-
-  return true
+  // 先頭が1-3はtrue、それ以外はfalse
+  return /^[1-3]/.test(convex[0])
 }

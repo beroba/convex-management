@@ -139,6 +139,7 @@ var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0
                 result = _a.sent();
                 if (!result)
                     return [2];
+                console.log(1);
                 situation.Report();
                 return [2];
         }
