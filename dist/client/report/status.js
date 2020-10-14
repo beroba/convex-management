@@ -108,7 +108,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     convexEndProcess(end_cell, members.length, sheet, days, msg);
                 }
                 else {
-                    situationReport(num_cell, over_cell, msg);
+                    updateProcess(num_cell, over_cell, msg);
                 }
                 return [2];
         }
@@ -195,7 +195,7 @@ var convexEndProcess = function (end_cell, people, sheet, days, msg) { return __
         }
     });
 }); };
-var situationReport = function (num_cell, over_cell, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var updateProcess = function (num_cell, over_cell, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var num, over;
     return __generator(this, function (_a) {
         switch (_a.label) {
