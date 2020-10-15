@@ -4,8 +4,9 @@ import {Ready} from './client/ready'
 import {GuildMemberAdd} from './client/guildMemberAdd'
 import {GuildMemberUpdate} from './client/guildMemberUpdate'
 import {Message} from './client/message'
-import {MessageReactionAdd} from './client/messageReactionAdd'
 import {MessageDelete} from './client/messageDelete'
+import {MessageReactionAdd} from './client/messageReactionAdd'
+import {MessageUpdate} from './client/MessageUpdate'
 import {CronOperation} from './util/cron'
 
 export const Client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']})
@@ -27,6 +28,9 @@ Client.on('messageDelete', msg => MessageDelete(msg))
 
 // リアクションが付与された際に実行
 Client.on('messageReactionAdd', (react, user) => MessageReactionAdd(react, user))
+
+// メッセージが更新された際に実行
+Client.on('messageUpdate', (_, msg) => MessageUpdate(msg))
 
 // クーロンの内容
 CronOperation()

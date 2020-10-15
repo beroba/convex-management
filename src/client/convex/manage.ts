@@ -10,6 +10,7 @@ import * as status from '../report/status'
  * 引数で渡されたプレイヤーidの凸状況を変更する
  * @param arg プレイヤーidと凸状況
  * @param msg DiscordからのMessage
+ * @return 実行結果の真偽値
  */
 export const Update = async (arg: string, msg: Discord.Message): Promise<boolean> => {
   // idと凸状況を取得
