@@ -6,7 +6,7 @@ import {GuildMemberUpdate} from './client/guildMemberUpdate'
 import {Message} from './client/message'
 import {MessageDelete} from './client/messageDelete'
 import {MessageReactionAdd} from './client/messageReactionAdd'
-import {MessageUpdate} from './client/MessageUpdate'
+import {MessageUpdate} from './client/messageUpdate'
 import {CronOperation} from './util/cron'
 
 export const Client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']})
