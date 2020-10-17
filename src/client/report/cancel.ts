@@ -4,10 +4,9 @@ import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
-import * as date from '../convex/date'
+import * as convex from '../convex'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
-import * as status from './status'
 
 /**
  * 凸報告を取り消す
@@ -91,14 +90,14 @@ const statusRestore = async (msg: Discord.Message, user: Discord.User): Promise<
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const members: string[][] = PiecesEach(cells, 2).filter(v => v)
   const member = util.GetMembersFromUser(msg.guild?.members, user)
-  const row = status.GetMemberRow(members, user.id)
+  const row = convex.GetMemberRow(members, user.id)
 
   // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
-  const days = await date.GetDay()
-  const num_cell = await date.GetCell(0, row, sheet, days)
-  const over_cell = await date.GetCell(1, row, sheet, days)
-  const end_cell = await date.GetCell(2, row, sheet, days)
-  const hist_cell = await date.GetCell(3, row, sheet, days)
+  const days = await convex.GetDay()
+  const num_cell = await convex.GetCell(0, days[2], row, sheet)
+  const over_cell = await convex.GetCell(1, days[2], row, sheet)
+  const end_cell = await convex.GetCell(2, days[2], row, sheet)
+  const hist_cell = await convex.GetCell(3, days[2], row, sheet)
 
   // 2回キャンセルしてないか確認
   const result = checkCancelTwice(num_cell, over_cell, hist_cell)

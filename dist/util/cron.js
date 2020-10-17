@@ -62,7 +62,7 @@ exports.CronOperation = void 0;
 var cron = __importStar(require("node-cron"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
-var date = __importStar(require("../client/convex/date"));
+var convex = __importStar(require("../client/convex"));
 exports.CronOperation = function () {
     setRemainConvex();
 };
@@ -72,7 +72,7 @@ var setRemainConvex = function () {
         var _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0: return [4, date.GetDay()];
+                case 0: return [4, convex.GetDay()];
                 case 1:
                     day = _c.sent();
                     if (day[0] === '練習日')

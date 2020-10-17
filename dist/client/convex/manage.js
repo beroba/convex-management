@@ -83,15 +83,14 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var date = __importStar(require("./date"));
-var status = __importStar(require("../report/status"));
+var convex = __importStar(require("."));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, convex, sheet, cells, members, row, name, days, people_cell, _b, _c;
+    var _a, id, status, sheet, cells, members, row, name, days, people_cell, _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
-                _a = __read(util.Format(arg).split(' '), 2), id = _a[0], convex = _a[1];
-                if (!convexFormatConfirm(convex)) {
+                _a = __read(util.Format(arg).split(' '), 2), id = _a[0], status = _a[1];
+                if (!convexFormatConfirm(status)) {
                     msg.reply('凸状況の書式が違うわ');
                     return [2, false];
                 }
@@ -102,17 +101,17 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
             case 2:
                 cells = _d.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                row = status.GetMemberRow(members, id || '');
+                row = convex.GetMemberRow(members, id || '');
                 if (row === 2) {
                     msg.reply('クランメンバーにそのidの人は居なかったわよ');
                     return [2, false];
                 }
                 name = members.filter(function (m) { return m[1] === id; })[0][0];
-                if (!(convex === '3')) return [3, 6];
-                return [4, date.GetDay()];
+                if (!(status === '3')) return [3, 6];
+                return [4, convex.GetDay()];
             case 3:
                 days = _d.sent();
-                return [4, date.GetCell(2, 1, sheet, days)];
+                return [4, convex.GetCell(2, 1, sheet, days)];
             case 4:
                 people_cell = _d.sent();
                 _b = convexEndProcess;
@@ -124,31 +123,31 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 _c = updateProcess;
                 return [4, readCells(row, sheet)];
             case 7:
-                _c.apply(void 0, [_d.sent(), convex, name]);
+                _c.apply(void 0, [_d.sent(), status, name]);
                 _d.label = 8;
             case 8: return [2, true];
         }
     });
 }); };
-var convexFormatConfirm = function (convex) {
-    if (convex[0] === '0')
-        return convex.length === 1 ? true : false;
-    return /^[1-3]/.test(convex[0]);
+var convexFormatConfirm = function (status) {
+    if (status[0] === '0')
+        return status.length === 1 ? true : false;
+    return /^[1-3]/.test(status[0]);
 };
 var readCells = function (row, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var days, num_cell, over_cell, end_cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+            case 0: return [4, convex.GetDay()];
             case 1:
                 days = _a.sent();
-                return [4, date.GetCell(0, row, sheet, days)];
+                return [4, convex.GetCell(0, row, sheet, days)];
             case 2:
                 num_cell = _a.sent();
-                return [4, date.GetCell(1, row, sheet, days)];
+                return [4, convex.GetCell(1, row, sheet, days)];
             case 3:
                 over_cell = _a.sent();
-                return [4, date.GetCell(2, row, sheet, days)];
+                return [4, convex.GetCell(2, row, sheet, days)];
             case 4:
                 end_cell = _a.sent();
                 return [2, [num_cell, over_cell, end_cell]];
@@ -168,13 +167,13 @@ var convexEndProcess = function (cells, people_cell, name) { return __awaiter(vo
         return [2];
     });
 }); };
-var updateProcess = function (cells, convex, name) { return __awaiter(void 0, void 0, void 0, function () {
+var updateProcess = function (cells, status, name) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, num_cell, over_cell, end_cell, _b, num, over, channel;
     return __generator(this, function (_c) {
         _a = __read(__spread(cells), 3), num_cell = _a[0], over_cell = _a[1], end_cell = _a[2];
-        _b = __read(convex.length === 1
-            ? [convex === '0' ? '' : convex, '']
-            : __spread(convex
+        _b = __read(status.length === 1
+            ? [status === '0' ? '' : status, '']
+            : __spread(status
                 .replace(/ /g, '')
                 .split(',')
                 .map(function (n) { return (n === '0' ? '' : n); })), 2), num = _b[0], over = _b[1];

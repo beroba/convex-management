@@ -65,7 +65,7 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var date = __importStar(require("./date"));
+var convex = __importStar(require("."));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, days, range, status, _a, cells, members, list, text, situation, msg, history;
     return __generator(this, function (_b) {
@@ -73,7 +73,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _b.sent();
-                return [4, date.GetDay()];
+                return [4, convex.GetDay()];
             case 2:
                 days = _b.sent();
                 range = days[2] + "3:" + alphabet_to_number_1.AtoA(days[2], 1) + "32";
@@ -116,7 +116,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
         switch (_a.label) {
             case 0:
                 time = getCurrentDate();
-                return [4, date.GetDay()];
+                return [4, convex.GetDay()];
             case 1:
                 day = (_a.sent())[0];
                 return [4, lapAndBoss.GetCurrent()];

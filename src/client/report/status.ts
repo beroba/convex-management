@@ -4,7 +4,7 @@ import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import * as date from '../convex/date'
+import * as convex from '../convex'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as report from '../convex/report'
 
@@ -20,14 +20,14 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   // メンバーのセル一覧から凸報告者の行を取得
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const row = GetMemberRow(members, msg.member?.id || '')
+  const row = convex.GetMemberRow(members, msg.member?.id || '')
 
   // 凸数、持ち越し、3凸終了のセルを取得
-  const days = await date.GetDay()
-  const num_cell = await date.GetCell(0, row, sheet, days)
-  const over_cell = await date.GetCell(1, row, sheet, days)
-  const end_cell = await date.GetCell(2, row, sheet, days)
-  const hist_cell = await date.GetCell(3, row, sheet, days)
+  const days = await convex.GetDay()
+  const num_cell = await convex.GetCell(0, days[2], row, sheet)
+  const over_cell = await convex.GetCell(1, days[2], row, sheet)
+  const end_cell = await convex.GetCell(2, days[2], row, sheet)
+  const hist_cell = await convex.GetCell(3, days[2], row, sheet)
 
   // 既に3凸している人は終了する
   if (end_cell.getValue()) return true
@@ -52,14 +52,6 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
 
   return
 }
-
-/**
- * メンバー一覧から指定したメンバーの行番号を取得
- * @param members メンバー一覧のcell
- * @param id メンバーのid
- * @return 取得した行番号
- */
-export const GetMemberRow = (members: string[][], id: string): number => members.map(v => v[1]).indexOf(id) + 3
 
 /**
  * 現在の凸状況を履歴に残す
@@ -149,7 +141,7 @@ const convexEndProcess = async (end_cell: any, people: number, sheet: any, days:
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const people_cell = await date.GetCell(2, 1, sheet, days)
+  const people_cell = await convex.GetCell(2, days[2], 1, sheet)
   const n = people_cell.getValue()
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
 

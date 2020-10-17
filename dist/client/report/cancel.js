@@ -63,10 +63,9 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-var date = __importStar(require("../convex/date"));
+var convex = __importStar(require("../convex"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
-var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, isRole, result;
     var _a;
@@ -137,20 +136,20 @@ var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 member = util.GetMembersFromUser((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-                row = status.GetMemberRow(members, user.id);
-                return [4, date.GetDay()];
+                row = convex.GetMemberRow(members, user.id);
+                return [4, convex.GetDay()];
             case 3:
                 days = _b.sent();
-                return [4, date.GetCell(0, row, sheet, days)];
+                return [4, convex.GetCell(0, row, sheet, days)];
             case 4:
                 num_cell = _b.sent();
-                return [4, date.GetCell(1, row, sheet, days)];
+                return [4, convex.GetCell(1, row, sheet, days)];
             case 5:
                 over_cell = _b.sent();
-                return [4, date.GetCell(2, row, sheet, days)];
+                return [4, convex.GetCell(2, row, sheet, days)];
             case 6:
                 end_cell = _b.sent();
-                return [4, date.GetCell(3, row, sheet, days)];
+                return [4, convex.GetCell(3, row, sheet, days)];
             case 7:
                 hist_cell = _b.sent();
                 result = checkCancelTwice(num_cell, over_cell, hist_cell);

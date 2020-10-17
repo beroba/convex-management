@@ -3,8 +3,7 @@ import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import * as date from './date'
-import * as status from '../report/status'
+import * as convex from '.'
 
 /**
  * 引数で渡されたプレイヤーidの凸状況を変更する
@@ -14,10 +13,10 @@ import * as status from '../report/status'
  */
 export const Update = async (arg: string, msg: Discord.Message): Promise<boolean> => {
   // idと凸状況を取得
-  const [id, convex] = util.Format(arg).split(' ')
+  const [id, status] = util.Format(arg).split(' ')
 
   // 凸状況の書式がおかしい場合は終了
-  if (!convexFormatConfirm(convex)) {
+  if (!convexFormatConfirm(status)) {
     msg.reply('凸状況の書式が違うわ')
     return false
   }
@@ -28,7 +27,7 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   // メンバーのセル一覧から凸報告者の行を取得
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const row = status.GetMemberRow(members, id || '')
+  const row = convex.GetMemberRow(members, id || '')
 
   // ユーザーidが存在しない場合は終了
   if (row === 2) {
@@ -39,14 +38,16 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   // 変更者のユーザーネームを取得
   const name = members.filter(m => m[1] === id)[0][0]
 
+  // クラバトの日付情報を取得
+  const days = await convex.GetDay()
+
   // 3凸終了とそれ以外に処理を分ける
-  if (convex === '3') {
+  if (status === '3') {
     // 現在の3凸人数を取得
-    const days = await date.GetDay()
-    const people_cell = await date.GetCell(2, 1, sheet, days)
-    convexEndProcess(await readCells(row, sheet), people_cell, name)
+    const people_cell = await convex.GetCell(2, days[2], 1, sheet)
+    convexEndProcess(await readCells(row, sheet, days), people_cell, name)
   } else {
-    updateProcess(await readCells(row, sheet), convex, name)
+    updateProcess(await readCells(row, sheet, days), status, name)
   }
 
   return true
@@ -54,28 +55,28 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
 
 /**
  * 凸状況の書式が正しいか判別
- * @param convex 凸状況
+ * @param status 凸状況
  * @return 真偽値
  */
-const convexFormatConfirm = (convex: string): boolean => {
+const convexFormatConfirm = (status: string): boolean => {
   // 未凸の場合は持ち越しが発生しないので長さが1の場合のみtrue、それ以外はfalse
-  if (convex[0] === '0') return convex.length === 1 ? true : false
+  if (status[0] === '0') return status.length === 1 ? true : false
 
   // 先頭が1-3はtrue、それ以外はfalse
-  return /^[1-3]/.test(convex[0])
+  return /^[1-3]/.test(status[0])
 }
 
 /**
  * [num_cell, over_cell, end_cell]をまとめた配列を返す
  * @param row 更新者の行
  * @param sheet 凸報告のシート
+ * @param days クラバトの日付情報
  * @return cellsの配列
  */
-const readCells = async (row: number, sheet: any): Promise<any[]> => {
-  const days = await date.GetDay()
-  const num_cell = await date.GetCell(0, row, sheet, days)
-  const over_cell = await date.GetCell(1, row, sheet, days)
-  const end_cell = await date.GetCell(2, row, sheet, days)
+const readCells = async (row: number, sheet: any, days: string[]): Promise<any[]> => {
+  const num_cell = await convex.GetCell(0, days[2], row, sheet)
+  const over_cell = await convex.GetCell(1, days[2], row, sheet)
+  const end_cell = await convex.GetCell(2, days[2], row, sheet)
   return [num_cell, over_cell, end_cell]
 }
 
@@ -101,18 +102,18 @@ const convexEndProcess = async (cells: any[], people_cell: any, name: string) =>
 /**
  * 凸状況を更新する処理
  * @param cells [num_cell, over_cell, end_cell]の配列
- * @param convex 凸状況
+ * @param status 凸状況
  * @param msg DiscordからのMessage
  */
-const updateProcess = async (cells: any[], convex: string, name: string) => {
+const updateProcess = async (cells: any[], status: string, name: string) => {
   const [num_cell, over_cell, end_cell] = [...cells]
 
   // 凸状況から凸数と持ち越しに分ける
   const [num, over] =
-    convex.length === 1
-      ? [convex === '0' ? '' : convex, '']
+    status.length === 1
+      ? [status === '0' ? '' : status, '']
       : [
-          ...convex
+          ...status
             .replace(/ /g, '')
             .split(',')
             .map(n => (n === '0' ? '' : n)),

@@ -1,13 +1,13 @@
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as date from './date'
+import * as convex from '.'
 import * as lapAndBoss from './lapAndBoss'
 
 /**
  * 全凸終了報告を行う
  */
 export const AllConvex = async () => {
-  const day = (await date.GetDay())[0]
+  const day = (await convex.GetDay())[0]
   const state = await lapAndBoss.GetCurrent()
 
   // 進行に報告をする

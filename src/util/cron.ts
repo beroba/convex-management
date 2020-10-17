@@ -1,7 +1,7 @@
 import * as cron from 'node-cron'
 import Settings from 'const-settings'
 import * as util from '../util'
-import * as date from '../client/convex/date'
+import * as convex from '../client/convex'
 // import * as report from '../client/convex/report'
 
 /**
@@ -20,7 +20,7 @@ const setRemainConvex = () => {
   // 朝5時に実行
   cron.schedule('0 10 5 * * *', async () => {
     // クラバトの日じゃない場合は終了
-    const day = await date.GetDay()
+    const day = await convex.GetDay()
     if (day[0] === '練習日') return
 
     // べろばあのクランメンバー一覧を取得
