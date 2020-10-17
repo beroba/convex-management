@@ -54,6 +54,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -137,19 +153,19 @@ var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 member = util.GetMembersFromUser((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members, user);
                 row = convex.GetMemberRow(members, user.id);
-                return [4, convex.GetDay()];
+                return [4, convex.GetDays()];
             case 3:
                 days = _b.sent();
-                return [4, convex.GetCell(0, row, sheet, days)];
+                return [4, convex.GetCell(0, days.col, row, sheet)];
             case 4:
                 num_cell = _b.sent();
-                return [4, convex.GetCell(1, row, sheet, days)];
+                return [4, convex.GetCell(1, days.col, row, sheet)];
             case 5:
                 over_cell = _b.sent();
-                return [4, convex.GetCell(2, row, sheet, days)];
+                return [4, convex.GetCell(2, days.col, row, sheet)];
             case 6:
                 end_cell = _b.sent();
-                return [4, convex.GetCell(3, row, sheet, days)];
+                return [4, convex.GetCell(3, days.col, row, sheet)];
             case 7:
                 hist_cell = _b.sent();
                 result = checkCancelTwice(num_cell, over_cell, hist_cell);
@@ -170,9 +186,9 @@ var checkCancelTwice = function (num_cell, over_cell, hist_cell) {
     return num + over === hist.replace(',', '');
 };
 var rollback = function (num_cell, over_cell, hist_cell) {
-    var hist = hist_cell.getValue().split(',');
-    num_cell.setValue(hist[0]);
-    over_cell.setValue(hist[1]);
+    var _a = __read(hist_cell.getValue().split(','), 2), num = _a[0], over = _a[1];
+    num_cell.setValue(num);
+    over_cell.setValue(over);
 };
 var endConfirm = function (end_cell, member) {
     var end = end_cell.getValue();

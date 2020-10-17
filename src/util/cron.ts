@@ -20,8 +20,8 @@ const setRemainConvex = () => {
   // 朝5時に実行
   cron.schedule('0 10 5 * * *', async () => {
     // クラバトの日じゃない場合は終了
-    const day = await convex.GetDay()
-    if (day[0] === '練習日') return
+    const days = await convex.GetDays()
+    if (days.number === '練習日') return
 
     // べろばあのクランメンバー一覧を取得
     const clanMembers = util

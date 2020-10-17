@@ -68,14 +68,14 @@ exports.CronOperation = function () {
 };
 var setRemainConvex = function () {
     cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var day, clanMembers, channel;
+        var days, clanMembers, channel;
         var _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0: return [4, convex.GetDay()];
+                case 0: return [4, convex.GetDays()];
                 case 1:
-                    day = _c.sent();
-                    if (day[0] === '練習日')
+                    days = _c.sent();
+                    if (days.number === '練習日')
                         return [2];
                     clanMembers = (_b = (_a = util
                         .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });

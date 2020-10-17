@@ -5,20 +5,33 @@ import {AtoA} from 'alphabet-to-number'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
+ * 日付情報の形式
+ */
+export type Days = {
+  number: string
+  date: string
+  col: string
+}
+
+/**
  * クラバトの日付情報を取得する。
  * クラバトの日でない場合、練習日を返す
  * @return 日付の情報
  */
-export const GetDay = async (): Promise<string[]> => {
+export const GetDays = async (): Promise<Days> => {
   // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
   // 日付の0を取り除く
-  const days: string[][] = PiecesEach(cells, 3).map(c => [c[0], c[1].split('/').map(Number).join('/'), c[2]])
+  const days: Days[] = PiecesEach(cells, 3).map(c => ({
+    number: c[0],
+    date: c[1].split('/').map(Number).join('/'),
+    col: c[2],
+  }))
 
   // クラバトの日を取得
-  const day: Option<string[]> = days.find(d => d[1] === mmdd())
+  const day: Option<Days> = days.find(d => d.date === mmdd())
 
   // クラバトの日でなければ練習日を返す
   return day ? day : days[5]

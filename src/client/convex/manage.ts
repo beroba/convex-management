@@ -39,15 +39,15 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   const name = members.filter(m => m[1] === id)[0][0]
 
   // クラバトの日付情報を取得
-  const days = await convex.GetDay()
+  const days = await convex.GetDays()
 
   // 3凸終了とそれ以外に処理を分ける
   if (status === '3') {
-    // 現在の3凸人数を取得
-    const people_cell = await convex.GetCell(2, days[2], 1, sheet)
-    convexEndProcess(await readCells(row, sheet, days), people_cell, name)
+    const cells = await readCells(row, sheet, days)
+    convexEndProcess(cells, name)
   } else {
-    updateProcess(await readCells(row, sheet, days), status, name)
+    const cells = await readCells(row, sheet, days)
+    updateProcess(cells, status, name)
   }
 
   return true
@@ -67,17 +67,18 @@ const convexFormatConfirm = (status: string): boolean => {
 }
 
 /**
- * [num_cell, over_cell, end_cell]をまとめた配列を返す
+ * [num_cell, over_cell, end_cell, people_cell]をまとめた配列を返す
  * @param row 更新者の行
  * @param sheet 凸報告のシート
- * @param days クラバトの日付情報
+ * @param days 日付情報
  * @return cellsの配列
  */
-const readCells = async (row: number, sheet: any, days: string[]): Promise<any[]> => {
-  const num_cell = await convex.GetCell(0, days[2], row, sheet)
-  const over_cell = await convex.GetCell(1, days[2], row, sheet)
-  const end_cell = await convex.GetCell(2, days[2], row, sheet)
-  return [num_cell, over_cell, end_cell]
+const readCells = async (row: number, sheet: any, days: convex.Days): Promise<any[]> => {
+  const num_cell = await convex.GetCell(0, days.col, row, sheet)
+  const over_cell = await convex.GetCell(1, days.col, row, sheet)
+  const end_cell = await convex.GetCell(2, days.col, row, sheet)
+  const people_cell = await convex.GetCell(2, days.col, 1, sheet)
+  return [num_cell, over_cell, end_cell, people_cell]
 }
 
 /**
@@ -85,8 +86,8 @@ const readCells = async (row: number, sheet: any, days: string[]): Promise<any[]
  * @param cells [num_cell, over_cell, end_cell]の配列
  * @param msg DiscordからのMessage
  */
-const convexEndProcess = async (cells: any[], people_cell: any, name: string) => {
-  const [num_cell, over_cell, end_cell] = [...cells]
+const convexEndProcess = async (cells: any[], name: string) => {
+  const [num_cell, over_cell, end_cell, people_cell] = [...cells]
 
   // 3凸状態に更新
   num_cell.setValue(3)
@@ -101,24 +102,16 @@ const convexEndProcess = async (cells: any[], people_cell: any, name: string) =>
 
 /**
  * 凸状況を更新する処理
- * @param cells [num_cell, over_cell, end_cell]の配列
+ * @param cells [num_cell, over_cell, end_cell, people_cell]の配列
  * @param status 凸状況
  * @param msg DiscordからのMessage
  */
 const updateProcess = async (cells: any[], status: string, name: string) => {
+  // people_cellは使用しない
   const [num_cell, over_cell, end_cell] = [...cells]
 
   // 凸状況から凸数と持ち越しに分ける
-  const [num, over] =
-    status.length === 1
-      ? [status === '0' ? '' : status, '']
-      : [
-          ...status
-            .replace(/ /g, '')
-            .split(',')
-            .map(n => (n === '0' ? '' : n)),
-        ]
-
+  const [num, over] = divideNumOver(status)
   // 凸状況を更新
   num_cell.setValue(num)
   over_cell.setValue(over)
@@ -127,4 +120,19 @@ const updateProcess = async (cells: any[], status: string, name: string) => {
   // 凸状況を報告する
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(`${name}, ` + (num ? `${num}凸目 ${over ? '持ち越し' : '終了'}` : '未凸'))
+}
+
+/**
+ * 凸状況を凸数と持ち越しに分ける
+ * @param status 凸状況
+ */
+const divideNumOver = (status: string): string[] => {
+  if (status.length === 1) {
+    return [status === '0' ? '' : status, '']
+  } else {
+    return status
+      .replace(/ /g, '')
+      .split(',')
+      .map(n => (n === '0' ? '' : n))
+  }
 }

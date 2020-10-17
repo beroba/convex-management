@@ -6,7 +6,6 @@ import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as convex from '../convex'
 import * as lapAndBoss from '../convex/lapAndBoss'
-import * as report from '../convex/report'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
@@ -23,11 +22,11 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   const row = convex.GetMemberRow(members, msg.member?.id || '')
 
   // 凸数、持ち越し、3凸終了のセルを取得
-  const days = await convex.GetDay()
-  const num_cell = await convex.GetCell(0, days[2], row, sheet)
-  const over_cell = await convex.GetCell(1, days[2], row, sheet)
-  const end_cell = await convex.GetCell(2, days[2], row, sheet)
-  const hist_cell = await convex.GetCell(3, days[2], row, sheet)
+  const days = await convex.GetDays()
+  const num_cell = await convex.GetCell(0, days.col, row, sheet)
+  const over_cell = await convex.GetCell(1, days.col, row, sheet)
+  const end_cell = await convex.GetCell(2, days.col, row, sheet)
+  const hist_cell = await convex.GetCell(3, days.col, row, sheet)
 
   // 既に3凸している人は終了する
   if (end_cell.getValue()) return true
@@ -45,7 +44,7 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸状況を報告
   const end = await isThreeConvex(num_cell, over_cell)
   if (end) {
-    convexEndProcess(end_cell, members.length, sheet, days, msg)
+    convexEndProcess(end_cell, sheet, days, msg)
   } else {
     updateProcess(num_cell, over_cell, msg)
   }
@@ -128,12 +127,11 @@ const isThreeConvex = async (num_cell: any, over_cell: any): Promise<boolean> =>
  * 3凸終了の扱いにし、凸残ロールを削除し、何人目の3凸終了者か報告をする。
  * 全凸終了時だったら全凸終了報告もする
  * @param end_cell 3凸終了のセル
- * @param people クランメンバーの人数
  * @param sheet 凸報告のシート
- * @param days クラバトの日付情報
+ * @param days 日付情報
  * @param msg DiscordからのMessage
  */
-const convexEndProcess = async (end_cell: any, people: number, sheet: any, days: string[], msg: Discord.Message) => {
+const convexEndProcess = async (end_cell: any, sheet: any, days: convex.Days, msg: Discord.Message) => {
   // 3凸終了のフラグを立てる
   await end_cell.setValue(1)
 
@@ -141,12 +139,9 @@ const convexEndProcess = async (end_cell: any, people: number, sheet: any, days:
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const people_cell = await convex.GetCell(2, days[2], 1, sheet)
+  const people_cell = await convex.GetCell(2, days.col, 1, sheet)
   const n = people_cell.getValue()
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
-
-  // 全凸終了していたら報告をする
-  if (Number(n) === people) await report.AllConvex()
 }
 
 /**

@@ -73,10 +73,10 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _b.sent();
-                return [4, convex.GetDay()];
+                return [4, convex.GetDays()];
             case 2:
                 days = _b.sent();
-                range = days[2] + "3:" + alphabet_to_number_1.AtoA(days[2], 1) + "32";
+                range = days.col + "3:" + alphabet_to_number_1.AtoA(days.col, 1) + "32";
                 _a = pieces_each_1["default"];
                 return [4, spreadsheet.GetCells(sheet, range)];
             case 3:
@@ -111,14 +111,14 @@ var mergeList = function (status, members) {
         .filter(function (v) { return v.member !== ''; });
 };
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, day, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+    var time, days, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 time = getCurrentDate();
-                return [4, convex.GetDay()];
+                return [4, convex.GetDays()];
             case 1:
-                day = (_a.sent())[0];
+                days = _a.sent();
                 return [4, lapAndBoss.GetCurrent()];
             case 2:
                 state = _a.sent();
@@ -131,7 +131,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 凸2 = userSorting(list, 2, 0);
                 持越3 = userSorting(list, 3, 1);
                 凸3 = userSorting(list, 3, 0);
-                return [2, ("`" + time + "` " + day + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                return [2, ("`" + time + "` " + days.number + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
                         (current + " `" + remaining + "`\n") +
                         '```\n' +
                         ("\u672A\u51F8: " + 未凸 + "\n") +
