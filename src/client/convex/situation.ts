@@ -4,7 +4,7 @@ import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from './lapAndBoss'
-import * as date from './date'
+import * as convex from '.'
 
 /**
  * メンバー毎の凸状況
@@ -23,8 +23,8 @@ export const Report = async () => {
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // 凸状況とメンバー一覧を取得
-  const days = await date.CheckCalnBattle()
-  const range = `${days[2]}3:${AtoA(days[2], 1)}32`
+  const days = await convex.GetDays()
+  const range = `${days.col}3:${AtoA(days.col, 1)}32`
   const status: number[][] = PiecesEach((await spreadsheet.GetCells(sheet, range)).map(Number), 2)
 
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
@@ -73,7 +73,7 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
   const time = getCurrentDate()
 
   // クラバトの日数を取得
-  const day = `${await date.GetDay()}日目`
+  const days = await convex.GetDays()
 
   // 現在の周回数とボスを取得
   const state = await lapAndBoss.GetCurrent()
@@ -92,7 +92,7 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
   const 凸3   = userSorting(list, 3, 0)
 
   return (
-    `\`${time}\` ${day} 凸状況一覧\n` +
+    `\`${time}\` ${days.number} 凸状況一覧\n` +
     `${current} \`${remaining}\`\n` +
     '```\n' +
     `未凸: ${未凸}\n` +

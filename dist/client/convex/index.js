@@ -58,46 +58,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Unevenness = exports.AllConvex = void 0;
+exports.GetMemberRow = exports.GetCell = exports.GetDays = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
-var convex = __importStar(require("."));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var days, state, channel;
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.GetDays = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, cells, days, day;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, convex.GetDays()];
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                days = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
             case 2:
-                state = _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(days.number + "\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                console.log('Complete convex end report');
-                return [2];
+                cells = _a.sent();
+                days = pieces_each_1["default"](cells, 3).map(function (c) { return ({
+                    number: c[0],
+                    date: c[1].split('/').map(Number).join('/'),
+                    col: c[2]
+                }); });
+                day = days.find(function (d) { return d.date === mmdd(); });
+                return [2, day ? day : days[5]];
         }
     });
 }); };
-exports.Unevenness = function (day) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, 凸残, channel;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, lapAndBoss.GetCurrent()];
-            case 1:
-                state = _c.sent();
-                凸残 = (_b = (_a = util
-                    .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return "<@!" + m.user.id + ">"; });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u51F8\u72B6\u6CC1\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306E\u51F8\u6B8B\u308A\u306F " + (凸残 === null || 凸残 === void 0 ? void 0 : 凸残.join(' ')) + " \u3088\n") +
-                    ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                return [2];
-        }
+exports.GetCell = function (n, col, row, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, sheet.getCell("" + alphabet_to_number_1.AtoA(col, n) + row)];
     });
 }); };
+exports.GetMemberRow = function (members, id) { return members.map(function (v) { return v[1]; }).indexOf(id) + 3; };
+var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };

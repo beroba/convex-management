@@ -2,7 +2,6 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as carryover from '../convex/carryover'
-import * as date from '../convex/date'
 import * as situation from '../convex/situation'
 import * as status from './status'
 import * as cancel from '../plan/cancel'
@@ -24,13 +23,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!isRole) {
     msg.reply('クランメンバーじゃないわ')
     return 'Not a clan member'
-  }
-
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) {
-    msg.reply('今日はクラバトの日じゃないわ')
-    return "It's not ClanBattle days"
   }
 
   // 凸状況を更新

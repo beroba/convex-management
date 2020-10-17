@@ -2,7 +2,6 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as date from '../convex/date'
 import * as list from './list'
 import * as status from './status'
 
@@ -38,14 +37,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     const cal = await msg.reply('予想ダメージが書いてないと動かないわ\n※15秒にこのメッセージは消えます')
     setTimeout(() => (msg.delete(), cal.delete()), 15000)
     return "I didn't write the expected damage"
-  }
-
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) {
-    const cal = await msg.reply('今日はクラバトの日じゃないわ\n※15秒にこのメッセージは消えます')
-    setTimeout(() => (msg.delete(), cal.delete()), 15000)
-    return "It's not ClanBattle days"
   }
 
   // 凸予定を更新

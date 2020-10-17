@@ -4,10 +4,9 @@ import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
-import * as date from '../convex/date'
+import * as convex from '../convex'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
-import * as status from './status'
 
 /**
  * 凸報告を取り消す
@@ -36,10 +35,6 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
   if (!isRole) return
 
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) return
-
   // 凸状況を元に戻す
   const result = await statusRestore(react.message, user)
   // 失敗したら終了
@@ -66,10 +61,6 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // クランメンバーじゃなければ終了
   const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
   if (!isRole) return
-
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) return
 
   // 凸状況を元に戻す
   const user = msg.member?.user
@@ -99,14 +90,14 @@ const statusRestore = async (msg: Discord.Message, user: Discord.User): Promise<
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const members: string[][] = PiecesEach(cells, 2).filter(v => v)
   const member = util.GetMembersFromUser(msg.guild?.members, user)
-  const row = status.GetMemberRow(members, user.id)
+  const row = convex.GetMemberRow(members, user.id)
 
   // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
-  const days = await date.CheckCalnBattle()
-  const num_cell = await status.GetCell(0, row, sheet, days)
-  const over_cell = await status.GetCell(1, row, sheet, days)
-  const end_cell = await status.GetCell(2, row, sheet, days)
-  const hist_cell = await status.GetCell(3, row, sheet, days)
+  const days = await convex.GetDays()
+  const num_cell = await convex.GetCell(0, days.col, row, sheet)
+  const over_cell = await convex.GetCell(1, days.col, row, sheet)
+  const end_cell = await convex.GetCell(2, days.col, row, sheet)
+  const hist_cell = await convex.GetCell(3, days.col, row, sheet)
 
   // 2回キャンセルしてないか確認
   const result = checkCancelTwice(num_cell, over_cell, hist_cell)
@@ -147,11 +138,11 @@ const checkCancelTwice = (num_cell: any, over_cell: any, hist_cell: any): boolea
  */
 const rollback = (num_cell: any, over_cell: any, hist_cell: any) => {
   // セルの値を取得
-  const hist = hist_cell.getValue().split(',')
+  const [num, over] = hist_cell.getValue().split(',')
 
   // 履歴を戻す
-  num_cell.setValue(hist[0])
-  over_cell.setValue(hist[1])
+  num_cell.setValue(num)
+  over_cell.setValue(over)
 }
 
 /**

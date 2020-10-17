@@ -61,11 +61,10 @@ exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-var date = __importStar(require("../convex/date"));
 var list = __importStar(require("./list"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, cal_1, cal_2, cal_3, day, cal_4;
+    var isRole, cal_1, cal_2, cal_3;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -95,17 +94,8 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 cal_3 = _c.sent();
                 setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 15000);
                 return [2, "I didn't write the expected damage"];
-            case 6: return [4, date.GetDay()];
+            case 6: return [4, status.Update(msg)];
             case 7:
-                day = _c.sent();
-                if (!!day) return [3, 9];
-                return [4, msg.reply('今日はクラバトの日じゃないわ\n※15秒にこのメッセージは消えます')];
-            case 8:
-                cal_4 = _c.sent();
-                setTimeout(function () { return (msg["delete"](), cal_4["delete"]()); }, 15000);
-                return [2, "It's not ClanBattle days"];
-            case 9: return [4, status.Update(msg)];
-            case 10:
                 _c.sent();
                 list.SituationEdit();
                 return [2, 'Make a convex reservation'];

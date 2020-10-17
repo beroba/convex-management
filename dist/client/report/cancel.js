@@ -54,6 +54,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -63,12 +79,11 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-var date = __importStar(require("../convex/date"));
+var convex = __importStar(require("../convex"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
-var status = __importStar(require("./status"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, isRole, day, result;
+    var channel, isRole, result;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -88,13 +103,8 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                 isRole = (_a = react.message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
                 if (!isRole)
                     return [2];
-                return [4, date.GetDay()];
-            case 2:
-                day = _b.sent();
-                if (!day)
-                    return [2];
                 return [4, statusRestore(react.message, user)];
-            case 3:
+            case 2:
                 result = _b.sent();
                 if (!result)
                     return [2];
@@ -104,7 +114,7 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, day, user, result;
+    var isRole, user, result;
     var _a, _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -116,16 +126,11 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
                 if (!isRole)
                     return [2];
-                return [4, date.GetDay()];
-            case 1:
-                day = _d.sent();
-                if (!day)
-                    return [2];
                 user = (_c = msg.member) === null || _c === void 0 ? void 0 : _c.user;
                 if (!user)
                     return [2];
                 return [4, statusRestore(msg, user)];
-            case 2:
+            case 1:
                 result = _d.sent();
                 if (!result)
                     return [2];
@@ -147,20 +152,20 @@ var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 member = util.GetMembersFromUser((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-                row = status.GetMemberRow(members, user.id);
-                return [4, date.CheckCalnBattle()];
+                row = convex.GetMemberRow(members, user.id);
+                return [4, convex.GetDays()];
             case 3:
                 days = _b.sent();
-                return [4, status.GetCell(0, row, sheet, days)];
+                return [4, convex.GetCell(0, days.col, row, sheet)];
             case 4:
                 num_cell = _b.sent();
-                return [4, status.GetCell(1, row, sheet, days)];
+                return [4, convex.GetCell(1, days.col, row, sheet)];
             case 5:
                 over_cell = _b.sent();
-                return [4, status.GetCell(2, row, sheet, days)];
+                return [4, convex.GetCell(2, days.col, row, sheet)];
             case 6:
                 end_cell = _b.sent();
-                return [4, status.GetCell(3, row, sheet, days)];
+                return [4, convex.GetCell(3, days.col, row, sheet)];
             case 7:
                 hist_cell = _b.sent();
                 result = checkCancelTwice(num_cell, over_cell, hist_cell);
@@ -181,9 +186,9 @@ var checkCancelTwice = function (num_cell, over_cell, hist_cell) {
     return num + over === hist.replace(',', '');
 };
 var rollback = function (num_cell, over_cell, hist_cell) {
-    var hist = hist_cell.getValue().split(',');
-    num_cell.setValue(hist[0]);
-    over_cell.setValue(hist[1]);
+    var _a = __read(hist_cell.getValue().split(','), 2), num = _a[0], over = _a[1];
+    num_cell.setValue(num);
+    over_cell.setValue(over);
 };
 var endConfirm = function (end_cell, member) {
     var end = end_cell.getValue();
