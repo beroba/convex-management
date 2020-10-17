@@ -73,7 +73,7 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
   const time = getCurrentDate()
 
   // クラバトの日数を取得
-  const day = `${await date.GetDay()}日目`
+  const day = await date.GetDay()
 
   // 現在の周回数とボスを取得
   const state = await lapAndBoss.GetCurrent()

@@ -13,7 +13,7 @@ export const AllConvex = async () => {
   // 進行に報告をする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(
-    `${day}日目の全凸終了報告よ！\n` +
+    `${day}の全凸終了報告よ！\n` +
       `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
       `お疲れ様！次も頑張りなさい`
   )
