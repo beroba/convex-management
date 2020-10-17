@@ -23,7 +23,7 @@ export const Report = async () => {
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // 凸状況とメンバー一覧を取得
-  const days = await date.CheckCalnBattle()
+  const days = await date.GetDay()
   const range = `${days[2]}3:${AtoA(days[2], 1)}32`
   const status: number[][] = PiecesEach((await spreadsheet.GetCells(sheet, range)).map(Number), 2)
 
@@ -73,7 +73,7 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
   const time = getCurrentDate()
 
   // クラバトの日数を取得
-  const day = await date.GetDay()
+  const day = (await date.GetDay())[0]
 
   // 現在の周回数とボスを取得
   const state = await lapAndBoss.GetCurrent()

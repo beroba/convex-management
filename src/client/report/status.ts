@@ -2,7 +2,6 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
-import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as date from '../convex/date'
@@ -24,11 +23,11 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   const row = GetMemberRow(members, msg.member?.id || '')
 
   // 凸数、持ち越し、3凸終了のセルを取得
-  const days = await date.CheckCalnBattle()
-  const num_cell = await GetCell(0, row, sheet, days)
-  const over_cell = await GetCell(1, row, sheet, days)
-  const end_cell = await GetCell(2, row, sheet, days)
-  const hist_cell = await GetCell(3, row, sheet, days)
+  const days = await date.GetDay()
+  const num_cell = await date.GetCell(0, row, sheet, days)
+  const over_cell = await date.GetCell(1, row, sheet, days)
+  const end_cell = await date.GetCell(2, row, sheet, days)
+  const hist_cell = await date.GetCell(3, row, sheet, days)
 
   // 既に3凸している人は終了する
   if (end_cell.getValue()) return true
@@ -61,20 +60,6 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
  * @return 取得した行番号
  */
 export const GetMemberRow = (members: string[][], id: string): number => members.map(v => v[1]).indexOf(id) + 3
-
-/**
- * 指定した列と行のセルを取得する。
- * 列は右にどれだけずらすかを指定する
- * @param n 基準の列から右にずらす数、値がない場合は`0`
- * @param row 凸報告の行
- * @param sheet 凸報告のシート
- * @param days クラバトの日付情報
- * @return 取得したセル
- */
-export const GetCell = async (n = 0, row: number, sheet: any, days: string[]): Promise<any> => {
-  const col = AtoA(days[2], n)
-  return sheet.getCell(`${col}${row}`)
-}
 
 /**
  * 現在の凸状況を履歴に残す
@@ -164,7 +149,7 @@ const convexEndProcess = async (end_cell: any, people: number, sheet: any, days:
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const people_cell = await GetCell(2, 1, sheet, days)
+  const people_cell = await date.GetCell(2, 1, sheet, days)
   const n = people_cell.getValue()
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
 

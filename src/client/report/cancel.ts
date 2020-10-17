@@ -36,10 +36,6 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
   if (!isRole) return
 
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) return
-
   // 凸状況を元に戻す
   const result = await statusRestore(react.message, user)
   // 失敗したら終了
@@ -66,10 +62,6 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // クランメンバーじゃなければ終了
   const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
   if (!isRole) return
-
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) return
 
   // 凸状況を元に戻す
   const user = msg.member?.user
@@ -102,11 +94,11 @@ const statusRestore = async (msg: Discord.Message, user: Discord.User): Promise<
   const row = status.GetMemberRow(members, user.id)
 
   // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
-  const days = await date.CheckCalnBattle()
-  const num_cell = await status.GetCell(0, row, sheet, days)
-  const over_cell = await status.GetCell(1, row, sheet, days)
-  const end_cell = await status.GetCell(2, row, sheet, days)
-  const hist_cell = await status.GetCell(3, row, sheet, days)
+  const days = await date.GetDay()
+  const num_cell = await date.GetCell(0, row, sheet, days)
+  const over_cell = await date.GetCell(1, row, sheet, days)
+  const end_cell = await date.GetCell(2, row, sheet, days)
+  const hist_cell = await date.GetCell(3, row, sheet, days)
 
   // 2回キャンセルしてないか確認
   const result = checkCancelTwice(num_cell, over_cell, hist_cell)

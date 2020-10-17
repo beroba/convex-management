@@ -2,14 +2,14 @@ import * as cron from 'node-cron'
 import Settings from 'const-settings'
 import * as util from '../util'
 import * as date from '../client/convex/date'
-import * as report from '../client/convex/report'
+// import * as report from '../client/convex/report'
 
 /**
  * クーロンで操作する関数一覧
  */
 export const CronOperation = () => {
   setRemainConvex()
-  fullConvexReport()
+  // fullConvexReport()
 }
 
 /**
@@ -21,7 +21,7 @@ const setRemainConvex = () => {
   cron.schedule('0 10 5 * * *', async () => {
     // クラバトの日じゃない場合は終了
     const day = await date.GetDay()
-    if (!day) return
+    if (day[0] === '練習日') return
 
     // べろばあのクランメンバー一覧を取得
     const clanMembers = util
@@ -40,51 +40,51 @@ const setRemainConvex = () => {
   })
 }
 
-/**
- * 全凸されていない場合にその日付の凸状況を報告をする
- */
-const fullConvexReport = () => {
-  /**
-   * 全凸してるか確認し真偽値を返す
-   * @return 真偽値
-   */
-  const convexConfirm = (): boolean => {
-    // 凸残ロールがついている人が居るか確認
-    const remain = util
-      .GetGuild()
-      ?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)
-      ?.members.map(m => m)
+// /**
+//  * 全凸されていない場合にその日付の凸状況を報告をする
+//  */
+// const fullConvexReport = () => {
+//   /**
+//    * 全凸してるか確認し真偽値を返す
+//    * @return 真偽値
+//    */
+//   const convexConfirm = (): boolean => {
+//     // 凸残ロールがついている人が居るか確認
+//     const remain = util
+//       .GetGuild()
+//       ?.roles.cache.get(Settings.ROLE_ID.REMAIN_CONVEX)
+//       ?.members.map(m => m)
 
-    return remain?.length ? true : false
-  }
+//     return remain?.length ? true : false
+//   }
 
-  // 最終日以外
-  cron.schedule('0 5 5 * * *', async () => {
-    // クラバトの日じゃない場合、またはクラバト最終日の場合は終了
-    const day = await date.GetDay()
-    if (!day || day === '1') return
+//   // 最終日以外
+//   cron.schedule('0 5 5 * * *', async () => {
+//     // クラバトの日じゃない場合、またはクラバト最終日の場合は終了
+//     const day = await date.GetDay()
+//     if (!day || day === '1') return
 
-    // 全凸している場合は終了
-    if (convexConfirm()) return
+//     // 全凸している場合は終了
+//     if (convexConfirm()) return
 
-    // #進行に報告をする
-    await report.Unevenness(Number(day) - 1)
+//     // #進行に報告をする
+//     await report.Unevenness(Number(day) - 1)
 
-    console.log('Convex situation report')
-  })
+//     console.log('Convex situation report')
+//   })
 
-  // 最終日
-  cron.schedule('0 5 0 * * *', async () => {
-    // クラバトの日じゃない場合、またはクラバト最終日じゃない場合は終了
-    const day = await date.GetDay()
-    if (!day || day !== '5') return
+//   // 最終日
+//   cron.schedule('0 5 0 * * *', async () => {
+//     // クラバトの日じゃない場合、またはクラバト最終日じゃない場合は終了
+//     const day = await date.GetDay()
+//     if (!day || day !== '5') return
 
-    // 全凸している場合は終了
-    if (convexConfirm()) return
+//     // 全凸している場合は終了
+//     if (convexConfirm()) return
 
-    // #進行に報告をする
-    await report.Unevenness(day)
+//     // #進行に報告をする
+//     await report.Unevenness(day)
 
-    console.log('Convex situation report')
-  })
-}
+//     console.log('Convex situation report')
+//   })
+// }

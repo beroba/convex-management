@@ -61,12 +61,11 @@ exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var carryover = __importStar(require("../convex/carryover"));
-var date = __importStar(require("../convex/date"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 var cancel = __importStar(require("../plan/cancel"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, day, result;
+    var isRole, result;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -80,15 +79,8 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
                 }
-                return [4, date.GetDay()];
-            case 1:
-                day = _c.sent();
-                if (!day) {
-                    msg.reply('今日はクラバトの日じゃないわ');
-                    return [2, "It's not ClanBattle days"];
-                }
                 return [4, status.Update(msg)];
-            case 2:
+            case 1:
                 result = _c.sent();
                 if (result) {
                     msg.reply('もう3凸してるわ');

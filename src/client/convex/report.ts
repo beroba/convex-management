@@ -7,7 +7,7 @@ import * as lapAndBoss from './lapAndBoss'
  * 全凸終了報告を行う
  */
 export const AllConvex = async () => {
-  const day = await date.GetDay()
+  const day = (await date.GetDay())[0]
   const state = await lapAndBoss.GetCurrent()
 
   // 進行に報告をする

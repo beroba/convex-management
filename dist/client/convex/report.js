@@ -69,12 +69,12 @@ exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, funct
         switch (_a.label) {
             case 0: return [4, date.GetDay()];
             case 1:
-                day = _a.sent();
+                day = (_a.sent())[0];
                 return [4, lapAndBoss.GetCurrent()];
             case 2:
                 state = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
+                channel.send(day + "\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
                     ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
                     "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
                 console.log('Complete convex end report');

@@ -73,7 +73,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _b.sent();
-                return [4, date.CheckCalnBattle()];
+                return [4, date.GetDay()];
             case 2:
                 days = _b.sent();
                 range = days[2] + "3:" + alphabet_to_number_1.AtoA(days[2], 1) + "32";
@@ -118,7 +118,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 time = getCurrentDate();
                 return [4, date.GetDay()];
             case 1:
-                day = (_a.sent()) + "\u65E5\u76EE";
+                day = (_a.sent())[0];
                 return [4, lapAndBoss.GetCurrent()];
             case 2:
                 state = _a.sent();

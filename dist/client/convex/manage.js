@@ -109,10 +109,10 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 }
                 name = members.filter(function (m) { return m[1] === id; })[0][0];
                 if (!(convex === '3')) return [3, 6];
-                return [4, date.CheckCalnBattle()];
+                return [4, date.GetDay()];
             case 3:
                 days = _d.sent();
-                return [4, status.GetCell(2, 1, sheet, days)];
+                return [4, date.GetCell(2, 1, sheet, days)];
             case 4:
                 people_cell = _d.sent();
                 _b = convexEndProcess;
@@ -139,16 +139,16 @@ var readCells = function (row, sheet) { return __awaiter(void 0, void 0, void 0,
     var days, num_cell, over_cell, end_cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, date.CheckCalnBattle()];
+            case 0: return [4, date.GetDay()];
             case 1:
                 days = _a.sent();
-                return [4, status.GetCell(0, row, sheet, days)];
+                return [4, date.GetCell(0, row, sheet, days)];
             case 2:
                 num_cell = _a.sent();
-                return [4, status.GetCell(1, row, sheet, days)];
+                return [4, date.GetCell(1, row, sheet, days)];
             case 3:
                 over_cell = _a.sent();
-                return [4, status.GetCell(2, row, sheet, days)];
+                return [4, date.GetCell(2, row, sheet, days)];
             case 4:
                 end_cell = _a.sent();
                 return [2, [num_cell, over_cell, end_cell]];

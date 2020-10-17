@@ -1,31 +1,41 @@
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import {AtoA} from 'alphabet-to-number'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
- * 今日のクラバトがn日目なのか返す
- * @return n日目かの値
- */
-export const GetDay = async (): Promise<Option<string>> => {
-  const cell = await CheckCalnBattle()
-  return cell ? cell[0] : null
-}
-
-/**
- * クラバトがあるかを確認する。
- * あった場合は日付の情報を返す
+ * クラバトの日付情報を取得する。
+ * クラバトの日でない場合、練習日を返す
  * @return 日付の情報
  */
-export const CheckCalnBattle = async (): Promise<string[]> => {
+export const GetDay = async (): Promise<string[]> => {
   // 情報のシートを取得
   const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
-  // クラバトの日かどうか確認
-  return PiecesEach(cells, 3)
-    .map(v => [v[0], v[1].split('/').map(Number).join('/'), v[2]])
-    .filter(v => v[1] === mmdd())[0]
+  // 日付の0を取り除く
+  const days: string[][] = PiecesEach(cells, 3).map(c => [c[0], c[1].split('/').map(Number).join('/'), c[2]])
+
+  // クラバトの日を取得
+  const day: Option<string[]> = days.find(d => d[1] === mmdd())
+
+  // クラバトの日でなければ練習日を返す
+  return day ? day : days[5]
+}
+
+/**
+ * 指定した列と行のセルを取得する。
+ * 列は右にどれだけずらすかを指定する
+ * @param n 基準の列から右にずらす数、値がない場合は`0`
+ * @param row 凸報告の行
+ * @param sheet 凸報告のシート
+ * @param days クラバトの日付情報
+ * @return 取得したセル
+ */
+export const GetCell = async (n = 0, row: number, sheet: any, days: string[]): Promise<any> => {
+  const col = AtoA(days[2], n)
+  return sheet.getCell(`${col}${row}`)
 }
 
 /**

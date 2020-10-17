@@ -42,8 +42,8 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   // 3凸終了とそれ以外に処理を分ける
   if (convex === '3') {
     // 現在の3凸人数を取得
-    const days = await date.CheckCalnBattle()
-    const people_cell = await status.GetCell(2, 1, sheet, days)
+    const days = await date.GetDay()
+    const people_cell = await date.GetCell(2, 1, sheet, days)
     convexEndProcess(await readCells(row, sheet), people_cell, name)
   } else {
     updateProcess(await readCells(row, sheet), convex, name)
@@ -72,10 +72,10 @@ const convexFormatConfirm = (convex: string): boolean => {
  * @return cellsの配列
  */
 const readCells = async (row: number, sheet: any): Promise<any[]> => {
-  const days = await date.CheckCalnBattle()
-  const num_cell = await status.GetCell(0, row, sheet, days)
-  const over_cell = await status.GetCell(1, row, sheet, days)
-  const end_cell = await status.GetCell(2, row, sheet, days)
+  const days = await date.GetDay()
+  const num_cell = await date.GetCell(0, row, sheet, days)
+  const over_cell = await date.GetCell(1, row, sheet, days)
+  const end_cell = await date.GetCell(2, row, sheet, days)
   return [num_cell, over_cell, end_cell]
 }
 
