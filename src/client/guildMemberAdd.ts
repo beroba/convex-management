@@ -16,7 +16,8 @@ export const GuildMemberAdd = (member: Discord.GuildMember | Discord.PartialGuil
 
   channel.send(
     `<@!${member.user?.id}> まずは <#${Settings.CHANNEL_ID.CHANNEL_POLICY}> を確認しなさい！\n` +
-      `ちゃんと <#${Settings.CHANNEL_ID.INTRODUCTION}> も書くことね`
+      `ちゃんと <#${Settings.CHANNEL_ID.INTRODUCTION}> も書くことね\n` +
+      `クランに入る人は <#${Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT}> を見て指示通りにしたがってね`
   )
 
   console.log(`I’m ${member.user?.username}, a new member.`)

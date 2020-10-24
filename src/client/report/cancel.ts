@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
-import * as date from './date'
-import * as lapAndBoss from './lapAndBoss'
-import * as situation from './situation'
-import * as status from './status'
+import * as convex from '../convex'
+import * as lapAndBoss from '../convex/lapAndBoss'
+import * as situation from '../convex/situation'
 
 /**
  * 凸報告を取り消す
@@ -31,12 +31,44 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   // 送信者と同じ人で無ければ終了
   if (react.message.author.id !== user.id) return
 
-  // クラバトの日じゃない場合は終了
-  const day = await date.GetDay()
-  if (!day) return
+  // クランメンバーじゃなければ終了
+  const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) return
 
   // 凸状況を元に戻す
-  await statusRestore(react, user)
+  const result = await statusRestore(react.message, user)
+  // 失敗したら終了
+  if (!result) return
+
+  // 凸状況に報告
+  situation.Report()
+
+  return 'Convex cancellation'
+}
+
+/**
+ * 凸報告を取り消す
+ * @param msg DiscordからのMessage
+ * @return 取り消し処理の実行結果
+ */
+export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
+  // botのメッセージは実行しない
+  if (msg.member?.user.bot) return
+
+  // #凸報告でなければ終了
+  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
+
+  // クランメンバーじゃなければ終了
+  const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!isRole) return
+
+  // 凸状況を元に戻す
+  const user = msg.member?.user
+  if (!user) return
+
+  const result = await statusRestore(msg, user)
+  // 失敗したら終了
+  if (!result) return
 
   // 凸状況に報告
   situation.Report()
@@ -46,24 +78,31 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
 
 /**
  * 凸状況を元に戻す
- * @param react DiscordからのReaction
+ * @param msg DiscordからのMessage
  * @param user リアクションしたユーザー
+ * @return 成功したかの真偽値
  */
-const statusRestore = async (react: Discord.MessageReaction, user: Discord.User) => {
+const statusRestore = async (msg: Discord.Message, user: Discord.User): Promise<boolean> => {
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // メンバーのセル一覧から凸報告者の行を取得
-  const members: string[] = (await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)).filter(v => v)
-  const member = util.GetMembersFromUser(react.message.guild?.members, user)
-  const row = status.GetMemberRow(members, member)
+  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
+  const member = util.GetMembersFromUser(msg.guild?.members, user)
+  const row = convex.GetMemberRow(members, user.id)
 
   // 凸数、持ち越し、3凸終了、前回履歴のセルを取得
-  const days = await date.CheckCalnBattle()
-  const num_cell = await status.GetCell(0, row, sheet, days)
-  const over_cell = await status.GetCell(1, row, sheet, days)
-  const end_cell = await status.GetCell(2, row, sheet, days)
-  const hist_cell = await status.GetCell(3, row, sheet, days)
+  const days = await convex.GetDays()
+  const num_cell = await convex.GetCell(0, days.col, row, sheet)
+  const over_cell = await convex.GetCell(1, days.col, row, sheet)
+  const end_cell = await convex.GetCell(2, days.col, row, sheet)
+  const hist_cell = await convex.GetCell(3, days.col, row, sheet)
+
+  // 2回キャンセルしてないか確認
+  const result = checkCancelTwice(num_cell, over_cell, hist_cell)
+  // キャンセルしていた場合は終了
+  if (result) return false
 
   // 凸状況を1つ前に戻す
   rollback(num_cell, over_cell, hist_cell)
@@ -72,7 +111,23 @@ const statusRestore = async (react: Discord.MessageReaction, user: Discord.User)
   // 凸状況を報告
   feedback(num_cell, over_cell, user)
   // ボス倒していたかを判別
-  killConfirm(react)
+  killConfirm(msg)
+
+  return true
+}
+
+/**
+ * 2回キャンセルしてないか確認
+ * @param num_cell 凸数のセル
+ * @param over_cell 持ち越しのセル
+ * @param hist_cell 履歴のセル
+ * @return キャンセルしていたかの真偽値
+ */
+const checkCancelTwice = (num_cell: any, over_cell: any, hist_cell: any): boolean => {
+  const num = num_cell.getValue()
+  const over = over_cell.getValue()
+  const hist = hist_cell.getValue()
+  return num + over === hist.replace(',', '')
 }
 
 /**
@@ -83,11 +138,11 @@ const statusRestore = async (react: Discord.MessageReaction, user: Discord.User)
  */
 const rollback = (num_cell: any, over_cell: any, hist_cell: any) => {
   // セルの値を取得
-  const hist = hist_cell.getValue().split(',')
+  const [num, over] = hist_cell.getValue().split(',')
 
   // 履歴を戻す
-  num_cell.setValue(hist[0])
-  over_cell.setValue(hist[1])
+  num_cell.setValue(num)
+  over_cell.setValue(over)
 }
 
 /**
@@ -125,11 +180,12 @@ const feedback = (num_cell: any, over_cell: any, user: Discord.User) => {
 
 /**
  * ボスを倒していた場合、前のボスに戻す
- * @param react DiscordからのReaction
+ * @param msg DiscordからのMessage
  */
-const killConfirm = async (react: Discord.MessageReaction) => {
+const killConfirm = async (msg: Discord.Message) => {
+  const content = util.Format(msg.content)
   // ボスを倒していなければ終了
-  if (!/^kill/i.test(react.message.content)) return
+  if (!/^k|kill/i.test(content)) return
 
   // 前のボスに戻す
   lapAndBoss.Previous()

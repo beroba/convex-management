@@ -78,27 +78,29 @@ exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
-var date = __importStar(require("../convex/date"));
+var list = __importStar(require("../plan/list"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 exports.ClanBattle = function (command, msg) {
-    var _a;
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
         return;
-    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return const_settings_1["default"].COMMAND_ROLE.some(function (v) { return v === r.id; }); });
-    if (!isRole)
-        return;
     switch (true) {
-        case /cb over/.test(command): {
-            var arg = command.replace('/cb over ', '');
-            simultConvexCalc(arg, msg);
-            return 'Simultaneous convex carryover calculation';
+        case /cb convex/.test(command): {
+            var arg = command.replace('/cb convex ', '');
+            changeConvex(arg, msg);
+            return 'Change of convex management';
+        }
+        case /cb boss now/.test(command): {
+            currentBossNow();
+            return 'Show ckurrent boss';
         }
         case /cb boss next/.test(command): {
-            moveForward(msg);
+            moveForward();
             return 'Advance to next lap and boss';
         }
         case /cb boss previous/.test(command): {
-            moveReturn(msg);
+            moveReturn();
             return 'Advance to previous lap and boss';
         }
         case /cb boss/.test(command): {
@@ -106,41 +108,58 @@ exports.ClanBattle = function (command, msg) {
             changeBoss(arg, msg);
             return 'Change laps and boss';
         }
+        case /cb plan/.test(command): {
+            var arg = command.replace('/cb plan ', '');
+            planList(arg);
+            return 'Display convex plan list';
+        }
+        case /cb over/.test(command): {
+            var arg = command.replace('/cb over ', '');
+            simultConvexCalc(arg, msg);
+            return 'Simultaneous convex carryover calculation';
+        }
+        case /cb help/.test(command): {
+            msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
+            return 'Show help';
+        }
     }
 };
-var simultConvexCalc = function (arg, msg) {
-    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
-    var _a = __read(arg.replace('　', ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
-    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```\u30C0\u30E1\u30FC\u30B8\u306E\u9AD8\u3044\u65B9\u3092\u5148\u306B\u901A\u3059\u3053\u3068\u306D");
-};
-var moveForward = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
+var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var result;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+            case 0: return [4, manage.Update(arg, msg)];
             case 1:
-                day = _a.sent();
-                if (!day)
-                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                return [4, lapAndBoss.Next()];
-            case 2:
+                result = _a.sent();
+                if (!result)
+                    return [2];
+                situation.Report();
+                return [2];
+        }
+    });
+}); };
+var currentBossNow = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        lapAndBoss.ProgressReport();
+        return [2];
+    });
+}); };
+var moveForward = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, lapAndBoss.Next()];
+            case 1:
                 _a.sent();
                 situation.Report();
                 return [2];
         }
     });
 }); };
-var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
+var moveReturn = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+            case 0: return [4, lapAndBoss.Previous()];
             case 1:
-                day = _a.sent();
-                if (!day)
-                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                return [4, lapAndBoss.Previous()];
-            case 2:
                 _a.sent();
                 situation.Report();
                 return [2];
@@ -148,21 +167,36 @@ var moveReturn = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day, bool;
+    var result;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+            case 0: return [4, lapAndBoss.Update(arg)];
             case 1:
-                day = _a.sent();
-                if (!day)
-                    return [2, msg.reply('今日はクラバトの日じゃないわ')];
-                return [4, lapAndBoss.Update(arg)];
-            case 2:
-                bool = _a.sent();
-                if (!bool)
+                result = _a.sent();
+                if (!result)
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
                 situation.Report();
                 return [2];
         }
     });
 }); };
+var planList = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (/^[a-e]$/i.test(arg)) {
+            list.Output(arg);
+        }
+        else if (/^[1-5]$/i.test(arg)) {
+            list.Output(alphabet_to_number_1.NtoA(arg));
+        }
+        else {
+            list.AllOutput();
+        }
+        return [2];
+    });
+}); };
+var simultConvexCalc = function (arg, msg) {
+    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
+    var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
+    var word = 'ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！';
+    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```" + word);
+};

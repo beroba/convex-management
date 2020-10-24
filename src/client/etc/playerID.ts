@@ -9,13 +9,20 @@ import * as util from '../../util'
  * @param user リアクションしたユーザー
  * @return ロール付与の実行結果
  */
-export const RoleGrant = (react: Discord.MessageReaction, user: Discord.User): Option<string> => {
+export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
   // #id送信ロール付与でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT) return
 
   // idスクショ送信のロールを付与する
   const member = util.GetMembersFromUser(react.message.guild?.members, user)
   member?.roles.add(Settings.ROLE_ID.PLAYER_ID_SEND)
+
+  // #id送信チャンネルへの誘導をする
+  const msg = await react.message.reply(
+    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！\n※15秒にこのメッセージは消えます`
+  )
+  // 15秒したらメッセージを削除する
+  setTimeout(() => msg.delete(), 15000)
 
   return 'Grant player id send role'
 }
@@ -41,7 +48,8 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   // #プレイヤーidリストにメッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)
   // 画像がある場合は画像も送信
-  await channel.send(`${util.GetUserName(msg.member)}\n${msg.content}`, url ? {files: [url]} : {})
+  const content = util.Format(msg.content)
+  await channel.send(`${util.GetUserName(msg.member)}\n${content}`, url ? {files: [url]} : {})
 
   // 元のメッセージを削除
   await msg.delete()

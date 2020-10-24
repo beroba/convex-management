@@ -61,16 +61,26 @@ exports.__esModule = true;
 exports.Save = exports.RoleGrant = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.RoleGrant = function (react, user) {
+exports.RoleGrant = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, msg;
     var _a;
-    if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT)
-        return;
-    var member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-    member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND);
-    return 'Grant player id send role';
-};
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT)
+                    return [2];
+                member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
+                member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND);
+                return [4, react.message.reply("<@!" + user.id + ">  <#" + const_settings_1["default"].CHANNEL_ID.PLAYER_ID_SEND + "> \u3053\u3053\u3067\u30B9\u30AF\u30B7\u30E7\u3092\u9001\u3063\u3066\u306D\uFF01\n\u203B15\u79D2\u306B\u3053\u306E\u30E1\u30C3\u30BB\u30FC\u30B8\u306F\u6D88\u3048\u307E\u3059")];
+            case 1:
+                msg = _b.sent();
+                setTimeout(function () { return msg["delete"](); }, 15000);
+                return [2, 'Grant player id send role'];
+        }
+    });
+}); };
 exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, channel;
+    var url, channel, content;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -84,7 +94,8 @@ exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, functio
                 _c.sent();
                 url = msg.attachments.map(function (a) { return a.url; })[0];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
-                return [4, channel.send(util.GetUserName(msg.member) + "\n" + msg.content, url ? { files: [url] } : {})];
+                content = util.Format(msg.content);
+                return [4, channel.send(util.GetUserName(msg.member) + "\n" + content, url ? { files: [url] } : {})];
             case 2:
                 _c.sent();
                 return [4, msg["delete"]()];

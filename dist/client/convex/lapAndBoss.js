@@ -74,19 +74,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CurrentMessage = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
+exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
+var list = __importStar(require("../plan/list"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, num, infoSheet, boss, _b, lap_cell, boss_cell, num_cell;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = __read(arg.replace('　', ' ').split(' '), 2), lap = _a[0], num = _a[1];
+                _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], num = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
-                if (!/[a-e]|[A-E]/.test(num))
+                if (!/[a-e]/i.test(num))
                     return [2, false];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
@@ -104,7 +106,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                progressReport();
+                exports.ProgressReport();
                 return [2, true];
         }
     });
@@ -129,7 +131,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                progressReport();
+                exports.ProgressReport();
                 return [2];
         }
     });
@@ -154,13 +156,13 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, spreadsheet.SetValue(num_cell, num)];
             case 5:
                 _c.sent();
-                progressReport();
+                exports.ProgressReport();
                 return [2];
         }
     });
 }); };
 exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, range, _a, lap, boss;
+    var infoSheet, range, _a, lap, boss, cells, num;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
@@ -170,18 +172,11 @@ exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, func
                 return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[1])];
             case 2:
                 _a = __read.apply(void 0, [_b.sent(), 2]), lap = _a[0], boss = _a[1];
-                return [2, { lap: lap, boss: boss }];
-        }
-    });
-}); };
-exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.GetCurrent()];
-            case 1:
-                state = _a.sent();
-                return [2, "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`"];
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 3:
+                cells = _b.sent();
+                num = pieces_each_1["default"](cells, 2).filter(function (v) { return v[1] === boss; })[0][0];
+                return [2, { lap: lap, boss: boss, num: num }];
         }
     });
 }); };
@@ -192,20 +187,21 @@ var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, 
             case 0: return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 1:
                 cells = _a.sent();
-                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
         }
     });
 }); };
-var progressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                _b = (_a = channel).send;
-                return [4, exports.CurrentMessage()];
+exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var state, role, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.GetCurrent()];
             case 1:
-                _b.apply(_a, [_c.sent()]);
+                state = _a.sent();
+                role = const_settings_1["default"].BOSS_ROLE_ID[state.num];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "`");
+                list.PlanOnly(state.num);
                 return [2];
         }
     });

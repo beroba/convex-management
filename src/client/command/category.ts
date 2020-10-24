@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
@@ -42,6 +42,8 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
   if (!subLeader) return []
   const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
   if (!clanMembers) return []
+  const sistarMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.SISTAR_MEMBERS)
+  if (!sistarMembers) return []
   const tomodachi = msg.guild?.roles.cache.get(Settings.ROLE_ID.TOMODACHI)
   if (!tomodachi) return []
   const everyone = msg.guild?.roles.everyone
@@ -59,6 +61,10 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
     },
     {
       id: clanMembers.id,
+      allow: ['VIEW_CHANNEL'],
+    },
+    {
+      id: sistarMembers.id,
       allow: ['VIEW_CHANNEL'],
     },
     {
@@ -83,14 +89,17 @@ const channelNameList = async (): Promise<string[]> => {
   const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // ボスの名前を取得
-  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = util.PiecesEach(cells, 2).map(v => v[1])
+  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = PiecesEach(cells, 2).map(v => v[1])
 
   // prettier-ignore
   return [
-    '検証総合', '凸ルート案', '編成質問・相談',
-    `${a}編成`, `${b}編成`,
-    `${c}編成`, `${d}編成`,
-    `${e}編成`, '持ち越し編成',
+    '検証総合', '凸ルート案', '編成・tl質問',
+    `${a}`, `${a}-オート`,
+    `${b}`, `${b}-オート`,
+    `${c}`, `${c}-オート`,
+    `${d}`, `${d}-オート`,
+    `${e}`, `${e}-オート`,
+    '持ち越し用',
   ]
 }
 

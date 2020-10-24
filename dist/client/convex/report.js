@@ -58,52 +58,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Unevenness = exports.AllConvex = exports.Convex = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
+exports.Unevenness = exports.AllConvex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var index_1 = require("../../index");
 var util = __importStar(require("../../util"));
-var date = __importStar(require("./date"));
+var convex = __importStar(require("."));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var situation = __importStar(require("./situation"));
-var status = __importStar(require("./status"));
-exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var day;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
-                    return [2];
-                return [4, date.GetDay()];
-            case 1:
-                day = _b.sent();
-                if (!day) {
-                    msg.reply('今日はクラバトの日じゃないわ');
-                    return [2, "It's not ClanBattle days"];
-                }
-                return [4, status.Update(msg)];
-            case 2:
-                _b.sent();
-                situation.Report();
-                return [2, 'Update status'];
-        }
-    });
-}); };
 exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var day, state, channel;
+    var days, state, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, date.GetDay()];
+            case 0: return [4, convex.GetDays()];
             case 1:
-                day = _a.sent();
+                days = _a.sent();
                 return [4, lapAndBoss.GetCurrent()];
             case 2:
                 state = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
+                channel.send(days.number + "\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
                     ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
                     "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
                 console.log('Complete convex end report');
@@ -112,15 +83,15 @@ exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.Unevenness = function (day) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, guild, 凸残, channel;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var state, 凸残, channel;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0: return [4, lapAndBoss.GetCurrent()];
             case 1:
-                state = _b.sent();
-                guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
-                凸残 = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return "<@!" + m.user.id + ">"; });
+                state = _c.sent();
+                凸残 = (_b = (_a = util
+                    .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return "<@!" + m.user.id + ">"; });
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send(day + "\u65E5\u76EE\u306E\u51F8\u72B6\u6CC1\u5831\u544A\u3088\uFF01\n" +
                     ("\u4ECA\u65E5\u306E\u51F8\u6B8B\u308A\u306F " + (凸残 === null || 凸残 === void 0 ? void 0 : 凸残.join(' ')) + " \u3088\n") +

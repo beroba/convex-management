@@ -58,26 +58,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CheckCalnBattle = exports.GetColumn = exports.GetDay = void 0;
+exports.GetCell = exports.GetDay = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.GetDay = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.CheckCalnBattle()];
-            case 1:
-                cell = _a.sent();
-                return [2, cell ? cell[0] : null];
-        }
-    });
-}); };
-exports.GetColumn = function (n, cell) {
-    return String.fromCharCode(cell[2].charCodeAt(0) + n);
-};
-exports.CheckCalnBattle = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells;
+    var infoSheet, cells, days, day;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
@@ -86,11 +73,20 @@ exports.CheckCalnBattle = function () { return __awaiter(void 0, void 0, void 0,
                 return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [2, util
-                        .PiecesEach(cells, 3)
-                        .map(function (v) { return [v[0], v[1].split('/').map(Number).join('/'), v[2]]; })
-                        .filter(function (v) { return v[1] === mmdd(); })[0]];
+                days = pieces_each_1["default"](cells, 3).map(function (c) { return [c[0], c[1].split('/').map(Number).join('/'), c[2]]; });
+                day = days.find(function (d) { return d[1] === mmdd(); });
+                return [2, day ? day : days[5]];
         }
     });
 }); };
+exports.GetCell = function (n, row, sheet, days) {
+    if (n === void 0) { n = 0; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var col;
+        return __generator(this, function (_a) {
+            col = alphabet_to_number_1.AtoA(days[2], n);
+            return [2, sheet.getCell("" + col + row)];
+        });
+    });
+};
 var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };

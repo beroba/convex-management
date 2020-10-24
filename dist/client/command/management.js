@@ -60,11 +60,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
 exports.Management = function (command, msg) {
+    var _a;
     if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
+        return;
+    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return const_settings_1["default"].COMMAND_ROLE.some(function (v) { return v === r.id; }); });
+    if (!isRole)
         return;
     switch (true) {
         case /cb manage create category/.test(command): {
@@ -82,9 +87,17 @@ exports.Management = function (command, msg) {
             setDate(arg, msg);
             return 'Update convex management members';
         }
+        case /cb manage remove role/.test(command): {
+            removeRole(msg);
+            return 'Release all remaining convex rolls';
+        }
         case /cb manage update members/.test(command): {
             updateMembers(msg);
             return 'Update convex management members';
+        }
+        case /cb manage update sistars/.test(command): {
+            updateSistars(msg);
+            return 'Update convex management sistars';
         }
         case /cb manage sheet/.test(command): {
             spreadsheetLink(msg);
@@ -120,31 +133,72 @@ var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+var removeRole = function (msg) {
+    var _a, _b;
+    var clanMembers = (_b = (_a = util
+        .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
+    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
+    msg.reply('凸残ロール全て外したわよ！');
+};
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var clanMembers, infoSheet;
+    var members, sheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                clanMembers = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return util.GetUserName(m); }).sort();
+                members = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
+                    name: util.GetUserName(m),
+                    id: m.id
+                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _c.sent();
-                clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, infoSheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN + (i + 3))];
-                            case 1:
-                                cell = _a.sent();
-                                cell.setValue(m);
-                                return [2];
-                        }
-                    });
-                }); });
+                sheet = _c.sent();
+                fetchNameAndId(members, sheet);
                 msg.reply('クランメンバー一覧を更新したわよ！');
                 return [2];
         }
+    });
+}); };
+var updateSistars = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var members, sheet;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                members = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTAR_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
+                    name: util.GetUserName(m),
+                    id: m.id
+                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].SISTAR_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _c.sent();
+                fetchNameAndId(members, sheet);
+                msg.reply('妹クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+var fetchNameAndId = function (members, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        members === null || members === void 0 ? void 0 : members.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
+            var col, name_cell, id_cell;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
+                        return [4, sheet.getCell("" + col + (i + 3))];
+                    case 1:
+                        name_cell = _a.sent();
+                        name_cell.setValue(m.name);
+                        return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
+                    case 2:
+                        id_cell = _a.sent();
+                        id_cell.setValue(m.id);
+                        return [2];
+                }
+            });
+        }); });
+        return [2];
     });
 }); };
 var spreadsheetLink = function (msg) {

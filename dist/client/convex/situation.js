@@ -54,107 +54,115 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var date = __importStar(require("./date"));
+var convex = __importStar(require("."));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var manageSheet, days, range, status, members, list, channel, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var sheet, days, range, status, _a, cells, members, list, text, situation, msg, history;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                manageSheet = _c.sent();
-                return [4, date.CheckCalnBattle()];
+                sheet = _b.sent();
+                return [4, convex.GetDays()];
             case 2:
-                days = _c.sent();
-                range = date.GetColumn(0, days) + "3:" + date.GetColumn(1, days) + "32";
-                return [4, spreadsheet.GetCells(manageSheet, range)];
+                days = _b.sent();
+                range = days.col + "3:" + alphabet_to_number_1.AtoA(days.col, 1) + "32";
+                _a = pieces_each_1["default"];
+                return [4, spreadsheet.GetCells(sheet, range)];
             case 3:
-                status = _c.sent();
-                return [4, spreadsheet.GetCells(manageSheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+                status = _a.apply(void 0, [(_b.sent()).map(Number), 2]);
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 4:
-                members = _c.sent();
-                list = util
-                    .PiecesEach(status, 2)
-                    .map(function (v) { return v.map(Number); })
-                    .map(function (v, i) { return __spread([members[i]], v); })
-                    .filter(function (v) { return v[0] !== ''; });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
-                _b = (_a = channel).send;
+                cells = _b.sent();
+                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
+                list = mergeList(status, members);
                 return [4, createMessage(list)];
             case 5:
-                _b.apply(_a, [_c.sent()]);
+                text = _b.sent();
+                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
+                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
+            case 6:
+                msg = _b.sent();
+                msg.edit(text);
+                history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
+                history.send(text);
                 console.log('Report convex situation');
                 return [2];
         }
     });
 }); };
+var mergeList = function (status, members) {
+    return status
+        .map(function (v, i) { return ({
+        member: members[i][0],
+        number: v[0],
+        over: v[1]
+    }); })
+        .filter(function (v) { return v.member !== ''; });
+};
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var p0, time, day, getUserList, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var time, days, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                p0 = function (n) { return (n + '').padStart(2, '0'); };
-                time = (function (d) {
-                    return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
-                })(new Date());
-                return [4, date.GetDay()];
+                time = getCurrentDate();
+                return [4, convex.GetDays()];
             case 1:
-                day = (_b.sent()) + "\u65E5\u76EE";
-                getUserList = function (list, a, b) {
-                    return list.filter(function (l) { return l[1] === a; }).filter(function (l) { return l[2] === b; }).map(function (l) { return l[0]; }).join(', ');
-                };
-                未凸 = getUserList(list, 0, 0);
-                持越1 = getUserList(list, 1, 1);
-                凸1 = getUserList(list, 1, 0);
-                持越2 = getUserList(list, 2, 1);
-                凸2 = getUserList(list, 2, 0);
-                持越3 = getUserList(list, 3, 1);
-                凸3 = getUserList(list, 3, 0);
-                _a = "`" + time + "` " + day + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n";
-                return [4, lapAndBoss.CurrentMessage()];
-            case 2: return [2, (_a +
-                    ((_b.sent()) + "\n") +
-                    '```\n' +
-                    ("\u672A\u51F8: " + 未凸 + "\n") +
-                    '\n' +
-                    ("\u6301\u8D8A: " + 持越1 + "\n") +
-                    ("1\u51F8 : " + 凸1 + "\n") +
-                    '\n' +
-                    ("\u6301\u8D8A: " + 持越2 + "\n") +
-                    ("2\u51F8 : " + 凸2 + "\n") +
-                    '\n' +
-                    ("\u6301\u8D8A: " + 持越3 + "\n") +
-                    ("3\u51F8 : " + 凸3 + "\n") +
-                    '\n' +
-                    '```')];
+                days = _a.sent();
+                return [4, lapAndBoss.GetCurrent()];
+            case 2:
+                state = _a.sent();
+                current = "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`";
+                remaining = remainingConvexNumber(list);
+                未凸 = userSorting(list, 0, 0);
+                持越1 = userSorting(list, 1, 1);
+                凸1 = userSorting(list, 1, 0);
+                持越2 = userSorting(list, 2, 1);
+                凸2 = userSorting(list, 2, 0);
+                持越3 = userSorting(list, 3, 1);
+                凸3 = userSorting(list, 3, 0);
+                return [2, ("`" + time + "` " + days.number + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                        (current + " `" + remaining + "`\n") +
+                        '```\n' +
+                        ("\u672A\u51F8: " + 未凸 + "\n") +
+                        '\n' +
+                        ("\u6301\u8D8A: " + 持越1 + "\n") +
+                        ("1\u51F8 : " + 凸1 + "\n") +
+                        '\n' +
+                        ("\u6301\u8D8A: " + 持越2 + "\n") +
+                        ("2\u51F8 : " + 凸2 + "\n") +
+                        '\n' +
+                        ("\u6301\u8D8A: " + 持越3 + "\n") +
+                        ("3\u51F8 : " + 凸3 + "\n") +
+                        '\n' +
+                        '```')];
         }
     });
 }); };
+var getCurrentDate = function () {
+    var p0 = function (n) { return (n + '').padStart(2, '0'); };
+    var d = new Date();
+    return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
+};
+var userSorting = function (list, number, over) {
+    return list
+        .filter(function (l) { return l.number === number; })
+        .filter(function (l) { return l.over === over; })
+        .map(function (l) { return l.member; })
+        .join(', ');
+};
+var remainingConvexNumber = function (list) {
+    var remaining = list.map(function (l) { return 3 - l.number + l.over; }).reduce(function (a, b) { return a + b; });
+    var over = list.map(function (l) { return l.over; }).reduce(function (a, b) { return a + b; });
+    return remaining + "/" + list.length * 3 + "(" + over + ")";
+};

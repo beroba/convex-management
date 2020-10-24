@@ -76,7 +76,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, year, day, channel;
@@ -113,7 +113,7 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var settingPermissions = function (msg) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     var leader = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.LEADER);
     if (!leader)
         return [];
@@ -123,10 +123,13 @@ var settingPermissions = function (msg) {
     var clanMembers = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
     if (!clanMembers)
         return [];
-    var tomodachi = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.TOMODACHI);
+    var sistarMembers = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTAR_MEMBERS);
+    if (!sistarMembers)
+        return [];
+    var tomodachi = (_e = msg.guild) === null || _e === void 0 ? void 0 : _e.roles.cache.get(const_settings_1["default"].ROLE_ID.TOMODACHI);
     if (!tomodachi)
         return [];
-    var everyone = (_e = msg.guild) === null || _e === void 0 ? void 0 : _e.roles.everyone;
+    var everyone = (_f = msg.guild) === null || _f === void 0 ? void 0 : _f.roles.everyone;
     if (!everyone)
         return [];
     return [
@@ -140,6 +143,10 @@ var settingPermissions = function (msg) {
         },
         {
             id: clanMembers.id,
+            allow: ['VIEW_CHANNEL']
+        },
+        {
+            id: sistarMembers.id,
             allow: ['VIEW_CHANNEL']
         },
         {
@@ -162,14 +169,15 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
                 return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
                 cells = _g.sent();
-                _a = __read(util.PiecesEach(cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
+                _a = __read(pieces_each_1["default"](cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
                 return [2, [
-                        '検証総合', '持ち越し編成',
-                        a + "\u7269\u7406", a + "\u9B54\u6CD5",
-                        b + "\u7269\u7406", b + "\u9B54\u6CD5",
-                        c + "\u7269\u7406", c + "\u9B54\u6CD5",
-                        d + "\u7269\u7406", d + "\u9B54\u6CD5",
-                        e + "\u7269\u7406", e + "\u9B54\u6CD5",
+                        '検証総合', '凸ルート案', '編成・tl質問',
+                        "" + a, a + "-\u30AA\u30FC\u30C8",
+                        "" + b, b + "-\u30AA\u30FC\u30C8",
+                        "" + c, c + "-\u30AA\u30FC\u30C8",
+                        "" + d, d + "-\u30AA\u30FC\u30C8",
+                        "" + e, e + "-\u30AA\u30FC\u30C8",
+                        '持ち越し用',
                     ]];
         }
     });

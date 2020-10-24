@@ -1,6 +1,22 @@
 import * as Discord from 'discord.js'
+import moji from 'moji'
 import Option from 'type-of-option'
+import ThrowEnv from 'throw-env'
 import {Client} from '../index'
+
+/**
+ * 文字列を半角にし、連続したスペースを1つにする
+ * @param str 文字列
+ * @return 整形した文字列
+ */
+export const Format = (str: string): string =>
+  moji(str).convert('ZE', 'HE').convert('ZS', 'HS').toString().replace(/\s+/g, ' ')
+
+/**
+ * クランサーバーのguildを取得する
+ * @return クランサーバーのguild
+ */
+export const GetGuild = (): Option<Discord.Guild> => Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
 
 /**
  * 配列の中に確認用のチャンネルがあるか確認する
@@ -38,14 +54,3 @@ export const GetMembersFromUser = (
  * @param id チャンネルのid
  */
 export const GetTextChannel = (id: string): Discord.TextChannel => Client.channels.cache.get(id) as Discord.TextChannel
-
-/**
- * 配列をn個づつの塊にして作り直す
- * @param array 元になる配列
- * @param n 塊としてまとめる数
- * @return 作り直した配列
- */
-export const PiecesEach = <T>(array: T[], n: number): T[][] => {
-  const l = Array(Math.ceil(array.length / n))
-  return Array.from(l, (_, i) => i).map((_, i) => array.slice(i * n, (i + 1) * n))
-}

@@ -60,79 +60,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.CronOperation = void 0;
 var cron = __importStar(require("node-cron"));
-var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
-var index_1 = require("../index");
 var util = __importStar(require("../util"));
-var date = __importStar(require("../client/convex/date"));
-var report = __importStar(require("../client/convex/report"));
+var convex = __importStar(require("../client/convex"));
 exports.CronOperation = function () {
     setRemainConvex();
-    fullConvexReport();
 };
 var setRemainConvex = function () {
     cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var day, guild, clanMembers, channel;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4, date.GetDay()];
+        var days, clanMembers, channel;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4, convex.GetDays()];
                 case 1:
-                    day = _b.sent();
-                    if (!day)
+                    days = _c.sent();
+                    if (days.number === '練習日')
                         return [2];
-                    guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
-                    clanMembers = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
+                    clanMembers = (_b = (_a = util
+                        .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
                     clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
                     channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
                     channel.send('クランメンバーに凸残ロールを付与したわ');
                     console.log('Add convex role');
-                    return [2];
-            }
-        });
-    }); });
-};
-var fullConvexReport = function () {
-    var convexConfirm = function () {
-        var _a;
-        var guild = index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
-        var remain = (_a = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _a === void 0 ? void 0 : _a.members.map(function (m) { return m; });
-        return (remain === null || remain === void 0 ? void 0 : remain.length) ? true : false;
-    };
-    cron.schedule('0 5 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var day;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, date.GetDay()];
-                case 1:
-                    day = _a.sent();
-                    if (!day || day === '1')
-                        return [2];
-                    if (convexConfirm())
-                        return [2];
-                    return [4, report.Unevenness(Number(day) - 1)];
-                case 2:
-                    _a.sent();
-                    console.log('Convex situation report');
-                    return [2];
-            }
-        });
-    }); });
-    cron.schedule('0 5 0 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var day;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, date.GetDay()];
-                case 1:
-                    day = _a.sent();
-                    if (!day || day !== '5')
-                        return [2];
-                    if (convexConfirm())
-                        return [2];
-                    return [4, report.Unevenness(day)];
-                case 2:
-                    _a.sent();
-                    console.log('Convex situation report');
                     return [2];
             }
         });
