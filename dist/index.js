@@ -33,7 +33,10 @@ var messageDelete_1 = require("./client/messageDelete");
 var messageReactionAdd_1 = require("./client/messageReactionAdd");
 var messageUpdate_1 = require("./client/messageUpdate");
 var cron_1 = require("./util/cron");
-exports.Client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
+exports.Client = new Discord.Client({
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+    ws: { intents: Discord.Intents.ALL }
+});
 exports.Client.on('ready', function () { return ready_1.Ready(); });
 exports.Client.on('guildMemberAdd', function (member) { return guildMemberAdd_1.GuildMemberAdd(member); });
 exports.Client.on('guildMemberUpdate', function (_, member) { return guildMemberUpdate_1.GuildMemberUpdate(member); });
