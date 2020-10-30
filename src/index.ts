@@ -9,7 +9,10 @@ import {MessageReactionAdd} from './client/messageReactionAdd'
 import {MessageUpdate} from './client/messageUpdate'
 import {CronOperation} from './util/cron'
 
-export const Client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']})
+export const Client = new Discord.Client({
+  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+  ws: {intents: Discord.Intents.ALL},
+})
 
 // botの起動時に実行
 Client.on('ready', () => Ready())
