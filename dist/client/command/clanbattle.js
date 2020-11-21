@@ -118,6 +118,10 @@ exports.ClanBattle = function (command, msg) {
             simultConvexCalc(arg, msg);
             return 'Simultaneous convex carryover calculation';
         }
+        case /cb task/.test(command): {
+            addTaskKillRoll(msg);
+            return 'Add task kill roll';
+        }
         case /cb help/.test(command): {
             msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
             return 'Show help';
@@ -195,8 +199,19 @@ var planList = function (arg) { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 var simultConvexCalc = function (arg, msg) {
-    var overCalc = function (a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
     var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
     var word = 'ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！';
-    msg.reply("```A " + overCalc(A, B) + "s\nB " + overCalc(B, A) + "s```" + word);
+    msg.reply("```A " + overCalc(HP, A, B) + "s\nB " + overCalc(HP, B, A) + "s```" + word);
+};
+var overCalc = function (HP, a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
+var addTaskKillRoll = function (msg) {
+    var _a, _b;
+    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.TASK_KILL; });
+    if (isRole) {
+        msg.reply('既にタスキルしてるわ');
+    }
+    else {
+        (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(const_settings_1["default"].ROLE_ID.TASK_KILL);
+        msg.reply('タスキルロールを付けたわよ！');
+    }
 };

@@ -57,6 +57,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Simultaneous convex carryover calculation'
     }
 
+    case /cb task/.test(command): {
+      addTaskKillRoll(msg)
+      return 'Add task kill roll'
+    }
+
     case /cb help/.test(command): {
       msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
       return 'Show help'
@@ -145,16 +150,35 @@ const planList = async (arg: string) => {
  * @param msg DiscordからのMessage
  */
 const simultConvexCalc = (arg: string, msg: Discord.Message) => {
-  /**
-   * 持ち越しの計算をする
-   * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
-   * @param a AのHP
-   * @param b BのHP
-   * @return 計算結果
-   */
-  const overCalc = (a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
-
   const [HP, A, B] = arg.replace(/　/g, ' ').split(' ').map(Number)
   const word = 'ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！'
-  msg.reply(`\`\`\`A ${overCalc(A, B)}s\nB ${overCalc(B, A)}s\`\`\`${word}`)
+  msg.reply(`\`\`\`A ${overCalc(HP, A, B)}s\nB ${overCalc(HP, B, A)}s\`\`\`${word}`)
+}
+
+/**
+ * 持ち越しの計算をする
+ * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
+ * @param HP ボスのHP
+ * @param a AのHP
+ * @param b BのHP
+ * @return 計算結果
+ */
+const overCalc = (HP: number, a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
+
+/**
+ * メッセージ送信者にタスキルロールを付与する
+ * @param msg DiscordからのMessage
+ */
+const addTaskKillRoll = (msg: Discord.Message) => {
+  // 既にタスキルしてるか確認する
+  const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.TASK_KILL)
+
+  if (isRole) {
+    msg.reply('既にタスキルしてるわ')
+  } else {
+    // タスキルロールを付与する
+    msg.member?.roles.add(Settings.ROLE_ID.TASK_KILL)
+
+    msg.reply('タスキルロールを付けたわよ！')
+  }
 }

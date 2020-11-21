@@ -65,6 +65,7 @@ var util = __importStar(require("../util"));
 var convex = __importStar(require("../client/convex"));
 exports.CronOperation = function () {
     setRemainConvex();
+    removeTaskKillRoll();
 };
 var setRemainConvex = function () {
     cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -85,6 +86,20 @@ var setRemainConvex = function () {
                     console.log('Add convex role');
                     return [2];
             }
+        });
+    }); });
+};
+var removeTaskKillRoll = function () {
+    cron.schedule('0 37 * * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var guildMembers, channel;
+        var _a;
+        return __generator(this, function (_b) {
+            guildMembers = (_a = util.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m; });
+            guildMembers === null || guildMembers === void 0 ? void 0 : guildMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.TASK_KILL); });
+            channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+            channel.send('全員のタスキルロールを外したわ');
+            console.log('remove task kill role');
+            return [2];
         });
     }); });
 };
