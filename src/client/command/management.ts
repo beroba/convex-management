@@ -49,9 +49,9 @@ export const Management = (command: string, msg: Discord.Message): Option<string
       return 'Update convex management members'
     }
 
-    case /cb manage update sistars/.test(command): {
+    case /cb manage update sisters/.test(command): {
       updateSistars(msg)
-      return 'Update convex management sistars'
+      return 'Update convex management sisters'
     }
 
     case /cb manage sheet/.test(command): {
