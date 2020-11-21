@@ -9,15 +9,16 @@ import * as convex from '../client/convex'
  */
 export const CronOperation = () => {
   setRemainConvex()
+  removeTaskKillRoll()
   // fullConvexReport()
 }
 
 /**
- * クラバトがある日の朝5時に、クランメンバー全員に凸残ロールを付与する。
- * '0 0 5 * * *'
+ * クラバトがある日の05:10に、クランメンバー全員に凸残ロールを付与する。
+ * '0 10 5 * * *'
  */
 const setRemainConvex = () => {
-  // 朝5時に実行
+  // 05:10に実行
   cron.schedule('0 10 5 * * *', async () => {
     // クラバトの日じゃない場合は終了
     const days = await convex.GetDays()
@@ -37,6 +38,27 @@ const setRemainConvex = () => {
     channel.send('クランメンバーに凸残ロールを付与したわ')
 
     console.log('Add convex role')
+  })
+}
+
+/**
+ * 05:00に全員のタスクキルロールを外す。
+ * '0 0 5 * * *'
+ */
+const removeTaskKillRoll = () => {
+  // 05:00に実行
+  cron.schedule('0 0 5 * * *', async () => {
+    // べろべろのメンバー一覧を取得
+    const guildMembers = util.GetGuild()?.members.cache.map(m => m)
+
+    // メンバー全員のタスキルロールを外す
+    guildMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.TASK_KILL))
+
+    // bot-notifyに通知をする
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+    channel.send('全員のタスキルロールを外したわ')
+
+    console.log('remove task kill role')
   })
 }
 
