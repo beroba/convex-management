@@ -122,6 +122,10 @@ exports.ClanBattle = function (command, msg) {
             addTaskKillRoll(msg);
             return 'Add task kill roll';
         }
+        case /cb update report/.test(command): {
+            updateReport(msg);
+            return 'Convex situation updated';
+        }
         case /cb help/.test(command): {
             msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
             return 'Show help';
@@ -214,4 +218,9 @@ var addTaskKillRoll = function (msg) {
         (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(const_settings_1["default"].ROLE_ID.TASK_KILL);
         msg.reply('タスキルロールを付けたわよ！');
     }
+};
+var updateReport = function (msg) {
+    situation.Report();
+    list.SituationEdit();
+    msg.reply('凸状況を更新したわよ！');
 };

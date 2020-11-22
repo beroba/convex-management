@@ -62,6 +62,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Add task kill roll'
     }
 
+    case /cb update report/.test(command): {
+      updateReport(msg)
+      return 'Convex situation updated'
+    }
+
     case /cb help/.test(command): {
       msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
       return 'Show help'
@@ -181,4 +186,17 @@ const addTaskKillRoll = (msg: Discord.Message) => {
 
     msg.reply('タスキルロールを付けたわよ！')
   }
+}
+
+/**
+ * 凸状況を更新する
+ * @param msg DiscordからのMessage
+ */
+const updateReport = (msg: Discord.Message) => {
+  // 凸状況に報告
+  situation.Report()
+  // 凸状況を更新
+  list.SituationEdit()
+
+  msg.reply('凸状況を更新したわよ！')
 }
