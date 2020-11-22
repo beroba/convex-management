@@ -79,6 +79,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
                 }
+                carryover.AllDelete(msg);
                 return [4, status.Update(msg)];
             case 1:
                 result = _c.sent();
@@ -86,7 +87,6 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];
                 }
-                carryover.AllDelete(msg);
                 situation.Report();
                 cancel.Report(msg);
                 return [2, 'Update status'];

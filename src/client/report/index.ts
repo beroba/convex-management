@@ -25,6 +25,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Not a clan member'
   }
 
+  // 持ち越し状況を削除
+  carryover.AllDelete(msg)
+
   // 凸状況を更新
   const result = await status.Update(msg)
 
@@ -33,9 +36,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     msg.reply('もう3凸してるわ')
     return '3 Convex is finished'
   }
-
-  // 持ち越し状況を削除
-  carryover.AllDelete(msg)
 
   // 凸状況に報告
   situation.Report()
