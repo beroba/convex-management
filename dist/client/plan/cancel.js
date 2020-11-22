@@ -165,7 +165,7 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-exports.AllReset = function (user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.AllReset = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -175,7 +175,7 @@ exports.AllReset = function (user) { return __awaiter(void 0, void 0, void 0, fu
             case 1:
                 (_a.sent())
                     .map(function (v) { return v; })
-                    .filter(function (m) { return m.author.id === user.id; })
+                    .filter(function (m) { return m.author.id === id; })
                     .forEach(function (m) { return m["delete"](); });
                 console.log('Delete all convex schedules');
                 return [2];

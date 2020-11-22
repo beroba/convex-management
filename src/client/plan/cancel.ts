@@ -127,14 +127,14 @@ export const Report = async (msg: Discord.Message) => {
 }
 
 /**
- * 引数に渡されたuserの凸予定を全て削除する
- * @param msg DiscordからのMessage
+ * 引数に渡されたユーザーidの凸予定を全て削除する
+ * @param is ユーザーid
  */
-export const AllReset = async (user: Discord.User) => {
+export const AllReset = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
   ;(await channel.messages.fetch())
     .map(v => v)
-    .filter(m => m.author.id === user.id)
+    .filter(m => m.author.id === id)
     .forEach(m => m.delete())
 
   console.log('Delete all convex schedules')

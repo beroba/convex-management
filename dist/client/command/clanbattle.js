@@ -195,18 +195,12 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var planAllReset = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
-    var _a;
-    return __generator(this, function (_b) {
-        if (arg === '/cb reset plan') {
-            cancel.AllReset(msg.author);
-        }
-        else {
-            user = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m.user; }).filter(function (u) { return u.id === arg; })[0];
-            if (!user)
-                return [2];
-            cancel.AllReset(user);
-        }
+    var id;
+    return __generator(this, function (_a) {
+        if (arg === '/cb reset plan')
+            return [2, msg.reply('凸予定をリセットする人が分からないわ')];
+        id = util.Format(arg).replace(/[^0-9]/g, '');
+        cancel.AllReset(id);
         msg.reply('凸予定をリセットしたわ');
         return [2];
     });

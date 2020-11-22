@@ -13,7 +13,9 @@ import * as convex from '.'
  */
 export const Update = async (arg: string, msg: Discord.Message): Promise<boolean> => {
   // idと凸状況を取得
-  const [id, status] = util.Format(arg).split(' ')
+  const [user, status] = util.Format(arg).split(' ')
+  // メンションからユーザーidだけを取り除く
+  const id = user.replace(/[^0-9]/g, '')
 
   // 凸状況の書式がおかしい場合は終了
   if (!convexFormatConfirm(status)) {
@@ -27,7 +29,7 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   // メンバーのセル一覧から凸報告者の行を取得
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const row = convex.GetMemberRow(members, id || '')
+  const row = convex.GetMemberRow(members, id)
 
   // ユーザーidが存在しない場合は終了
   if (row === 2) {
