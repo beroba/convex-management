@@ -1,9 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import * as convex from '../convex'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 
 /**
@@ -55,22 +52,6 @@ export const React = (msg: Discord.Message): Option<string> => {
  * @param msg DiscordからのMessage
  */
 export const AllDelete = async (msg: Discord.Message) => {
-  // 凸報告のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // メンバーのセル一覧から凸報告者の行を取得
-  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const row = convex.GetMemberRow(members, msg.member?.id || '')
-
-  // 持ち越し状況か確認
-  const days = await convex.GetDays()
-  const over_cell = await convex.GetCell(1, days.col, row, sheet)
-  const over = await over_cell.getValue()
-
-  // 持ち越し状況でない場合は終了
-  if (!over) return
-
   // 持ち越し状況を全て削除
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   ;(await channel.messages.fetch())

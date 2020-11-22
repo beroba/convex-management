@@ -94,8 +94,6 @@ export const Report = async (msg: Discord.Message) => {
   const content = util.Format(msg.content)
   const num = await checkBossNumber(content)
 
-  console.log(num)
-
   // 凸予定のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)

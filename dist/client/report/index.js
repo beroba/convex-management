@@ -79,16 +79,22 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
                 }
-                carryover.AllDelete(msg);
                 return [4, status.Update(msg)];
             case 1:
                 result = _c.sent();
-                if (result) {
+                console.log(result);
+                if (result.already) {
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];
                 }
+                if (result.over)
+                    carryover.AllDelete(msg);
                 situation.Report();
-                cancel.Report(msg);
+                return [4, cancel.Report(msg)];
+            case 2:
+                _c.sent();
+                if (result.end)
+                    cancel.AllReset(msg.author);
                 return [2, 'Update status'];
         }
     });

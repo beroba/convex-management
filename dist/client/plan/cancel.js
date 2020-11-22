@@ -138,7 +138,6 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, checkBossNumber(content)];
             case 1:
                 num = _b.sent();
-                console.log(num);
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 2:
                 sheet = _b.sent();

@@ -7,6 +7,15 @@ import * as status from './status'
 import * as cancel from '../plan/cancel'
 
 /**
+ * 凸状況の状態
+ */
+export type Status = {
+  already: boolean
+  over: boolean
+  end: boolean
+}
+
+/**
  * 凸報告の管理を行う
  * @param msg DiscordからのMessage
  * @return 凸報告の実行結果
@@ -25,23 +34,26 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Not a clan member'
   }
 
-  // 持ち越し状況を削除
-  carryover.AllDelete(msg)
-
   // 凸状況を更新
   const result = await status.Update(msg)
 
   // 3凸していた場合は終了
-  if (result) {
+  if (result.already) {
     msg.reply('もう3凸してるわ')
     return '3 Convex is finished'
   }
 
+  // 持ち越しがある場合、持ち越し状況を削除
+  if (result.over) carryover.AllDelete(msg)
+
+  // 凸予定を削除
+  await cancel.Report(msg)
+
   // 凸状況に報告
   situation.Report()
 
-  // 凸予定を削除
-  cancel.Report(msg)
+  // 3凸終了していたら凸予定を削除
+  if (result.end) cancel.AllReset(msg.author)
 
   return 'Update status'
 }

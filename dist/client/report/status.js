@@ -65,9 +65,8 @@ var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var convex = __importStar(require("../convex"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
-var plan = __importStar(require("../plan/cancel"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, members, row, days, num_cell, over_cell, end_cell, hist_cell, content, end;
+    var sheet, cells, members, row, days, num_cell, over_cell, end_cell, hist_cell, over, content, end;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -95,8 +94,9 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 7:
                 hist_cell = _b.sent();
                 if (end_cell.getValue())
-                    return [2, true];
+                    return [2, { already: true, over: false, end: false }];
                 saveHistory(num_cell, over_cell, hist_cell);
+                over = over_cell.getValue() ? true : false;
                 content = util.Format(msg.content);
                 statusUpdate(num_cell, over_cell, content);
                 msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
@@ -109,7 +109,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 else {
                     updateProcess(num_cell, over_cell, msg);
                 }
-                return [2];
+                return [2, { already: false, over: over, end: end }];
         }
     });
 }); };
@@ -174,7 +174,6 @@ var convexEndProcess = function (end_cell, sheet, days, msg) { return __awaiter(
                 return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
             case 4:
                 _b.sent();
-                plan.AllReset(msg.author);
                 return [2];
         }
     });
