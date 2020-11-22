@@ -6,6 +6,7 @@ import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as convex from '../convex'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as plan from '../plan/cancel'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
@@ -142,6 +143,8 @@ const convexEndProcess = async (end_cell: any, sheet: any, days: convex.Days, ms
   const people_cell = await convex.GetCell(2, days.col, 1, sheet)
   const n = people_cell.getValue()
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
+
+  plan.AllReset(msg.author)
 }
 
 /**
