@@ -12,7 +12,6 @@ import * as cancel from '../plan/cancel'
 export type Status = {
   already: boolean
   over: boolean
-  end: boolean
 }
 
 /**
@@ -51,9 +50,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // 凸状況に報告
   situation.Report()
-
-  // 3凸終了していたら凸予定を削除
-  if (result.end) cancel.AllReset(msg.author)
 
   return 'Update status'
 }
