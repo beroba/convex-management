@@ -1,19 +1,18 @@
 import * as Discord from 'discord.js'
-import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as convex from '../convex'
 import * as lapAndBoss from '../convex/lapAndBoss'
-import * as plan from '../plan/cancel'
+import {Status} from './'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
  * @return 持ち越しかどうかの真偽値
  */
-export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => {
+export const Update = async (msg: Discord.Message): Promise<Status> => {
   // 凸報告のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
@@ -30,10 +29,13 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
   const hist_cell = await convex.GetCell(3, days.col, row, sheet)
 
   // 既に3凸している人は終了する
-  if (end_cell.getValue()) return true
+  if (end_cell.getValue()) return {already: true, over: false, end: false}
 
   // 現在の凸状況を履歴に残しておく
   saveHistory(num_cell, over_cell, hist_cell)
+
+  // 持ち越し状況の真偽値を保存
+  const over = over_cell.getValue() ? true : false
 
   // 凸数と持ち越しの状態を更新する
   const content = util.Format(msg.content)
@@ -50,7 +52,7 @@ export const Update = async (msg: Discord.Message): Promise<Option<Boolean>> => 
     updateProcess(num_cell, over_cell, msg)
   }
 
-  return
+  return {already: false, over: over, end: end}
 }
 
 /**
@@ -143,8 +145,6 @@ const convexEndProcess = async (end_cell: any, sheet: any, days: convex.Days, ms
   const people_cell = await convex.GetCell(2, days.col, 1, sheet)
   const n = people_cell.getValue()
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
-
-  plan.AllReset(msg.author)
 }
 
 /**
