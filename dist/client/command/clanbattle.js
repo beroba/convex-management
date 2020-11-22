@@ -109,9 +109,10 @@ exports.ClanBattle = function (command, msg) {
             changeBoss(arg, msg);
             return 'Change laps and boss';
         }
-        case /cb reset/.test(command): {
-            cancel.AllReset(msg);
-            return 'All Delete';
+        case /cb reset plan/.test(command): {
+            var arg = command.replace('/cb reset plan ', '');
+            planAllReset(arg, msg);
+            return 'All reset plan';
         }
         case /cb plan/.test(command): {
             var arg = command.replace('/cb plan ', '');
@@ -191,6 +192,22 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 situation.Report();
                 return [2];
         }
+    });
+}); };
+var planAllReset = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    var _a;
+    return __generator(this, function (_b) {
+        if (arg === '/cb reset plan') {
+            cancel.AllReset(msg.author);
+        }
+        else {
+            user = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m.user; }).filter(function (u) { return u.id === arg; })[0];
+            if (!user)
+                return [2];
+            cancel.AllReset(user);
+        }
+        return [2];
     });
 }); };
 var planList = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
