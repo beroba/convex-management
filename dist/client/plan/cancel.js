@@ -138,8 +138,6 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, checkBossNumber(content)];
             case 1:
                 num = _b.sent();
-                if (!num)
-                    return [2];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 2:
                 sheet = _b.sent();
@@ -252,7 +250,7 @@ var deleteBossRole = function (cells, msg) {
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
 };
 var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, name, num;
+    var sheet, cells, name, num, range;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
@@ -271,7 +269,8 @@ var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void
                     return [2, alphabet_to_number_1.NtoA(num)];
                 if (/[a-e]/i.test(num))
                     return [2, num];
-                return [2];
+                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
+                return [2, sheet.getCell(range[0])];
         }
     });
 }); };
