@@ -5,6 +5,7 @@ import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
+import * as cancel from '../plan/cancel'
 import * as list from '../plan/list'
 import {NtoA} from 'alphabet-to-number'
 
@@ -43,6 +44,11 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       const arg = command.replace('/cb boss ', '')
       changeBoss(arg, msg)
       return 'Change laps and boss'
+    }
+
+    case /cb reset/.test(command): {
+      cancel.AllReset(msg.author)
+      return 'All Delete'
     }
 
     case /cb plan/.test(command): {

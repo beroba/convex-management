@@ -65,6 +65,7 @@ var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var convex = __importStar(require("../convex"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var plan = __importStar(require("../plan/cancel"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, members, row, days, num_cell, over_cell, end_cell, hist_cell, content, end;
     var _a;
@@ -173,6 +174,7 @@ var convexEndProcess = function (end_cell, sheet, days, msg) { return __awaiter(
                 return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
             case 4:
                 _b.sent();
+                plan.AllReset(msg);
                 return [2];
         }
     });

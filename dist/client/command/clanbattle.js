@@ -80,6 +80,7 @@ var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
+var cancel = __importStar(require("../plan/cancel"));
 var list = __importStar(require("../plan/list"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 exports.ClanBattle = function (command, msg) {
@@ -107,6 +108,10 @@ exports.ClanBattle = function (command, msg) {
             var arg = command.replace('/cb boss ', '');
             changeBoss(arg, msg);
             return 'Change laps and boss';
+        }
+        case /cb reset/.test(command): {
+            cancel.AllReset(msg);
+            return 'All Delete';
         }
         case /cb plan/.test(command): {
             var arg = command.replace('/cb plan ', '');
