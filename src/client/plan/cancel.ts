@@ -135,7 +135,7 @@ export const AllReset = async (id: string) => {
   ;(await channel.messages.fetch())
     .map(v => v)
     .filter(m => m.author.id === id)
-    .forEach(m => m.delete())
+    .forEach(async m => await new Promise(() => setTimeout(() => m.delete(), 5000)))
 
   console.log('Delete all convex schedules')
 }
