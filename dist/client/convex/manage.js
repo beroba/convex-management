@@ -85,11 +85,12 @@ var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var convex = __importStar(require("."));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, status, sheet, cells, members, row, name, days, cells_1, cells_2;
+    var _a, user, status, id, sheet, cells, members, row, name, days, cells_1, cells_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = __read(util.Format(arg).split(' '), 2), id = _a[0], status = _a[1];
+                _a = __read(util.Format(arg).split(' '), 2), user = _a[0], status = _a[1];
+                id = user.replace(/[^0-9]/g, '');
                 if (!convexFormatConfirm(status)) {
                     msg.reply('凸状況の書式が違うわ');
                     return [2, false];
@@ -101,7 +102,7 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
             case 2:
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                row = convex.GetMemberRow(members, id || '');
+                row = convex.GetMemberRow(members, id);
                 if (row === 2) {
                     msg.reply('クランメンバーにそのidの人は居なかったわよ');
                     return [2, false];

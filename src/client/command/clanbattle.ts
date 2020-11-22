@@ -139,19 +139,19 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
 
 /**
  * 引数に渡されたユーザーの凸予定を全て消す
- * @param arg 凸予定を消したいユーザー
+ * @param arg 凸予定を消すユーザーのidかメンション
  * @param msg DiscordからのMessage
  */
 const planAllReset = async (arg: string, msg: Discord.Message) => {
-  // 引数が無い場合は自分の凸予定を消す
-  if (arg === '/cb reset plan') {
-    cancel.AllReset(msg.author)
-  } else {
-    // 引数のユーザーを取得
-    const user = msg.guild?.members.cache.map(m => m.user).filter(u => u.id === arg)[0]
-    if (!user) return
-    cancel.AllReset(user)
-  }
+  // 引数が無い場合は終了
+  if (arg === '/cb reset plan') return msg.reply('凸予定をリセットする人が分からないわ')
+
+  // メンションからユーザーidだけを取り除く
+  const id = util.Format(arg).replace(/[^0-9]/g, '')
+
+  // 凸予定を全て削除する
+  await cancel.AllReset(id)
+
   msg.reply('凸予定をリセットしたわ')
 }
 
@@ -217,11 +217,10 @@ const addTaskKillRoll = (msg: Discord.Message) => {
  * 凸状況を更新する
  * @param msg DiscordからのMessage
  */
-const updateReport = (msg: Discord.Message) => {
-  // 凸状況に報告
-  situation.Report()
+const updateReport = async (msg: Discord.Message) => {
   // 凸状況を更新
-  list.SituationEdit()
+  situation.Report()
+  await list.SituationEdit()
 
   msg.reply('凸状況を更新したわよ！')
 }
