@@ -93,8 +93,6 @@ export const Report = async (msg: Discord.Message) => {
   // ボス番号を取得
   const content = util.Format(msg.content)
   const num = await checkBossNumber(content)
-  // ボス番号がなければ終了
-  if (!num) return
 
   // 凸予定のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
@@ -235,7 +233,7 @@ const deleteBossRole = (cells: string[], msg: Discord.Message) => {
  * @param content 凸報告のメッセージ
  * @return ボス番号
  */
-const checkBossNumber = async (content: string): Promise<Option<string>> => {
+const checkBossNumber = async (content: string): Promise<string> => {
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
@@ -255,8 +253,10 @@ const checkBossNumber = async (content: string): Promise<Option<string>> => {
   if (/[1-5]/.test(num)) return NtoA(num)
   // 先頭文字がボス番号(a-e)ならそのまま返す
   if (/[a-e]/i.test(num)) return num
-  // 一致しなければundefinedを返す
-  return
+
+  // 一致しなければ現在のボス番号を返す
+  const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
+  return sheet.getCell(range[0])
 }
 
 /**
