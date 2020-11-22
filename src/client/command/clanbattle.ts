@@ -152,6 +152,7 @@ const planAllReset = async (arg: string, msg: Discord.Message) => {
     if (!user) return
     cancel.AllReset(user)
   }
+  msg.reply('凸予定をリセットしたわ')
 }
 
 /**
