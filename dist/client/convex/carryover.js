@@ -60,6 +60,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.AllDelete = exports.React = exports.Delete = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var convex = __importStar(require("../convex"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
@@ -90,14 +93,33 @@ exports.React = function (msg) {
     return 'React Kanryou';
 };
 exports.AllDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
+    var sheet, cells, members, row, days, over_cell, over, channel;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _b.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                cells = _b.sent();
+                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
+                row = convex.GetMemberRow(members, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '');
+                return [4, convex.GetDays()];
+            case 3:
+                days = _b.sent();
+                return [4, convex.GetCell(1, days.col, row, sheet)];
+            case 4:
+                over_cell = _b.sent();
+                return [4, over_cell.getValue()];
+            case 5:
+                over = _b.sent();
+                if (!over)
+                    return [2];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
                 return [4, channel.messages.fetch()];
-            case 1:
-                (_a.sent())
+            case 6:
+                (_b.sent())
                     .map(function (v) { return v; })
                     .filter(function (m) { return m.author.id === msg.author.id; })
                     .forEach(function (m) { return m["delete"](); });

@@ -24,7 +24,7 @@
     "@types/ws": "^7.2.5",
     "alphabet-to-number": "^1.0.0",
     "const-settings": "^1.0.0",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.5.0",
     "google-spreadsheet-as-promised": "^0.2.12",
     "moji": "^0.5.1",
     "node-cron": "^2.0.3",
