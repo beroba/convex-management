@@ -207,6 +207,7 @@ var planAllReset = function (arg, msg) { return __awaiter(void 0, void 0, void 0
                 return [2];
             cancel.AllReset(user);
         }
+        msg.reply('凸予定をリセットしたわ');
         return [2];
     });
 }); };

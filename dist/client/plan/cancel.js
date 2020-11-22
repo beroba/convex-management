@@ -138,6 +138,7 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, checkBossNumber(content)];
             case 1:
                 num = _b.sent();
+                console.log(num);
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 2:
                 sheet = _b.sent();
@@ -270,7 +271,8 @@ var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void
                 if (/[a-e]/i.test(num))
                     return [2, num];
                 range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [2, sheet.getCell(range[0])];
+                return [4, sheet.getCell(range[2])];
+            case 3: return [2, (_a.sent()).getValue()];
         }
     });
 }); };
