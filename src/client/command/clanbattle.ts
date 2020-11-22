@@ -46,9 +46,10 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Change laps and boss'
     }
 
-    case /cb reset/.test(command): {
-      cancel.AllReset(msg.author)
-      return 'All Delete'
+    case /cb reset plan/.test(command): {
+      const arg = command.replace('/cb reset plan ', '')
+      planAllReset(arg, msg)
+      return 'All reset plan'
     }
 
     case /cb plan/.test(command): {
@@ -134,6 +135,23 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
 
   // 凸状況に報告
   situation.Report()
+}
+
+/**
+ * 引数に渡されたユーザーの凸予定を全て消す
+ * @param arg 凸予定を消したいユーザー
+ * @param msg DiscordからのMessage
+ */
+const planAllReset = async (arg: string, msg: Discord.Message) => {
+  // 引数が無い場合は自分の凸予定を消す
+  if (arg === '/cb reset plan') {
+    cancel.AllReset(msg.author)
+  } else {
+    // 引数のユーザーを取得
+    const user = msg.guild?.members.cache.map(m => m.user).filter(u => u.id === arg)[0]
+    if (!user) return
+    cancel.AllReset(user)
+  }
 }
 
 /**

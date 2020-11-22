@@ -174,7 +174,7 @@ var convexEndProcess = function (end_cell, sheet, days, msg) { return __awaiter(
                 return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
             case 4:
                 _b.sent();
-                plan.AllReset(msg);
+                plan.AllReset(msg.author);
                 return [2];
         }
     });
