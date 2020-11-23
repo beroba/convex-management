@@ -79,7 +79,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, year, day, channel;
+    var _a, year, day, channel, list;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -94,19 +94,20 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 channel = _c.sent();
                 return [4, channelNameList()];
             case 2:
-                (_c.sent()).forEach(function (name) { return __awaiter(void 0, void 0, void 0, function () {
+                list = (_c.sent()).map(function (info) { return __awaiter(void 0, void 0, void 0, function () {
                     var c;
                     var _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
-                            case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(name, { type: 'text', parent: channel === null || channel === void 0 ? void 0 : channel.id }))];
+                            case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(info.name, { type: 'text', parent: channel === null || channel === void 0 ? void 0 : channel.id }))];
                             case 1:
                                 c = _b.sent();
-                                c === null || c === void 0 ? void 0 : c.send(name);
-                                return [2];
+                                c === null || c === void 0 ? void 0 : c.send(info.row ? separation(1) : info.name);
+                                return [2, { name: info.name, row: info.row, id: c === null || c === void 0 ? void 0 : c.id }];
                         }
                     });
                 }); });
+                fetchChannelID(list);
                 msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
                 return [2];
         }
@@ -133,30 +134,12 @@ var settingPermissions = function (msg) {
     if (!everyone)
         return [];
     return [
-        {
-            id: leader.id,
-            allow: ['MENTION_EVERYONE']
-        },
-        {
-            id: subLeader.id,
-            allow: ['MANAGE_MESSAGES']
-        },
-        {
-            id: clanMembers.id,
-            allow: ['VIEW_CHANNEL']
-        },
-        {
-            id: sisterMembers.id,
-            allow: ['VIEW_CHANNEL']
-        },
-        {
-            id: tomodachi.id,
-            allow: ['VIEW_CHANNEL']
-        },
-        {
-            id: everyone.id,
-            deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE']
-        },
+        { id: leader.id, allow: ['MENTION_EVERYONE'] },
+        { id: subLeader.id, allow: ['MANAGE_MESSAGES'] },
+        { id: clanMembers.id, allow: ['VIEW_CHANNEL'] },
+        { id: sisterMembers.id, allow: ['VIEW_CHANNEL'] },
+        { id: tomodachi.id, allow: ['VIEW_CHANNEL'] },
+        { id: everyone.id, deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE'] },
     ];
 };
 var channelNameList = function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -171,13 +154,20 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
                 cells = _g.sent();
                 _a = __read(pieces_each_1["default"](cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
                 return [2, [
-                        '検証総合', '凸ルート案', '編成・tl質問',
-                        "" + a, a + "-\u30AA\u30FC\u30C8",
-                        "" + b, b + "-\u30AA\u30FC\u30C8",
-                        "" + c, c + "-\u30AA\u30FC\u30C8",
-                        "" + d, d + "-\u30AA\u30FC\u30C8",
-                        "" + e, e + "-\u30AA\u30FC\u30C8",
-                        '持ち越し用',
+                        { name: '検証総合', row: 0, id: '' },
+                        { name: '凸ルート案', row: 0, id: '' },
+                        { name: '編成・tl質問', row: 0, id: '' },
+                        { name: "" + a, row: 3, id: '' },
+                        { name: a + "-\u30AA\u30FC\u30C8", row: 4, id: '' },
+                        { name: "" + b, row: 5, id: '' },
+                        { name: b + "-\u30AA\u30FC\u30C8", row: 6, id: '' },
+                        { name: "" + c, row: 7, id: '' },
+                        { name: c + "-\u30AA\u30FC\u30C8", row: 8, id: '' },
+                        { name: "" + d, row: 9, id: '' },
+                        { name: d + "-\u30AA\u30FC\u30C8", row: 10, id: '' },
+                        { name: "" + e, row: 11, id: '' },
+                        { name: e + "-\u30AA\u30FC\u30C8", row: 12, id: '' },
+                        { name: '持ち越し用', row: 0, id: '' },
                     ]];
         }
     });
@@ -195,3 +185,37 @@ exports.Delete = function (arg, msg) {
     channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
     msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
 };
+var separation = function (n) { return "\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC" + n + "\u6BB5\u968E\u76EE\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC"; };
+var fetchChannelID = function (list) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                list.forEach(function (c) { return __awaiter(void 0, void 0, void 0, function () {
+                    var col, row, cell, _a, _b;
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
+                            case 0:
+                                col = const_settings_1["default"].INFORMATION_SHEET.CATEGORY_COLUMN;
+                                return [4, c];
+                            case 1:
+                                row = (_c.sent()).row;
+                                if (!row)
+                                    return [2];
+                                return [4, sheet.getCell("" + col + row)];
+                            case 2:
+                                cell = _c.sent();
+                                _b = (_a = cell).setValue;
+                                return [4, c];
+                            case 3:
+                                _b.apply(_a, [(_c.sent()).id]);
+                                return [2];
+                        }
+                    });
+                }); });
+                return [2];
+        }
+    });
+}); };
