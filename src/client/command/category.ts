@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
+import * as util from '../../util'
 
 /**
  * チャンネル情報
@@ -32,7 +33,7 @@ export const Create = async (arg: string, msg: Discord.Message) => {
   // チャンネルの作成し初回メッセージを送信
   const list = (await channelNameList()).map(async info => {
     const c = await msg.guild?.channels.create(info.name, {type: 'text', parent: channel?.id})
-    c?.send(info.row ? separation(1) : info.name)
+    c?.send(info.row ? separate(1) : info.name)
     return {name: info.name, row: info.row, id: c?.id} as ChannelInfo
   })
 
@@ -40,6 +41,49 @@ export const Create = async (arg: string, msg: Discord.Message) => {
   fetchChannelID(list)
 
   msg.reply(`${year}年${day}月のカテゴリーを作成したわよ！`)
+}
+
+/**
+ * 不要になったクラバト用のカテゴリーとチャンネルを削除する
+ * @param arg 削除する年と月
+ * @param msg DiscordからのMessage
+ */
+export const Delete = (arg: string, msg: Discord.Message) => {
+  // 年と月がない場合終了
+  const [year, day] = arg.split('/').map(Number)
+  if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
+
+  // カテゴリーが見つからなかった場合終了
+  const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
+  if (!category) return msg.reply(`${year}年${day}月クラバトなんてないんだけど！`)
+
+  const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
+
+  // カテゴリとチャンネルを削除
+  category?.delete()
+  // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
+  channels?.forEach(c => setTimeout(() => c.delete(), 1000))
+
+  msg.reply(`${year}年${day}月のカテゴリーを削除したわ`)
+}
+
+/**
+ * クラバトカテゴリーに段階数の区切りを付ける
+ * @param n 段階数
+ */
+export const SetSeparate = async (n: number) => {
+  // 情報のシートを取得
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.CATEGORY_CELLS)
+
+  PiecesEach(cells, 2)
+    // 空の値を省く
+    .filter(c => !/^,+$/.test(c.toString()))
+    .forEach(async c => {
+      // ボスのチャンネルに区切りを送信する
+      const channel = util.GetTextChannel(c[1])
+      channel.send(separate(n))
+    })
 }
 
 /**
@@ -107,35 +151,16 @@ const channelNameList = async (): Promise<ChannelInfo[]> => {
 }
 
 /**
- * 不要になったクラバト用のカテゴリーとチャンネルを削除する
- * @param arg 削除する年と月
- * @param msg DiscordからのMessage
- */
-export const Delete = (arg: string, msg: Discord.Message) => {
-  // 年と月がない場合終了
-  const [year, day] = arg.split('/').map(Number)
-  if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
-
-  // カテゴリーが見つからなかった場合終了
-  const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
-  if (!category) return msg.reply(`${year}年${day}月クラバトなんてないんだけど！`)
-
-  const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
-
-  // カテゴリとチャンネルを削除
-  category?.delete()
-  // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
-  channels?.forEach(c => setTimeout(() => c.delete(), 1000))
-
-  msg.reply(`${year}年${day}月のカテゴリーを削除したわ`)
-}
-
-/**
  * 段階数の区切り
  * @param n 段階数
+ * @return 区切りの文字列
  */
-const separation = (n: number) => `ーーーーーーーー${n}段階目ーーーーーーーー`
+const separate = (n: number): string => `ーーーーーーーー${n}段階目ーーーーーーーー`
 
+/**
+ * チャンネルidをスプレッドシートに保存する
+ * @param list チャンネル情報の配列
+ */
 const fetchChannelID = async (list: Promise<ChannelInfo>[]) => {
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)

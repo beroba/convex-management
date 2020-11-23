@@ -74,10 +74,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Delete = exports.Create = void 0;
+exports.SetSeparate = exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var util = __importStar(require("../../util"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, year, day, channel, list;
     var _b;
@@ -102,13 +103,50 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                             case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(info.name, { type: 'text', parent: channel === null || channel === void 0 ? void 0 : channel.id }))];
                             case 1:
                                 c = _b.sent();
-                                c === null || c === void 0 ? void 0 : c.send(info.row ? separation(1) : info.name);
+                                c === null || c === void 0 ? void 0 : c.send(info.row ? separate(1) : info.name);
                                 return [2, { name: info.name, row: info.row, id: c === null || c === void 0 ? void 0 : c.id }];
                         }
                     });
                 }); });
                 fetchChannelID(list);
                 msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
+                return [2];
+        }
+    });
+}); };
+exports.Delete = function (arg, msg) {
+    var _a;
+    var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
+    if (!year)
+        return msg.reply('ちゃんと年と月を入力しなさい');
+    var category = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.find(function (c) { return c.name === year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8"; });
+    if (!category)
+        return msg.reply(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8\u306A\u3093\u3066\u306A\u3044\u3093\u3060\u3051\u3069\uFF01");
+    var channels = category.guild.channels.cache.filter(function (c) { return c.parentID === category.id; });
+    category === null || category === void 0 ? void 0 : category["delete"]();
+    channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
+    msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
+};
+exports.SetSeparate = function (n) { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.CATEGORY_CELLS)];
+            case 2:
+                cells = _a.sent();
+                pieces_each_1["default"](cells, 2)
+                    .filter(function (c) { return !/^,+$/.test(c.toString()); })
+                    .forEach(function (c) { return __awaiter(void 0, void 0, void 0, function () {
+                    var channel;
+                    return __generator(this, function (_a) {
+                        channel = util.GetTextChannel(c[1]);
+                        channel.send(separate(n));
+                        return [2];
+                    });
+                }); });
                 return [2];
         }
     });
@@ -172,20 +210,7 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-exports.Delete = function (arg, msg) {
-    var _a;
-    var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
-    if (!year)
-        return msg.reply('ちゃんと年と月を入力しなさい');
-    var category = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.find(function (c) { return c.name === year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8"; });
-    if (!category)
-        return msg.reply(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8\u306A\u3093\u3066\u306A\u3044\u3093\u3060\u3051\u3069\uFF01");
-    var channels = category.guild.channels.cache.filter(function (c) { return c.parentID === category.id; });
-    category === null || category === void 0 ? void 0 : category["delete"]();
-    channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
-    msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
-};
-var separation = function (n) { return "\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC" + n + "\u6BB5\u968E\u76EE\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC"; };
+var separate = function (n) { return "\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC" + n + "\u6BB5\u968E\u76EE\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC"; };
 var fetchChannelID = function (list) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet;
     return __generator(this, function (_a) {

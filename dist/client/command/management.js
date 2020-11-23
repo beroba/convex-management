@@ -103,6 +103,10 @@ exports.Management = function (command, msg) {
             spreadsheetLink(msg);
             return 'Show spreadsheet link';
         }
+        case /cb test/.test(command): {
+            category.SetSeparate(3);
+            return 'test';
+        }
     }
 };
 var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
