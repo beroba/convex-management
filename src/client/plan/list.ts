@@ -119,6 +119,6 @@ const createPlanList = (num: string, list: string[][]): string => {
     .map(l => `${l[3]} ${l[7]}`)
     .join('\n')
 
-  // 予定者が居ない場合は予定書なしと返す
-  return text ? text : '予定者なし'
+  // 予定者が居ない場合は空白を返す
+  return text ? text : ' '
 }
