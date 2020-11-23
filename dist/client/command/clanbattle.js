@@ -109,9 +109,9 @@ exports.ClanBattle = function (command, msg) {
             changeBoss(arg, msg);
             return 'Change laps and boss';
         }
-        case /cb reset plan/.test(command): {
-            var arg = command.replace('/cb reset plan ', '');
-            planAllReset(arg, msg);
+        case /cb complete plan/.test(command): {
+            var arg = command.replace('/cb complete plan ', '');
+            planComplete(arg, msg);
             return 'All reset plan';
         }
         case /cb plan/.test(command): {
@@ -194,15 +194,20 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var planAllReset = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var planComplete = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var id;
     return __generator(this, function (_a) {
-        if (arg === '/cb reset plan')
-            return [2, msg.reply('凸予定をリセットする人が分からないわ')];
-        id = util.Format(arg).replace(/[^0-9]/g, '');
-        cancel.AllReset(id);
-        msg.reply('凸予定をリセットしたわ');
-        return [2];
+        switch (_a.label) {
+            case 0:
+                if (arg === '/cb complete plan')
+                    return [2, msg.reply('凸予定をリセットする人が分からないわ')];
+                id = util.Format(arg).replace(/[^0-9]/g, '');
+                return [4, cancel.AllComplete(id)];
+            case 1:
+                _a.sent();
+                msg.reply('凸予定をリセットしたわ');
+                return [2];
+        }
     });
 }); };
 var planList = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -236,8 +241,16 @@ var addTaskKillRoll = function (msg) {
         msg.reply('タスキルロールを付けたわよ！');
     }
 };
-var updateReport = function (msg) {
-    situation.Report();
-    list.SituationEdit();
-    msg.reply('凸状況を更新したわよ！');
-};
+var updateReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                situation.Report();
+                return [4, list.SituationEdit()];
+            case 1:
+                _a.sent();
+                msg.reply('凸状況を更新したわよ！');
+                return [2];
+        }
+    });
+}); };

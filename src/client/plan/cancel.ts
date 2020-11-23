@@ -30,28 +30,10 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
   // 送信者と同じ人で無ければ終了
   if (react.message.author.id !== user.id) return
 
-  // クランメンバーじゃなければ終了
-  const isRole = react.message.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.CLAN_MEMBERS)
-  if (!isRole) return
-
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
-
-  // 凸予定の完了を付ける
-  await convexComplete(sheet, cells, react.message.id)
-
-  // メッセージを削除
+  // 凸予定のメッセージを削除する
   react.message.delete()
-  msgCalDelete(cells, react.message.id)
 
-  // ボスのロールを外す
-  deleteBossRole(cells, react.message)
-
-  // 凸状況を更新
-  list.SituationEdit()
-
-  return 'Delete completed message'
+  return 'Already completed message'
 }
 
 /**
@@ -63,21 +45,11 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // #凸予定でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
 
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
+  // botのメッセージでは実行しない
+  if (msg.author.bot) return
 
-  // 凸予定が完了しているか確認
-  if (!isConvexPlan(cells, msg)) return
-
-  // 凸予定の完了を付ける
-  await convexComplete(sheet, cells, msg.id)
-
-  // メッセージを削除
-  msgCalDelete(cells, msg.id)
-
-  // ボスのロールを外す
-  deleteBossRole(cells, msg)
+  // 凸予定を削除
+  planComplete(msg)
 
   // 凸状況を更新
   list.SituationEdit()
@@ -107,83 +79,80 @@ export const Report = async (msg: Discord.Message) => {
   await convexComplete(sheet, cells, id)
 
   // メッセージを削除
-  msgUserDelete(cells, id)
-  msgCalDelete(cells, id)
+  msgDelete(PiecesEach(cells, 8).filter(v => v[1] === id)[0][1])
+  msgDelete(PiecesEach(cells, 8).filter(v => v[1] === id)[0][2])
 
   // ボスのロールを外す
   const plans = PiecesEach(cells, 8)
     .filter(c => c[4] === msg.author.id)
     .filter(v => v[5] === num)
     .filter(c => !c[0])
+
   // 凸予定が残り1つ以下だったら実行
   if (plans.length <= 1) {
     msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
   }
 
-  // 凸状況を更新
-  list.SituationEdit()
-
   console.log('Delete completed message')
 }
 
 /**
- * 引数に渡されたユーザーidの凸予定を全て削除する
+ * 引数に渡されたユーザーidの凸予定を全て完了する
  * @param is ユーザーid
  */
-export const AllReset = async (id: string) => {
+export const AllComplete = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
-  ;(await channel.messages.fetch())
-    .map(v => v)
-    .filter(m => m.author.id === id)
-    .forEach(async m => await new Promise(() => setTimeout(() => m.delete(), 5000)))
+  await Promise.all(
+    (await channel.messages.fetch())
+      .map(v => v)
+      .filter(m => m.author.id === id)
+      .map(async m => await new Promise(() => setTimeout(async () => await m.delete(), 5000)))
+  )
 
   console.log('Delete all convex schedules')
 }
 
 /**
- * 凸予定が完了していなければture、でなければfalse
- * @param cells 凸予定の一覧
+ * 凸予定を完了する
  * @param msg DiscordからのMessage
- * @return 結果の真偽値
  */
-const isConvexPlan = (cells: string[], msg: Discord.Message): boolean => {
-  // 凸予定に削除したメッセージのidがあるか確認
-  const list = PiecesEach(cells, 8)
-    .map(c => c.slice(0, 3))
-    .filter(c => c.some(v => v === msg.id))
+const planComplete = async (msg: Discord.Message) => {
+  // 凸予定のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
 
-  // なければfalse
-  if (list.length === 0) return false
-  // 凸予定が完了してたらfalse
-  if (list[0][0] === '1') return false
-  // 凸予定があって完了してなければtrue
-  return true
+  // 凸予定の完了を付ける
+  await convexComplete(sheet, cells, msg.id)
+
+  // メッセージを削除
+  const id = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][2]
+  msgDelete(id)
+
+  // ボスのロールを外す
+  deleteBossRole(cells, msg)
+
+  // 凸状況を更新
+  list.SituationEdit()
 }
 
 /**
- * 報告者のメッセージを削除する
- * @param cells 凸予定の一覧
- * @param id 送信者のメッセージid
+ * 凸予定のメッセージを削除する
+ * @param id 削除するメッセージid
  */
-const msgUserDelete = async (cells: string[], id: string) => {
-  const msgid = PiecesEach(cells, 8).filter(v => v[1] === id)[0][1]
+const msgDelete = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
 
-  // メッセージを削除する
-  ;(await channel.messages.fetch(msgid)).delete()
-}
+  // メッセージをキャッシュする
+  const msg = await channel.messages
+    .fetch(id)
+    .then(m => m)
+    .catch(_ => undefined)
 
-/**
- * キャルのメッセージを削除する
- * @param cells 凸予定の一覧
- * @param id 送信者のメッセージid
- */
-const msgCalDelete = async (cells: string[], id: string) => {
-  const msgid = PiecesEach(cells, 8).filter(v => v[1] === id)[0][2]
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
+  // メッセージが既にない場合は終了
+  if (!msg) return
 
   // メッセージを削除する
-  ;(await channel.messages.fetch(msgid)).delete()
+  msg.delete()
 }
 
 /**
