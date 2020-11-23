@@ -54,6 +54,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -142,22 +153,52 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var channel, msg, _loop_1, msg_1, msg_1_1, m, e_1_1;
+    var e_1, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
                 return [4, channel.messages.fetch()];
             case 1:
-                (_a.sent())
-                    .map(function (v) { return v; })
-                    .filter(function (m) { return m.author.id === id; })
-                    .map(function (m) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, m["delete"]()];
-                        case 1: return [2, _a.sent()];
-                    }
-                }); }); });
+                msg = (_b.sent()).map(function (v) { return v; }).filter(function (m) { return m.author.id === id; });
+                _loop_1 = function (m) {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, new Promise(function () { return setTimeout(function () { return m["delete"](); }, 5000); })];
+                            case 1:
+                                _a.sent();
+                                return [2];
+                        }
+                    });
+                };
+                _b.label = 2;
+            case 2:
+                _b.trys.push([2, 7, 8, 9]);
+                msg_1 = __values(msg), msg_1_1 = msg_1.next();
+                _b.label = 3;
+            case 3:
+                if (!!msg_1_1.done) return [3, 6];
+                m = msg_1_1.value;
+                return [5, _loop_1(m)];
+            case 4:
+                _b.sent();
+                _b.label = 5;
+            case 5:
+                msg_1_1 = msg_1.next();
+                return [3, 3];
+            case 6: return [3, 9];
+            case 7:
+                e_1_1 = _b.sent();
+                e_1 = { error: e_1_1 };
+                return [3, 9];
+            case 8:
+                try {
+                    if (msg_1_1 && !msg_1_1.done && (_a = msg_1["return"])) _a.call(msg_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+                return [7];
+            case 9:
                 console.log('Delete all convex schedules');
                 return [2];
         }

@@ -102,17 +102,9 @@ export const Report = async (msg: Discord.Message) => {
  */
 export const AllComplete = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
-  // await Promise.all(
-  //   (await channel.messages.fetch())
-  //     .map(v => v)
-  //     .filter(m => m.author.id === id)
-  //     .map(async m => await new Promise(() => setTimeout(async () => await m.delete(), 5000)))
-  // )
+  const msg = (await channel.messages.fetch()).map(v => v).filter(m => m.author.id === id)
 
-  ;(await channel.messages.fetch())
-    .map(v => v)
-    .filter(m => m.author.id === id)
-    .map(async m => await m.delete())
+  for (const m of msg) await new Promise(() => setTimeout(() => m.delete(), 5000))
 
   console.log('Delete all convex schedules')
 }
