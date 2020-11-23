@@ -104,6 +104,7 @@ export const AllComplete = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
   const list = (await channel.messages.fetch()).map(v => v).filter(m => m.author.id === id)
 
+  // 10秒起きに削除を実行
   const sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
 
   for (const m of list) {
