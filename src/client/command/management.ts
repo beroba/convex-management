@@ -50,7 +50,7 @@ export const Management = (command: string, msg: Discord.Message): Option<string
     }
 
     case /cb manage update sisters/.test(command): {
-      updateSistars(msg)
+      updateSisters(msg)
       return 'Update convex management sisters'
     }
 
@@ -134,10 +134,10 @@ const updateMembers = async (msg: Discord.Message) => {
  * 妹クランのメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
-const updateSistars = async (msg: Discord.Message) => {
+const updateSisters = async (msg: Discord.Message) => {
   // 妹クランメンバー一覧をニックネームで取得
   const members: Option<Members[]> = msg.guild?.roles.cache
-    .get(Settings.ROLE_ID.SISTAR_MEMBERS)
+    .get(Settings.ROLE_ID.SISTER_MEMBERS)
     ?.members.map(m => ({
       name: util.GetUserName(m),
       id: m.id,
@@ -145,7 +145,7 @@ const updateSistars = async (msg: Discord.Message) => {
     .sort((a, b) => (a.name > b.name ? 1 : -1))
 
   // 妹クランのシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.SISTAR_SHEET.SHEET_NAME)
+  const sheet = await spreadsheet.GetWorksheet(Settings.SISTER_SHEET.SHEET_NAME)
 
   // シートに名前とidを保存する
   fetchNameAndId(members, sheet)

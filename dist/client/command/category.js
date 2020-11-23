@@ -123,8 +123,8 @@ var settingPermissions = function (msg) {
     var clanMembers = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS);
     if (!clanMembers)
         return [];
-    var sistarMembers = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTAR_MEMBERS);
-    if (!sistarMembers)
+    var sisterMembers = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS);
+    if (!sisterMembers)
         return [];
     var tomodachi = (_e = msg.guild) === null || _e === void 0 ? void 0 : _e.roles.cache.get(const_settings_1["default"].ROLE_ID.TOMODACHI);
     if (!tomodachi)
@@ -146,7 +146,7 @@ var settingPermissions = function (msg) {
             allow: ['VIEW_CHANNEL']
         },
         {
-            id: sistarMembers.id,
+            id: sisterMembers.id,
             allow: ['VIEW_CHANNEL']
         },
         {

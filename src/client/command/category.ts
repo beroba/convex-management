@@ -42,8 +42,8 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
   if (!subLeader) return []
   const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
   if (!clanMembers) return []
-  const sistarMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.SISTAR_MEMBERS)
-  if (!sistarMembers) return []
+  const sisterMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.SISTER_MEMBERS)
+  if (!sisterMembers) return []
   const tomodachi = msg.guild?.roles.cache.get(Settings.ROLE_ID.TOMODACHI)
   if (!tomodachi) return []
   const everyone = msg.guild?.roles.everyone
@@ -64,7 +64,7 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
       allow: ['VIEW_CHANNEL'],
     },
     {
-      id: sistarMembers.id,
+      id: sisterMembers.id,
       allow: ['VIEW_CHANNEL'],
     },
     {
