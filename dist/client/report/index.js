@@ -89,7 +89,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 if (result.over)
                     carryover.AllDelete(msg);
                 if (result.end) {
-                    cancel.AllComplete(msg.id);
+                    cancel.AllComplete(msg.author.id);
                 }
                 else {
                     cancel.Report(msg);
