@@ -49,10 +49,10 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.author.bot) return
 
   // 凸予定を削除
-  planComplete(msg)
+  await planComplete(msg)
 
   // 凸状況を更新
-  list.SituationEdit()
+  await list.SituationEdit()
 
   return 'Delete completed message'
 }
@@ -102,12 +102,17 @@ export const Report = async (msg: Discord.Message) => {
  */
 export const AllComplete = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
-  await Promise.all(
-    (await channel.messages.fetch())
-      .map(v => v)
-      .filter(m => m.author.id === id)
-      .map(async m => await new Promise(() => setTimeout(async () => await m.delete(), 5000)))
-  )
+  // await Promise.all(
+  //   (await channel.messages.fetch())
+  //     .map(v => v)
+  //     .filter(m => m.author.id === id)
+  //     .map(async m => await new Promise(() => setTimeout(async () => await m.delete(), 5000)))
+  // )
+
+  ;(await channel.messages.fetch())
+    .map(v => v)
+    .filter(m => m.author.id === id)
+    .map(async m => await m.delete())
 
   console.log('Delete all convex schedules')
 }
@@ -126,13 +131,10 @@ const planComplete = async (msg: Discord.Message) => {
 
   // メッセージを削除
   const id = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][2]
-  msgDelete(id)
+  await msgDelete(id)
 
   // ボスのロールを外す
   deleteBossRole(cells, msg)
-
-  // 凸状況を更新
-  list.SituationEdit()
 }
 
 /**
