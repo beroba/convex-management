@@ -89,13 +89,20 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
-            return [2];
-        if (msg.author.bot)
-            return [2];
-        planComplete(msg);
-        list.SituationEdit();
-        return [2, 'Delete completed message'];
+        switch (_a.label) {
+            case 0:
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
+                    return [2];
+                if (msg.author.bot)
+                    return [2];
+                return [4, planComplete(msg)];
+            case 1:
+                _a.sent();
+                return [4, list.SituationEdit()];
+            case 2:
+                _a.sent();
+                return [2, 'Delete completed message'];
+        }
     });
 }); };
 exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -135,29 +142,22 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
-                _b = (_a = Promise).all;
                 return [4, channel.messages.fetch()];
-            case 1: return [4, _b.apply(_a, [(_c.sent())
-                        .map(function (v) { return v; })
-                        .filter(function (m) { return m.author.id === id; })
-                        .map(function (m) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, new Promise(function () { return setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4, m["delete"]()];
-                                        case 1: return [2, _a.sent()];
-                                    }
-                                }); }); }, 5000); })];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); })])];
-            case 2:
-                _c.sent();
+            case 1:
+                (_a.sent())
+                    .map(function (v) { return v; })
+                    .filter(function (m) { return m.author.id === id; })
+                    .map(function (m) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, m["delete"]()];
+                        case 1: return [2, _a.sent()];
+                    }
+                }); }); });
                 console.log('Delete all convex schedules');
                 return [2];
         }
@@ -177,9 +177,10 @@ var planComplete = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 3:
                 _a.sent();
                 id = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
-                msgDelete(id);
+                return [4, msgDelete(id)];
+            case 4:
+                _a.sent();
                 deleteBossRole(cells, msg);
-                list.SituationEdit();
                 return [2];
         }
     });
