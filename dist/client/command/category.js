@@ -109,6 +109,7 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     });
                 }); });
                 fetchChannelID(list);
+                resetStageFlag();
                 msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
                 return [2];
         }
@@ -128,13 +129,13 @@ exports.Delete = function (arg, msg) {
     msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
 };
 exports.SetSeparate = function (n) { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells;
+    var sheet, cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.CATEGORY_CELLS)];
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.CATEGORY_CELLS)];
             case 2:
                 cells = _a.sent();
                 pieces_each_1["default"](cells, 2)
@@ -236,6 +237,30 @@ var fetchChannelID = function (list) { return __awaiter(void 0, void 0, void 0, 
                                 return [4, c];
                             case 3:
                                 _b.apply(_a, [(_c.sent()).id]);
+                                return [2];
+                        }
+                    });
+                }); });
+                return [2];
+        }
+    });
+}); };
+var resetStageFlag = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, col;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                col = const_settings_1["default"].INFORMATION_SHEET.STAGE_COLUMN;
+                [2, 3, 4].forEach(function (n) { return __awaiter(void 0, void 0, void 0, function () {
+                    var cell;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, sheet.getCell("" + col + (n + 2))];
+                            case 1:
+                                cell = _a.sent();
+                                cell.setValue('');
                                 return [2];
                         }
                     });

@@ -40,6 +40,9 @@ export const Create = async (arg: string, msg: Discord.Message) => {
   // チャンネルidを保存する
   fetchChannelID(list)
 
+  // 段階数のフラグをリセットする
+  resetStageFlag()
+
   msg.reply(`${year}年${day}月のカテゴリーを作成したわよ！`)
 }
 
@@ -73,8 +76,8 @@ export const Delete = (arg: string, msg: Discord.Message) => {
  */
 export const SetSeparate = async (n: number) => {
   // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.CATEGORY_CELLS)
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.CATEGORY_CELLS)
 
   PiecesEach(cells, 2)
     // 空の値を省く
@@ -176,5 +179,21 @@ const fetchChannelID = async (list: Promise<ChannelInfo>[]) => {
     // チャンネルidを保存
     const cell = await sheet.getCell(`${col}${row}`)
     cell.setValue((await c).id)
+  })
+}
+
+/**
+ * 段階数のフラグをリセットする
+ */
+const resetStageFlag = async () => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  const col = Settings.INFORMATION_SHEET.STAGE_COLUMN
+
+  // フラグをリセットする
+  ;[2, 3, 4].forEach(async n => {
+    const cell = await sheet.getCell(`${col}${n + 2}`)
+    cell.setValue('')
   })
 }
