@@ -2,6 +2,16 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as spreadsheet from '../../util/spreadsheet'
+import * as util from '../../util'
+
+/**
+ * チャンネル情報
+ */
+type ChannelInfo = {
+  name: string
+  row: number
+  id: string
+}
 
 /**
  * クラバト用のカテゴリーとチャンネルを作成する
@@ -21,86 +31,19 @@ export const Create = async (arg: string, msg: Discord.Message) => {
   })
 
   // チャンネルの作成し初回メッセージを送信
-  ;(await channelNameList()).forEach(async name => {
-    const c = await msg.guild?.channels.create(name, {type: 'text', parent: channel?.id})
-    c?.send(name)
+  const list = (await channelNameList()).map(async info => {
+    const c = await msg.guild?.channels.create(info.name, {type: 'text', parent: channel?.id})
+    c?.send(info.row ? separate(1) : info.name)
+    return {name: info.name, row: info.row, id: c?.id} as ChannelInfo
   })
 
+  // チャンネルidを保存する
+  fetchChannelID(list)
+
+  // 段階数のフラグをリセットする
+  resetStageFlag()
+
   msg.reply(`${year}年${day}月のカテゴリーを作成したわよ！`)
-}
-
-/**
- * クラバト用カテゴリーの権限を設定
- * @param msg
- * @return 設定した権限
- */
-const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[] => {
-  // 各ロールがあるか確認
-  const leader = msg.guild?.roles.cache.get(Settings.ROLE_ID.LEADER)
-  if (!leader) return []
-  const subLeader = msg.guild?.roles.cache.get(Settings.ROLE_ID.SUB_LEADER)
-  if (!subLeader) return []
-  const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-  if (!clanMembers) return []
-  const sistarMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.SISTAR_MEMBERS)
-  if (!sistarMembers) return []
-  const tomodachi = msg.guild?.roles.cache.get(Settings.ROLE_ID.TOMODACHI)
-  if (!tomodachi) return []
-  const everyone = msg.guild?.roles.everyone
-  if (!everyone) return []
-
-  // カテゴリーの権限を設定
-  return [
-    {
-      id: leader.id,
-      allow: ['MENTION_EVERYONE'],
-    },
-    {
-      id: subLeader.id,
-      allow: ['MANAGE_MESSAGES'],
-    },
-    {
-      id: clanMembers.id,
-      allow: ['VIEW_CHANNEL'],
-    },
-    {
-      id: sistarMembers.id,
-      allow: ['VIEW_CHANNEL'],
-    },
-    {
-      id: tomodachi.id,
-      allow: ['VIEW_CHANNEL'],
-    },
-    {
-      id: everyone.id,
-      deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE'],
-    },
-  ]
-}
-
-/**
- * 作成するチャンネル名のリストを返す。
- * ボスの名前はスプレッドシートから取得する
- * @return チャンネル名のリスト
- */
-const channelNameList = async (): Promise<string[]> => {
-  // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-
-  // ボスの名前を取得
-  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = PiecesEach(cells, 2).map(v => v[1])
-
-  // prettier-ignore
-  return [
-    '検証総合', '凸ルート案', '編成・tl質問',
-    `${a}`, `${a}-オート`,
-    `${b}`, `${b}-オート`,
-    `${c}`, `${c}-オート`,
-    `${d}`, `${d}-オート`,
-    `${e}`, `${e}-オート`,
-    '持ち越し用',
-  ]
 }
 
 /**
@@ -125,4 +68,132 @@ export const Delete = (arg: string, msg: Discord.Message) => {
   channels?.forEach(c => setTimeout(() => c.delete(), 1000))
 
   msg.reply(`${year}年${day}月のカテゴリーを削除したわ`)
+}
+
+/**
+ * クラバトカテゴリーに段階数の区切りを付ける
+ * @param n 段階数
+ */
+export const SetSeparate = async (n: number) => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.CATEGORY_CELLS)
+
+  PiecesEach(cells, 2)
+    // 空の値を省く
+    .filter(c => !/^,+$/.test(c.toString()))
+    .forEach(async c => {
+      // ボスのチャンネルに区切りを送信する
+      const channel = util.GetTextChannel(c[1])
+      channel.send(separate(n))
+    })
+}
+
+/**
+ * クラバト用カテゴリーの権限を設定
+ * @param msg
+ * @return 設定した権限
+ */
+const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[] => {
+  // 各ロールがあるか確認
+  const leader = msg.guild?.roles.cache.get(Settings.ROLE_ID.LEADER)
+  if (!leader) return []
+  const subLeader = msg.guild?.roles.cache.get(Settings.ROLE_ID.SUB_LEADER)
+  if (!subLeader) return []
+  const clanMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+  if (!clanMembers) return []
+  const sisterMembers = msg.guild?.roles.cache.get(Settings.ROLE_ID.SISTER_MEMBERS)
+  if (!sisterMembers) return []
+  const tomodachi = msg.guild?.roles.cache.get(Settings.ROLE_ID.TOMODACHI)
+  if (!tomodachi) return []
+  const everyone = msg.guild?.roles.everyone
+  if (!everyone) return []
+
+  // カテゴリーの権限を設定
+  // prettier-ignore
+  return [
+    {id: leader.id,        allow: ['MENTION_EVERYONE']},
+    {id: subLeader.id,     allow: ['MANAGE_MESSAGES']},
+    {id: clanMembers.id,   allow: ['VIEW_CHANNEL']},
+    {id: sisterMembers.id, allow: ['VIEW_CHANNEL']},
+    {id: tomodachi.id,     allow: ['VIEW_CHANNEL']},
+    {id: everyone.id,      deny:  ['VIEW_CHANNEL', 'MENTION_EVERYONE']},
+  ]
+}
+
+/**
+ * 作成するチャンネル名のリストを返す。
+ * ボスの名前はスプレッドシートから取得する
+ * @return チャンネル名のリスト
+ */
+const channelNameList = async (): Promise<ChannelInfo[]> => {
+  // 情報のシートを取得
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+
+  // ボスの名前を取得
+  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = PiecesEach(cells, 2).map(v => v[1])
+
+  // prettier-ignore
+  return [
+    {name: '検証総合',     row: 0,  id: ''},
+    {name: '凸ルート案',   row: 0,  id: ''},
+    {name: '編成・tl質問', row: 0,  id: ''},
+    {name: `${a}`,         row: 3,  id: ''},
+    {name: `${a}-オート`,  row: 4,  id: ''},
+    {name: `${b}`,         row: 5,  id: ''},
+    {name: `${b}-オート`,  row: 6,  id: ''},
+    {name: `${c}`,         row: 7,  id: ''},
+    {name: `${c}-オート`,  row: 8,  id: ''},
+    {name: `${d}`,         row: 9,  id: ''},
+    {name: `${d}-オート`,  row: 10, id: ''},
+    {name: `${e}`,         row: 11, id: ''},
+    {name: `${e}-オート`,  row: 12, id: ''},
+    {name: '持ち越し用',   row: 0,  id: ''},
+  ]
+}
+
+/**
+ * 段階数の区切り
+ * @param n 段階数
+ * @return 区切りの文字列
+ */
+const separate = (n: number): string => `ーーーーーーーー${n}段階目ーーーーーーーー`
+
+/**
+ * チャンネルidをスプレッドシートに保存する
+ * @param list チャンネル情報の配列
+ */
+const fetchChannelID = async (list: Promise<ChannelInfo>[]) => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  list.forEach(async c => {
+    // 行と列を取得
+    const col = Settings.INFORMATION_SHEET.CATEGORY_COLUMN
+    const row = (await c).row
+
+    // 行がない場合は終了
+    if (!row) return
+
+    // チャンネルidを保存
+    const cell = await sheet.getCell(`${col}${row}`)
+    cell.setValue((await c).id)
+  })
+}
+
+/**
+ * 段階数のフラグをリセットする
+ */
+const resetStageFlag = async () => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  const col = Settings.INFORMATION_SHEET.STAGE_COLUMN
+
+  // フラグをリセットする
+  ;[2, 3, 4].forEach(async n => {
+    const cell = await sheet.getCell(`${col}${n + 2}`)
+    cell.setValue('')
+  })
 }

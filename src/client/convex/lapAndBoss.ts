@@ -1,9 +1,13 @@
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
+import * as spreadsheet from '../../util/spreadsheet'
 import * as list from '../plan/list'
+import * as category from '../command/category'
 
+/**
+ * 現在のボスの情報
+ */
 type Current = {
   lap: string
   boss: string
@@ -24,17 +28,20 @@ export const Update = async (arg: string): Promise<boolean> => {
   if (!/[a-e]/i.test(num)) return false
 
   // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const boss = await readBossName(infoSheet, num)
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const boss = await readBossName(sheet, num)
 
   // 現在の周回数とボスを更新
-  const [lap_cell, boss_cell, num_cell] = readCurrentCell(infoSheet)
+  const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
   await spreadsheet.SetValue(lap_cell, lap)
   await spreadsheet.SetValue(boss_cell, boss)
   await spreadsheet.SetValue(num_cell, num)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
+
+  // 段階数の区切りを付ける
+  stageConfirm()
 
   return true
 }
@@ -44,11 +51,11 @@ export const Update = async (arg: string): Promise<boolean> => {
  */
 export const Next = async () => {
   // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 設定するセルと値を取得
-  const [lap_cell, boss_cell, num_cell] = readCurrentCell(infoSheet)
-  const [lap, boss, num] = await readForwardDate(lap_cell, num_cell, infoSheet)
+  const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
+  const [lap, boss, num] = await readForwardDate(lap_cell, num_cell, sheet)
 
   // 現在の周回数とボスを更新
   await spreadsheet.SetValue(lap_cell, lap)
@@ -57,6 +64,9 @@ export const Next = async () => {
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
+
+  // 段階数の区切りを付ける
+  stageConfirm()
 }
 
 /**
@@ -64,11 +74,11 @@ export const Next = async () => {
  */
 export const Previous = async () => {
   // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 設定するセルと値を取得
-  const [lap_cell, boss_cell, num_cell] = readCurrentCell(infoSheet)
-  const [lap, boss, num] = await readReturnDate(lap_cell, num_cell, infoSheet)
+  const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
+  const [lap, boss, num] = await readReturnDate(lap_cell, num_cell, sheet)
 
   // 現在の周回数とボスを更新
   await spreadsheet.SetValue(lap_cell, lap)
@@ -77,6 +87,9 @@ export const Previous = async () => {
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
+
+  // 段階数の区切りを付ける
+  stageConfirm()
 }
 
 /**
@@ -85,28 +98,17 @@ export const Previous = async () => {
  */
 export const GetCurrent = async (): Promise<Current> => {
   // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 範囲を指定して現在の周回数とボスを取得
   const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
-  const [lap, boss] = await spreadsheet.GetCells(infoSheet, `${range[0]}:${range[1]}`)
+  const [lap, boss] = await spreadsheet.GetCells(sheet, `${range[0]}:${range[1]}`)
 
   // ボス番号の取得
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
   const num = PiecesEach(cells, 2).filter(v => v[1] === boss)[0][0]
 
   return {lap: lap, boss: boss, num: num}
-}
-
-/**
- * 情報シートから現在のボスの名前を取得する
- * @param infoSheet 情報のシート
- * @param num ボスの番号
- * @return ボスの名前
- */
-const readBossName = async (infoSheet: any, num: string): Promise<string> => {
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-  return PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
 }
 
 /**
@@ -125,21 +127,32 @@ export const ProgressReport = async () => {
 }
 
 /**
+ * 情報シートから現在のボスの名前を取得する
+ * @param sheet 情報のシート
+ * @param num ボスの番号
+ * @return ボスの名前
+ */
+const readBossName = async (sheet: any, num: string): Promise<string> => {
+  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+  return PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
+}
+
+/**
  * 情報シートの現在の周回数とボスのセルを取得する
- * @param infoSheet 情報のシート
+ * @param sheet 情報のシート
  * @return セルの一覧
  */
-const readCurrentCell = (infoSheet: any): any[] =>
-  Settings.INFORMATION_SHEET.CURRENT_CELL.split(',').map((cell: string) => infoSheet.getCell(cell))
+const readCurrentCell = (sheet: any): any[] =>
+  Settings.INFORMATION_SHEET.CURRENT_CELL.split(',').map((cell: string) => sheet.getCell(cell))
 
 /**
  * 情報シートの現在の周回数とボスから次に進める値を取得する
  * @param lap_cell 周回数のセル
  * @param num_cell ボス番号のセル
- * @param infoSheet 情報のシート
+ * @param sheet 情報のシート
  * @return 設定する値
  */
-const readForwardDate = async (lap_cell: any, num_cell: any, infoSheet: any): Promise<[number, string, string]> => {
+const readForwardDate = async (lap_cell: any, num_cell: any, sheet: any): Promise<[number, string, string]> => {
   // 現在の周回数とボス番号を取得
   const lap = await spreadsheet.GetValue(lap_cell)
   const num = await spreadsheet.GetValue(num_cell)
@@ -149,7 +162,7 @@ const readForwardDate = async (lap_cell: any, num_cell: any, infoSheet: any): Pr
   const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
 
   // 周回数とボスとボス番号を返す
-  const boss = await readBossName(infoSheet, numberList[n])
+  const boss = await readBossName(sheet, numberList[n])
   return [n ? lap : Number(lap) + 1, boss, numberList[n]]
 }
 
@@ -157,10 +170,10 @@ const readForwardDate = async (lap_cell: any, num_cell: any, infoSheet: any): Pr
  * 情報シートの現在の周回数とボスから前に戻す値を取得する
  * @param lap_cell 周回数のセル
  * @param num_cell ボス番号のセル
- * @param infoSheet 情報のシート
+ * @param sheet 情報のシート
  * @return 設定する値
  */
-const readReturnDate = async (lap_cell: any, num_cell: any, infoSheet: any): Promise<[number, string, string]> => {
+const readReturnDate = async (lap_cell: any, num_cell: any, sheet: any): Promise<[number, string, string]> => {
   // 現在の周回数とボス番号を取得
   const lap = await spreadsheet.GetValue(lap_cell)
   const num = await spreadsheet.GetValue(num_cell)
@@ -170,6 +183,54 @@ const readReturnDate = async (lap_cell: any, num_cell: any, infoSheet: any): Pro
   const n = (n => (n === 0 ? 4 : n - 1))(numberList.indexOf(num))
 
   // 周回数とボスとボス番号を返す
-  const boss = await readBossName(infoSheet, numberList[n])
+  const boss = await readBossName(sheet, numberList[n])
   return [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]
+}
+
+/**
+ * 段階が切り替わるか確認をする
+ */
+const stageConfirm = async () => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  // 周回数とボス番号を取得
+  const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
+  const [lap, , num] = await spreadsheet.GetCells(sheet, `${range[0]}:${range[2]}`)
+
+  // 1ボスない場合は終了
+  if (num !== 'a') return
+
+  // 段階数のセル
+  const cells: string[][] = PiecesEach(await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.STAGE_CELLS), 2)
+  const col = Settings.INFORMATION_SHEET.STAGE_COLUMN
+
+  switch (lap) {
+    case '4': {
+      if (cells[1][1]) return
+      return fetchStage(2, sheet, col)
+    }
+
+    case '11': {
+      if (cells[2][1]) return
+      return fetchStage(3, sheet, col)
+    }
+
+    case '35': {
+      if (cells[3][1]) return
+      return fetchStage(4, sheet, col)
+    }
+  }
+}
+
+/**
+ * 段階数の区切りとフラグを立てる
+ * @param n 段階数
+ * @param sheet 情報のシート
+ * @param col フラグの列
+ */
+const fetchStage = async (n: number, sheet: any, col: string) => {
+  category.SetSeparate(n)
+  const cell = await sheet.getCell(`${col}${n + 2}`)
+  cell.setValue(1)
 }

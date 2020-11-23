@@ -96,7 +96,7 @@ exports.Management = function (command, msg) {
             return 'Update convex management members';
         }
         case /cb manage update sisters/.test(command): {
-            updateSistars(msg);
+            updateSisters(msg);
             return 'Update convex management sisters';
         }
         case /cb manage sheet/.test(command): {
@@ -159,17 +159,17 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
-var updateSistars = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var members, sheet;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                members = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTAR_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
+                members = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
                     name: util.GetUserName(m),
                     id: m.id
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].SISTAR_SHEET.SHEET_NAME)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _c.sent();
                 fetchNameAndId(members, sheet);

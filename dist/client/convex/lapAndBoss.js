@@ -77,11 +77,12 @@ exports.__esModule = true;
 exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("../plan/list"));
+var category = __importStar(require("../command/category"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap, num, infoSheet, boss, _b, lap_cell, boss_cell, num_cell;
+    var _a, lap, num, sheet, boss, _b, lap_cell, boss_cell, num_cell;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -92,11 +93,11 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2, false];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _c.sent();
-                return [4, readBossName(infoSheet, num)];
+                sheet = _c.sent();
+                return [4, readBossName(sheet, num)];
             case 2:
                 boss = _c.sent();
-                _b = __read(readCurrentCell(infoSheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
+                _b = __read(readCurrentCell(sheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
             case 3:
                 _c.sent();
@@ -107,19 +108,20 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
             case 5:
                 _c.sent();
                 exports.ProgressReport();
+                stageConfirm();
                 return [2, true];
         }
     });
 }); };
 exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
+    var sheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _c.sent();
-                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readForwardDate(lap_cell, num_cell, infoSheet)];
+                sheet = _c.sent();
+                _a = __read(readCurrentCell(sheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, readForwardDate(lap_cell, num_cell, sheet)];
             case 2:
                 _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
@@ -132,19 +134,20 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
             case 5:
                 _c.sent();
                 exports.ProgressReport();
+                stageConfirm();
                 return [2];
         }
     });
 }); };
 exports.Previous = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
+    var sheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _c.sent();
-                _a = __read(readCurrentCell(infoSheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readReturnDate(lap_cell, num_cell, infoSheet)];
+                sheet = _c.sent();
+                _a = __read(readCurrentCell(sheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
+                return [4, readReturnDate(lap_cell, num_cell, sheet)];
             case 2:
                 _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
@@ -157,37 +160,27 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
             case 5:
                 _c.sent();
                 exports.ProgressReport();
+                stageConfirm();
                 return [2];
         }
     });
 }); };
 exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, range, _a, lap, boss, cells, num;
+    var sheet, range, _a, lap, boss, cells, num;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                infoSheet = _b.sent();
+                sheet = _b.sent();
                 range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[1])];
+                return [4, spreadsheet.GetCells(sheet, range[0] + ":" + range[1])];
             case 2:
                 _a = __read.apply(void 0, [_b.sent(), 2]), lap = _a[0], boss = _a[1];
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 3:
                 cells = _b.sent();
                 num = pieces_each_1["default"](cells, 2).filter(function (v) { return v[1] === boss; })[0][0];
                 return [2, { lap: lap, boss: boss, num: num }];
-        }
-    });
-}); };
-var readBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
-    var cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 1:
-                cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
         }
     });
 }); };
@@ -206,10 +199,21 @@ exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var readCurrentCell = function (infoSheet) {
-    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return infoSheet.getCell(cell); });
+var readBossName = function (sheet, num) { return __awaiter(void 0, void 0, void 0, function () {
+    var cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 1:
+                cells = _a.sent();
+                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+        }
+    });
+}); };
+var readCurrentCell = function (sheet) {
+    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return sheet.getCell(cell); });
 };
-var readForwardDate = function (lap_cell, num_cell, infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
+var readForwardDate = function (lap_cell, num_cell, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var lap, num, numberList, n, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -221,14 +225,14 @@ var readForwardDate = function (lap_cell, num_cell, infoSheet) { return __awaite
                 num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
-                return [4, readBossName(infoSheet, numberList[n])];
+                return [4, readBossName(sheet, numberList[n])];
             case 3:
                 boss = _a.sent();
                 return [2, [n ? lap : Number(lap) + 1, boss, numberList[n]]];
         }
     });
 }); };
-var readReturnDate = function (lap_cell, num_cell, infoSheet) { return __awaiter(void 0, void 0, void 0, function () {
+var readReturnDate = function (lap_cell, num_cell, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var lap, num, numberList, n, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -240,10 +244,63 @@ var readReturnDate = function (lap_cell, num_cell, infoSheet) { return __awaiter
                 num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 0 ? 4 : n - 1); })(numberList.indexOf(num));
-                return [4, readBossName(infoSheet, numberList[n])];
+                return [4, readBossName(sheet, numberList[n])];
             case 3:
                 boss = _a.sent();
                 return [2, [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]];
+        }
+    });
+}); };
+var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, range, _a, lap, num, cells, _b, col;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _c.sent();
+                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
+                return [4, spreadsheet.GetCells(sheet, range[0] + ":" + range[2])];
+            case 2:
+                _a = __read.apply(void 0, [_c.sent(), 3]), lap = _a[0], num = _a[2];
+                if (num !== 'a')
+                    return [2];
+                _b = pieces_each_1["default"];
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.STAGE_CELLS)];
+            case 3:
+                cells = _b.apply(void 0, [_c.sent(), 2]);
+                col = const_settings_1["default"].INFORMATION_SHEET.STAGE_COLUMN;
+                switch (lap) {
+                    case '4': {
+                        if (cells[1][1])
+                            return [2];
+                        return [2, fetchStage(2, sheet, col)];
+                    }
+                    case '11': {
+                        if (cells[2][1])
+                            return [2];
+                        return [2, fetchStage(3, sheet, col)];
+                    }
+                    case '35': {
+                        if (cells[3][1])
+                            return [2];
+                        return [2, fetchStage(4, sheet, col)];
+                    }
+                }
+                return [2];
+        }
+    });
+}); };
+var fetchStage = function (n, sheet, col) { return __awaiter(void 0, void 0, void 0, function () {
+    var cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                category.SetSeparate(n);
+                return [4, sheet.getCell("" + col + (n + 2))];
+            case 1:
+                cell = _a.sent();
+                cell.setValue(1);
+                return [2];
         }
     });
 }); };
