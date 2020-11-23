@@ -181,5 +181,5 @@ var createPlanList = function (num, list) {
         .filter(function (l) { return l[5] === num; })
         .map(function (l) { return l[3] + " " + l[7]; })
         .join('\n');
-    return text ? text : '予定者なし';
+    return text ? text : ' ';
 };
