@@ -94,7 +94,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 7:
                 hist_cell = _b.sent();
                 if (end_cell.getValue())
-                    return [2, { already: true, over: false }];
+                    return [2, { already: true, over: false, end: false }];
                 saveHistory(num_cell, over_cell, hist_cell);
                 over = over_cell.getValue() ? true : false;
                 content = util.Format(msg.content);
@@ -109,7 +109,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 else {
                     updateProcess(num_cell, over_cell, msg);
                 }
-                return [2, { already: false, over: over }];
+                return [2, { already: false, over: over, end: end }];
         }
     });
 }); };

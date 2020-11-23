@@ -162,6 +162,7 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
                 return [4, channel.messages.fetch()];
             case 1:
                 list = (_b.sent()).map(function (v) { return v; }).filter(function (m) { return m.author.id === id; });
+                console.log(list);
                 sleep = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
                 _b.label = 2;
             case 2:

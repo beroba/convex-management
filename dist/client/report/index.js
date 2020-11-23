@@ -88,9 +88,12 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 }
                 if (result.over)
                     carryover.AllDelete(msg);
-                return [4, cancel.Report(msg)];
-            case 2:
-                _c.sent();
+                if (result.end) {
+                    cancel.AllComplete(msg.id);
+                }
+                else {
+                    cancel.Report(msg);
+                }
                 situation.Report();
                 return [2, 'Update status'];
         }
