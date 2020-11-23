@@ -46,14 +46,15 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 持ち越しがある場合、持ち越し状況を削除
   if (result.over) carryover.AllDelete(msg)
 
-  // 凸予定を削除
-  await cancel.Report(msg)
+  // 凸予定の削除
+  if (result.end) {
+    cancel.AllComplete(msg.author.id)
+  } else {
+    cancel.Report(msg)
+  }
 
   // 凸状況に報告
   situation.Report()
-
-  // 3凸終了していたら全ての凸予定を完了する
-  if (result.end) cancel.AllComplete(msg.id)
 
   return 'Update status'
 }
