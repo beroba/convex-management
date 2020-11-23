@@ -115,23 +115,23 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, user, result;
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if (msg.author.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
                 if (!isRole)
                     return [2];
-                user = (_c = msg.member) === null || _c === void 0 ? void 0 : _c.user;
+                user = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.user;
                 if (!user)
                     return [2];
                 return [4, statusRestore(msg, user)];
             case 1:
-                result = _d.sent();
+                result = _c.sent();
                 if (!result)
                     return [2];
                 situation.Report();
