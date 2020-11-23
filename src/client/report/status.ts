@@ -29,7 +29,7 @@ export const Update = async (msg: Discord.Message): Promise<Status> => {
   const hist_cell = await convex.GetCell(3, days.col, row, sheet)
 
   // 既に3凸している人は終了する
-  if (end_cell.getValue()) return {already: true, over: false}
+  if (end_cell.getValue()) return {already: true, over: false, end: false}
 
   // 現在の凸状況を履歴に残しておく
   saveHistory(num_cell, over_cell, hist_cell)
@@ -52,7 +52,7 @@ export const Update = async (msg: Discord.Message): Promise<Status> => {
     updateProcess(num_cell, over_cell, msg)
   }
 
-  return {already: false, over: over}
+  return {already: false, over: over, end: end}
 }
 
 /**
