@@ -36,7 +36,7 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
  */
 export const React = (msg: Discord.Message): Option<string> => {
   // #持ち越し状況でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CARRYOVER_SITUATION) return
+  if (msg.channel.id !== Settings.CHANNEL_ID.CARRYOVER_DESTINATION) return
 
   // ルナの絵文字をつける
   msg.react(Settings.EMOJI_ID.RUNA)
