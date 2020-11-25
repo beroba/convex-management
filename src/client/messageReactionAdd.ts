@@ -4,6 +4,7 @@ import ThrowEnv from 'throw-env'
 import * as report from './report/cancel'
 import * as plan from './plan/cancel'
 import * as carryover from './convex/carryover'
+import * as sister from './convex/sister'
 import * as playerID from './etc/playerID'
 
 /**
@@ -27,6 +28,10 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
 
   // 持ち越し状況の削除を行う
   comment = await carryover.Delete(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 持ち越し凸先の削除を行う
+  comment = await sister.Delete(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // プレイヤーid送信ロールの付与を行う
