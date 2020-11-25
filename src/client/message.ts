@@ -5,6 +5,7 @@ import {Command} from './command'
 import * as report from './report'
 import * as plan from './plan'
 import * as carryover from './convex/carryover'
+import * as sister from './convex/sister'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
 
@@ -31,6 +32,10 @@ export const Message = async (msg: Discord.Message) => {
 
   // 持ち越し状況に絵文字をつける
   comment = carryover.React(msg)
+  if (comment) return console.log(comment)
+
+  // 持ち越し凸先に絵文字をつける
+  comment = sister.React(msg)
   if (comment) return console.log(comment)
 
   // プレイヤーIDの保存処理を行う

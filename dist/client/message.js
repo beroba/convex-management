@@ -64,6 +64,7 @@ var command_1 = require("./command");
 var report = __importStar(require("./report"));
 var plan = __importStar(require("./plan"));
 var carryover = __importStar(require("./convex/carryover"));
+var sister = __importStar(require("./convex/sister"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -87,6 +88,9 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 if (comment)
                     return [2, console.log(comment)];
                 comment = carryover.React(msg);
+                if (comment)
+                    return [2, console.log(comment)];
+                comment = sister.React(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];

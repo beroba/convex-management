@@ -58,47 +58,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageReactionAdd = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var report = __importStar(require("./report/cancel"));
-var plan = __importStar(require("./plan/cancel"));
-var carryover = __importStar(require("./convex/carryover"));
-var sister = __importStar(require("./convex/sister"));
-var playerID = __importStar(require("./etc/playerID"));
-exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+exports.React = exports.Delete = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if (user.bot)
                     return [2];
-                return [4, report.Cancel(react, user)];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_DESTINATION)
+                    return [2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_DESTINATION);
+                return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, plan.Already(react, user)];
-            case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, carryover.Delete(react, user)];
-            case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, sister.Delete(react, user)];
-            case 4:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, playerID.RoleGrant(react, user)];
-            case 5:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
+                _a.sent();
+                if (react.message.author.id !== user.id)
+                    return [2];
+                react.message["delete"]();
+                return [2, "Delete my sister's completed message"];
         }
     });
 }); };
+exports.React = function (msg) {
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.RUNA);
+    return 'React Kanryou';
+};
