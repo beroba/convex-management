@@ -13,7 +13,7 @@ import * as list from './list'
  */
 export const Message = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  if (msg.author.bot) return
 
   // #凸予定でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return

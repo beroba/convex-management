@@ -66,23 +66,22 @@ var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, result;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if (msg.author.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _b.sent();
+                sheet = _a.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 2:
-                cells = _b.sent();
+                cells = _a.sent();
                 return [4, planUpdate(sheet, cells, msg)];
             case 3:
-                result = _b.sent();
+                result = _a.sent();
                 if (!result)
                     return [2];
                 list.SituationEdit();

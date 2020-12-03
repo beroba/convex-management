@@ -21,8 +21,8 @@ export type Status = {
  * @return 凸報告の実行結果
  */
 export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージはコマンド実行しない
-  if (msg.member?.user.bot) return
+  // botのメッセージは実行しない
+  if (msg.author.bot) return
 
   // #凸報告でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
