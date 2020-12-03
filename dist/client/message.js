@@ -77,6 +77,9 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                     return [2];
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
+                comment = send.YuiKusano(msg);
+                if (comment)
+                    console.log(comment);
                 return [4, report.Convex(msg)];
             case 1:
                 comment = _b.sent();
@@ -98,10 +101,10 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                comment = send.YabaiImage(msg);
+                comment = send.AorB(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                comment = send.YuiKusano(msg);
+                comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 return [2];

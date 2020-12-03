@@ -82,7 +82,7 @@ exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.React = function (msg) {
-    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_DESTINATION)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.RUNA);
     return 'React Kanryou';

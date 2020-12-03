@@ -22,9 +22,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.YuiKusano = exports.YabaiImage = void 0;
+exports.YabaiImage = exports.AorB = exports.YuiKusano = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+exports.YuiKusano = function (msg) {
+    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
+    return 'React Yui Kusano';
+};
+exports.AorB = function (msg) {
+    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
+        return;
+    if (!/^.+or.+$/i.test(msg.content))
+        return;
+    var list = msg.content.split('or').map(function (s) { return s.trim(); });
+    var rand = createRandNumber(list.length);
+    var channel = util.GetTextChannel(msg.channel.id);
+    channel.send(list[rand]);
+    return 'Returned any of or';
+};
+var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
 exports.YabaiImage = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
         return;
@@ -33,11 +52,4 @@ exports.YabaiImage = function (msg) {
         return;
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
     return 'Send Yabai Image';
-};
-exports.YuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'React Yui Kusano';
 };
