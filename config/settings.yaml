@@ -103,8 +103,8 @@ COMMAND_CHANNEL:
     - 運営管理用
     - bot-test
 
-# 特定メッセージを入力した際にbotが画像を送信するチャンネル
-SEND_IMAGE_CHANNEL:
+# 特定メッセージを入力した際にbotがあれこれするチャンネル
+THIS_AND_THAT_CHANNEL:
   - 雑談
   - くらばと
   - vc用

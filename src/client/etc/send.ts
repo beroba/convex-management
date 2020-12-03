@@ -76,6 +76,9 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
   if (msg.author.bot) return
 
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+
   // 漢字でも動くようにする
   const adjustment = msg.content.replace(/お話し|お話/, 'おはなし')
 
@@ -109,7 +112,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   if (msg.author.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // orが入っている最初の行を取得
   const content = msg.content.split('\n').find(s => /^.+or.+$/i.test(s))
@@ -150,7 +153,7 @@ const createRandNumber = (n: number): number => require('get-random-values')(new
  */
 export const YabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // ヤバイの文字が入っているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
