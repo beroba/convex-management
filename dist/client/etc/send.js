@@ -92,6 +92,8 @@ exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, functi
     return __generator(this, function (_a) {
         if (msg.author.bot)
             return [2];
+        if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
+            return [2];
         adjustment = msg.content.replace(/お話し|お話/, 'おはなし');
         match = adjustment.match(/^おはなし /);
         if (!match)
@@ -107,7 +109,7 @@ exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, functi
 exports.AorB = function (msg) {
     if (msg.author.bot)
         return;
-    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
+    if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     var content = msg.content.split('\n').find(function (s) { return /^.+or.+$/i.test(s); });
     if (!content)
@@ -124,7 +126,7 @@ exports.AorB = function (msg) {
 };
 var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
 exports.YabaiImage = function (msg) {
-    if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
+    if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
     if (!match)
