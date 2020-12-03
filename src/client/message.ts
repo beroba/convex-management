@@ -22,6 +22,11 @@ export const Message = async (msg: Discord.Message) => {
 
   let comment: Option<string>
 
+  // ユイの文字がある場合に絵文字をつける
+  // ユイの絵文字は全てのメッセージに付けたいのでreturnしない
+  comment = send.YuiKusano(msg)
+  if (comment) console.log(comment)
+
   // 凸報告の処理を行う
   comment = await report.Convex(msg)
   if (comment) return console.log(comment)
@@ -42,11 +47,11 @@ export const Message = async (msg: Discord.Message) => {
   comment = await playerID.Save(msg)
   if (comment) return console.log(comment)
 
-  // ヤバイの文字がある場合に画像を送信
-  comment = send.YabaiImage(msg)
+  // メッセージにorが含まれている場合の処理
+  comment = send.AorB(msg)
   if (comment) return console.log(comment)
 
-  // ユイの文字がある場合に絵文字をつける
-  comment = send.YuiKusano(msg)
+  // ヤバイの文字がある場合に画像を送信
+  comment = send.YabaiImage(msg)
   if (comment) return console.log(comment)
 }
