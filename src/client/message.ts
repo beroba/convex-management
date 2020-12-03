@@ -22,8 +22,7 @@ export const Message = async (msg: Discord.Message) => {
 
   let comment: Option<string>
 
-  // ユイの文字がある場合に絵文字をつける
-  // ユイの絵文字は全てのメッセージに付けたいのでreturnしない
+  // 特定のメッセージに絵文字を付ける
   send.Emoji(msg)
 
   // 凸報告の処理を行う
@@ -44,6 +43,10 @@ export const Message = async (msg: Discord.Message) => {
 
   // プレイヤーIDの保存処理を行う
   comment = await playerID.Save(msg)
+  if (comment) return console.log(comment)
+
+  // メッセージの先頭がおはなしの場合の処理
+  comment = await send.Speak(msg)
   if (comment) return console.log(comment)
 
   // メッセージにorが含まれている場合の処理
