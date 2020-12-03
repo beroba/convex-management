@@ -3,6 +3,10 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 
+/**
+ * 特定のメッセージに絵文字を付ける
+ * @param msg DiscordからのMessage
+ */
 export const Emoji = (msg: Discord.Message) => {
   // 草野優衣の絵文字を押す
   yuiKusano(msg)
@@ -20,8 +24,10 @@ const yuiKusano = (msg: Discord.Message) => {
   // ユイっぽい文字が入っているか確認
   const match = msg.content.replace(/草|優衣|くさ|ゆい|715020255059247146/g, 'ユイ').match(/ユイ/)
 
-  // 入っていない場合は終了、入っている場合は草野優衣の絵文字をつける
+  // 入っていない場合は終了
   if (!match) return
+
+  // 草野優衣の絵文字をつける
   msg.react(Settings.EMOJI_ID.YUI_KUSANO)
 
   console.log('React Yui Kusano')
@@ -35,8 +41,10 @@ const mazarashi = (msg: Discord.Message) => {
   // まざらしっぽい文字が入っているか確認
   const match = msg.content.replace(/まざ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'らし').match(/らし/)
 
-  // 入っていない場合は終了、入っている場合はまざらしの絵文字をつける
+  // 入っていない場合は終了
   if (!match) return
+
+  // まざらしの絵文字をつける
   msg.react(Settings.EMOJI_ID.MAZARASHI)
 
   console.log('React Mazarashi')
@@ -48,13 +56,42 @@ const mazarashi = (msg: Discord.Message) => {
  */
 const usamaru = (msg: Discord.Message) => {
   // うさまるっぽい文字が入っているか確認
-  const match = msg.content.replace(/うさ|レジ|ギガス|兎丸|usamaru|652747597739589632/g, 'まる').match(/まる/)
+  const match = msg.content.replace(/うさ|レジ|ギガス|ｷﾞｶﾞ|兎丸|usamaru|652747597739589632/g, 'まる').match(/まる/)
 
-  // 入っていない場合は終了、入っている場合はうさまるの絵文字をつける
+  // 入っていない場合は終了
   if (!match) return
+
+  // うさまるの絵文字をつける
   msg.react(Settings.EMOJI_ID.USAMARU)
 
   console.log('React Usamaru')
+}
+
+/**
+ * 送信されたメッセージの先頭におはなしが入っている場合、キャルが喋る
+ * @param msg DiscordからのMessage
+ * @return おはなしの結果
+ */
+export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
+  // botのメッセージは実行しない
+  if (msg.author.bot) return
+
+  // 漢字でも動くようにする
+  const content = msg.content.replace(/お話し|お話/, 'おはなし')
+
+  // おはなしが先頭じゃない場合は終了
+  const match = content.match(/^おはなし /)
+  if (!match) return
+
+  // 送信者のメッセージを削除する
+  setTimeout(() => msg.delete(), 500)
+
+  // メッセージ送信先のチャンネルを取得
+  const channel = util.GetTextChannel(msg.channel.id)
+  // おはなし以外のメッセージ
+  channel.send(content.replace('おはなし', ''))
+
+  return 'Speaking Cal'
 }
 
 /**
