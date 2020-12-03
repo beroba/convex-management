@@ -81,26 +81,26 @@ exports.RoleGrant = function (react, user) { return __awaiter(void 0, void 0, vo
 }); };
 exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var url, channel, content;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if (msg.author.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.PLAYER_ID_SEND)
                     return [2];
-                return [4, ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.remove(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND))];
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND))];
             case 1:
-                _c.sent();
+                _b.sent();
                 url = msg.attachments.map(function (a) { return a.url; })[0];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
                 content = util.Format(msg.content);
                 return [4, channel.send(util.GetUserName(msg.member) + "\n" + content, url ? { files: [url] } : {})];
             case 2:
-                _c.sent();
+                _b.sent();
                 return [4, msg["delete"]()];
             case 3:
-                _c.sent();
+                _b.sent();
                 return [2, 'Save player id'];
         }
     });

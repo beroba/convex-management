@@ -66,22 +66,22 @@ var status = __importStar(require("./status"));
 var cancel = __importStar(require("../plan/cancel"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, result;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if (msg.author.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
                 if (!isRole) {
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
                 }
                 return [4, status.Update(msg)];
             case 1:
-                result = _c.sent();
+                result = _b.sent();
                 if (result.already) {
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];

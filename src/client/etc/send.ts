@@ -25,14 +25,21 @@ export const YuiKusano = (msg: Discord.Message): Option<string> => {
  * @return orが入っていたかの結果
  */
 export const AorB = (msg: Discord.Message): Option<string> => {
+  // botのメッセージは実行しない
+  if (msg.author.bot) return
+
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
 
   // orが入っていなければ終了
   if (!/^.+or.+$/i.test(msg.content)) return
 
-  // 選択肢のリスト
-  const list = msg.content.split('or').map(s => s.trim())
+  // orで区切ったリストを作る
+  const list = msg.content
+    .replace('OR', 'or')
+    .split('or')
+    .map(s => s.trim())
+
   // リストの数に応じて乱数を作る
   const rand = createRandNumber(list.length)
 

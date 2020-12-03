@@ -33,11 +33,16 @@ exports.YuiKusano = function (msg) {
     return 'React Yui Kusano';
 };
 exports.AorB = function (msg) {
+    if (msg.author.bot)
+        return;
     if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
         return;
     if (!/^.+or.+$/i.test(msg.content))
         return;
-    var list = msg.content.split('or').map(function (s) { return s.trim(); });
+    var list = msg.content
+        .replace('OR', 'or')
+        .split('or')
+        .map(function (s) { return s.trim(); });
     var rand = createRandNumber(list.length);
     var channel = util.GetTextChannel(msg.channel.id);
     channel.send(list[rand]);

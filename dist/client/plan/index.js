@@ -65,38 +65,38 @@ var list = __importStar(require("./list"));
 var status = __importStar(require("./status"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, cal_1, cal_2, cal_3;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if (msg.author.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
-                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
+                isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
                 if (!!isRole) return [3, 2];
                 return [4, msg.reply('クランメンバーじゃないわ\n※15秒にこのメッセージは消えます')];
             case 1:
-                cal_1 = _c.sent();
+                cal_1 = _b.sent();
                 setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 15000);
                 return [2, 'Not a clan member'];
             case 2:
                 if (!!formatConfirm(msg)) return [3, 4];
                 return [4, msg.reply('書式が違うから予定できないわ\n※15秒にこのメッセージは消えます')];
             case 3:
-                cal_2 = _c.sent();
+                cal_2 = _b.sent();
                 setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 15000);
                 return [2, 'The format of the boss number is different'];
             case 4:
                 if (!(msg.content.length === 1)) return [3, 6];
                 return [4, msg.reply('予想ダメージが書いてないと動かないわ\n※15秒にこのメッセージは消えます')];
             case 5:
-                cal_3 = _c.sent();
+                cal_3 = _b.sent();
                 setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 15000);
                 return [2, "I didn't write the expected damage"];
             case 6: return [4, status.Update(msg)];
             case 7:
-                _c.sent();
+                _b.sent();
                 list.SituationEdit();
                 return [2, 'Make a convex reservation'];
         }

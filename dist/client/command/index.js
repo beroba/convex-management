@@ -24,8 +24,7 @@ var util = __importStar(require("../../util"));
 var management_1 = require("./management");
 var clanbattle_1 = require("./clanbattle");
 exports.Command = function (msg) {
-    var _a;
-    if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+    if (msg.author.bot)
         return;
     var content = util.Format(msg.content);
     var comment;

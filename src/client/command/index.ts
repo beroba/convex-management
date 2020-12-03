@@ -9,8 +9,8 @@ import {ClanBattle} from './clanbattle'
  * @param msg DiscordからのMessage
  */
 export const Command = (msg: Discord.Message) => {
-  // botのメッセージはコマンド実行しない
-  if (msg.member?.user.bot) return
+  // botのメッセージは実行しない
+  if (msg.author.bot) return
 
   const content = util.Format(msg.content)
 
