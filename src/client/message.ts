@@ -45,6 +45,10 @@ export const Message = async (msg: Discord.Message) => {
   comment = await playerID.Save(msg)
   if (comment) return console.log(comment)
 
+  // メッセージにカンカンカンが含まれている場合の処理
+  comment = send.GoodMorning(msg)
+  if (comment) return console.log(comment)
+
   // メッセージの先頭がおはなしの場合の処理
   comment = await send.Speak(msg)
   if (comment) return console.log(comment)
