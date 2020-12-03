@@ -77,9 +77,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                     return [2];
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
-                comment = send.YuiKusano(msg);
-                if (comment)
-                    console.log(comment);
+                send.Emoji(msg);
                 return [4, report.Convex(msg)];
             case 1:
                 comment = _b.sent();

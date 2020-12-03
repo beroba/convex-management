@@ -24,8 +24,7 @@ export const Message = async (msg: Discord.Message) => {
 
   // ユイの文字がある場合に絵文字をつける
   // ユイの絵文字は全てのメッセージに付けたいのでreturnしない
-  comment = send.YuiKusano(msg)
-  if (comment) console.log(comment)
+  send.Emoji(msg)
 
   // 凸報告の処理を行う
   comment = await report.Convex(msg)
