@@ -99,6 +99,9 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
+                comment = send.GoodMorning(msg);
+                if (comment)
+                    return [2, console.log(comment)];
                 return [4, send.Speak(msg)];
             case 4:
                 comment = _b.sent();

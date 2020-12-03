@@ -103,7 +103,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 送信されたメッセージにorが入っていた場合どれかを乱数で返す
+ * 送信されたメッセージにorが入っていた場合どれかを乱数で送信する
  * @param msg DiscordからのMessage
  * @return orが入っていたかの結果
  */
@@ -137,6 +137,32 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   console.log(`${util.GetUserName(msg.member)}, ${content}`)
 
   return 'Returned any of or'
+}
+
+/**
+ * 送信されたメッセージにカンカンカンが入っていた場合おはよーを送信する
+ * @param msg DiscordからのMessage
+ * @return カンカンカンが入っていたかの結果
+ */
+export const GoodMorning = (msg: Discord.Message): Option<string> => {
+  // botのメッセージは実行しない
+  if (msg.author.bot) return
+
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+
+  // カンカンカンの文字が入っているか確認
+  if (!msg.content.match(/カンカンカン/)) return
+
+  // カンカンカンのメッセージ
+  const message =
+    'おはよー！！！カンカンカン！！！起きなさい！！！クラバトよ！！！！すごいクラバトよ！！！！外が明るいわよ！！カンカンカンカンカン！！！！！おはよ！！カンカンカン！！！見て見て！！！！外明るいの！！！外！！！！見て！！カンカンカンカンカン！！凸しなさい！！早く凸して！！カンカン！ぶっ殺すわよ！！！！！！！！！！'
+
+  // メッセージ送信先のチャンネルを取得
+  const channel = util.GetTextChannel(msg.channel.id)
+  channel.send(message)
+
+  return 'Good morning'
 }
 
 /**

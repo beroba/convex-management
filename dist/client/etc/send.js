@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.YabaiImage = exports.AorB = exports.Speak = exports.Emoji = void 0;
+exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Emoji = function (msg) {
@@ -123,6 +123,18 @@ exports.AorB = function (msg) {
     channel.send(list[rand]);
     console.log(util.GetUserName(msg.member) + ", " + content);
     return 'Returned any of or';
+};
+exports.GoodMorning = function (msg) {
+    if (msg.author.bot)
+        return;
+    if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
+        return;
+    if (!msg.content.match(/カンカンカン/))
+        return;
+    var message = 'おはよー！！！カンカンカン！！！起きなさい！！！クラバトよ！！！！すごいクラバトよ！！！！外が明るいわよ！！カンカンカンカンカン！！！！！おはよ！！カンカンカン！！！見て見て！！！！外明るいの！！！外！！！！見て！！カンカンカンカンカン！！凸しなさい！！早く凸して！！カンカン！ぶっ殺すわよ！！！！！！！！！！';
+    var channel = util.GetTextChannel(msg.channel.id);
+    channel.send(message);
+    return 'Good morning';
 };
 var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
 exports.YabaiImage = function (msg) {
