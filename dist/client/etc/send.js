@@ -119,6 +119,7 @@ exports.AorB = function (msg) {
     var rand = createRandNumber(list.length);
     var channel = util.GetTextChannel(msg.channel.id);
     channel.send(list[rand]);
+    console.log(util.GetUserName(msg.member) + ", " + content);
     return 'Returned any of or';
 };
 var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
