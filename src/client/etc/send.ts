@@ -31,11 +31,14 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.SEND_IMAGE_CHANNEL, msg.channel)) return
 
-  // orが入っていなければ終了
-  if (!/^.+or.+$/i.test(msg.content)) return
+  // orが入っている最初の行を取得
+  const content = msg.content.split('\n').find(s => /^.+or.+$/i.test(s))
+
+  // orがなければ終了
+  if (!content) return
 
   // orで区切ったリストを作る
-  const list = msg.content
+  const list = content
     .replace('OR', 'or')
     .split('or')
     .map(s => s.trim())

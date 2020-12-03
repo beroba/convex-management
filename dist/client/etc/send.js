@@ -37,9 +37,10 @@ exports.AorB = function (msg) {
         return;
     if (!util.IsChannel(const_settings_1["default"].SEND_IMAGE_CHANNEL, msg.channel))
         return;
-    if (!/^.+or.+$/i.test(msg.content))
+    var content = msg.content.split('\n').find(function (s) { return /^.+or.+$/i.test(s); });
+    if (!content)
         return;
-    var list = msg.content
+    var list = content
         .replace('OR', 'or')
         .split('or')
         .map(function (s) { return s.trim(); });
