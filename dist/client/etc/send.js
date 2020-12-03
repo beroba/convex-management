@@ -88,17 +88,19 @@ var usamaru = function (msg) {
     console.log('React Usamaru');
 };
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, match, channel;
+    var adjustment, match, content, channel;
     return __generator(this, function (_a) {
         if (msg.author.bot)
             return [2];
-        content = msg.content.replace(/お話し|お話/, 'おはなし');
-        match = content.match(/^おはなし /);
+        adjustment = msg.content.replace(/お話し|お話/, 'おはなし');
+        match = adjustment.match(/^おはなし /);
         if (!match)
             return [2];
         setTimeout(function () { return msg["delete"](); }, 500);
+        content = adjustment.replace('おはなし ', '');
         channel = util.GetTextChannel(msg.channel.id);
-        channel.send(content.replace('おはなし', ''));
+        channel.send(content);
+        console.log(util.GetUserName(msg.member) + ", " + content);
         return [2, 'Speaking Cal'];
     });
 }); };

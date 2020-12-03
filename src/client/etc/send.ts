@@ -77,19 +77,24 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.author.bot) return
 
   // 漢字でも動くようにする
-  const content = msg.content.replace(/お話し|お話/, 'おはなし')
+  const adjustment = msg.content.replace(/お話し|お話/, 'おはなし')
 
   // おはなしが先頭じゃない場合は終了
-  const match = content.match(/^おはなし /)
+  const match = adjustment.match(/^おはなし /)
   if (!match) return
 
   // 送信者のメッセージを削除する
   setTimeout(() => msg.delete(), 500)
 
+  // メッセージからおはなしを省く
+  const content = adjustment.replace('おはなし ', '')
+
   // メッセージ送信先のチャンネルを取得
   const channel = util.GetTextChannel(msg.channel.id)
-  // おはなし以外のメッセージ
-  channel.send(content.replace('おはなし', ''))
+  channel.send(content)
+
+  // 誰が送信したかロをを残す
+  console.log(`${util.GetUserName(msg.member)}, ${content}`)
 
   return 'Speaking Cal'
 }
