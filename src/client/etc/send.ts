@@ -13,12 +13,12 @@ export const Emoji = (msg: Discord.Message) => {
 }
 
 /**
- * 送信されたメッセージに草|優衣|くさ|ゆい|ユイの文字が入っていた場合、草野優衣の絵文字をつける
+ * 送信されたメッセージにユイっぽい文字が入っていた場合、草野優衣の絵文字をつける
  * @param msg DiscordからのMessage
  */
 const yuiKusano = (msg: Discord.Message) => {
-  // 草|優衣|くさ|ゆい|ユイの文字が入っているか確認
-  const match = msg.content.replace(/草|優衣|くさ|ゆい/g, 'ユイ').match(/ユイ/)
+  // ユイっぽい文字が入っているか確認
+  const match = msg.content.replace(/草|優衣|くさ|ゆい|715020255059247146/g, 'ユイ').match(/ユイ/)
 
   // 入っていない場合は終了、入っている場合は草野優衣の絵文字をつける
   if (!match) return
@@ -28,14 +28,12 @@ const yuiKusano = (msg: Discord.Message) => {
 }
 
 /**
- * 送信されたメッセージに厚着|下着|冷凍|まざらしの文字が入っていた場合、まざらしの絵文字をつける
+ * 送信されたメッセージにまざらしっぽいの文字が入っていた場合、まざらしの絵文字をつける
  * @param msg DiscordからのMessage
  */
 const mazarashi = (msg: Discord.Message) => {
-  // 厚着|下着|冷凍|まざらしの文字が入っているか確認
-  const match = msg.content
-    .replace(/厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'まざらし')
-    .match(/まざらし/)
+  // まざらしっぽい文字が入っているか確認
+  const match = msg.content.replace(/まざ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'らし').match(/らし/)
 
   // 入っていない場合は終了、入っている場合はまざらしの絵文字をつける
   if (!match) return
@@ -45,12 +43,12 @@ const mazarashi = (msg: Discord.Message) => {
 }
 
 /**
- * 送信されたメッセージにレジギガス|兎丸|usamaru|うさまるの文字が入っていた場合、うさまるの絵文字をつける
+ * 送信されたメッセージにうさまるっぽい文字が入っていた場合、うさまるの絵文字をつける
  * @param msg DiscordからのMessage
  */
 const usamaru = (msg: Discord.Message) => {
-  // レジギガス|兎丸|usamaru|うさまるの文字が入っているか確認
-  const match = msg.content.replace(/レジギガス|兎丸|usamaru|652747597739589632/g, 'うさまる').match(/うさまる/)
+  // うさまるっぽい文字が入っているか確認
+  const match = msg.content.replace(/うさ|レジ|ギガス|兎丸|usamaru|652747597739589632/g, 'まる').match(/まる/)
 
   // 入っていない場合は終了、入っている場合はうさまるの絵文字をつける
   if (!match) return

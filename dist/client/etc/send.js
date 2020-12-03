@@ -31,23 +31,21 @@ exports.Emoji = function (msg) {
     usamaru(msg);
 };
 var yuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣|くさ|ゆい/g, 'ユイ').match(/ユイ/);
+    var match = msg.content.replace(/草|優衣|くさ|ゆい|715020255059247146/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
     console.log('React Yui Kusano');
 };
 var mazarashi = function (msg) {
-    var match = msg.content
-        .replace(/厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'まざらし')
-        .match(/まざらし/);
+    var match = msg.content.replace(/まざ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'らし').match(/らし/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
     console.log('React Mazarashi');
 };
 var usamaru = function (msg) {
-    var match = msg.content.replace(/レジギガス|兎丸|usamaru|652747597739589632/g, 'うさまる').match(/うさまる/);
+    var match = msg.content.replace(/うさ|レジ|ギガス|兎丸|usamaru|652747597739589632/g, 'まる').match(/まる/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.USAMARU);
