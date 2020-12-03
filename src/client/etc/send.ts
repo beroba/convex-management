@@ -3,20 +3,25 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 
+export const Emoji = (msg: Discord.Message) => {
+  // 草野優衣の絵文字を押す
+  yuiKusano(msg)
+}
+
 /**
  * 送信されたメッセージに草野またはユイの文字が入っていた場合、草野優衣の絵文字をつける
  * @param msg DiscordからのMessage
  * @return 絵文字をつけたかの結果
  */
-export const YuiKusano = (msg: Discord.Message): Option<string> => {
+const yuiKusano = (msg: Discord.Message): Option<string> => {
   // 草野かユイの文字が入っているか確認
-  const match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/)
+  const match = msg.content.replace(/草|優衣|くさ|ゆい/g, 'ユイ').match(/ユイ/)
 
   // 入っていない場合は終了、入っている場合は草野優衣の絵文字をつける
   if (!match) return
   msg.react(Settings.EMOJI_ID.YUI_KUSANO)
 
-  return 'React Yui Kusano'
+  console.log('React Yui Kusano')
 }
 
 /**

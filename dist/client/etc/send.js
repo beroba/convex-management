@@ -22,15 +22,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.YabaiImage = exports.AorB = exports.YuiKusano = void 0;
+exports.YabaiImage = exports.AorB = exports.Emoji = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.YuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣/g, 'ユイ').match(/ユイ/);
+exports.Emoji = function (msg) {
+    yuiKusano(msg);
+};
+var yuiKusano = function (msg) {
+    var match = msg.content.replace(/草|優衣|くさ|ゆい/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    return 'React Yui Kusano';
+    console.log('React Yui Kusano');
 };
 exports.AorB = function (msg) {
     if (msg.author.bot)
