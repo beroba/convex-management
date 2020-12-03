@@ -93,7 +93,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   const channel = util.GetTextChannel(msg.channel.id)
   channel.send(content)
 
-  // 誰が送信したかロをを残す
+  // 誰が送信したかのログを残す
   console.log(`${util.GetUserName(msg.member)}, ${content}`)
 
   return 'Speaking Cal'
@@ -129,6 +129,9 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // メッセージ送信先のチャンネルを取得
   const channel = util.GetTextChannel(msg.channel.id)
   channel.send(list[rand])
+
+  // 誰が送信したかのログを残す
+  console.log(`${util.GetUserName(msg.member)}, ${content}`)
 
   return 'Returned any of or'
 }
