@@ -62,32 +62,48 @@ exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = export
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Emoji = function (msg) {
-    yuiKusano(msg);
-    mazarashi(msg);
-    usamaru(msg);
+    if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
+        return;
+    yuiKusanoEmoji(msg);
+    mazarashiEmoji(msg);
+    usamaruEmoji(msg);
+    macchaDesuyoEmoji(msg);
+    nikuEmoji(msg);
 };
-var yuiKusano = function (msg) {
-    var match = msg.content.replace(/草|優衣|くさ|ゆい|715020255059247146/g, 'ユイ').match(/ユイ/);
+var yuiKusanoEmoji = function (msg) {
+    var match = msg.content.replace(/草|優衣|^くさ|くさ$/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    console.log('React Yui Kusano');
+    console.log('React Yui Kusano emoji');
 };
-var mazarashi = function (msg) {
-    var match = msg.content
-        .replace(/まじゃ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'まざ')
-        .match(/まざ/);
+var mazarashiEmoji = function (msg) {
+    var match = msg.content.replace(/ま.+らし|厚着|下着|冷凍|解凍|722547140487938181/g, 'まらざし').match(/まらざし/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
-    console.log('React Mazarashi');
+    console.log('React Mazarashi emoji');
 };
-var usamaru = function (msg) {
-    var match = msg.content.replace(/うさ|レジ|ギガス|ｷﾞｶﾞ|兎丸|usamaru|652747597739589632/g, 'まる').match(/まる/);
+var usamaruEmoji = function (msg) {
+    var match = msg.content.replace(/^うさ..|..ギガス$|..まる$|ｷﾞｶﾞ|652747597739589632/g, '兎丸').match(/兎丸/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.USAMARU);
-    console.log('React Usamaru');
+    console.log('React Usamaru emoji');
+};
+var macchaDesuyoEmoji = function (msg) {
+    var match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.MACCHA_DESUYO);
+    console.log('React Maccha Desuyo emoji');
+};
+var nikuEmoji = function (msg) {
+    var match = msg.content.match(/肉/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.NIKU);
+    console.log('React Niku emoji');
 };
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var adjustment, match, content, channel;
