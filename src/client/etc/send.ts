@@ -29,7 +29,7 @@ export const Emoji = (msg: Discord.Message) => {
  */
 const yuiKusanoEmoji = (msg: Discord.Message) => {
   // 草野優衣っぽい文字が含まれているか確認
-  const match = msg.content.replace(/草|優衣|^くさ|くさ$/g, 'ユイ').match(/ユイ/)
+  const match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/)
 
   // 含まれていない場合は終了
   if (!match) return
