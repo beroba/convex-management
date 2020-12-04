@@ -24,11 +24,11 @@ export const Emoji = (msg: Discord.Message) => {
 }
 
 /**
- * 送信されたメッセージにユイっぽい文字が含まれていた場合、草野優衣の絵文字をつける
+ * 送信されたメッセージに草野優衣っぽい文字が含まれていた場合、草野優衣の絵文字をつける
  * @param msg DiscordからのMessage
  */
 const yuiKusanoEmoji = (msg: Discord.Message) => {
-  // ユイっぽい文字が含まれているか確認
+  // 草野優衣っぽい文字が含まれているか確認
   const match = msg.content.replace(/草|優衣|^くさ|くさ$/g, 'ユイ').match(/ユイ/)
 
   // 含まれていない場合は終了
@@ -64,7 +64,7 @@ const mazarashiEmoji = (msg: Discord.Message) => {
 const usamaruEmoji = (msg: Discord.Message) => {
   // うさまるっぽい文字が含まれているか確認
   const match = msg.content
-    .replace(/^うさ..|..ギガス$|..まる$|レジギガス|ｷﾞｶﾞ|兎丸|652747597739589632/g, 'うさまる')
+    .replace(/^うさ..|..まる$|兎丸|レジギガス|..ギガス$|ｷﾞｶﾞ|652747597739589632/g, 'うさまる')
     .match(/うさまる/)
 
   // 含まれていない場合は終了

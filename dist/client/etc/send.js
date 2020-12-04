@@ -86,7 +86,7 @@ var mazarashiEmoji = function (msg) {
 };
 var usamaruEmoji = function (msg) {
     var match = msg.content
-        .replace(/^うさ..|..ギガス$|..まる$|レジギガス|ｷﾞｶﾞ|兎丸|652747597739589632/g, 'うさまる')
+        .replace(/^うさ..|..まる$|兎丸|レジギガス|..ギガス$|ｷﾞｶﾞ|652747597739589632/g, 'うさまる')
         .match(/うさまる/);
     if (!match)
         return;
