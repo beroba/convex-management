@@ -39,7 +39,9 @@ const yuiKusano = (msg: Discord.Message) => {
  */
 const mazarashi = (msg: Discord.Message) => {
   // まざらしっぽい文字が入っているか確認
-  const match = msg.content.replace(/まざ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'らし').match(/らし/)
+  const match = msg.content
+    .replace(/まじゃ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'まざ')
+    .match(/まざ/)
 
   // 入っていない場合は終了
   if (!match) return
@@ -114,17 +116,14 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // orが入っている最初の行を取得
-  const content = msg.content.split('\n').find(s => /^.+or.+$/i.test(s))
+  // discord以外のorが入っている最初の行を取得
+  const content = msg.content.split('\n').find(s => /^.+(?<![dis][cord])or.+$/i.test(s))
 
-  // orがなければ終了
+  // discord以外のorがなければ終了
   if (!content) return
 
-  // orで区切ったリストを作る
-  const list = content
-    .replace('OR', 'or')
-    .split('or')
-    .map(s => s.trim())
+  // discord以外のorで区切ったリストを作る
+  const list = content.split(/(?<![dis][cord])or/i).map(s => s.trim())
 
   // リストの数に応じて乱数を作る
   const rand = createRandNumber(list.length)
