@@ -63,7 +63,9 @@ const mazarashiEmoji = (msg: Discord.Message) => {
  */
 const usamaruEmoji = (msg: Discord.Message) => {
   // うさまるっぽい文字が含まれているか確認
-  const match = msg.content.replace(/^うさ..|..ギガス$|..まる$|ｷﾞｶﾞ|652747597739589632/g, '兎丸').match(/兎丸/)
+  const match = msg.content
+    .replace(/^うさ..|..ギガス$|..まる$|レジギガス|ｷﾞｶﾞ|兎丸|652747597739589632/g, 'うさまる')
+    .match(/うさまる/)
 
   // 含まれていない場合は終了
   if (!match) return
