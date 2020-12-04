@@ -85,7 +85,9 @@ var mazarashiEmoji = function (msg) {
     console.log('React Mazarashi emoji');
 };
 var usamaruEmoji = function (msg) {
-    var match = msg.content.replace(/^うさ..|..ギガス$|..まる$|ｷﾞｶﾞ|652747597739589632/g, '兎丸').match(/兎丸/);
+    var match = msg.content
+        .replace(/^うさ..|..まる$|兎丸|レジギガス|..ギガス$|ｷﾞｶﾞ|652747597739589632/g, 'うさまる')
+        .match(/うさまる/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.USAMARU);
