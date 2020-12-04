@@ -46,6 +46,10 @@ EMOJI_ID:
   MAZARASHI: '782668872435367987'
   # レジギガスのカスタム絵文字
   USAMARU: '784071995758870550'
+  # 抹茶ですよのカスタム絵文字
+  MACCHA_DESUYO: '739681535967363082'
+  # 肉のカスタム絵文字
+  NIKU: '781580398546780203'
 
 # ロールのID
 ROLE_ID:
@@ -111,6 +115,11 @@ THIS_AND_THAT_CHANNEL:
   - vc用
   - vc用-姉
   - bot-test
+
+# 絵文字を押さないチャンネル
+NOT_EMOJI_CHANNEL:
+  - 凸状況
+  - 凸状況履歴
 
 # クラバトカテゴリーの場所
 CATEGORY:

@@ -8,69 +8,108 @@ import * as util from '../../util'
  * @param msg DiscordからのMessage
  */
 export const Emoji = (msg: Discord.Message) => {
+  // 指定のチャンネルでは実行されない用にする
+  if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
+
   // 草野優衣の絵文字を押す
-  yuiKusano(msg)
+  yuiKusanoEmoji(msg)
   // まざらしの絵文字を押す
-  mazarashi(msg)
+  mazarashiEmoji(msg)
   // うさまるの絵文字を押す
-  usamaru(msg)
+  usamaruEmoji(msg)
+  // 抹茶ですよの絵文字を押す
+  macchaDesuyoEmoji(msg)
+  // 肉の絵文字を押す
+  nikuEmoji(msg)
 }
 
 /**
- * 送信されたメッセージにユイっぽい文字が入っていた場合、草野優衣の絵文字をつける
+ * 送信されたメッセージにユイっぽい文字が含まれていた場合、草野優衣の絵文字をつける
  * @param msg DiscordからのMessage
  */
-const yuiKusano = (msg: Discord.Message) => {
-  // ユイっぽい文字が入っているか確認
-  const match = msg.content.replace(/草|優衣|くさ|ゆい|715020255059247146/g, 'ユイ').match(/ユイ/)
+const yuiKusanoEmoji = (msg: Discord.Message) => {
+  // ユイっぽい文字が含まれているか確認
+  const match = msg.content.replace(/草|優衣|^くさ|くさ$/g, 'ユイ').match(/ユイ/)
 
-  // 入っていない場合は終了
+  // 含まれていない場合は終了
   if (!match) return
 
   // 草野優衣の絵文字をつける
   msg.react(Settings.EMOJI_ID.YUI_KUSANO)
 
-  console.log('React Yui Kusano')
+  console.log('React Yui Kusano emoji')
 }
 
 /**
- * 送信されたメッセージにまざらしっぽいの文字が入っていた場合、まざらしの絵文字をつける
+ * 送信されたメッセージにまざらしっぽいの文字が含まれていた場合、まざらしの絵文字をつける
  * @param msg DiscordからのMessage
  */
-const mazarashi = (msg: Discord.Message) => {
-  // まざらしっぽい文字が入っているか確認
-  const match = msg.content
-    .replace(/まじゃ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'まざ')
-    .match(/まざ/)
+const mazarashiEmoji = (msg: Discord.Message) => {
+  // まざらしっぽい文字が含まれているか確認
+  const match = msg.content.replace(/ま.+らし|厚着|下着|冷凍|解凍|722547140487938181/g, 'まらざし').match(/まらざし/)
 
-  // 入っていない場合は終了
+  // 含まれていない場合は終了
   if (!match) return
 
   // まざらしの絵文字をつける
   msg.react(Settings.EMOJI_ID.MAZARASHI)
 
-  console.log('React Mazarashi')
+  console.log('React Mazarashi emoji')
 }
 
 /**
- * 送信されたメッセージにうさまるっぽい文字が入っていた場合、うさまるの絵文字をつける
+ * 送信されたメッセージにうさまるっぽい文字が含まれていた場合、うさまるの絵文字をつける
  * @param msg DiscordからのMessage
  */
-const usamaru = (msg: Discord.Message) => {
-  // うさまるっぽい文字が入っているか確認
-  const match = msg.content.replace(/うさ|レジ|ギガス|ｷﾞｶﾞ|兎丸|usamaru|652747597739589632/g, 'まる').match(/まる/)
+const usamaruEmoji = (msg: Discord.Message) => {
+  // うさまるっぽい文字が含まれているか確認
+  const match = msg.content.replace(/^うさ..|..ギガス$|..まる$|ｷﾞｶﾞ|652747597739589632/g, '兎丸').match(/兎丸/)
 
-  // 入っていない場合は終了
+  // 含まれていない場合は終了
   if (!match) return
 
   // うさまるの絵文字をつける
   msg.react(Settings.EMOJI_ID.USAMARU)
 
-  console.log('React Usamaru')
+  console.log('React Usamaru emoji')
 }
 
 /**
- * 送信されたメッセージの先頭におはなしが入っている場合、キャルが喋る
+ * 送信されたメッセージに抹茶ですよっぽい文字が含まれていた場合、抹茶ですよの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const macchaDesuyoEmoji = (msg: Discord.Message) => {
+  // 抹茶ですよっぽい文字が含まれているか確認
+  const match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // 抹茶ですよの絵文字をつける
+  msg.react(Settings.EMOJI_ID.MACCHA_DESUYO)
+
+  console.log('React Maccha Desuyo emoji')
+}
+
+/**
+ * 送信されたメッセージに肉が含まれていた場合、肉の絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const nikuEmoji = (msg: Discord.Message) => {
+  // 肉が含まれているか確認
+  const match = msg.content.match(/肉/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // 肉の絵文字をつける
+  msg.react(Settings.EMOJI_ID.NIKU)
+
+  console.log('React Niku emoji')
+}
+
+/**
+ * 送信されたメッセージの先頭がおはなしの場合、元のメッセージを削除しキャルがメッセージを送信する
  * @param msg DiscordからのMessage
  * @return おはなしの結果
  */
@@ -105,9 +144,9 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 送信されたメッセージにorが入っていた場合どれかを乱数で送信する
+ * 送信されたメッセージにorが含まれていた場合、orで区切ったどれかを乱数で送信する
  * @param msg DiscordからのMessage
- * @return orが入っていたかの結果
+ * @return orが含まれていたかの結果
  */
 export const AorB = (msg: Discord.Message): Option<string> => {
   // botのメッセージは実行しない
@@ -116,7 +155,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // discord以外のorが入っている最初の行を取得
+  // discord以外のorが含まれている最初の行を取得
   const content = msg.content.split('\n').find(s => /^.+(?<![dis][cord])or.+$/i.test(s))
 
   // discord以外のorがなければ終了
@@ -139,9 +178,9 @@ export const AorB = (msg: Discord.Message): Option<string> => {
 }
 
 /**
- * 送信されたメッセージにカンカンカンが入っていた場合おはよーを送信する
+ * 送信されたメッセージにカンカンカンが含まれていた場合おはよーを送信する
  * @param msg DiscordからのMessage
- * @return カンカンカンが入っていたかの結果
+ * @return カンカンカンが含まれていたかの結果
  */
 export const GoodMorning = (msg: Discord.Message): Option<string> => {
   // botのメッセージは実行しない
@@ -150,7 +189,7 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // カンカンカンの文字が入っているか確認
+  // カンカンカンの文字が含まれているか確認
   if (!msg.content.match(/カンカンカン/)) return
 
   // カンカンカンのメッセージ
@@ -172,7 +211,7 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
 const createRandNumber = (n: number): number => require('get-random-values')(new Uint8Array(1))[0] % n
 
 /**
- * 送信されたメッセージにヤバイの文字が入っていた場合、ヤバイわよ！の画像を送信する
+ * 送信されたメッセージにヤバイの文字が含まれていた場合、ヤバイわよ！の画像を送信する
  * @param msg DiscordからのMessage
  * @return 画像を送信したかの結果
  */
@@ -180,12 +219,13 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // ヤバイの文字が入っているか確認
+  // ヤバイの文字が含まれているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
 
-  // 入っていない場合は終了、入っている場合はヤバイわよ！の画像を送信
+  // 含まれていない場合は終了
   if (!match) return
 
+  // ヤバイわよ！の画像を送信
   msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
 
   return 'Send Yabai Image'
