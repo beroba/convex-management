@@ -74,7 +74,9 @@ var yuiKusano = function (msg) {
     console.log('React Yui Kusano');
 };
 var mazarashi = function (msg) {
-    var match = msg.content.replace(/まざ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'らし').match(/らし/);
+    var match = msg.content
+        .replace(/まじゃ|厚着|下着|冷凍|341239349997993984|722547140487938181/g, 'まざ')
+        .match(/まざ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
@@ -111,13 +113,10 @@ exports.AorB = function (msg) {
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
-    var content = msg.content.split('\n').find(function (s) { return /^.+or.+$/i.test(s); });
+    var content = msg.content.split('\n').find(function (s) { return /^.+(?<![dis][cord])or.+$/i.test(s); });
     if (!content)
         return;
-    var list = content
-        .replace('OR', 'or')
-        .split('or')
-        .map(function (s) { return s.trim(); });
+    var list = content.split(/(?<![dis][cord])or/i).map(function (s) { return s.trim(); });
     var rand = createRandNumber(list.length);
     var channel = util.GetTextChannel(msg.channel.id);
     channel.send(list[rand]);

@@ -10,6 +10,7 @@ import * as convex from '../client/convex'
 export const CronOperation = () => {
   setRemainConvex()
   removeTaskKillRoll()
+  notifyDailyMission()
   // fullConvexReport()
 }
 
@@ -47,7 +48,7 @@ const setRemainConvex = () => {
  */
 const removeTaskKillRoll = () => {
   // 05:00に実行
-  cron.schedule('0 0 5 * * *', async () => {
+  cron.schedule('0 0 5 * * *', () => {
     // べろべろのメンバー一覧を取得
     const guildMembers = util.GetGuild()?.members.cache.map(m => m)
 
@@ -59,6 +60,21 @@ const removeTaskKillRoll = () => {
     channel.send('全員のタスキルロールを外したわ')
 
     console.log('remove task kill role')
+  })
+}
+
+/**
+ * 04:30にデイリーミッション消化の通知を行う。
+ * '0 30 4 * * *'
+ */
+const notifyDailyMission = () => {
+  // 04:30に実行
+  cron.schedule('0 30 4 * * *', () => {
+    // 雑談に通知をする
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.CHAT)
+    channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！')
+
+    console.log('Notify daily mission digestion')
   })
 }
 
