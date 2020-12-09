@@ -157,6 +157,9 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
+  // urlの場合は終了する
+  if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/)) return
+
   // discord以外のorが含まれている最初の行を取得
   const content = msg.content.split('\n').find(s => /^.+(?<![dis][cord])or.+$/i.test(s))
 

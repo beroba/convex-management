@@ -71,7 +71,7 @@ exports.Emoji = function (msg) {
     nikuEmoji(msg);
 };
 var yuiKusanoEmoji = function (msg) {
-    var match = msg.content.replace(/草|優衣|^くさ|くさ$/g, 'ユイ').match(/ユイ/);
+    var match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
@@ -130,6 +130,8 @@ exports.AorB = function (msg) {
     if (msg.author.bot)
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
+        return;
+    if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/))
         return;
     var content = msg.content.split('\n').find(function (s) { return /^.+(?<![dis][cord])or.+$/i.test(s); });
     if (!content)
