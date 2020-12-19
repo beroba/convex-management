@@ -160,14 +160,27 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // urlの場合は終了する
   if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/)) return
 
+  // 全角を半角に変換する
+  const content = util.Format(msg.content)
+
+  // 絵文字だけ抜き出したリストを作る
+  const emoji = content.match(/<.*?>/g)?.map(e => e)
+
   // discord以外のorが含まれている最初の行を取得
-  const content = msg.content.split('\n').find(s => /^.+(?<![dis][cord])or.+$/i.test(s))
+  const line = content
+    .replace(/<.*?>/g, '１') // 絵文字を全て１に変換
+    .split('\n')
+    .find(s => /^.+(?<![dis][cord])or.+$/i.test(s))
 
   // discord以外のorがなければ終了
-  if (!content) return
+  if (!line) return
 
-  // discord以外のorで区切ったリストを作る
-  const list = content.split(/(?<![dis][cord])or/i).map(s => s.trim())
+  // 絵文字を元に戻したリストを作成
+  const list = replaceEmoji(
+    // discord以外のorで区切ったリストを作る
+    line.split(/(?<![dis][cord])or/i).map(s => s.trim()),
+    emoji
+  )
 
   // リストの数に応じて乱数を作る
   const rand = createRandNumber(list.length)
@@ -181,6 +194,38 @@ export const AorB = (msg: Discord.Message): Option<string> => {
 
   return 'Returned any of or'
 }
+
+/**
+ * 第1引数で渡されたリストの１を、第2引数で渡された絵文字に入れ替えて返す
+ * @param list 変換元のリスト
+ * @param emoji 入れ替える絵文字のリスト
+ * @return 入れ替えたリスト
+ */
+const replaceEmoji = (list: string[], emoji: Option<string[]>): string[] => {
+  // 絵文字がない場合は終了
+  if (!emoji) return list
+
+  // 絵文字のカウンタを作成
+  let i = 0
+  return list.map(l => {
+    // 全ての１が絵文字になるまでループする
+    // 無限ループにならない用に20で止まるように保険をかけておく
+    for (let j = 0; j < 20; j++) {
+      // １がなくなったら終了
+      if (!/１/.test(l)) return l
+      // １を絵文字に変換し、絵文字のカウンタを上げる
+      l = l.replace('１', emoji[i++])
+    }
+    return l
+  })
+}
+
+/**
+ * 引数に渡された整数の範囲で乱数を生成する
+ * @param n 乱数の生成範囲
+ * @return 乱数
+ */
+const createRandNumber = (n: number): number => require('get-random-values')(new Uint8Array(1))[0] % n
 
 /**
  * 送信されたメッセージにカンカンカンが含まれていた場合おはよーを送信する
@@ -207,13 +252,6 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
 
   return 'Good morning'
 }
-
-/**
- * 引数に渡された整数の範囲で乱数を生成する
- * @param n 乱数の生成範囲
- * @return 乱数
- */
-const createRandNumber = (n: number): number => require('get-random-values')(new Uint8Array(1))[0] % n
 
 /**
  * 送信されたメッセージにヤバイの文字が含まれていた場合、ヤバイわよ！の画像を送信する

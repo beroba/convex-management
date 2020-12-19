@@ -127,22 +127,42 @@ exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 exports.AorB = function (msg) {
+    var _a;
     if (msg.author.bot)
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/))
         return;
-    var content = msg.content.split('\n').find(function (s) { return /^.+(?<![dis][cord])or.+$/i.test(s); });
-    if (!content)
+    var content = util.Format(msg.content);
+    var emoji = (_a = content.match(/<.*?>/g)) === null || _a === void 0 ? void 0 : _a.map(function (e) { return e; });
+    var line = content
+        .replace(/<.*?>/g, '１')
+        .split('\n')
+        .find(function (s) { return /^.+(?<![dis][cord])or.+$/i.test(s); });
+    if (!line)
         return;
-    var list = content.split(/(?<![dis][cord])or/i).map(function (s) { return s.trim(); });
+    var list = replaceEmoji(line.split(/(?<![dis][cord])or/i).map(function (s) { return s.trim(); }), emoji);
     var rand = createRandNumber(list.length);
     var channel = util.GetTextChannel(msg.channel.id);
     channel.send(list[rand]);
     console.log(util.GetUserName(msg.member) + ", " + content);
     return 'Returned any of or';
 };
+var replaceEmoji = function (list, emoji) {
+    if (!emoji)
+        return list;
+    var i = 0;
+    return list.map(function (l) {
+        for (var j = 0; j < 20; j++) {
+            if (!/１/.test(l))
+                return l;
+            l = l.replace('１', emoji[i++]);
+        }
+        return l;
+    });
+};
+var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
 exports.GoodMorning = function (msg) {
     if (msg.author.bot)
         return;
@@ -155,7 +175,6 @@ exports.GoodMorning = function (msg) {
     channel.send(message);
     return 'Good morning';
 };
-var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
 exports.YabaiImage = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
