@@ -184,10 +184,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
 
   // リストの数に応じて乱数を作る
   const rand = createRandNumber(list.length)
-
-  // メッセージ送信先のチャンネルを取得
-  const channel = util.GetTextChannel(msg.channel.id)
-  channel.send(list[rand])
+  msg.reply(list[rand])
 
   // 誰が送信したかのログを残す
   console.log(`${util.GetUserName(msg.member)}, ${content}`)
