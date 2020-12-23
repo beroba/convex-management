@@ -10,7 +10,11 @@ import {Client} from '../index'
  * @return 整形した文字列
  */
 export const Format = (str: string): string =>
-  moji(str).convert('ZE', 'HE').convert('ZS', 'HS').toString().replace(/\s+/g, ' ')
+  moji(str)
+    .convert('ZE', 'HE')
+    .convert('ZS', 'HS')
+    .toString()
+    .replace(/[^\S\n\r]+/g, ' ')
 
 /**
  * クランサーバーのguildを取得する
