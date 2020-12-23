@@ -144,8 +144,7 @@ exports.AorB = function (msg) {
         return;
     var list = replaceEmoji(line.split(/(?<![dis][cord])or/i).map(function (s) { return s.trim(); }), emoji);
     var rand = createRandNumber(list.length);
-    var channel = util.GetTextChannel(msg.channel.id);
-    channel.send(list[rand]);
+    msg.reply(list[rand]);
     console.log(util.GetUserName(msg.member) + ", " + content);
     return 'Returned any of or';
 };

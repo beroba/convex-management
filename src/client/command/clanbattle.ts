@@ -25,6 +25,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       changeConvex(arg, msg)
       return 'Change of convex management'
     }
+
     case /cb boss now/.test(command): {
       currentBossNow()
       return 'Show ckurrent boss'

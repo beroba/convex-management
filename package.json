@@ -7,6 +7,9 @@
     "build": "tsc -p ./tsconfig.json",
     "start": "node ./dist/index.js"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smicle/convex-management.git"
@@ -24,7 +27,7 @@
     "@types/ws": "^7.2.5",
     "alphabet-to-number": "^1.0.0",
     "const-settings": "^1.0.0",
-    "discord.js": "^12.5.1",
+    "discord.js": "github:discordjs/discord.js",
     "get-random-values": "^1.2.2",
     "google-spreadsheet-as-promised": "^0.2.12",
     "moji": "^0.5.1",

@@ -8,7 +8,11 @@ var moji_1 = __importDefault(require("moji"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var index_1 = require("../index");
 exports.Format = function (str) {
-    return moji_1["default"](str).convert('ZE', 'HE').convert('ZS', 'HS').toString().replace(/\s+/g, ' ');
+    return moji_1["default"](str)
+        .convert('ZE', 'HE')
+        .convert('ZS', 'HS')
+        .toString()
+        .replace(/[^\S\n\r]+/g, ' ');
 };
 exports.GetGuild = function () { return index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID')); };
 exports.IsChannel = function (array, channel) {
