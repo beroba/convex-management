@@ -285,6 +285,11 @@ var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, functi
                             return [2];
                         return [2, fetchStage(4, sheet, col)];
                     }
+                    case '45': {
+                        if (cells[4][1])
+                            return [2];
+                        return [2, fetchStage(5, sheet, col)];
+                    }
                 }
                 return [2];
         }
@@ -295,7 +300,8 @@ var fetchStage = function (n, sheet, col) { return __awaiter(void 0, void 0, voi
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                category.SetSeparate(n);
+                if (n < 5)
+                    category.SetSeparate(n);
                 return [4, sheet.getCell("" + col + (n + 2))];
             case 1:
                 cell = _a.sent();
