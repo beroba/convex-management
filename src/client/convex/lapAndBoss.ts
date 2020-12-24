@@ -3,7 +3,6 @@ import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from '../plan/list'
-import * as category from '../command/category'
 import {NtoA} from 'alphabet-to-number'
 
 /**
@@ -286,11 +285,6 @@ const stageConfirm = async () => {
       if (cells[3][1]) return
       return fetchStage(4, sheet, col)
     }
-
-    case '45': {
-      if (cells[4][1]) return
-      return fetchStage(5, sheet, col)
-    }
   }
 }
 
@@ -338,8 +332,6 @@ const switchStageRole = (stage: string) => {
  * @param col フラグの列
  */
 const fetchStage = async (n: number, sheet: any, col: string) => {
-  // 4段階目までは区切りを入れる
-  if (n < 5) category.SetSeparate(n)
   const cell = await sheet.getCell(`${col}${n + 2}`)
   cell.setValue(1)
 }

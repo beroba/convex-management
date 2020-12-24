@@ -80,7 +80,6 @@ var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("../plan/list"));
-var category = __importStar(require("../command/category"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 exports.StageNames = ['first', 'second', 'third', 'fourth', 'fifth'];
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -314,11 +313,6 @@ var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, functi
                             return [2];
                         return [2, fetchStage(4, sheet, col)];
                     }
-                    case '45': {
-                        if (cells[4][1])
-                            return [2];
-                        return [2, fetchStage(5, sheet, col)];
-                    }
                 }
                 return [2];
         }
@@ -348,10 +342,7 @@ var fetchStage = function (n, sheet, col) { return __awaiter(void 0, void 0, voi
     var cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                if (n < 5)
-                    category.SetSeparate(n);
-                return [4, sheet.getCell("" + col + (n + 2))];
+            case 0: return [4, sheet.getCell("" + col + (n + 2))];
             case 1:
                 cell = _a.sent();
                 cell.setValue(1);
