@@ -74,13 +74,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = void 0;
+exports.CalCurrent = exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = exports.StageNames = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("../plan/list"));
 var category = __importStar(require("../command/category"));
+var alphabet_to_number_1 = require("alphabet-to-number");
+exports.StageNames = ['first', 'second', 'third', 'fourth', 'fifth'];
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, num, sheet, boss, _b, lap_cell, boss_cell, num_cell;
     return __generator(this, function (_c) {
@@ -188,23 +190,38 @@ exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, role, channel;
+    var state, current, role, HP, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.GetCurrent()];
             case 1:
                 state = _a.sent();
+                current = exports.CalCurrent();
                 role = const_settings_1["default"].BOSS_ROLE_ID[state.num];
+                HP = const_settings_1["default"].STAGE_HP[(current === null || current === void 0 ? void 0 : current.stage) || ''][(current === null || current === void 0 ? void 0 : current.boss) || ''];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "`");
+                channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + HP + "`");
                 list.PlanOnly(state.num);
                 return [2];
         }
     });
 }); };
+exports.CalCurrent = function () {
+    var cal = util.GetCalInfo();
+    var role = cal === null || cal === void 0 ? void 0 : cal.roles.cache.map(function (m) { return m.name; });
+    var boss = role === null || role === void 0 ? void 0 : role.find(function (r) { return r.includes('ボス'); });
+    if (!boss)
+        return;
+    var stage = role === null || role === void 0 ? void 0 : role.find(function (r) { return r.includes('段階目'); });
+    if (!stage)
+        return;
+    return {
+        boss: alphabet_to_number_1.NtoA(boss[0]),
+        stage: exports.StageNames[Number(stage[0]) - 1]
+    };
+};
 var switchBossRole = function (num) {
-    var _a;
-    var cal = (_a = util.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID);
+    var cal = util.GetCalInfo();
     Object.values(const_settings_1["default"].BOSS_ROLE_ID).forEach(function (id) { return cal === null || cal === void 0 ? void 0 : cal.roles.remove(id); });
     cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].BOSS_ROLE_ID[num]);
     console.log("Switch Cal's boss role");
@@ -322,8 +339,7 @@ var getStageNow = function (lap) {
     }
 };
 var switchStageRole = function (stage) {
-    var _a;
-    var cal = (_a = util.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID);
+    var cal = util.GetCalInfo();
     Object.values(const_settings_1["default"].STAGE_ROLE_ID).forEach(function (id) { return cal === null || cal === void 0 ? void 0 : cal.roles.remove(id); });
     cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].STAGE_ROLE_ID[stage]);
     console.log("Switch Cal's stage role");

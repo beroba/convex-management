@@ -4,6 +4,7 @@ import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from '../plan/list'
 import * as category from '../command/category'
+import {NtoA} from 'alphabet-to-number'
 
 /**
  * 現在のボスの情報
@@ -13,6 +14,11 @@ type Current = {
   boss: string
   num: string
 }
+
+/**
+ * 段階名の配列
+ */
+export const StageNames = ['first', 'second', 'third', 'fourth', 'fifth']
 
 /**
  * 現在の周回数とボスを変更する
@@ -126,13 +132,43 @@ export const GetCurrent = async (): Promise<Current> => {
 export const ProgressReport = async () => {
   // 現在の周回数とボスを取得
   const state = await GetCurrent()
+  // 現在のボス番号と段階数を取得
+  const current = CalCurrent()
 
   // ボスのロールを取得
   const role = Settings.BOSS_ROLE_ID[state.num]
 
+  // HPを取得
+  const HP = Settings.STAGE_HP[current?.stage || ''][current?.boss || '']
+
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
+  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\` \`${HP}\``)
   list.PlanOnly(state.num)
+}
+
+/**
+ * キャルに付与されているロールからボス番号と段階名を取得する
+ * @return ボス番号と段階名
+ */
+export const CalCurrent = () => {
+  // キャルのユーザー情報を取得
+  const cal = util.GetCalInfo()
+  // キャルに付与されているロール一覧を取得
+  const role = cal?.roles.cache.map(m => m.name)
+
+  // ボスロールの名前を取得
+  const boss = role?.find(r => r.includes('ボス'))
+  if (!boss) return
+
+  // 段階ロールの名前を取得
+  const stage = role?.find(r => r.includes('段階目'))
+  if (!stage) return
+
+  // 現在のボス番号と段階名を返す
+  return {
+    boss: NtoA(boss[0]),
+    stage: StageNames[Number(stage[0]) - 1],
+  }
 }
 
 /**
@@ -141,7 +177,7 @@ export const ProgressReport = async () => {
  */
 const switchBossRole = (num: string) => {
   // キャルのユーザー情報を取得
-  const cal = util.GetGuild()?.members.cache.get(Settings.CAL_ID)
+  const cal = util.GetCalInfo()
 
   // 全てのボスロールを外す
   Object.values(Settings.BOSS_ROLE_ID as string[]).forEach(id => cal?.roles.remove(id))
@@ -259,9 +295,9 @@ const stageConfirm = async () => {
 }
 
 /**
- * 現在の周回数から段階数の名前を返す
+ * 現在の周回数から段階名を返す
  * @param n 周回数
- * @return 段階数の名前
+ * @return 段階名
  */
 const getStageNow = (lap: number) => {
   switch (true) {
@@ -280,11 +316,11 @@ const getStageNow = (lap: number) => {
 
 /**
  * キャルの段階ロールを切り替える
- * @param stage 段階数の名前
+ * @param stage 段階名
  */
 const switchStageRole = (stage: string) => {
   // キャルのユーザー情報を取得
-  const cal = util.GetGuild()?.members.cache.get(Settings.CAL_ID)
+  const cal = util.GetCalInfo()
 
   // 全ての段階ロールを外す
   Object.values(Settings.STAGE_ROLE_ID as string[]).forEach(id => cal?.roles.remove(id))

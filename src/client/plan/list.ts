@@ -1,7 +1,9 @@
+import {NtoA} from 'alphabet-to-number'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
+import * as lapAndBoss from '../convex/lapAndBoss'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力
@@ -48,13 +50,18 @@ export const SituationEdit = async () => {
 const createAllPlanText = async (): Promise<string> => {
   const list = await readPlanList()
   const table = await readBossTable()
-  return 'abcde'
-    .split('')
-    .map(c => {
-      const boss = takeBossName(c, table)
-      return `${boss}\n` + '```\n' + `${createPlanList(c, list)}\n` + '```'
-    })
-    .join('')
+
+  // 現在のボス番号と段階数を取得
+  const current = lapAndBoss.CalCurrent()
+
+  return lapAndBoss.StageNames.map((name, i) => {
+    // ボス番号を取得
+    const num = NtoA(i)
+    const boss = takeBossName(num, table)
+    const HP = Settings.STAGE_HP[current?.stage || ''][name]
+
+    return `${boss} \`${HP}\`\n` + '```\n' + `${createPlanList(num, list)}\n` + '```'
+  }).join('')
 }
 
 /**

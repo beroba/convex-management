@@ -59,10 +59,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.PlanOnly = exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
+var alphabet_to_number_1 = require("alphabet-to-number");
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.Output = function (num) { return __awaiter(void 0, void 0, void 0, function () {
     var list, table, boss, channel;
     return __generator(this, function (_a) {
@@ -111,7 +113,7 @@ exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var list, table;
+    var list, table, current;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, readPlanList()];
@@ -120,13 +122,13 @@ var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, f
                 return [4, readBossTable()];
             case 2:
                 table = _a.sent();
-                return [2, 'abcde'
-                        .split('')
-                        .map(function (c) {
-                        var boss = takeBossName(c, table);
-                        return boss + "\n" + '```\n' + (createPlanList(c, list) + "\n") + '```';
-                    })
-                        .join('')];
+                current = lapAndBoss.CalCurrent();
+                return [2, lapAndBoss.StageNames.map(function (name, i) {
+                        var num = alphabet_to_number_1.NtoA(i);
+                        var boss = takeBossName(num, table);
+                        var HP = const_settings_1["default"].STAGE_HP[(current === null || current === void 0 ? void 0 : current.stage) || ''][name];
+                        return boss + " `" + HP + "`\n" + '```\n' + (createPlanList(num, list) + "\n") + '```';
+                    }).join('')];
         }
     });
 }); };

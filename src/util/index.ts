@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
+import Settings from 'const-settings'
 import {Client} from '../index'
 
 /**
@@ -21,6 +22,12 @@ export const Format = (str: string): string =>
  * @return クランサーバーのguild
  */
 export const GetGuild = (): Option<Discord.Guild> => Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
+
+/**
+ * キャルのメンバー情報を取得する
+ * @return キャルのメンバー情報
+ */
+export const GetCalInfo = (): Option<Discord.GuildMember> => GetGuild()?.members.cache.get(Settings.CAL_ID)
 
 /**
  * 配列の中に確認用のチャンネルがあるか確認する
