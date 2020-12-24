@@ -69,23 +69,24 @@ var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
+                (_b = msg.guild.members.cache.get('687337133572096021')) === null || _b === void 0 ? void 0 : _b.setNickname('キャルちゃん');
                 if (msg.content.charAt(0) === '/')
                     return [2, command_1.Command(msg)];
                 send.Emoji(msg);
                 return [4, report.Convex(msg)];
             case 1:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, plan.Convex(msg)];
             case 2:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = carryover.React(msg);
@@ -96,7 +97,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
             case 3:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.GoodMorning(msg);
@@ -104,7 +105,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                     return [2, console.log(comment)];
                 return [4, send.Speak(msg)];
             case 4:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.AorB(msg);
