@@ -198,6 +198,10 @@ const stageConfirm = async () => {
   const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
   const [lap, , num] = await spreadsheet.GetCells(sheet, `${range[0]}:${range[2]}`)
 
+  // キャルの段階ロールを切り替える
+  const stage = getStageNow(Number(lap))
+  switchStageRole(stage)
+
   // 1ボスない場合は終了
   if (num !== 'a') return
 
@@ -228,7 +232,42 @@ const stageConfirm = async () => {
   }
 }
 
-// const switchStageRole = (n: number) => {}
+/**
+ * 現在の周回数から段階数の名前を返す
+ * @param n 周回数
+ * @return 段階数の名前
+ */
+const getStageNow = (lap: number) => {
+  switch (true) {
+    case lap < 4:
+      return 'first'
+    case lap < 11:
+      return 'second'
+    case lap < 35:
+      return 'third'
+    case lap < 45:
+      return 'fourth'
+    default:
+      return 'fifth'
+  }
+}
+
+/**
+ * キャルの段階ロールを切り替える
+ * @param stage 段階数の名前
+ */
+const switchStageRole = (stage: string) => {
+  // キャルのユーザー情報を取得
+  const cal = util.GetGuild()?.members.cache.get(Settings.CAL_ID)
+
+  // 全ての段階ロールを外す
+  Object.values(Settings.STAGE_ROLE_ID as string[]).forEach(id => cal?.roles.remove(id))
+
+  // 現在の段階ロールを付ける
+  cal?.roles.add(Settings.STAGE_ROLE_ID[stage])
+
+  console.log("Switch Cal's stage role")
+}
 
 /**
  * 段階数の区切りとフラグを立てる

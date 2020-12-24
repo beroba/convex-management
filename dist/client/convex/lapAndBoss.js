@@ -252,7 +252,7 @@ var readReturnDate = function (lap_cell, num_cell, sheet) { return __awaiter(voi
     });
 }); };
 var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, range, _a, lap, num, cells, _b, col;
+    var sheet, range, _a, lap, num, stage, cells, _b, col;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
@@ -262,6 +262,8 @@ var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, spreadsheet.GetCells(sheet, range[0] + ":" + range[2])];
             case 2:
                 _a = __read.apply(void 0, [_c.sent(), 3]), lap = _a[0], num = _a[2];
+                stage = getStageNow(Number(lap));
+                switchStageRole(stage);
                 if (num !== 'a')
                     return [2];
                 _b = pieces_each_1["default"];
@@ -295,6 +297,27 @@ var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
+var getStageNow = function (lap) {
+    switch (true) {
+        case lap < 4:
+            return 'first';
+        case lap < 11:
+            return 'second';
+        case lap < 35:
+            return 'third';
+        case lap < 45:
+            return 'fourth';
+        default:
+            return 'fifth';
+    }
+};
+var switchStageRole = function (stage) {
+    var _a;
+    var cal = (_a = util.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID);
+    Object.values(const_settings_1["default"].STAGE_ROLE_ID).forEach(function (id) { return cal === null || cal === void 0 ? void 0 : cal.roles.remove(id); });
+    cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].STAGE_ROLE_ID[stage]);
+    console.log("Switch Cal's stage role");
+};
 var fetchStage = function (n, sheet, col) { return __awaiter(void 0, void 0, void 0, function () {
     var cell;
     return __generator(this, function (_a) {
