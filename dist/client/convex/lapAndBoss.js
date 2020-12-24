@@ -108,6 +108,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
             case 5:
                 _c.sent();
                 exports.ProgressReport();
+                switchBossRole(num);
                 stageConfirm();
                 return [2, true];
         }
@@ -134,6 +135,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
             case 5:
                 _c.sent();
                 exports.ProgressReport();
+                switchBossRole(num);
                 stageConfirm();
                 return [2];
         }
@@ -160,6 +162,7 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
             case 5:
                 _c.sent();
                 exports.ProgressReport();
+                switchBossRole(num);
                 stageConfirm();
                 return [2];
         }
@@ -199,6 +202,13 @@ exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
+var switchBossRole = function (num) {
+    var _a;
+    var cal = (_a = util.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID);
+    Object.values(const_settings_1["default"].BOSS_ROLE_ID).forEach(function (id) { return cal === null || cal === void 0 ? void 0 : cal.roles.remove(id); });
+    cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].BOSS_ROLE_ID[num]);
+    console.log("Switch Cal's boss role");
+};
 var readBossName = function (sheet, num) { return __awaiter(void 0, void 0, void 0, function () {
     var cells;
     return __generator(this, function (_a) {

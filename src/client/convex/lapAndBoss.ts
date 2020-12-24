@@ -40,6 +40,9 @@ export const Update = async (arg: string): Promise<boolean> => {
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
+  // キャルのボスロールを切り替える
+  switchBossRole(num)
+
   // 段階数の区切りを付ける
   stageConfirm()
 
@@ -65,6 +68,9 @@ export const Next = async () => {
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
+  // キャルのボスロールを切り替える
+  switchBossRole(num)
+
   // 段階数の区切りを付ける
   stageConfirm()
 }
@@ -87,6 +93,9 @@ export const Previous = async () => {
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
+
+  // キャルのボスロールを切り替える
+  switchBossRole(num)
 
   // 段階数の区切りを付ける
   stageConfirm()
@@ -124,6 +133,23 @@ export const ProgressReport = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
   list.PlanOnly(state.num)
+}
+
+/**
+ * キャルのボスロールを切り替える
+ * @param num ボス番号
+ */
+const switchBossRole = (num: string) => {
+  // キャルのユーザー情報を取得
+  const cal = util.GetGuild()?.members.cache.get(Settings.CAL_ID)
+
+  // 全てのボスロールを外す
+  Object.values(Settings.BOSS_ROLE_ID as string[]).forEach(id => cal?.roles.remove(id))
+
+  // 現在のボスロールを付ける
+  cal?.roles.add(Settings.BOSS_ROLE_ID[num])
+
+  console.log("Switch Cal's boss role")
 }
 
 /**
