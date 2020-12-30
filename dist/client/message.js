@@ -113,6 +113,11 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
+                return [4, send.SendEmoji(msg)];
+            case 5:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
                 return [2];
         }
     });
