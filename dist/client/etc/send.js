@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
+exports.SendEmoji = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Emoji = function (msg) {
@@ -78,7 +78,9 @@ var yuiKusanoEmoji = function (msg) {
     console.log('React Yui Kusano emoji');
 };
 var mazarashiEmoji = function (msg) {
-    var match = msg.content.replace(/ま.+らし|厚着|下着|冷凍|解凍|722547140487938181/g, 'まらざし').match(/まらざし/);
+    var match = msg.content
+        .replace(/ま.+らし|厚着|下着|冷凍|解凍|むちむち|722547140487938181/g, 'まらざし')
+        .match(/まらざし/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
@@ -182,4 +184,16 @@ exports.YabaiImage = function (msg) {
         return;
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
     return 'Send Yabai Image';
+};
+exports.SendEmoji = function (msg) {
+    if (msg.content === 'ルル') {
+        msg["delete"]();
+        msg.channel.send('<:8_:661486876246540298>');
+        return 'Send Ruru Emoji';
+    }
+    if (msg.content === 'kmr') {
+        msg["delete"]();
+        msg.channel.send('<:emoji_39:618400519488143360>');
+        return 'Send kmr Emoji';
+    }
 };
