@@ -188,17 +188,17 @@ exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
         switch (_a.label) {
             case 0:
                 if (!(msg.content === 'ルル')) return [3, 2];
-                return [4, msg["delete"]()];
+                return [4, msg.channel.send('<:8_:661486876246540298>')];
             case 1:
                 _a.sent();
-                msg.channel.send('<:8_:661486876246540298>');
+                msg["delete"]();
                 return [2, 'Send Ruru Emoji'];
             case 2:
                 if (!(msg.content === 'kmr')) return [3, 4];
-                return [4, msg["delete"]()];
+                return [4, msg.channel.send('<:emoji_39:618400519488143360>')];
             case 3:
                 _a.sent();
-                msg.channel.send('<:emoji_39:618400519488143360>');
+                msg["delete"]();
                 return [2, 'Send kmr Emoji'];
             case 4: return [2];
         }
