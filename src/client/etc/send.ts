@@ -291,3 +291,26 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
 
   return 'Send Yabai Image'
 }
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、対応した絵文字を送信する
+ * @param msg DiscordからのMessage
+ * @return 送信した絵文字の結果
+ */
+export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> => {
+  if (msg.content === 'ルル') {
+    // 元のメッセージは削除
+    await msg.delete()
+    // 焼肉カンパニ！の絵文字を送信
+    msg.channel.send('<:8_:661486876246540298>')
+    return 'Send Ruru Emoji'
+  }
+
+  if (msg.content === 'kmr') {
+    // 元のメッセージは削除
+    await msg.delete()
+    // 焼肉カンパニ！の絵文字を送信
+    msg.channel.send('<:emoji_39:618400519488143360>')
+    return 'Send kmr Emoji'
+  }
+}

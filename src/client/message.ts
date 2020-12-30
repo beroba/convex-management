@@ -60,4 +60,8 @@ export const Message = async (msg: Discord.Message) => {
   // ヤバイの文字がある場合に画像を送信
   comment = send.YabaiImage(msg)
   if (comment) return console.log(comment)
+
+  // 特定の文字が完全1位していた場合に対応した絵文字を送信
+  comment = await send.SendEmoji(msg)
+  if (comment) return console.log(comment)
 }
