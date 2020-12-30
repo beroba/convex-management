@@ -191,14 +191,14 @@ exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, msg.channel.send('<:8_:661486876246540298>')];
             case 1:
                 _a.sent();
-                msg["delete"]();
+                setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send Ruru Emoji'];
             case 2:
                 if (!(msg.content === 'kmr')) return [3, 4];
                 return [4, msg.channel.send('<:emoji_39:618400519488143360>')];
             case 3:
                 _a.sent();
-                msg["delete"]();
+                setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send kmr Emoji'];
             case 4: return [2];
         }

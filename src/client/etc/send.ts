@@ -282,7 +282,7 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
     await msg.channel.send('<:8_:661486876246540298>')
 
     // 元のメッセージは削除
-    msg.delete()
+    setTimeout(() => msg.delete(), 100)
 
     return 'Send Ruru Emoji'
   }
@@ -292,7 +292,7 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
     await msg.channel.send('<:emoji_39:618400519488143360>')
 
     // 元のメッセージは削除
-    msg.delete()
+    setTimeout(() => msg.delete(), 100)
 
     return 'Send kmr Emoji'
   }
