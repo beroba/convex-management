@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
+exports.SendEmoji = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Emoji = function (msg) {
@@ -183,3 +183,24 @@ exports.YabaiImage = function (msg) {
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
     return 'Send Yabai Image';
 };
+exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(msg.content === 'ルル')) return [3, 2];
+                return [4, msg["delete"]()];
+            case 1:
+                _a.sent();
+                msg.channel.send('<:8_:661486876246540298>');
+                return [2, 'Send Ruru Emoji'];
+            case 2:
+                if (!(msg.content === 'kmr')) return [3, 4];
+                return [4, msg["delete"]()];
+            case 3:
+                _a.sent();
+                msg.channel.send('<:emoji_39:618400519488143360>');
+                return [2, 'Send kmr Emoji'];
+            case 4: return [2];
+        }
+    });
+}); };
