@@ -297,7 +297,7 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
     return 'Send kmr Emoji'
   }
 
-  if (msg.content === '熱盛') {
+  if (msg.content === '熱盛' || msg.content === 'あつもり') {
     // 焼肉カンパニ！の絵文字を送信
     await msg.channel.send('<:heike:670116923127889924> ')
 
