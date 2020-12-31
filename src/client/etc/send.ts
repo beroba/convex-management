@@ -310,7 +310,7 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
     return 'Send atsumori Emoji'
   }
 
-  const kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか/, '喧嘩か？')
+  const kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か/, '喧嘩か？')
   if (kachikomi === '喧嘩か？') {
     // 焼肉カンパニ！の絵文字を送信
     await msg.channel.send('<:kachikomi:620127181418397703>')
@@ -319,5 +319,15 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
     setTimeout(() => msg.delete(), 100)
 
     return 'Send kenkaka Emoji'
+  }
+
+  if (msg.content === 'kusa') {
+    // ﾖｺﾀﾊｲｲﾋﾄの絵文字を送信
+    await msg.channel.send('<:kusa:794298459024392232>')
+
+    // 元のメッセージは削除
+    setTimeout(() => msg.delete(), 100)
+
+    return 'Send kusa Emoji'
   }
 }
