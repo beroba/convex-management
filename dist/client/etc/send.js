@@ -186,23 +186,42 @@ exports.YabaiImage = function (msg) {
     return 'Send Yabai Image';
 };
 exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var ruru, kmr, atsumori, kachikomi;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!(msg.content === 'ルル')) return [3, 2];
+                ruru = msg.content.replace(/るる/, 'ルル');
+                if (!(ruru === 'ルル')) return [3, 2];
                 return [4, msg.channel.send('<:8_:661486876246540298>')];
             case 1:
                 _a.sent();
-                msg["delete"]();
-                return [2, 'Send Ruru Emoji'];
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, 'Send ruru Emoji'];
             case 2:
-                if (!(msg.content === 'kmr')) return [3, 4];
+                kmr = msg.content.replace(/kmr/i, 'kmr');
+                if (!(kmr === 'kmr')) return [3, 4];
                 return [4, msg.channel.send('<:emoji_39:618400519488143360>')];
             case 3:
                 _a.sent();
-                msg["delete"]();
+                setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send kmr Emoji'];
-            case 4: return [2];
+            case 4:
+                atsumori = msg.content.replace(/あつもり/, '熱盛');
+                if (!(atsumori === '熱盛')) return [3, 6];
+                return [4, msg.channel.send('<:heike:670116923127889924>')];
+            case 5:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, 'Send atsumori Emoji'];
+            case 6:
+                kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか/, '喧嘩か？');
+                if (!(kachikomi === '喧嘩か？')) return [3, 8];
+                return [4, msg.channel.send('<:kachikomi:620127181418397703>')];
+            case 7:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, 'Send kenkaka Emoji'];
+            case 8: return [2];
         }
     });
 }); };
