@@ -277,17 +277,19 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
  * @return 送信した絵文字の結果
  */
 export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> => {
-  if (msg.content === 'ルル') {
+  const ruru = msg.content.replace(/るる/, 'ルル')
+  if (ruru === 'ルル') {
     // 焼肉カンパニ！の絵文字を送信
     await msg.channel.send('<:8_:661486876246540298>')
 
     // 元のメッセージは削除
     setTimeout(() => msg.delete(), 100)
 
-    return 'Send Ruru Emoji'
+    return 'Send ruru Emoji'
   }
 
-  if (msg.content === 'kmr') {
+  const kmr = msg.content.replace(/kmr/i, 'kmr')
+  if (kmr === 'kmr') {
     // 焼肉カンパニ！の絵文字を送信
     await msg.channel.send('<:emoji_39:618400519488143360>')
 
@@ -297,13 +299,25 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
     return 'Send kmr Emoji'
   }
 
-  if (msg.content === '熱盛' || msg.content === 'あつもり') {
+  const atsumori = msg.content.replace(/あつもり/, '熱盛')
+  if (atsumori === '熱盛') {
     // 焼肉カンパニ！の絵文字を送信
-    await msg.channel.send('<:heike:670116923127889924> ')
+    await msg.channel.send('<:heike:670116923127889924>')
 
     // 元のメッセージは削除
     setTimeout(() => msg.delete(), 100)
 
-    return 'Send atumori Emoji'
+    return 'Send atsumori Emoji'
+  }
+
+  const kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか/, '喧嘩か？')
+  if (kachikomi === '') {
+    // 焼肉カンパニ！の絵文字を送信
+    await msg.channel.send('<:kachikomi:620127181418397703>')
+
+    // 元のメッセージは削除
+    setTimeout(() => msg.delete(), 100)
+
+    return 'Send kenkaka Emoji'
   }
 }
