@@ -214,14 +214,25 @@ exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send atsumori Emoji'];
             case 6:
+<<<<<<< HEAD
                 kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか/, '喧嘩か？');
+=======
+                kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か/, '喧嘩か？');
+>>>>>>> master
                 if (!(kachikomi === '喧嘩か？')) return [3, 8];
                 return [4, msg.channel.send('<:kachikomi:620127181418397703>')];
             case 7:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send kenkaka Emoji'];
-            case 8: return [2];
+            case 8:
+                if (!(msg.content === 'kusa')) return [3, 10];
+                return [4, msg.channel.send('<:kusa:794298459024392232>')];
+            case 9:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, 'Send kusa Emoji'];
+            case 10: return [2];
         }
     });
 }); };
