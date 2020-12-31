@@ -201,7 +201,7 @@ exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send kmr Emoji'];
             case 4:
-                if (!(msg.content === '熱盛')) return [3, 6];
+                if (!(msg.content === '熱盛' || msg.content === 'あつもり')) return [3, 6];
                 return [4, msg.channel.send('<:heike:670116923127889924> ')];
             case 5:
                 _a.sent();
