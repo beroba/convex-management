@@ -311,7 +311,7 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
   }
 
   const kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか/, '喧嘩か？')
-  if (kachikomi === '') {
+  if (kachikomi === '喧嘩か？') {
     // 焼肉カンパニ！の絵文字を送信
     await msg.channel.send('<:kachikomi:620127181418397703>')
 
