@@ -69,6 +69,7 @@ exports.Emoji = function (msg) {
     usamaruEmoji(msg);
     macchaDesuyoEmoji(msg);
     nikuEmoji(msg);
+    pantiesEmoji(msg);
 };
 var yuiKusanoEmoji = function (msg) {
     var match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/);
@@ -106,6 +107,13 @@ var nikuEmoji = function (msg) {
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.NIKU);
     console.log('React Niku emoji');
+};
+var pantiesEmoji = function (msg) {
+    var match = msg.content.replace(/ぱんつ|パンツ|パンティ|下着/g, 'しろは').match(/しろは/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.PANTIES);
+    console.log('React Panties emoji');
 };
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var adjustment, match, content, channel;
@@ -184,7 +192,7 @@ exports.YabaiImage = function (msg) {
     return 'Send Yabai Image';
 };
 exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var ruru, kmr, atsumori, kachikomi;
+    var ruru, kmr, atsumori, kachikomi, panties;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -226,7 +234,15 @@ exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send kusa Emoji'];
-            case 10: return [2];
+            case 10:
+                panties = msg.content.replace(/ぱんつ|パンティ/, 'パンツ');
+                if (!(panties === 'パンツ')) return [3, 12];
+                return [4, msg.channel.send('<:panties:795221559975084043>')];
+            case 11:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, 'Send kusa Emoji'];
+            case 12: return [2];
         }
     });
 }); };
