@@ -40,6 +40,8 @@ export const Emoji = (msg: Discord.Message) => {
   macchaDesuyoEmoji(msg)
   // 肉の絵文字を押す
   nikuEmoji(msg)
+  // パンツの絵文字を押す
+  pantiesEmoji(msg)
 }
 
 /**
@@ -129,6 +131,23 @@ const nikuEmoji = (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.NIKU)
 
   console.log('React Niku emoji')
+}
+
+/**
+ * 送信されたメッセージにパンツっぽい文字が含まれていた場合、パンツの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const pantiesEmoji = (msg: Discord.Message) => {
+  // パンツっぽ文字が含まれているか確認
+  const match = msg.content.replace(/ぱんつ|パンツ|パンティ|下着/g, 'しろは').match(/しろは/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // 肉の絵文字をつける
+  msg.react(Settings.EMOJI_ID.PANTIES)
+
+  console.log('React Panties emoji')
 }
 
 /**
@@ -345,6 +364,17 @@ export const SendEmoji = async (msg: Discord.Message): Promise<Option<string>> =
   if (msg.content === 'kusa') {
     // ﾖｺﾀﾊｲｲﾋﾄの絵文字を送信
     await msg.channel.send('<:kusa:794298459024392232>')
+
+    // 元のメッセージは削除
+    setTimeout(() => msg.delete(), 100)
+
+    return 'Send kusa Emoji'
+  }
+
+  const panties = msg.content.replace(/ぱんつ|パンティ/, 'パンツ')
+  if (panties === 'パンツ') {
+    // スタンプ保管庫の絵文字を送信
+    await msg.channel.send('<:panties:795221559975084043>')
 
     // 元のメッセージは削除
     setTimeout(() => msg.delete(), 100)
