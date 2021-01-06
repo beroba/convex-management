@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import {NtoA, AtoA} from 'alphabet-to-number'
-import * as status from '../../io/status'
+import * as bossTable from '../../io/bossTable'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
@@ -27,7 +27,7 @@ export const Update = async (msg: Discord.Message) => {
   const res = planObject(msg)
 
   // ボス番号からボス名を取得
-  const name = await status.TakeBossName(res.alpha)
+  const name = await bossTable.TakeName(res.alpha)
   if (!name) return
   res.boss = name
 

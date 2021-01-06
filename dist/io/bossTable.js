@@ -58,46 +58,63 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Unevenness = exports.AllConvex = void 0;
+exports.TakeAlpha = exports.TakeName = exports.Fetch = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
-var dateTable = __importStar(require("../../io/dateTable"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var date, state, channel;
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var spreadsheet = __importStar(require("../util/spreadsheet"));
+var io = __importStar(require("."));
+exports.Update = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, dateTable.TakeDate()];
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                date = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
-                state = _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(date.num + "\u306E\u5168\u51F8\u7D42\u4E86\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306F`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                console.log('Complete convex end report');
+                cells = _a.sent();
+                table = pieces_each_1["default"](cells, 2)
+                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                    .map(function (v) { return ({
+                    num: v[0],
+                    alpha: v[1],
+                    name: v[2]
+                }); });
+                return [4, io.Update(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE, table)];
+            case 3:
+                _a.sent();
                 return [2];
         }
     });
 }); };
-exports.Unevenness = function (day) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, 凸残, channel;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, lapAndBoss.GetCurrent()];
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE)];
+}); }); };
+exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+    var table, boss;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
             case 1:
-                state = _c.sent();
-                凸残 = (_b = (_a = util
-                    .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return "<@!" + m.user.id + ">"; });
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(day + "\u65E5\u76EE\u306E\u51F8\u72B6\u6CC1\u5831\u544A\u3088\uFF01\n" +
-                    ("\u4ECA\u65E5\u306E\u51F8\u6B8B\u308A\u306F " + (凸残 === null || 凸残 === void 0 ? void 0 : 凸残.join(' ')) + " \u3088\n") +
-                    ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`\u307E\u3067\u9032\u3093\u3060\u308F\n") +
-                    "\u304A\u75B2\u308C\u69D8\uFF01\u6B21\u3082\u9811\u5F35\u308A\u306A\u3055\u3044");
-                return [2];
+                table = _a.sent();
+                boss = table.filter(function (t) { return t.alpha === alpha; });
+                if (boss.length === 0)
+                    return [2];
+                return [2, boss[0].name];
+        }
+    });
+}); };
+exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
+    var table, boss;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                table = _a.sent();
+                boss = table.filter(function (t) { return t.name === name; });
+                if (boss.length === 0)
+                    return [2];
+                return [2, boss[0].alpha];
         }
     });
 }); };

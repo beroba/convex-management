@@ -1,19 +1,19 @@
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as convex from '.'
+import * as dateTable from '../../io/dateTable'
 import * as lapAndBoss from './lapAndBoss'
 
 /**
  * 全凸終了報告を行う
  */
 export const AllConvex = async () => {
-  const days = await convex.GetDays()
+  const date = await dateTable.TakeDate()
   const state = await lapAndBoss.GetCurrent()
 
   // 進行に報告をする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(
-    `${days.number}の全凸終了報告よ！\n` +
+    `${date.num}の全凸終了報告よ！\n` +
       `今日は\`${state.lap}\`周目の\`${state.boss}\`まで進んだわ\n` +
       `お疲れ様！次も頑張りなさい`
   )

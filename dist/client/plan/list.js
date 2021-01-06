@@ -62,7 +62,7 @@ exports.PlanOnly = exports.SituationEdit = exports.AllOutput = exports.Output = 
 var alphabet_to_number_1 = require("alphabet-to-number");
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
-var status = __importStar(require("../../io/status"));
+var bossTable = __importStar(require("../../io/bossTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
@@ -73,7 +73,7 @@ exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, fun
             case 0: return [4, readPlanList()];
             case 1:
                 list = _a.sent();
-                return [4, status.TakeBossName(alpha)];
+                return [4, bossTable.TakeName(alpha)];
             case 2:
                 name = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
@@ -125,7 +125,7 @@ var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, f
                             switch (_a.label) {
                                 case 0:
                                     alpha = alphabet_to_number_1.NtoA(i + 1);
-                                    return [4, status.TakeBossName(alpha)];
+                                    return [4, bossTable.TakeName(alpha)];
                                 case 1:
                                     name = _a.sent();
                                     return [2, name + "\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```'];

@@ -1,6 +1,8 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import * as dateTable from '../../io/dateTable'
+import {DateTable} from '../../io/type'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as convex from '.'
@@ -41,14 +43,14 @@ export const Update = async (arg: string, msg: Discord.Message): Promise<boolean
   const name = members.filter(m => m[1] === id)[0][0]
 
   // クラバトの日付情報を取得
-  const days = await convex.GetDays()
+  const date = await dateTable.TakeDate()
 
   // 3凸終了とそれ以外に処理を分ける
   if (status === '3') {
-    const cells = await readCells(row, sheet, days)
+    const cells = await readCells(row, sheet, date)
     convexEndProcess(cells, name)
   } else {
-    const cells = await readCells(row, sheet, days)
+    const cells = await readCells(row, sheet, date)
     updateProcess(cells, status, name)
   }
 
@@ -72,14 +74,14 @@ const convexFormatConfirm = (status: string): boolean => {
  * [num_cell, over_cell, end_cell, people_cell]をまとめた配列を返す
  * @param row 更新者の行
  * @param sheet 凸報告のシート
- * @param days 日付情報
+ * @param date 日付情報
  * @return cellsの配列
  */
-const readCells = async (row: number, sheet: any, days: convex.Days): Promise<any[]> => {
-  const num_cell = await convex.GetCell(0, days.col, row, sheet)
-  const over_cell = await convex.GetCell(1, days.col, row, sheet)
-  const end_cell = await convex.GetCell(2, days.col, row, sheet)
-  const people_cell = await convex.GetCell(2, days.col, 1, sheet)
+const readCells = async (row: number, sheet: any, date: DateTable): Promise<any[]> => {
+  const num_cell = await convex.GetCell(0, date.col, row, sheet)
+  const over_cell = await convex.GetCell(1, date.col, row, sheet)
+  const end_cell = await convex.GetCell(2, date.col, row, sheet)
+  const people_cell = await convex.GetCell(2, date.col, 1, sheet)
   return [num_cell, over_cell, end_cell, people_cell]
 }
 

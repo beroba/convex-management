@@ -81,11 +81,12 @@ exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var dateTable = __importStar(require("../../io/dateTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var convex = __importStar(require("."));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, user, status, id, sheet, cells, members, row, name, days, cells_1, cells_2;
+    var _a, user, status, id, sheet, cells, members, row, name, date, cells_1, cells_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -108,16 +109,16 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     return [2, false];
                 }
                 name = members.filter(function (m) { return m[1] === id; })[0][0];
-                return [4, convex.GetDays()];
+                return [4, dateTable.TakeDate()];
             case 3:
-                days = _b.sent();
+                date = _b.sent();
                 if (!(status === '3')) return [3, 5];
-                return [4, readCells(row, sheet, days)];
+                return [4, readCells(row, sheet, date)];
             case 4:
                 cells_1 = _b.sent();
                 convexEndProcess(cells_1, name);
                 return [3, 7];
-            case 5: return [4, readCells(row, sheet, days)];
+            case 5: return [4, readCells(row, sheet, date)];
             case 6:
                 cells_2 = _b.sent();
                 updateProcess(cells_2, status, name);
@@ -131,20 +132,20 @@ var convexFormatConfirm = function (status) {
         return status.length === 1 ? true : false;
     return /^[1-3]/.test(status[0]);
 };
-var readCells = function (row, sheet, days) { return __awaiter(void 0, void 0, void 0, function () {
+var readCells = function (row, sheet, date) { return __awaiter(void 0, void 0, void 0, function () {
     var num_cell, over_cell, end_cell, people_cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, convex.GetCell(0, days.col, row, sheet)];
+            case 0: return [4, convex.GetCell(0, date.col, row, sheet)];
             case 1:
                 num_cell = _a.sent();
-                return [4, convex.GetCell(1, days.col, row, sheet)];
+                return [4, convex.GetCell(1, date.col, row, sheet)];
             case 2:
                 over_cell = _a.sent();
-                return [4, convex.GetCell(2, days.col, row, sheet)];
+                return [4, convex.GetCell(2, date.col, row, sheet)];
             case 3:
                 end_cell = _a.sent();
-                return [4, convex.GetCell(2, days.col, 1, sheet)];
+                return [4, convex.GetCell(2, date.col, 1, sheet)];
             case 4:
                 people_cell = _a.sent();
                 return [2, [num_cell, over_cell, end_cell, people_cell]];

@@ -7,11 +7,11 @@ export type BossTable = {
   name: string
 }
 
-// /**
-//  * クラバトの日付情報
-//  */
-// export type Date = {
-//   days: string
-//   date: string
-//   col: string
-// }
+/**
+ * クラバトの日付情報
+ */
+export type DateTable = {
+  num: string
+  day: string
+  col: string
+}

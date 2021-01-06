@@ -61,7 +61,8 @@ exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-var status = __importStar(require("../../io/status"));
+var bossTable = __importStar(require("../../io/bossTable"));
+var dateTable = __importStar(require("../../io/dateTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
@@ -81,13 +82,13 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb manage create category/.test(command): return [3, 1];
                     case /cb manage delete category/.test(command): return [3, 2];
                     case /cb manage set days/.test(command): return [3, 3];
-                    case /cb manage set bossTable/.test(command): return [3, 4];
-                    case /cb manage remove role/.test(command): return [3, 6];
-                    case /cb manage update members/.test(command): return [3, 7];
-                    case /cb manage update sisters/.test(command): return [3, 8];
-                    case /cb manage sheet/.test(command): return [3, 9];
+                    case /cb manage set bossTable/.test(command): return [3, 5];
+                    case /cb manage remove role/.test(command): return [3, 7];
+                    case /cb manage update members/.test(command): return [3, 8];
+                    case /cb manage update sisters/.test(command): return [3, 9];
+                    case /cb manage sheet/.test(command): return [3, 10];
                 }
-                return [3, 10];
+                return [3, 11];
             case 1:
                 {
                     arg = command.replace('/cb manage create category', '');
@@ -103,70 +104,42 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                 }
                 _c.label = 3;
             case 3:
-                {
-                    arg = command.replace('/cb manage set days ', '');
-                    setDate(arg, msg);
-                    return [2, 'Set convex days'];
-                }
-                _c.label = 4;
-            case 4: return [4, status.UpdateBossTable()];
-            case 5:
+                arg = command.replace('/cb manage set days ', '');
+                return [4, dateTable.Update(arg)];
+            case 4:
+                _c.sent();
+                msg.reply('クランバトルの日付を設定したわよ！');
+                return [2, 'Set convex days'];
+            case 5: return [4, bossTable.Update()];
+            case 6:
                 _c.sent();
                 msg.reply('クランバトルのボステーブルを設定したわよ！');
                 return [2, 'Set convex bossTable'];
-            case 6:
+            case 7:
                 {
                     removeRole(msg);
                     return [2, 'Release all remaining convex rolls'];
                 }
-                _c.label = 7;
-            case 7:
+                _c.label = 8;
+            case 8:
                 {
                     updateMembers(msg);
                     return [2, 'Update convex management members'];
                 }
-                _c.label = 8;
-            case 8:
+                _c.label = 9;
+            case 9:
                 {
                     updateSisters(msg);
                     return [2, 'Update convex management sisters'];
                 }
-                _c.label = 9;
-            case 9:
+                _c.label = 10;
+            case 10:
                 {
                     spreadsheetLink(msg);
                     return [2, 'Show spreadsheet link'];
                 }
-                _c.label = 10;
-            case 10: return [2];
-        }
-    });
-}); };
-var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var days, infoSheet;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                days = Array.from(Array(5), function (_, i) { return arg.split('/')[0] + "/" + (Number(arg.split('/')[1]) + i); });
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _a.sent();
-                days.forEach(function (d, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, infoSheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.DATE_COLUMN + (i + 3))];
-                            case 1:
-                                cell = _a.sent();
-                                return [4, cell.setValue(d)];
-                            case 2:
-                                _a.sent();
-                                return [2];
-                        }
-                    });
-                }); });
-                msg.reply('クランバトルの日付を設定したわよ！');
-                return [2];
+                _c.label = 11;
+            case 11: return [2];
         }
     });
 }); };

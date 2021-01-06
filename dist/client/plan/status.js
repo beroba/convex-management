@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-var status = __importStar(require("../../io/status"));
+var bossTable = __importStar(require("../../io/bossTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -71,7 +71,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         switch (_c.label) {
             case 0:
                 res = planObject(msg);
-                return [4, status.TakeBossName(res.alpha)];
+                return [4, bossTable.TakeName(res.alpha)];
             case 1:
                 name = _c.sent();
                 if (!name)

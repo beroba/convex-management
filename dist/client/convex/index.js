@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -54,39 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
-exports.GetMemberRow = exports.GetCell = exports.GetDays = void 0;
-var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
+exports.GetMemberRow = exports.GetCell = void 0;
 var alphabet_to_number_1 = require("alphabet-to-number");
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.GetDays = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, days, day;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
-            case 2:
-                cells = _a.sent();
-                days = pieces_each_1["default"](cells, 3).map(function (c) { return ({
-                    number: c[0],
-                    date: c[1].split('/').map(Number).join('/'),
-                    col: c[2]
-                }); });
-                day = days.find(function (d) { return d.date === mmdd(); });
-                return [2, day ? day : days[5]];
-        }
-    });
-}); };
 exports.GetCell = function (n, col, row, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2, sheet.getCell("" + alphabet_to_number_1.AtoA(col, n) + row)];
     });
 }); };
 exports.GetMemberRow = function (members, id) { return members.map(function (v) { return v[1]; }).indexOf(id) + 3; };
-var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };

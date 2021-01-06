@@ -77,7 +77,7 @@ exports.__esModule = true;
 exports.SetSeparate = exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
-var status = __importStar(require("../../io/status"));
+var bossTable = __importStar(require("../../io/bossTable"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -183,15 +183,15 @@ var settingPermissions = function (msg) {
     ];
 };
 var channelNameList = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var month, bossTable, _a, a, b, c, d, e;
+    var month, table, _a, a, b, c, d, e;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 month = new Date().getMonth() + 1 + "\u6708";
-                return [4, status.FetchBossTable()];
+                return [4, bossTable.Fetch()];
             case 1:
-                bossTable = _b.sent();
-                _a = __read(bossTable.map(function (t) { return t.name; }), 5), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4];
+                table = _b.sent();
+                _a = __read(table.map(function (t) { return t.name; }), 5), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4];
                 return [2, [
                         { name: month + "-\u51F8\u30EB\u30FC\u30C8\u6848", row: 0, id: '' },
                         { name: month + "-\u691C\u8A3C\u7DCF\u5408", row: 0, id: '' },

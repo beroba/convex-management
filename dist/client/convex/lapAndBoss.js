@@ -77,7 +77,7 @@ exports.__esModule = true;
 exports.CalCurrent = exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = exports.StageNames = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
-var status = __importStar(require("../../io/status"));
+var bossTable = __importStar(require("../../io/bossTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("../plan/list"));
@@ -96,7 +96,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _c.sent();
-                return [4, status.TakeBossName(alpha)];
+                return [4, bossTable.TakeName(alpha)];
             case 2:
                 name = _c.sent();
                 _b = __read(readCurrentCell(sheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
@@ -241,7 +241,7 @@ var readForwardDate = function (lap_cell, num_cell) { return __awaiter(void 0, v
                 num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
-                return [4, status.TakeBossName(alphabet_to_number_1.NtoA(n))];
+                return [4, bossTable.TakeName(alphabet_to_number_1.NtoA(n))];
             case 3:
                 name = _a.sent();
                 return [2, [n ? lap : Number(lap) + 1, name, numberList[n]]];
@@ -260,7 +260,7 @@ var readReturnDate = function (lap_cell, num_cell) { return __awaiter(void 0, vo
                 num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 0 ? 4 : n - 1); })(numberList.indexOf(num));
-                return [4, status.TakeBossName(alphabet_to_number_1.NtoA(n))];
+                return [4, bossTable.TakeName(alphabet_to_number_1.NtoA(n))];
             case 3:
                 name = _a.sent();
                 return [2, [n === 4 ? Number(lap) - 1 : lap, name, numberList[n]]];

@@ -1,7 +1,7 @@
 import {NtoA} from 'alphabet-to-number'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
-import * as status from '../../io/status'
+import * as bossTable from '../../io/bossTable'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from '../convex/lapAndBoss'
@@ -12,7 +12,7 @@ import * as lapAndBoss from '../convex/lapAndBoss'
  */
 export const Output = async (alpha: string) => {
   const list = await readPlanList()
-  const name = await status.TakeBossName(alpha)
+  const name = await bossTable.TakeName(alpha)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(`${name}\n` + '```\n' + `${createPlanList(alpha, list)}\n` + '```')
@@ -57,7 +57,7 @@ const createAllPlanText = async (): Promise<string> => {
     lapAndBoss.StageNames.map(async (_name, i) => {
       // ボス番号を取得
       const alpha = NtoA(i + 1)
-      const name = await status.TakeBossName(alpha)
+      const name = await bossTable.TakeName(alpha)
       // const HP = Settings.STAGE_HP[current?.stage || ''][name]
 
       return `${name}\n` + '```\n' + `${createPlanList(alpha, list)}\n` + '```'

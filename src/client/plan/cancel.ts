@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {NtoA} from 'alphabet-to-number'
-import * as status from '../../io/status'
+import * as bossTable from '../../io/bossTable'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from './list'
@@ -208,7 +208,7 @@ const checkBossNumber = async (content: string): Promise<string> => {
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // ボス名からボス番号を取得
-  const alpha = await status.TakeBossAlpha(content)
+  const alpha = await bossTable.TakeAlpha(content)
 
   // ボス番号が合った場合を返す
   if (alpha) return alpha

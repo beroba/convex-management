@@ -10,17 +10,23 @@ export const Ready = () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('きゃるきゃるーん')
 
-  // /*
+  /*
   ;(async () => {
     const c = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-    c.send('日付テーブル `daysTable`')
-    // const msg = await c.messages.fetch('793374464422576139')
-    // msg.edit('ボステーブル `bossTable`')
+    //     const t = `\`\`\`json
+    // [
+    //   {"days": "", "date": "", "col": ""},
+    //   {"days": "", "date": "", "col": ""},
+    //   {"days": "", "date": "", "col": ""},
+    //   {"days": "", "date": "", "col": ""},
+    //   {"days": "", "date": "", "col": ""},
+    //   {"days": "", "date": "", "col": ""}
+    // ]
+    // \`\`\``
+    //     c.send(t)
 
-    // const bosstable = await io.Fetch<bosstable[]>('793374466402418708')
-    // console.log(bosstable)
-    // bosstable[0].name = 'ゴブリングレート'
-    // await io.Update('793374466402418708', bosstable)
+    const msg = await c.messages.fetch('796393409119780874')
+    msg.edit('ボステーブル `dateTable`')
   })()
   /**/
 

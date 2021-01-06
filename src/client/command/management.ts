@@ -2,7 +2,8 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
-import * as status from '../../io/status'
+import * as bossTable from '../../io/bossTable'
+import * as dateTable from '../../io/dateTable'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as category from './category'
@@ -36,13 +37,16 @@ export const Management = async (command: string, msg: Discord.Message): Promise
 
     case /cb manage set days/.test(command): {
       const arg = command.replace('/cb manage set days ', '')
-      setDate(arg, msg)
+      // 日付テーブルを更新する
+      await dateTable.Update(arg)
+      msg.reply('クランバトルの日付を設定したわよ！')
+
       return 'Set convex days'
     }
 
     case /cb manage set bossTable/.test(command): {
       // ボステーブルを更新する
-      await status.UpdateBossTable()
+      await bossTable.Update()
       msg.reply('クランバトルのボステーブルを設定したわよ！')
 
       return 'Set convex bossTable'
@@ -68,27 +72,6 @@ export const Management = async (command: string, msg: Discord.Message): Promise
       return 'Show spreadsheet link'
     }
   }
-}
-
-/**
- * クランバトルの日付を引数に渡された開始日から設定する
- * @param arg 開始日の日付
- * @param msg DiscordからのMessage
- */
-const setDate = async (arg: string, msg: Discord.Message) => {
-  // 開始日から順番に日付の配列を作成
-  const days = Array.from(Array(5), (_, i) => `${arg.split('/')[0]}/${Number(arg.split('/')[1]) + i}`)
-
-  // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 日付を更新
-  days.forEach(async (d, i) => {
-    const cell = await infoSheet.getCell(`${Settings.INFORMATION_SHEET.DATE_COLUMN}${i + 3}`)
-    await cell.setValue(d)
-  })
-
-  msg.reply('クランバトルの日付を設定したわよ！')
 }
 
 /**

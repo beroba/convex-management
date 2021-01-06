@@ -1,6 +1,6 @@
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
-import * as status from '../../io/status'
+import * as bossTable from '../../io/bossTable'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from '../plan/list'
@@ -36,7 +36,7 @@ export const Update = async (arg: string): Promise<boolean> => {
 
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const name = await status.TakeBossName(alpha)
+  const name = await bossTable.TakeName(alpha)
 
   // 現在の周回数とボスを更新
   const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
@@ -213,7 +213,7 @@ const readForwardDate = async (lap_cell: any, num_cell: any): Promise<[number, O
   const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
 
   // 周回数とボスとボス番号を返す
-  const name = await status.TakeBossName(NtoA(n))
+  const name = await bossTable.TakeName(NtoA(n))
   return [n ? lap : Number(lap) + 1, name, numberList[n]]
 }
 
@@ -234,7 +234,7 @@ const readReturnDate = async (lap_cell: any, num_cell: any): Promise<[number, Op
   const n = (n => (n === 0 ? 4 : n - 1))(numberList.indexOf(num))
 
   // 周回数とボスとボス番号を返す
-  const name = await status.TakeBossName(NtoA(n))
+  const name = await bossTable.TakeName(NtoA(n))
   return [n === 4 ? Number(lap) - 1 : lap, name, numberList[n]]
 }
 

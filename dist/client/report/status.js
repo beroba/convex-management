@@ -61,12 +61,13 @@ exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var dateTable = __importStar(require("../../io/dateTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var convex = __importStar(require("../convex"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, members, row, days, num_cell, over_cell, end_cell, hist_cell, over, content, end;
+    var sheet, cells, members, row, date, num_cell, over_cell, end_cell, hist_cell, over, content, end;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -78,19 +79,19 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
                 row = convex.GetMemberRow(members, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '');
-                return [4, convex.GetDays()];
+                return [4, dateTable.TakeDate()];
             case 3:
-                days = _b.sent();
-                return [4, convex.GetCell(0, days.col, row, sheet)];
+                date = _b.sent();
+                return [4, convex.GetCell(0, date.col, row, sheet)];
             case 4:
                 num_cell = _b.sent();
-                return [4, convex.GetCell(1, days.col, row, sheet)];
+                return [4, convex.GetCell(1, date.col, row, sheet)];
             case 5:
                 over_cell = _b.sent();
-                return [4, convex.GetCell(2, days.col, row, sheet)];
+                return [4, convex.GetCell(2, date.col, row, sheet)];
             case 6:
                 end_cell = _b.sent();
-                return [4, convex.GetCell(3, days.col, row, sheet)];
+                return [4, convex.GetCell(3, date.col, row, sheet)];
             case 7:
                 hist_cell = _b.sent();
                 if (end_cell.getValue())
@@ -104,7 +105,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 8:
                 end = _b.sent();
                 if (end) {
-                    convexEndProcess(end_cell, sheet, days, msg);
+                    convexEndProcess(end_cell, sheet, date, msg);
                 }
                 else {
                     updateProcess(num_cell, over_cell, msg);
@@ -156,7 +157,7 @@ var isThreeConvex = function (num_cell, over_cell) { return __awaiter(void 0, vo
         return [2, true];
     });
 }); };
-var convexEndProcess = function (end_cell, sheet, days, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var convexEndProcess = function (end_cell, sheet, date, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var people_cell, n;
     var _a;
     return __generator(this, function (_b) {
@@ -167,7 +168,7 @@ var convexEndProcess = function (end_cell, sheet, days, msg) { return __awaiter(
                 return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 2:
                 _b.sent();
-                return [4, convex.GetCell(2, days.col, 1, sheet)];
+                return [4, convex.GetCell(2, date.col, 1, sheet)];
             case 3:
                 people_cell = _b.sent();
                 n = people_cell.getValue();

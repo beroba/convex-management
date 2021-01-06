@@ -73,7 +73,7 @@ exports.AllComplete = exports.Report = exports.Delete = exports.Already = void 0
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-var status = __importStar(require("../../io/status"));
+var bossTable = __importStar(require("../../io/bossTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
@@ -273,7 +273,7 @@ var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, status.TakeBossAlpha(content)];
+                return [4, bossTable.TakeAlpha(content)];
             case 2:
                 alpha = _a.sent();
                 if (alpha)

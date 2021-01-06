@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
-import * as status from '../../io/status'
+import * as bossTable from '../../io/bossTable'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 
@@ -132,10 +132,10 @@ const channelNameList = async (): Promise<ChannelInfo[]> => {
   const month = `${new Date().getMonth() + 1}月`
 
   // キャルステータスからボステーブルを取得
-  const bossTable = await status.FetchBossTable()
+  const table = await bossTable.Fetch()
 
   // ボスの名前を取得
-  const [a, b, c, d, e] = bossTable.map(t => t.name)
+  const [a, b, c, d, e] = table.map(t => t.name)
 
   // prettier-ignore
   return [

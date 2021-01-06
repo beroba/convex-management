@@ -62,21 +62,21 @@ exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var dateTable = __importStar(require("../../io/dateTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("./lapAndBoss"));
-var convex = __importStar(require("."));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, days, range, status, _a, cells, members, list, text, situation, msg, history;
+    var sheet, date, range, status, _a, cells, members, list, text, situation, msg, history;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _b.sent();
-                return [4, convex.GetDays()];
+                return [4, dateTable.TakeDate()];
             case 2:
-                days = _b.sent();
-                range = days.col + "3:" + alphabet_to_number_1.AtoA(days.col, 1) + "32";
+                date = _b.sent();
+                range = date.col + "3:" + alphabet_to_number_1.AtoA(date.col, 1) + "32";
                 _a = pieces_each_1["default"];
                 return [4, spreadsheet.GetCells(sheet, range)];
             case 3:
@@ -111,14 +111,14 @@ var mergeList = function (status, members) {
         .filter(function (v) { return v.member !== ''; });
 };
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, days, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+    var time, date, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 time = getCurrentDate();
-                return [4, convex.GetDays()];
+                return [4, dateTable.TakeDate()];
             case 1:
-                days = _a.sent();
+                date = _a.sent();
                 return [4, lapAndBoss.GetCurrent()];
             case 2:
                 state = _a.sent();
@@ -131,7 +131,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 凸2 = userSorting(list, 2, 0);
                 持越3 = userSorting(list, 3, 1);
                 凸3 = userSorting(list, 3, 0);
-                return [2, ("`" + time + "` " + days.number + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
                         (current + " `" + remaining + "`\n") +
                         '```\n' +
                         ("\u672A\u51F8: " + 未凸 + "\n") +
