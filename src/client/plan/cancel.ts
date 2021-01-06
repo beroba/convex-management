@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {NtoA} from 'alphabet-to-number'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from './list'
@@ -205,15 +206,12 @@ const deleteBossRole = (cells: string[], msg: Discord.Message) => {
 const checkBossNumber = async (content: string): Promise<string> => {
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
-  // ボス名に一致するか確認
-  const name = PiecesEach(cells, 2)
-    .filter(v => !/^,+$/.test(v.toString()))
-    .filter(v => ~content.indexOf(v[1]))
+  // ボス名からボス番号を取得
+  const alpha = await status.TakeBossAlpha(content)
 
-  // 一致していればボス番号を返す
-  if (name.length) return name[0][0]
+  // ボス番号が合った場合を返す
+  if (alpha) return alpha
 
   // /^k|kill/を取り除いた先頭文字
   const num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0]

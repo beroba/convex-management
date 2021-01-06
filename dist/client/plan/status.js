@@ -60,30 +60,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var res, _a, _b;
-    var _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var res, name, _a;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 res = planObject(msg);
-                _a = res;
-                return [4, getBossName(res.num)];
+                return [4, status.TakeBossName(res.alpha)];
             case 1:
-                _a.boss = _d.sent();
-                _b = res;
+                name = _c.sent();
+                if (!name)
+                    return [2];
+                res.boss = name;
+                _a = res;
                 return [4, msg.reply(res.boss + "\u3092\u4E88\u5B9A\u3057\u305F\u308F\u3088\uFF01")];
             case 2:
-                _b.cal = (_d.sent()).id;
+                _a.cal = (_c.sent()).id;
                 return [4, fetchPlan(res)];
             case 3:
-                _d.sent();
+                _c.sent();
                 msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
-                (_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.add(const_settings_1["default"].BOSS_ROLE_ID[res.num]);
+                (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(const_settings_1["default"].BOSS_ROLE_ID[res.alpha]);
                 return [2];
         }
     });
@@ -96,25 +98,11 @@ var planObject = function (msg) {
         cal: '',
         member: util.GetUserName(msg.member),
         id: ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '',
-        num: alphabet_to_number_1.NtoA(content[0]),
+        alpha: alphabet_to_number_1.NtoA(content[0]),
         boss: '',
         message: content.slice(1).trim()
     };
 };
-var getBossName = function (num) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
-        }
-    });
-}); };
 var fetchPlan = function (res) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells;
     return __generator(this, function (_a) {

@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import * as status from '../../io/status'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
 
@@ -127,29 +128,30 @@ const settingPermissions = (msg: Discord.Message): Discord.OverwriteResolvable[]
  * @return チャンネル名のリスト
  */
 const channelNameList = async (): Promise<ChannelInfo[]> => {
-  // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+  // 現在の月を取得
+  const month = `${new Date().getMonth() + 1}月`
+
+  // キャルステータスからボステーブルを取得
+  const bossTable = await status.FetchBossTable()
 
   // ボスの名前を取得
-  const [a = 'a', b = 'b', c = 'c', d = 'd', e = 'e'] = PiecesEach(cells, 2).map(v => v[1])
+  const [a, b, c, d, e] = bossTable.map(t => t.name)
 
   // prettier-ignore
   return [
-    {name: '検証総合',     row: 0,  id: ''},
-    {name: '凸ルート案',   row: 0,  id: ''},
-    {name: '編成・tl質問', row: 0,  id: ''},
-    {name: `${a}`,         row: 3,  id: ''},
-    {name: `${a}-オート`,  row: 4,  id: ''},
-    {name: `${b}`,         row: 5,  id: ''},
-    {name: `${b}-オート`,  row: 6,  id: ''},
-    {name: `${c}`,         row: 7,  id: ''},
-    {name: `${c}-オート`,  row: 8,  id: ''},
-    {name: `${d}`,         row: 9,  id: ''},
-    {name: `${d}-オート`,  row: 10, id: ''},
-    {name: `${e}`,         row: 11, id: ''},
-    {name: `${e}-オート`,  row: 12, id: ''},
-    {name: '持ち越し用',   row: 0,  id: ''},
+    {name: `${month}-凸ルート案`, row: 0,  id: ''},
+    {name: `${month}-検証総合`,   row: 0,  id: ''},
+    {name: `${a}`,                row: 3,  id: ''},
+    {name: `${a}-オート`,         row: 4,  id: ''},
+    {name: `${b}`,                row: 5,  id: ''},
+    {name: `${b}-オート`,         row: 6,  id: ''},
+    {name: `${c}`,                row: 7,  id: ''},
+    {name: `${c}-オート`,         row: 8,  id: ''},
+    {name: `${d}`,                row: 9,  id: ''},
+    {name: `${d}-オート`,         row: 10, id: ''},
+    {name: `${e}`,                row: 11, id: ''},
+    {name: `${e}-オート`,         row: 12, id: ''},
+    {name: '持ち越し編成',        row: 0,  id: ''},
   ]
 }
 

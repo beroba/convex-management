@@ -1,9 +1,11 @@
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as list from '../plan/list'
 import {NtoA} from 'alphabet-to-number'
+import Option from 'type-of-option'
 
 /**
  * 現在のボスの情報
@@ -26,27 +28,27 @@ export const StageNames = ['first', 'second', 'third', 'fourth', 'fifth']
  */
 export const Update = async (arg: string): Promise<boolean> => {
   // 周回数とボス番号を取得
-  const [lap, num] = arg.replace(/　/g, ' ').split(' ')
+  const [lap, alpha] = arg.replace(/　/g, ' ').split(' ')
 
   // 書式が違う場合は終了
   if (!/\d/.test(lap)) return false
-  if (!/[a-e]/i.test(num)) return false
+  if (!/[a-e]/i.test(alpha)) return false
 
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const boss = await readBossName(sheet, num)
+  const name = await status.TakeBossName(alpha)
 
   // 現在の周回数とボスを更新
   const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
   await spreadsheet.SetValue(lap_cell, lap)
-  await spreadsheet.SetValue(boss_cell, boss)
-  await spreadsheet.SetValue(num_cell, num)
+  await spreadsheet.SetValue(boss_cell, name)
+  await spreadsheet.SetValue(num_cell, alpha)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
   // キャルのボスロールを切り替える
-  switchBossRole(num)
+  switchBossRole(alpha)
 
   // 段階数の区切りを付ける
   stageConfirm()
@@ -63,7 +65,7 @@ export const Next = async () => {
 
   // 設定するセルと値を取得
   const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
-  const [lap, boss, num] = await readForwardDate(lap_cell, num_cell, sheet)
+  const [lap, boss, num] = await readForwardDate(lap_cell, num_cell)
 
   // 現在の周回数とボスを更新
   await spreadsheet.SetValue(lap_cell, lap)
@@ -89,7 +91,7 @@ export const Previous = async () => {
 
   // 設定するセルと値を取得
   const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
-  const [lap, boss, num] = await readReturnDate(lap_cell, num_cell, sheet)
+  const [lap, boss, num] = await readReturnDate(lap_cell, num_cell)
 
   // 現在の周回数とボスを更新
   await spreadsheet.SetValue(lap_cell, lap)
@@ -188,17 +190,6 @@ const switchBossRole = (num: string) => {
 }
 
 /**
- * 情報シートから現在のボスの名前を取得する
- * @param sheet 情報のシート
- * @param num ボスの番号
- * @return ボスの名前
- */
-const readBossName = async (sheet: any, num: string): Promise<string> => {
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-  return PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
-}
-
-/**
  * 情報シートの現在の周回数とボスのセルを取得する
  * @param sheet 情報のシート
  * @return セルの一覧
@@ -210,10 +201,9 @@ const readCurrentCell = (sheet: any): any[] =>
  * 情報シートの現在の周回数とボスから次に進める値を取得する
  * @param lap_cell 周回数のセル
  * @param num_cell ボス番号のセル
- * @param sheet 情報のシート
  * @return 設定する値
  */
-const readForwardDate = async (lap_cell: any, num_cell: any, sheet: any): Promise<[number, string, string]> => {
+const readForwardDate = async (lap_cell: any, num_cell: any): Promise<[number, Option<string>, string]> => {
   // 現在の周回数とボス番号を取得
   const lap = await spreadsheet.GetValue(lap_cell)
   const num = await spreadsheet.GetValue(num_cell)
@@ -223,8 +213,8 @@ const readForwardDate = async (lap_cell: any, num_cell: any, sheet: any): Promis
   const n = (n => (n === 4 ? 0 : n + 1))(numberList.indexOf(num))
 
   // 周回数とボスとボス番号を返す
-  const boss = await readBossName(sheet, numberList[n])
-  return [n ? lap : Number(lap) + 1, boss, numberList[n]]
+  const name = await status.TakeBossName(NtoA(n))
+  return [n ? lap : Number(lap) + 1, name, numberList[n]]
 }
 
 /**
@@ -234,7 +224,7 @@ const readForwardDate = async (lap_cell: any, num_cell: any, sheet: any): Promis
  * @param sheet 情報のシート
  * @return 設定する値
  */
-const readReturnDate = async (lap_cell: any, num_cell: any, sheet: any): Promise<[number, string, string]> => {
+const readReturnDate = async (lap_cell: any, num_cell: any): Promise<[number, Option<string>, string]> => {
   // 現在の周回数とボス番号を取得
   const lap = await spreadsheet.GetValue(lap_cell)
   const num = await spreadsheet.GetValue(num_cell)
@@ -244,8 +234,8 @@ const readReturnDate = async (lap_cell: any, num_cell: any, sheet: any): Promise
   const n = (n => (n === 0 ? 4 : n - 1))(numberList.indexOf(num))
 
   // 周回数とボスとボス番号を返す
-  const boss = await readBossName(sheet, numberList[n])
-  return [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]
+  const name = await status.TakeBossName(NtoA(n))
+  return [n === 4 ? Number(lap) - 1 : lap, name, numberList[n]]
 }
 
 /**

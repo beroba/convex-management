@@ -1,11 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
+import * as status from '../../io/status'
 import * as util from '../../util'
-import * as io from '../../util/io'
-import {BossTable} from '../../util/type'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as category from './category'
 
@@ -15,7 +13,7 @@ import * as category from './category'
  * @param msg DiscordからのMessage
  * @return 実行したコマンドの結果
  */
-export const Management = (command: string, msg: Discord.Message): Option<string> => {
+export const Management = async (command: string, msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.MANAGEMENT, msg.channel)) return
 
@@ -43,7 +41,10 @@ export const Management = (command: string, msg: Discord.Message): Option<string
     }
 
     case /cb manage set bossTable/.test(command): {
-      setBossTable()
+      // ボステーブルを更新する
+      await status.UpdateBossTable()
+      msg.reply('クランバトルのボステーブルを設定したわよ！')
+
       return 'Set convex bossTable'
     }
 
@@ -88,27 +89,6 @@ const setDate = async (arg: string, msg: Discord.Message) => {
   })
 
   msg.reply('クランバトルの日付を設定したわよ！')
-}
-
-/**
- * ボステーブルを設定する
- */
-const setBossTable = async () => {
-  // 情報のシートを取得
-  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-
-  // スプレッドシートからボステーブルを作成する
-  const bossTable: BossTable[] = PiecesEach(cells, 2)
-    .filter(v => !/^,+$/.test(v.toString()))
-    .map((v, i) => ({
-      num: String(i + 1),
-      alpha: v[0],
-      name: v[1],
-    }))
-
-  // キャルステータスを更新する
-  io.Update(Settings.CAL_STATUS_ID.BOSSTABLE, bossTable)
 }
 
 /**

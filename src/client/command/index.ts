@@ -8,7 +8,7 @@ import {ClanBattle} from './clanbattle'
  * `/`から始まるコマンドの処理をする
  * @param msg DiscordからのMessage
  */
-export const Command = (msg: Discord.Message) => {
+export const Command = async (msg: Discord.Message) => {
   // botのメッセージは実行しない
   if (msg.author.bot) return
 
@@ -21,6 +21,6 @@ export const Command = (msg: Discord.Message) => {
   if (comment) return console.log(comment)
 
   // 運営管理用コマンドを実行
-  comment = Management(content, msg)
+  comment = await Management(content, msg)
   if (comment) return console.log(comment)
 }

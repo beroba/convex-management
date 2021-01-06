@@ -1,4 +1,4 @@
-import * as util from './'
+import * as util from '../util'
 import Settings from 'const-settings'
 
 /**

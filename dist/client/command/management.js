@@ -60,57 +60,88 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
-var io = __importStar(require("../../util/io"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
-exports.Management = function (command, msg) {
-    var _a;
-    if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
-        return;
-    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return const_settings_1["default"].COMMAND_ROLE.some(function (v) { return v === r.id; }); });
-    if (!isRole)
-        return;
-    switch (true) {
-        case /cb manage create category/.test(command): {
-            var arg = command.replace('/cb manage create category', '');
-            category.Create(arg, msg);
-            return 'Create ClanBattle category';
+exports.Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var isRole, _a, arg, arg, arg;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.MANAGEMENT, msg.channel))
+                    return [2];
+                isRole = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.some(function (r) { return const_settings_1["default"].COMMAND_ROLE.some(function (v) { return v === r.id; }); });
+                if (!isRole)
+                    return [2];
+                _a = true;
+                switch (_a) {
+                    case /cb manage create category/.test(command): return [3, 1];
+                    case /cb manage delete category/.test(command): return [3, 2];
+                    case /cb manage set days/.test(command): return [3, 3];
+                    case /cb manage set bossTable/.test(command): return [3, 4];
+                    case /cb manage remove role/.test(command): return [3, 6];
+                    case /cb manage update members/.test(command): return [3, 7];
+                    case /cb manage update sisters/.test(command): return [3, 8];
+                    case /cb manage sheet/.test(command): return [3, 9];
+                }
+                return [3, 10];
+            case 1:
+                {
+                    arg = command.replace('/cb manage create category', '');
+                    category.Create(arg, msg);
+                    return [2, 'Create ClanBattle category'];
+                }
+                _c.label = 2;
+            case 2:
+                {
+                    arg = command.replace('/cb manage delete category', '');
+                    category.Delete(arg, msg);
+                    return [2, 'Delete ClanBattle category'];
+                }
+                _c.label = 3;
+            case 3:
+                {
+                    arg = command.replace('/cb manage set days ', '');
+                    setDate(arg, msg);
+                    return [2, 'Set convex days'];
+                }
+                _c.label = 4;
+            case 4: return [4, status.UpdateBossTable()];
+            case 5:
+                _c.sent();
+                msg.reply('クランバトルのボステーブルを設定したわよ！');
+                return [2, 'Set convex bossTable'];
+            case 6:
+                {
+                    removeRole(msg);
+                    return [2, 'Release all remaining convex rolls'];
+                }
+                _c.label = 7;
+            case 7:
+                {
+                    updateMembers(msg);
+                    return [2, 'Update convex management members'];
+                }
+                _c.label = 8;
+            case 8:
+                {
+                    updateSisters(msg);
+                    return [2, 'Update convex management sisters'];
+                }
+                _c.label = 9;
+            case 9:
+                {
+                    spreadsheetLink(msg);
+                    return [2, 'Show spreadsheet link'];
+                }
+                _c.label = 10;
+            case 10: return [2];
         }
-        case /cb manage delete category/.test(command): {
-            var arg = command.replace('/cb manage delete category', '');
-            category.Delete(arg, msg);
-            return 'Delete ClanBattle category';
-        }
-        case /cb manage set days/.test(command): {
-            var arg = command.replace('/cb manage set days ', '');
-            setDate(arg, msg);
-            return 'Set convex days';
-        }
-        case /cb manage set bossTable/.test(command): {
-            setBossTable();
-            return 'Set convex bossTable';
-        }
-        case /cb manage remove role/.test(command): {
-            removeRole(msg);
-            return 'Release all remaining convex rolls';
-        }
-        case /cb manage update members/.test(command): {
-            updateMembers(msg);
-            return 'Update convex management members';
-        }
-        case /cb manage update sisters/.test(command): {
-            updateSisters(msg);
-            return 'Update convex management sisters';
-        }
-        case /cb manage sheet/.test(command): {
-            spreadsheetLink(msg);
-            return 'Show spreadsheet link';
-        }
-    }
-};
+    });
+}); };
 var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var days, infoSheet;
     return __generator(this, function (_a) {
@@ -135,28 +166,6 @@ var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fun
                     });
                 }); });
                 msg.reply('クランバトルの日付を設定したわよ！');
-                return [2];
-        }
-    });
-}); };
-var setBossTable = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, bossTable;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _a.sent();
-                bossTable = pieces_each_1["default"](cells, 2)
-                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
-                    .map(function (v, i) { return ({
-                    num: String(i + 1),
-                    alpha: v[0],
-                    name: v[1]
-                }); });
-                io.Update(const_settings_1["default"].CAL_STATUS_ID.BOSSTABLE, bossTable);
                 return [2];
         }
     });

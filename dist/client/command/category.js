@@ -77,6 +77,7 @@ exports.__esModule = true;
 exports.SetSeparate = exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var status = __importStar(require("../../io/status"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -182,20 +183,18 @@ var settingPermissions = function (msg) {
     ];
 };
 var channelNameList = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, _a, _b, a, _c, b, _d, c, _e, d, _f, e;
-    return __generator(this, function (_g) {
-        switch (_g.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+    var month, bossTable, _a, a, b, c, d, e;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                month = new Date().getMonth() + 1 + "\u6708";
+                return [4, status.FetchBossTable()];
             case 1:
-                infoSheet = _g.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _g.sent();
-                _a = __read(pieces_each_1["default"](cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
+                bossTable = _b.sent();
+                _a = __read(bossTable.map(function (t) { return t.name; }), 5), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4];
                 return [2, [
-                        { name: '検証総合', row: 0, id: '' },
-                        { name: '凸ルート案', row: 0, id: '' },
-                        { name: '編成・tl質問', row: 0, id: '' },
+                        { name: month + "-\u51F8\u30EB\u30FC\u30C8\u6848", row: 0, id: '' },
+                        { name: month + "-\u691C\u8A3C\u7DCF\u5408", row: 0, id: '' },
                         { name: "" + a, row: 3, id: '' },
                         { name: a + "-\u30AA\u30FC\u30C8", row: 4, id: '' },
                         { name: "" + b, row: 5, id: '' },
@@ -206,7 +205,7 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
                         { name: d + "-\u30AA\u30FC\u30C8", row: 10, id: '' },
                         { name: "" + e, row: 11, id: '' },
                         { name: e + "-\u30AA\u30FC\u30C8", row: 12, id: '' },
-                        { name: '持ち越し用', row: 0, id: '' },
+                        { name: '持ち越し編成', row: 0, id: '' },
                     ]];
         }
     });

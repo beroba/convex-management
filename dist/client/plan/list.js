@@ -62,22 +62,22 @@ exports.PlanOnly = exports.SituationEdit = exports.AllOutput = exports.Output = 
 var alphabet_to_number_1 = require("alphabet-to-number");
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
-exports.Output = function (num) { return __awaiter(void 0, void 0, void 0, function () {
-    var list, table, boss, channel;
+exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+    var list, name, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, readPlanList()];
             case 1:
                 list = _a.sent();
-                return [4, readBossTable()];
+                return [4, status.TakeBossName(alpha)];
             case 2:
-                table = _a.sent();
-                boss = takeBossName(num, table);
+                name = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(boss + "\n" + '```\n' + (createPlanList(num, list) + "\n") + '```');
+                channel.send(name + "\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```');
                 return [2];
         }
     });
@@ -113,22 +113,28 @@ exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var list, table, current;
+    var list, planTexts;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, readPlanList()];
             case 1:
                 list = _a.sent();
-                return [4, readBossTable()];
+                return [4, Promise.all(lapAndBoss.StageNames.map(function (_name, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var alpha, name;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    alpha = alphabet_to_number_1.NtoA(i + 1);
+                                    return [4, status.TakeBossName(alpha)];
+                                case 1:
+                                    name = _a.sent();
+                                    return [2, name + "\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```'];
+                            }
+                        });
+                    }); }))];
             case 2:
-                table = _a.sent();
-                current = lapAndBoss.CalCurrent();
-                return [2, lapAndBoss.StageNames.map(function (name, i) {
-                        var num = alphabet_to_number_1.NtoA(i);
-                        var boss = takeBossName(num, table);
-                        var HP = const_settings_1["default"].STAGE_HP[(current === null || current === void 0 ? void 0 : current.stage) || ''][name];
-                        return boss + " `" + HP + "`\n" + '```\n' + (createPlanList(num, list) + "\n") + '```';
-                    }).join('')];
+                planTexts = _a.sent();
+                return [2, planTexts.join('')];
         }
     });
 }); };
@@ -161,23 +167,6 @@ var readPlanList = function () { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
-var readBossTable = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return !/^,+$/.test(v.toString()); })];
-        }
-    });
-}); };
-var takeBossName = function (num, table) {
-    return table.filter(function (v) { return v[0] === num.toLowerCase(); })[0][1];
-};
 var createPlanList = function (num, list) {
     var text = list
         .filter(function (l) { return l[5] === num; })

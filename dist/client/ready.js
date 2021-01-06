@@ -67,17 +67,11 @@ exports.Ready = function () {
     var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
     channel.send('きゃるきゃるーん');
     (function () { return __awaiter(void 0, void 0, void 0, function () {
-        var c, msg;
+        var c;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    c = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CAL_STATUS);
-                    return [4, c.messages.fetch('793374464422576139')];
-                case 1:
-                    msg = _a.sent();
-                    msg.edit('ボステーブル `bossTable`');
-                    return [2];
-            }
+            c = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CAL_STATUS);
+            c.send('日付テーブル `daysTable`');
+            return [2];
         });
     }); })();
     console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");

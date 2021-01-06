@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
 import {NtoA, AtoA} from 'alphabet-to-number'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
@@ -13,7 +13,7 @@ type Plan = {
   cal: string
   member: string
   id: string
-  num: string
+  alpha: string
   boss: string
   message: string
 }
@@ -27,7 +27,9 @@ export const Update = async (msg: Discord.Message) => {
   const res = planObject(msg)
 
   // ボス番号からボス名を取得
-  res.boss = await getBossName(res.num)
+  const name = await status.TakeBossName(res.alpha)
+  if (!name) return
+  res.boss = name
 
   // 予定したボスを報告し、報告したキャルのメッセージIDを取得
   res.cal = (await msg.reply(`${res.boss}を予定したわよ！`)).id
@@ -39,7 +41,7 @@ export const Update = async (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.KANRYOU)
 
   // ボス番号のロールを付与
-  msg.member?.roles.add(Settings.BOSS_ROLE_ID[res.num])
+  msg.member?.roles.add(Settings.BOSS_ROLE_ID[res.alpha])
 }
 
 /**
@@ -56,24 +58,10 @@ const planObject = (msg: Discord.Message): Plan => {
     cal: '',
     member: util.GetUserName(msg.member),
     id: msg.member?.id || '',
-    num: NtoA(content[0]),
+    alpha: NtoA(content[0]),
     boss: '',
     message: content.slice(1).trim(),
   }
-}
-
-/**
- * ボス番号からボス名を取得
- * @param num ボス番号
- * @return ボス名
- */
-const getBossName = async (num: string): Promise<string> => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-
-  // ボス名を返す
-  return PiecesEach(cells, 2).filter(v => v[0] === num.toLowerCase())[0][1]
 }
 
 /**

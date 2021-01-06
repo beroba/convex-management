@@ -73,6 +73,7 @@ exports.AllComplete = exports.Report = exports.Delete = exports.Already = void 0
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
@@ -266,20 +267,17 @@ var deleteBossRole = function (cells, msg) {
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
 };
 var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, name, num, range;
+    var sheet, alpha, num, range;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+                return [4, status.TakeBossAlpha(content)];
             case 2:
-                cells = _a.sent();
-                name = pieces_each_1["default"](cells, 2)
-                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
-                    .filter(function (v) { return ~content.indexOf(v[1]); });
-                if (name.length)
-                    return [2, name[0][0]];
+                alpha = _a.sent();
+                if (alpha)
+                    return [2, alpha];
                 num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0];
                 if (/[1-5]/.test(num))
                     return [2, alphabet_to_number_1.NtoA(num)];

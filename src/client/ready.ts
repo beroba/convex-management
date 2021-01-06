@@ -13,8 +13,9 @@ export const Ready = () => {
   // /*
   ;(async () => {
     const c = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-    const msg = await c.messages.fetch('793374464422576139')
-    msg.edit('ボステーブル `bossTable`')
+    c.send('日付テーブル `daysTable`')
+    // const msg = await c.messages.fetch('793374464422576139')
+    // msg.edit('ボステーブル `bossTable`')
 
     // const bosstable = await io.Fetch<bosstable[]>('793374466402418708')
     // console.log(bosstable)

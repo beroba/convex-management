@@ -77,39 +77,40 @@ exports.__esModule = true;
 exports.CalCurrent = exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = exports.StageNames = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("../plan/list"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 exports.StageNames = ['first', 'second', 'third', 'fourth', 'fifth'];
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap, num, sheet, boss, _b, lap_cell, boss_cell, num_cell;
+    var _a, lap, alpha, sheet, name, _b, lap_cell, boss_cell, num_cell;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], num = _a[1];
+                _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], alpha = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
-                if (!/[a-e]/i.test(num))
+                if (!/[a-e]/i.test(alpha))
                     return [2, false];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _c.sent();
-                return [4, readBossName(sheet, num)];
+                return [4, status.TakeBossName(alpha)];
             case 2:
-                boss = _c.sent();
+                name = _c.sent();
                 _b = __read(readCurrentCell(sheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
             case 3:
                 _c.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss)];
+                return [4, spreadsheet.SetValue(boss_cell, name)];
             case 4:
                 _c.sent();
-                return [4, spreadsheet.SetValue(num_cell, num)];
+                return [4, spreadsheet.SetValue(num_cell, alpha)];
             case 5:
                 _c.sent();
                 exports.ProgressReport();
-                switchBossRole(num);
+                switchBossRole(alpha);
                 stageConfirm();
                 return [2, true];
         }
@@ -123,7 +124,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
             case 1:
                 sheet = _c.sent();
                 _a = __read(readCurrentCell(sheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readForwardDate(lap_cell, num_cell, sheet)];
+                return [4, readForwardDate(lap_cell, num_cell)];
             case 2:
                 _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
@@ -150,7 +151,7 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 sheet = _c.sent();
                 _a = __read(readCurrentCell(sheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readReturnDate(lap_cell, num_cell, sheet)];
+                return [4, readReturnDate(lap_cell, num_cell)];
             case 2:
                 _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
                 return [4, spreadsheet.SetValue(lap_cell, lap)];
@@ -225,22 +226,11 @@ var switchBossRole = function (num) {
     cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].BOSS_ROLE_ID[num]);
     console.log("Switch Cal's boss role");
 };
-var readBossName = function (sheet, num) { return __awaiter(void 0, void 0, void 0, function () {
-    var cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 1:
-                cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
-        }
-    });
-}); };
 var readCurrentCell = function (sheet) {
     return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return sheet.getCell(cell); });
 };
-var readForwardDate = function (lap_cell, num_cell, sheet) { return __awaiter(void 0, void 0, void 0, function () {
-    var lap, num, numberList, n, boss;
+var readForwardDate = function (lap_cell, num_cell) { return __awaiter(void 0, void 0, void 0, function () {
+    var lap, num, numberList, n, name;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetValue(lap_cell)];
@@ -251,15 +241,15 @@ var readForwardDate = function (lap_cell, num_cell, sheet) { return __awaiter(vo
                 num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
-                return [4, readBossName(sheet, numberList[n])];
+                return [4, status.TakeBossName(alphabet_to_number_1.NtoA(n))];
             case 3:
-                boss = _a.sent();
-                return [2, [n ? lap : Number(lap) + 1, boss, numberList[n]]];
+                name = _a.sent();
+                return [2, [n ? lap : Number(lap) + 1, name, numberList[n]]];
         }
     });
 }); };
-var readReturnDate = function (lap_cell, num_cell, sheet) { return __awaiter(void 0, void 0, void 0, function () {
-    var lap, num, numberList, n, boss;
+var readReturnDate = function (lap_cell, num_cell) { return __awaiter(void 0, void 0, void 0, function () {
+    var lap, num, numberList, n, name;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetValue(lap_cell)];
@@ -270,10 +260,10 @@ var readReturnDate = function (lap_cell, num_cell, sheet) { return __awaiter(voi
                 num = _a.sent();
                 numberList = ['a', 'b', 'c', 'd', 'e'];
                 n = (function (n) { return (n === 0 ? 4 : n - 1); })(numberList.indexOf(num));
-                return [4, readBossName(sheet, numberList[n])];
+                return [4, status.TakeBossName(alphabet_to_number_1.NtoA(n))];
             case 3:
-                boss = _a.sent();
-                return [2, [n === 4 ? Number(lap) - 1 : lap, boss, numberList[n]]];
+                name = _a.sent();
+                return [2, [n === 4 ? Number(lap) - 1 : lap, name, numberList[n]]];
         }
     });
 }); };

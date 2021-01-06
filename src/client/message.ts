@@ -18,7 +18,7 @@ export const Message = async (msg: Discord.Message) => {
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
   // `/`から始まるコマンドの処理
-  if (msg.content.charAt(0) === '/') return Command(msg)
+  if (msg.content.charAt(0) === '/') return await Command(msg)
 
   let comment: Option<string>
 

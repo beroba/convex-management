@@ -1,6 +1,7 @@
 import {NtoA} from 'alphabet-to-number'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as lapAndBoss from '../convex/lapAndBoss'
@@ -9,13 +10,12 @@ import * as lapAndBoss from '../convex/lapAndBoss'
  * 引数で渡されたボス番号の凸予定一覧を出力
  * @param num ボス番号
  */
-export const Output = async (num: string) => {
+export const Output = async (alpha: string) => {
   const list = await readPlanList()
-  const table = await readBossTable()
-  const boss = takeBossName(num, table)
+  const name = await status.TakeBossName(alpha)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`${boss}\n` + '```\n' + `${createPlanList(num, list)}\n` + '```')
+  channel.send(`${name}\n` + '```\n' + `${createPlanList(alpha, list)}\n` + '```')
 }
 
 /**
@@ -49,19 +49,22 @@ export const SituationEdit = async () => {
  */
 const createAllPlanText = async (): Promise<string> => {
   const list = await readPlanList()
-  const table = await readBossTable()
 
   // 現在のボス番号と段階数を取得
-  const current = lapAndBoss.CalCurrent()
+  // const current = lapAndBoss.CalCurrent()
 
-  return lapAndBoss.StageNames.map((name, i) => {
-    // ボス番号を取得
-    const num = NtoA(i)
-    const boss = takeBossName(num, table)
-    const HP = Settings.STAGE_HP[current?.stage || ''][name]
+  const planTexts = await Promise.all(
+    lapAndBoss.StageNames.map(async (_name, i) => {
+      // ボス番号を取得
+      const alpha = NtoA(i + 1)
+      const name = await status.TakeBossName(alpha)
+      // const HP = Settings.STAGE_HP[current?.stage || ''][name]
 
-    return `${boss} \`${HP}\`\n` + '```\n' + `${createPlanList(num, list)}\n` + '```'
-  }).join('')
+      return `${name}\n` + '```\n' + `${createPlanList(alpha, list)}\n` + '```'
+      // return `${boss} \`${HP}\`\n` + '```\n' + `${createPlanList(alpha, list)}\n` + '```'
+    })
+  )
+  return planTexts.join('')
 }
 
 /**
@@ -90,29 +93,6 @@ const readPlanList = async (): Promise<string[][]> => {
     .filter(v => !/^,+$/.test(v.toString()))
     .filter(v => !v[0])
 }
-
-/**
- * ボス番号とボス名のテーブルを取得
- * @return ボステーブル
- */
-const readBossTable = async (): Promise<string[][]> => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-
-  // 空の値を省いて返す
-  return PiecesEach(cells, 2).filter(v => !/^,+$/.test(v.toString()))
-}
-
-/**
- * ボス番号からボス名を取得する
- * @param num ボス番号
- * @param table ボステーブル
- * @return ボス名
- */
-// prettier-ignore
-const takeBossName = (num: string, table: string[][]): string =>
-  table.filter(v => v[0] === num.toLowerCase())[0][1]
 
 /**
  * 凸予定一覧から渡されたボス番号の予定者一覧を返す
