@@ -10,25 +10,6 @@ import * as util from '../../util'
 export const Emoji = (msg: Discord.Message) => {
   // 指定のチャンネルでは実行されない用にする
   if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
-  // ;(async () => {
-  //   const channel = util.GetTextChannel('791537113459589192')
-  //   const m = await channel.messages.fetch('793374466402418708')
-
-  //   const s = m.content
-  //     .split('\n')
-  //     .filter((_, i, l) => !(i === 0 || i === l.length - 1))
-  //     .map(s => s.trim())
-  //     .join('')
-
-  //   const c = JSON.parse(s)
-  //   c[0].name = 'ゴブリングレート'
-
-  //   const j = JSON.stringify(c)
-
-  //   const t =
-  //     '```json\n' + j.replace(/{/g, '\n  {').replace(/]/g, '\n]').replace(/:/g, ': ').replace(/,/g, ', ') + '\n```'
-  //   m.edit(t)
-  // })()
 
   // 草野優衣の絵文字を押す
   yuiKusanoEmoji(msg)
