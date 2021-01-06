@@ -60,8 +60,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
+var io = __importStar(require("../../util/io"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
 exports.Management = function (command, msg) {
@@ -85,7 +87,11 @@ exports.Management = function (command, msg) {
         case /cb manage set days/.test(command): {
             var arg = command.replace('/cb manage set days ', '');
             setDate(arg, msg);
-            return 'Update convex management members';
+            return 'Set convex days';
+        }
+        case /cb manage set bossTable/.test(command): {
+            setBossTable();
+            return 'Set convex bossTable';
         }
         case /cb manage remove role/.test(command): {
             removeRole(msg);
@@ -129,6 +135,28 @@ var setDate = function (arg, msg) { return __awaiter(void 0, void 0, void 0, fun
                     });
                 }); });
                 msg.reply('クランバトルの日付を設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var setBossTable = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var infoSheet, cells, bossTable;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                infoSheet = _a.sent();
+                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 2:
+                cells = _a.sent();
+                bossTable = pieces_each_1["default"](cells, 2)
+                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                    .map(function (v, i) { return ({
+                    num: String(i + 1),
+                    alpha: v[0],
+                    name: v[1]
+                }); });
+                io.Update(const_settings_1["default"].CAL_STATUS_ID.BOSSTABLE, bossTable);
                 return [2];
         }
     });

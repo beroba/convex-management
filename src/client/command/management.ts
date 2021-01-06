@@ -1,8 +1,11 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
+import * as io from '../../util/io'
+import {BossTable} from '../../util/type'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as category from './category'
 
@@ -36,7 +39,12 @@ export const Management = (command: string, msg: Discord.Message): Option<string
     case /cb manage set days/.test(command): {
       const arg = command.replace('/cb manage set days ', '')
       setDate(arg, msg)
-      return 'Update convex management members'
+      return 'Set convex days'
+    }
+
+    case /cb manage set bossTable/.test(command): {
+      setBossTable()
+      return 'Set convex bossTable'
     }
 
     case /cb manage remove role/.test(command): {
@@ -80,6 +88,27 @@ const setDate = async (arg: string, msg: Discord.Message) => {
   })
 
   msg.reply('クランバトルの日付を設定したわよ！')
+}
+
+/**
+ * ボステーブルを設定する
+ */
+const setBossTable = async () => {
+  // 情報のシートを取得
+  const infoSheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+  const cells: string[] = await spreadsheet.GetCells(infoSheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+
+  // スプレッドシートからボステーブルを作成する
+  const bossTable: BossTable[] = PiecesEach(cells, 2)
+    .filter(v => !/^,+$/.test(v.toString()))
+    .map((v, i) => ({
+      num: String(i + 1),
+      alpha: v[0],
+      name: v[1],
+    }))
+
+  // キャルステータスを更新する
+  io.Update(Settings.CAL_STATUS_ID.BOSSTABLE, bossTable)
 }
 
 /**
