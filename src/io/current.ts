@@ -10,14 +10,14 @@ import {Current} from './type'
  */
 export const UpdateLap = async (lap: string) => {
   // キャルステータスから現在の状況を取得
-  const json: Current = await Fetch()
+  const state: Current = await Fetch()
 
   // 値を更新
-  json.stage = GetStageName(lap)
-  json.lap = lap
+  state.lap = lap
+  state.stage = GetStageName(lap)
 
   // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, json)
+  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
 }
 
 /**
@@ -47,19 +47,20 @@ export const GetStageName = (lap: string): string => {
  */
 export const UpdateBoss = async (alpha: string) => {
   // キャルステータスから現在の状況を取得
-  const json: Current = await Fetch()
+  const state: Current = await Fetch()
 
   // 値を更新
-  json.alpha = alpha
+  state.alpha = alpha
   const num = await bossTable.TakeNum(alpha)
   if (!num) return
-  json.num = num
+  state.num = num
   const boss = await bossTable.TakeName(alpha)
   if (!boss) return
-  json.boss = boss
+  state.boss = boss
+  state.hp = Settings.STAGE_HP[state.stage][alpha]
 
   // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, json)
+  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
 }
 
 /**

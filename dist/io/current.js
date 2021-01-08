@@ -80,15 +80,15 @@ var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var bossTable = __importStar(require("./bossTable"));
 exports.UpdateLap = function (lap) { return __awaiter(void 0, void 0, void 0, function () {
-    var json;
+    var state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                json = _a.sent();
-                json.stage = exports.GetStageName(lap);
-                json.lap = lap;
-                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
+                state = _a.sent();
+                state.lap = lap;
+                state.stage = exports.GetStageName(lap);
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
             case 2:
                 _a.sent();
                 return [2];
@@ -111,26 +111,27 @@ exports.GetStageName = function (lap) {
     }
 };
 exports.UpdateBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var json, num, boss;
+    var state, num, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                json = _a.sent();
-                json.alpha = alpha;
+                state = _a.sent();
+                state.alpha = alpha;
                 return [4, bossTable.TakeNum(alpha)];
             case 2:
                 num = _a.sent();
                 if (!num)
                     return [2];
-                json.num = num;
+                state.num = num;
                 return [4, bossTable.TakeName(alpha)];
             case 3:
                 boss = _a.sent();
                 if (!boss)
                     return [2];
-                json.boss = boss;
-                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
+                state.boss = boss;
+                state.hp = const_settings_1["default"].STAGE_HP[state.stage][alpha];
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
             case 4:
                 _a.sent();
                 return [2];

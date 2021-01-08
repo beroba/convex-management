@@ -74,11 +74,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ProgressReport = exports.Previous = exports.Next = exports.Update = void 0;
+exports.stageConfirm = exports.ProgressReport = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
@@ -104,60 +103,62 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, util.sleep(100)];
             case 4:
                 _b.sent();
-                current.SetCells();
                 exports.ProgressReport();
+                current.SetCells();
                 return [2, true];
         }
     });
 }); };
 exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+    var state, lap, alpha;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, current.Fetch()];
             case 1:
-                sheet = _c.sent();
-                _a = __read(readCurrentCell(sheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readForwardDate(lap_cell, num_cell)];
+                state = _a.sent();
+                lap = String(Number(state.lap) + (state.alpha === 'e' ? 1 : 0));
+                alpha = alphabet_to_number_1.NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1);
+                return [4, current.UpdateLap(lap)];
             case 2:
-                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
-                return [4, spreadsheet.SetValue(lap_cell, lap)];
+                _a.sent();
+                return [4, util.sleep(100)];
             case 3:
-                _c.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss)];
+                _a.sent();
+                return [4, current.UpdateBoss(alpha)];
             case 4:
-                _c.sent();
-                return [4, spreadsheet.SetValue(num_cell, num)];
+                _a.sent();
+                return [4, util.sleep(100)];
             case 5:
-                _c.sent();
+                _a.sent();
                 exports.ProgressReport();
-                stageConfirm();
+                current.SetCells();
                 return [2];
         }
     });
 }); };
 exports.Previous = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, _a, lap_cell, boss_cell, num_cell, _b, lap, boss, num;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+    var state, lap, alpha;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, current.Fetch()];
             case 1:
-                sheet = _c.sent();
-                _a = __read(readCurrentCell(sheet), 3), lap_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, readReturnDate(lap_cell, num_cell)];
+                state = _a.sent();
+                lap = String(Number(state.lap) - (state.alpha === 'a' ? 1 : 0));
+                alpha = alphabet_to_number_1.NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1);
+                return [4, current.UpdateLap(lap)];
             case 2:
-                _b = __read.apply(void 0, [_c.sent(), 3]), lap = _b[0], boss = _b[1], num = _b[2];
-                return [4, spreadsheet.SetValue(lap_cell, lap)];
+                _a.sent();
+                return [4, util.sleep(100)];
             case 3:
-                _c.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss)];
+                _a.sent();
+                return [4, current.UpdateBoss(alpha)];
             case 4:
-                _c.sent();
-                return [4, spreadsheet.SetValue(num_cell, num)];
+                _a.sent();
+                return [4, util.sleep(100)];
             case 5:
-                _c.sent();
+                _a.sent();
                 exports.ProgressReport();
-                stageConfirm();
+                current.SetCells();
                 return [2];
         }
     });
@@ -176,48 +177,7 @@ exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var readCurrentCell = function (sheet) {
-    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return sheet.getCell(cell); });
-};
-var readForwardDate = function (lap_cell, num_cell) { return __awaiter(void 0, void 0, void 0, function () {
-    var lap, num, numberList, n, name;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetValue(lap_cell)];
-            case 1:
-                lap = _a.sent();
-                return [4, spreadsheet.GetValue(num_cell)];
-            case 2:
-                num = _a.sent();
-                numberList = ['a', 'b', 'c', 'd', 'e'];
-                n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
-                return [4, bossTable.TakeName(alphabet_to_number_1.NtoA(n))];
-            case 3:
-                name = _a.sent();
-                return [2, [n ? lap : Number(lap) + 1, name, numberList[n]]];
-        }
-    });
-}); };
-var readReturnDate = function (lap_cell, num_cell) { return __awaiter(void 0, void 0, void 0, function () {
-    var lap, num, numberList, n, name;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetValue(lap_cell)];
-            case 1:
-                lap = _a.sent();
-                return [4, spreadsheet.GetValue(num_cell)];
-            case 2:
-                num = _a.sent();
-                numberList = ['a', 'b', 'c', 'd', 'e'];
-                n = (function (n) { return (n === 0 ? 4 : n - 1); })(numberList.indexOf(num));
-                return [4, bossTable.TakeName(alphabet_to_number_1.NtoA(n))];
-            case 3:
-                name = _a.sent();
-                return [2, [n === 4 ? Number(lap) - 1 : lap, name, numberList[n]]];
-        }
-    });
-}); };
-var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, range, _a, lap, num, stage, cells, _b, col;
     return __generator(this, function (_c) {
         switch (_c.label) {
