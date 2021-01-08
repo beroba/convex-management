@@ -17,7 +17,7 @@ export const Command = async (msg: Discord.Message) => {
   let comment: Option<string>
 
   // クラバト用コマンドを実行
-  comment = ClanBattle(content, msg)
+  comment = await ClanBattle(content, msg)
   if (comment) return console.log(comment)
 
   // 運営管理用コマンドを実行

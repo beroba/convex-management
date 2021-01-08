@@ -1,25 +1,11 @@
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import {NtoA} from 'alphabet-to-number'
 import * as bossTable from '../../io/bossTable'
+import * as current from '../../io/current'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import * as list from '../plan/list'
-import {NtoA} from 'alphabet-to-number'
-import Option from 'type-of-option'
-
-/**
- * 現在のボスの情報
- */
-type Current = {
-  lap: string
-  boss: string
-  num: string
-}
-
-/**
- * 段階名の配列
- */
-export const StageNames = ['first', 'second', 'third', 'fourth', 'fifth']
 
 /**
  * 現在の周回数とボスを変更する
@@ -34,24 +20,20 @@ export const Update = async (arg: string): Promise<boolean> => {
   if (!/\d/.test(lap)) return false
   if (!/[a-e]/i.test(alpha)) return false
 
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const name = await bossTable.TakeName(alpha)
+  // 現在の状況を更新
+  await current.UpdateLap(lap)
+  await util.sleep(100)
+  await current.UpdateBoss(alpha)
+  await util.sleep(100)
 
-  // 現在の周回数とボスを更新
-  const [lap_cell, boss_cell, num_cell] = readCurrentCell(sheet)
-  await spreadsheet.SetValue(lap_cell, lap)
-  await spreadsheet.SetValue(boss_cell, name)
-  await spreadsheet.SetValue(num_cell, alpha)
+  // 現在の状況をスプレッドシートに反映
+  current.SetCells()
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
-  // キャルのボスロールを切り替える
-  switchBossRole(alpha)
-
   // 段階数の区切りを付ける
-  stageConfirm()
+  // stageConfirm()
 
   return true
 }
@@ -74,9 +56,6 @@ export const Next = async () => {
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
-
-  // キャルのボスロールを切り替える
-  switchBossRole(num)
 
   // 段階数の区切りを付ける
   stageConfirm()
@@ -101,92 +80,23 @@ export const Previous = async () => {
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
-  // キャルのボスロールを切り替える
-  switchBossRole(num)
-
   // 段階数の区切りを付ける
   stageConfirm()
-}
-
-/**
- * 現在の周回数とボスをオブジェクトで返す
- * @return 現在の周回数とボス
- */
-export const GetCurrent = async (): Promise<Current> => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 範囲を指定して現在の周回数とボスを取得
-  const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
-  const [lap, boss] = await spreadsheet.GetCells(sheet, `${range[0]}:${range[1]}`)
-
-  // ボス番号の取得
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
-  const num = PiecesEach(cells, 2).filter(v => v[1] === boss)[0][0]
-
-  return {lap: lap, boss: boss, num: num}
 }
 
 /**
  * #進行に現在の周回数とボスを報告
  */
 export const ProgressReport = async () => {
-  // 現在の周回数とボスを取得
-  const state = await GetCurrent()
-  // 現在のボス番号と段階数を取得
-  const current = CalCurrent()
+  // 現在の状況を取得
+  const state = await current.Fetch()
 
   // ボスのロールを取得
-  const role = Settings.BOSS_ROLE_ID[state.num]
+  const role = Settings.BOSS_ROLE_ID[state.alpha]
 
-  // HPを取得
-  const HP = Settings.STAGE_HP[current?.stage || ''][current?.boss || '']
-
+  // 進行に報告
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\` \`${HP}\``)
-  list.PlanOnly(state.num)
-}
-
-/**
- * キャルに付与されているロールからボス番号と段階名を取得する
- * @return ボス番号と段階名
- */
-export const CalCurrent = () => {
-  // キャルのユーザー情報を取得
-  const cal = util.GetCalInfo()
-  // キャルに付与されているロール一覧を取得
-  const role = cal?.roles.cache.map(m => m.name)
-
-  // ボスロールの名前を取得
-  const boss = role?.find(r => r.includes('ボス'))
-  if (!boss) return
-
-  // 段階ロールの名前を取得
-  const stage = role?.find(r => r.includes('段階目'))
-  if (!stage) return
-
-  // 現在のボス番号と段階名を返す
-  return {
-    boss: NtoA(boss[0]),
-    stage: StageNames[Number(stage[0]) - 1],
-  }
-}
-
-/**
- * キャルのボスロールを切り替える
- * @param num ボス番号
- */
-const switchBossRole = (num: string) => {
-  // キャルのユーザー情報を取得
-  const cal = util.GetCalInfo()
-
-  // 全てのボスロールを外す
-  Object.values(Settings.BOSS_ROLE_ID as string[]).forEach(id => cal?.roles.remove(id))
-
-  // 現在のボスロールを付ける
-  cal?.roles.add(Settings.BOSS_ROLE_ID[num])
-
-  console.log("Switch Cal's boss role")
+  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
 }
 
 /**

@@ -85,7 +85,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                     day: parseZero(v[1]),
                     col: v[2]
                 }); });
-                return [4, io.Update(const_settings_1["default"].CAL_STATUS_ID.DAYS_TABLE, table)];
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.DAYS_TABLE, table)];
             case 5:
                 _a.sent();
                 return [2];

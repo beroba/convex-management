@@ -83,61 +83,102 @@ var situation = __importStar(require("../convex/situation"));
 var cancel = __importStar(require("../plan/cancel"));
 var list = __importStar(require("../plan/list"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-exports.ClanBattle = function (command, msg) {
-    if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
-        return;
-    switch (true) {
-        case /cb convex/.test(command): {
-            var arg = command.replace('/cb convex ', '');
-            changeConvex(arg, msg);
-            return 'Change of convex management';
+exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, arg, arg, arg, arg, arg;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
+                    return [2];
+                _a = true;
+                switch (_a) {
+                    case /cb convex/.test(command): return [3, 1];
+                    case /cb boss now/.test(command): return [3, 2];
+                    case /cb boss next/.test(command): return [3, 3];
+                    case /cb boss previous/.test(command): return [3, 4];
+                    case /cb boss/.test(command): return [3, 5];
+                    case /cb complete plan/.test(command): return [3, 7];
+                    case /cb plan/.test(command): return [3, 8];
+                    case /cb over/.test(command): return [3, 9];
+                    case /cb task/.test(command): return [3, 10];
+                    case /cb update report/.test(command): return [3, 11];
+                    case /cb help/.test(command): return [3, 12];
+                }
+                return [3, 13];
+            case 1:
+                {
+                    arg = command.replace('/cb convex ', '');
+                    changeConvex(arg, msg);
+                    return [2, 'Change of convex management'];
+                }
+                _b.label = 2;
+            case 2:
+                {
+                    currentBossReport();
+                    return [2, 'Show ckurrent boss'];
+                }
+                _b.label = 3;
+            case 3:
+                {
+                    moveForward();
+                    return [2, 'Advance to next lap and boss'];
+                }
+                _b.label = 4;
+            case 4:
+                {
+                    moveReturn();
+                    return [2, 'Advance to previous lap and boss'];
+                }
+                _b.label = 5;
+            case 5:
+                arg = command.replace('/cb boss ', '');
+                return [4, changeBoss(arg, msg)];
+            case 6:
+                _b.sent();
+                return [2, 'Change laps and boss'];
+            case 7:
+                {
+                    arg = command.replace('/cb complete plan ', '');
+                    planComplete(arg, msg);
+                    return [2, 'All reset plan'];
+                }
+                _b.label = 8;
+            case 8:
+                {
+                    arg = command.replace('/cb plan ', '');
+                    planList(arg);
+                    return [2, 'Display convex plan list'];
+                }
+                _b.label = 9;
+            case 9:
+                {
+                    arg = command.replace('/cb over ', '');
+                    simultConvexCalc(arg, msg);
+                    return [2, 'Simultaneous convex carryover calculation'];
+                }
+                _b.label = 10;
+            case 10:
+                {
+                    addTaskKillRoll(msg);
+                    return [2, 'Add task kill roll'];
+                }
+                _b.label = 11;
+            case 11:
+                {
+                    updateReport(msg);
+                    return [2, 'Convex situation updated'];
+                }
+                _b.label = 12;
+            case 12:
+                {
+                    msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
+                    return [2, 'Show help'];
+                }
+                _b.label = 13;
+            case 13: return [2];
         }
-        case /cb boss now/.test(command): {
-            currentBossNow();
-            return 'Show ckurrent boss';
-        }
-        case /cb boss next/.test(command): {
-            moveForward();
-            return 'Advance to next lap and boss';
-        }
-        case /cb boss previous/.test(command): {
-            moveReturn();
-            return 'Advance to previous lap and boss';
-        }
-        case /cb boss/.test(command): {
-            var arg = command.replace('/cb boss ', '');
-            changeBoss(arg, msg);
-            return 'Change laps and boss';
-        }
-        case /cb complete plan/.test(command): {
-            var arg = command.replace('/cb complete plan ', '');
-            planComplete(arg, msg);
-            return 'All reset plan';
-        }
-        case /cb plan/.test(command): {
-            var arg = command.replace('/cb plan ', '');
-            planList(arg);
-            return 'Display convex plan list';
-        }
-        case /cb over/.test(command): {
-            var arg = command.replace('/cb over ', '');
-            simultConvexCalc(arg, msg);
-            return 'Simultaneous convex carryover calculation';
-        }
-        case /cb task/.test(command): {
-            addTaskKillRoll(msg);
-            return 'Add task kill roll';
-        }
-        case /cb update report/.test(command): {
-            updateReport(msg);
-            return 'Convex situation updated';
-        }
-        case /cb help/.test(command): {
-            msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
-            return 'Show help';
-        }
-    }
-};
+    });
+}); };
 var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var result;
     return __generator(this, function (_a) {
@@ -152,7 +193,7 @@ var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-var currentBossNow = function () { return __awaiter(void 0, void 0, void 0, function () {
+var currentBossReport = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         lapAndBoss.ProgressReport();
         return [2];

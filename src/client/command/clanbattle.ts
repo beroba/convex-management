@@ -15,7 +15,7 @@ import {NtoA} from 'alphabet-to-number'
  * @param msg DiscordからのMessage
  * @return 実行したコマンドの結果
  */
-export const ClanBattle = (command: string, msg: Discord.Message): Option<string> => {
+export const ClanBattle = async (command: string, msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)) return
 
@@ -27,7 +27,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
     }
 
     case /cb boss now/.test(command): {
-      currentBossNow()
+      currentBossReport()
       return 'Show ckurrent boss'
     }
 
@@ -43,7 +43,7 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
 
     case /cb boss/.test(command): {
       const arg = command.replace('/cb boss ', '')
-      changeBoss(arg, msg)
+      await changeBoss(arg, msg)
       return 'Change laps and boss'
     }
 
@@ -99,7 +99,7 @@ const changeConvex = async (arg: string, msg: Discord.Message) => {
 /**
  * #進行に現在の周回数とボスを報告
  */
-const currentBossNow = async () => {
+const currentBossReport = async () => {
   // #進行に現在の周回数とボスを報告
   lapAndBoss.ProgressReport()
 }

@@ -18,6 +18,12 @@ export const Format = (str: string): string =>
     .replace(/[^\S\n\r]+/g, ' ')
 
 /**
+ * 特定の秒数遅延させる
+ * @param ms 遅延させる秒数
+ */
+export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
+
+/**
  * クランサーバーのguildを取得する
  * @return クランサーバーのguild
  */

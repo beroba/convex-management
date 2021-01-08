@@ -54,7 +54,7 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
  */
 export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // #凸報告でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return

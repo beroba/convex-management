@@ -154,7 +154,7 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, list, sleep, list_1, list_1_1, m, e_1_1;
+    var channel, list, list_1, list_1_1, m, e_1_1;
     var e_1, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -163,7 +163,6 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
                 return [4, channel.messages.fetch()];
             case 1:
                 list = (_b.sent()).map(function (v) { return v; }).filter(function (m) { return m.author.id === id; });
-                sleep = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 7, 8, 9]);
@@ -173,7 +172,7 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
                 if (!!list_1_1.done) return [3, 6];
                 m = list_1_1.value;
                 m["delete"]();
-                return [4, sleep(10000)];
+                return [4, util.sleep(10000)];
             case 4:
                 _b.sent();
                 _b.label = 5;

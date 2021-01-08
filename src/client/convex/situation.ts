@@ -2,9 +2,9 @@ import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
 import * as dateTable from '../../io/dateTable'
+import * as current from '../../io/current'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
-import * as lapAndBoss from './lapAndBoss'
 
 /**
  * メンバー毎の凸状況
@@ -19,22 +19,11 @@ type ConvexStatus = {
  * 凸状況に報告をする
  */
 export const Report = async () => {
-  // 凸報告のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // 凸状況とメンバー一覧を取得
-  const date = await dateTable.TakeDate()
-  const range = `${date.col}3:${AtoA(date.col, 1)}32`
-  const status: number[][] = PiecesEach((await spreadsheet.GetCells(sheet, range)).map(Number), 2)
-
-  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-
-  // 1つにマージする
-  const list: ConvexStatus[] = mergeList(status, members)
+  // 凸状況を取得
+  const status: ConvexStatus[] = await fetchConvexStatus()
 
   // 現在の凸状況を取得
-  const text = await createMessage(list)
+  const text = await createMessage(status)
 
   // 凸状況を更新
   const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
@@ -46,6 +35,26 @@ export const Report = async () => {
   history.send(text)
 
   console.log('Report convex situation')
+}
+
+/**
+ * 凸状況をスプレッドシートから取得する
+ */
+const fetchConvexStatus = async (): Promise<ConvexStatus[]> => {
+  // 凸報告のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // 凸状況を取得
+  const date = await dateTable.TakeDate()
+  const range = `${date.col}3:${AtoA(date.col, 1)}32`
+  const status: number[][] = PiecesEach((await spreadsheet.GetCells(sheet, range)).map(Number), 2)
+
+  // メンバー一覧を取得
+  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
+
+  // 1つにマージして返す
+  return mergeList(status, members)
 }
 
 /**
@@ -75,9 +84,9 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
   // クラバトの日数を取得
   const date = await dateTable.TakeDate()
 
-  // 現在の周回数とボスを取得
-  const state = await lapAndBoss.GetCurrent()
-  const current = `\`${state.lap}\`周目の\`${state.boss}\``
+  // 現在の状況を取得
+  const state = await current.Fetch()
+  const boss = `\`${state.lap}\`周目の\`${state.boss}\``
 
   // 残り凸数を計算する
   const remaining = remainingConvexNumber(list)
@@ -93,7 +102,7 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
 
   return (
     `\`${time}\` ${date.num} 凸状況一覧\n` +
-    `${current} \`${remaining}\`\n` +
+    `${boss} \`${remaining}\`\n` +
     '```\n' +
     `未凸: ${未凸}\n` +
     '\n' +

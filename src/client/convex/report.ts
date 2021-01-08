@@ -1,14 +1,14 @@
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as dateTable from '../../io/dateTable'
-import * as lapAndBoss from './lapAndBoss'
+import * as current from '../../io/current'
 
 /**
  * 全凸終了報告を行う
  */
 export const AllConvex = async () => {
   const date = await dateTable.TakeDate()
-  const state = await lapAndBoss.GetCurrent()
+  const state = await current.Fetch()
 
   // 進行に報告をする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
@@ -27,7 +27,7 @@ export const AllConvex = async () => {
  */
 export const Unevenness = async (day: string | number) => {
   // 全凸終了処理を行う
-  const state = await lapAndBoss.GetCurrent()
+  const state = await current.Fetch()
 
   // 凸残したユーザー一覧を取得
   const 凸残 = util

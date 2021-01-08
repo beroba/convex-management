@@ -62,7 +62,7 @@ exports.Unevenness = exports.AllConvex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var dateTable = __importStar(require("../../io/dateTable"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
+var current = __importStar(require("../../io/current"));
 exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
     var date, state, channel;
     return __generator(this, function (_a) {
@@ -70,7 +70,7 @@ exports.AllConvex = function () { return __awaiter(void 0, void 0, void 0, funct
             case 0: return [4, dateTable.TakeDate()];
             case 1:
                 date = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                return [4, current.Fetch()];
             case 2:
                 state = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
@@ -87,7 +87,7 @@ exports.Unevenness = function (day) { return __awaiter(void 0, void 0, void 0, f
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
-            case 0: return [4, lapAndBoss.GetCurrent()];
+            case 0: return [4, current.Fetch()];
             case 1:
                 state = _c.sent();
                 凸残 = (_b = (_a = util

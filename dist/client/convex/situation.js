@@ -63,11 +63,33 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var dateTable = __importStar(require("../../io/dateTable"));
+var current = __importStar(require("../../io/current"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, date, range, status, _a, cells, members, list, text, situation, msg, history;
+    var status, text, situation, msg, history;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, fetchConvexStatus()];
+            case 1:
+                status = _a.sent();
+                return [4, createMessage(status)];
+            case 2:
+                text = _a.sent();
+                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
+                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
+            case 3:
+                msg = _a.sent();
+                msg.edit(text);
+                history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
+                history.send(text);
+                console.log('Report convex situation');
+                return [2];
+        }
+    });
+}); };
+var fetchConvexStatus = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, date, range, status, _a, cells, members;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
@@ -85,19 +107,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
             case 4:
                 cells = _b.sent();
                 members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                list = mergeList(status, members);
-                return [4, createMessage(list)];
-            case 5:
-                text = _b.sent();
-                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
-                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
-            case 6:
-                msg = _b.sent();
-                msg.edit(text);
-                history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
-                history.send(text);
-                console.log('Report convex situation');
-                return [2];
+                return [2, mergeList(status, members)];
         }
     });
 }); };
@@ -111,7 +121,7 @@ var mergeList = function (status, members) {
         .filter(function (v) { return v.member !== ''; });
 };
 var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, date, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+    var time, date, state, boss, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -119,10 +129,10 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 return [4, dateTable.TakeDate()];
             case 1:
                 date = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                return [4, current.Fetch()];
             case 2:
                 state = _a.sent();
-                current = "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`";
+                boss = "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`";
                 remaining = remainingConvexNumber(list);
                 未凸 = userSorting(list, 0, 0);
                 持越1 = userSorting(list, 1, 1);
@@ -132,7 +142,7 @@ var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, f
                 持越3 = userSorting(list, 3, 1);
                 凸3 = userSorting(list, 3, 0);
                 return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
-                        (current + " `" + remaining + "`\n") +
+                        (boss + " `" + remaining + "`\n") +
                         '```\n' +
                         ("\u672A\u51F8: " + 未凸 + "\n") +
                         '\n' +

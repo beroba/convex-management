@@ -63,9 +63,9 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var bossTable = __importStar(require("../../io/bossTable"));
+var current = __importStar(require("../../io/current"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var list, name, channel;
     return __generator(this, function (_a) {
@@ -113,14 +113,17 @@ exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var list, planTexts;
+    var list, state, planTexts;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, readPlanList()];
             case 1:
                 list = _a.sent();
-                return [4, Promise.all(lapAndBoss.StageNames.map(function (_name, i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var alpha, name;
+                return [4, current.Fetch()];
+            case 2:
+                state = _a.sent();
+                return [4, Promise.all(Array.from(Array(5), function (_, i) { return i; }).map(function (i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var alpha, name, hp;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -128,11 +131,12 @@ var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, f
                                     return [4, bossTable.TakeName(alpha)];
                                 case 1:
                                     name = _a.sent();
-                                    return [2, name + "\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```'];
+                                    hp = const_settings_1["default"].STAGE_HP[state.stage][alpha];
+                                    return [2, name + " `" + hp + "`\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```'];
                             }
                         });
                     }); }))];
-            case 2:
+            case 3:
                 planTexts = _a.sent();
                 return [2, planTexts.join('')];
         }

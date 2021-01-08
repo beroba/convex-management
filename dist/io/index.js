@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Update = exports.Fetch = void 0;
+exports.UpdateJson = exports.UpdateArray = exports.Fetch = void 0;
 var util = __importStar(require("../util"));
 var const_settings_1 = __importDefault(require("const-settings"));
 exports.Fetch = function (id) { return __awaiter(void 0, void 0, void 0, function () {
@@ -79,7 +79,7 @@ exports.Fetch = function (id) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-exports.Update = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
+exports.UpdateArray = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -95,7 +95,32 @@ exports.Update = function (id, json) { return __awaiter(void 0, void 0, void 0, 
                         .replace(/:/g, ': ')
                         .replace(/,/g, ', ') +
                     '\n```';
-                msg.edit(text);
+                return [4, msg.edit(text)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.UpdateJson = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, msg, text;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CAL_STATUS);
+                return [4, channel.messages.fetch(id)];
+            case 1:
+                msg = _a.sent();
+                text = '```json\n' +
+                    JSON.stringify(json)
+                        .replace(/{/g, '\n{\n  ')
+                        .replace(/}/g, '\n}\n')
+                        .replace(/:/g, ': ')
+                        .replace(/,/g, ',\n  ') +
+                    '\n```';
+                return [4, msg.edit(text)];
+            case 2:
+                _a.sent();
                 return [2];
         }
     });

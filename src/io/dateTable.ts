@@ -28,7 +28,7 @@ export const Update = async (arg: string) => {
     }))
 
   // キャルステータスを更新する
-  await io.Update(Settings.CAL_STATUS_ID.DAYS_TABLE, table)
+  await io.UpdateArray(Settings.CAL_STATUS_ID.DAYS_TABLE, table)
 }
 
 /**
@@ -57,8 +57,8 @@ const setDate = async (arg: string, sheet: any) => {
 const parseZero = (d: string) => d.split('/').map(Number).join('/')
 
 /**
- * キャルステータスからボステーブルを取得
- * @return ボステーブル
+ * キャルステータスから日付テーブルを取得
+ * @return 日付テーブル
  */
 export const Fetch = async (): Promise<DateTable[]> => io.Fetch<DateTable[]>(Settings.CAL_STATUS_ID.DAYS_TABLE)
 

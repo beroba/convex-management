@@ -54,81 +54,131 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.TakeNum = exports.TakeAlpha = exports.TakeName = exports.Fetch = exports.Update = void 0;
+exports.SetCells = exports.Fetch = exports.UpdateHp = exports.UpdateBoss = exports.GetStageName = exports.UpdateLap = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
-exports.Update = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, table;
+var bossTable = __importStar(require("./bossTable"));
+exports.UpdateLap = function (lap) { return __awaiter(void 0, void 0, void 0, function () {
+    var json;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 0: return [4, exports.Fetch()];
             case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+                json = _a.sent();
+                json.stage = exports.GetStageName(lap);
+                json.lap = lap;
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
             case 2:
-                cells = _a.sent();
-                table = pieces_each_1["default"](cells, 2)
-                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
-                    .map(function (v) { return ({
-                    num: v[0],
-                    alpha: v[1],
-                    name: v[2]
-                }); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE, table)];
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.GetStageName = function (lap) {
+    var l = Number(lap);
+    switch (true) {
+        case l < 4:
+            return 'first';
+        case l < 11:
+            return 'second';
+        case l < 35:
+            return 'third';
+        case l < 45:
+            return 'fourth';
+        default:
+            return 'fifth';
+    }
+};
+exports.UpdateBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+    var json, num, boss;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                json = _a.sent();
+                json.alpha = alpha;
+                return [4, bossTable.TakeNum(alpha)];
+            case 2:
+                num = _a.sent();
+                if (!num)
+                    return [2];
+                json.num = num;
+                return [4, bossTable.TakeName(alpha)];
             case 3:
+                boss = _a.sent();
+                if (!boss)
+                    return [2];
+                json.boss = boss;
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
+            case 4:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.UpdateHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
+    var json;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                json = _a.sent();
+                json.hp = hp;
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
+            case 2:
                 _a.sent();
                 return [2];
         }
     });
 }); };
 exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE)];
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.CURRENT)];
 }); }); };
-exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+exports.SetCells = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var json, sheet, _a, lap, boss, alpha, lap_cell, boss_cell, alpha_cell;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].name];
-        }
-    });
-}); };
-exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.name === name; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].alpha];
-        }
-    });
-}); };
-exports.TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].num];
+                json = _b.sent();
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 2:
+                sheet = _b.sent();
+                _a = __read(const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(','), 3), lap = _a[0], boss = _a[1], alpha = _a[2];
+                return [4, sheet.getCell(lap)];
+            case 3:
+                lap_cell = _b.sent();
+                lap_cell.setValue(json.lap);
+                return [4, sheet.getCell(boss)];
+            case 4:
+                boss_cell = _b.sent();
+                boss_cell.setValue(json.boss);
+                return [4, sheet.getCell(alpha)];
+            case 5:
+                alpha_cell = _b.sent();
+                alpha_cell.setValue(json.alpha);
+                return [2];
         }
     });
 }); };

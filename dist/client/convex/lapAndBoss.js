@@ -74,44 +74,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.CalCurrent = exports.ProgressReport = exports.GetCurrent = exports.Previous = exports.Next = exports.Update = exports.StageNames = void 0;
+exports.ProgressReport = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var bossTable = __importStar(require("../../io/bossTable"));
+var current = __importStar(require("../../io/current"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var list = __importStar(require("../plan/list"));
-var alphabet_to_number_1 = require("alphabet-to-number");
-exports.StageNames = ['first', 'second', 'third', 'fourth', 'fifth'];
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap, alpha, sheet, name, _b, lap_cell, boss_cell, num_cell;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a, lap, alpha;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], alpha = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
                 if (!/[a-e]/i.test(alpha))
                     return [2, false];
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+                return [4, current.UpdateLap(lap)];
             case 1:
-                sheet = _c.sent();
-                return [4, bossTable.TakeName(alpha)];
+                _b.sent();
+                return [4, util.sleep(100)];
             case 2:
-                name = _c.sent();
-                _b = __read(readCurrentCell(sheet), 3), lap_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
-                return [4, spreadsheet.SetValue(lap_cell, lap)];
+                _b.sent();
+                return [4, current.UpdateBoss(alpha)];
             case 3:
-                _c.sent();
-                return [4, spreadsheet.SetValue(boss_cell, name)];
+                _b.sent();
+                return [4, util.sleep(100)];
             case 4:
-                _c.sent();
-                return [4, spreadsheet.SetValue(num_cell, alpha)];
-            case 5:
-                _c.sent();
+                _b.sent();
+                current.SetCells();
                 exports.ProgressReport();
-                switchBossRole(alpha);
-                stageConfirm();
                 return [2, true];
         }
     });
@@ -137,7 +131,6 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
             case 5:
                 _c.sent();
                 exports.ProgressReport();
-                switchBossRole(num);
                 stageConfirm();
                 return [2];
         }
@@ -164,68 +157,25 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
             case 5:
                 _c.sent();
                 exports.ProgressReport();
-                switchBossRole(num);
                 stageConfirm();
                 return [2];
         }
     });
 }); };
-exports.GetCurrent = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, range, _a, lap, boss, cells, num;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _b.sent();
-                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [4, spreadsheet.GetCells(sheet, range[0] + ":" + range[1])];
-            case 2:
-                _a = __read.apply(void 0, [_b.sent(), 2]), lap = _a[0], boss = _a[1];
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 3:
-                cells = _b.sent();
-                num = pieces_each_1["default"](cells, 2).filter(function (v) { return v[1] === boss; })[0][0];
-                return [2, { lap: lap, boss: boss, num: num }];
-        }
-    });
-}); };
 exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, current, role, HP, channel;
+    var state, role, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, exports.GetCurrent()];
+            case 0: return [4, current.Fetch()];
             case 1:
                 state = _a.sent();
-                current = exports.CalCurrent();
-                role = const_settings_1["default"].BOSS_ROLE_ID[state.num];
-                HP = const_settings_1["default"].STAGE_HP[(current === null || current === void 0 ? void 0 : current.stage) || ''][(current === null || current === void 0 ? void 0 : current.boss) || ''];
+                role = const_settings_1["default"].BOSS_ROLE_ID[state.alpha];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + HP + "`");
-                list.PlanOnly(state.num);
+                channel.send("<@&" + role + ">\n`" + state.lap + "`\u5468\u76EE `" + state.boss + "`");
                 return [2];
         }
     });
 }); };
-exports.CalCurrent = function () {
-    var cal = util.GetCalInfo();
-    var role = cal === null || cal === void 0 ? void 0 : cal.roles.cache.map(function (m) { return m.name; });
-    var boss = role === null || role === void 0 ? void 0 : role.find(function (r) { return r.includes('ボス'); });
-    if (!boss)
-        return;
-    var stage = role === null || role === void 0 ? void 0 : role.find(function (r) { return r.includes('段階目'); });
-    if (!stage)
-        return;
-    return {
-        boss: alphabet_to_number_1.NtoA(boss[0]),
-        stage: exports.StageNames[Number(stage[0]) - 1]
-    };
-};
-var switchBossRole = function (num) {
-    var cal = util.GetCalInfo();
-    Object.values(const_settings_1["default"].BOSS_ROLE_ID).forEach(function (id) { return cal === null || cal === void 0 ? void 0 : cal.roles.remove(id); });
-    cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].BOSS_ROLE_ID[num]);
-    console.log("Switch Cal's boss role");
-};
 var readCurrentCell = function (sheet) {
     return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return sheet.getCell(cell); });
 };

@@ -67,11 +67,13 @@ exports.Command = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 if (msg.author.bot)
                     return [2];
                 content = util.Format(msg.content);
-                comment = clanbattle_1.ClanBattle(content, msg);
+                return [4, clanbattle_1.ClanBattle(content, msg)];
+            case 1:
+                comment = _a.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, management_1.Management(content, msg)];
-            case 1:
+            case 2:
                 comment = _a.sent();
                 if (comment)
                     return [2, console.log(comment)];

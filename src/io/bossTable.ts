@@ -23,7 +23,7 @@ export const Update = async () => {
     }))
 
   // キャルステータスを更新する
-  await io.Update(Settings.CAL_STATUS_ID.BOSS_TABLE, table)
+  await io.UpdateArray(Settings.CAL_STATUS_ID.BOSS_TABLE, table)
 }
 
 /**
@@ -64,4 +64,21 @@ export const TakeAlpha = async (name: string): Promise<Option<string>> => {
 
   // ボス番号を返す
   return boss[0].alpha
+}
+
+/**
+ * ボス番号からボス番号を取得
+ * @param alpha ボス番号
+ * @return ボス番号
+ */
+export const TakeNum = async (alpha: string): Promise<Option<string>> => {
+  // キャルステータスからボステーブルを取得
+  const table = await Fetch()
+
+  // ボス名がない場合は終了
+  const boss = table.filter(t => t.alpha === alpha)
+  if (boss.length === 0) return
+
+  // ボス番号を返す
+  return boss[0].num
 }

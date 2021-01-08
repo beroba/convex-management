@@ -27,7 +27,7 @@ export const Fetch = async <T>(id: string): Promise<T> => {
  * @param id 更新したいステータスのid
  * @param json 更新させたいjsonの情報
  */
-export const Update = async <T>(id: string, json: T) => {
+export const UpdateArray = async <T>(id: string, json: T) => {
   // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
   const msg = await channel.messages.fetch(id)
@@ -44,5 +44,30 @@ export const Update = async <T>(id: string, json: T) => {
     '\n```'
 
   // メッセージを更新
-  msg.edit(text)
+  await msg.edit(text)
+}
+
+/**
+ * キャルステータスの値を更新する
+ * @param id 更新したいステータスのid
+ * @param json 更新させたいjsonの情報
+ */
+export const UpdateJson = async <T>(id: string, json: T) => {
+  // 更新したいステータスのidを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
+  const msg = await channel.messages.fetch(id)
+
+  // prettier-ignore
+  // 見やすいように書式を追加するする
+  const text =
+    '```json\n' +
+    JSON.stringify(json)
+      .replace(/{/g, '\n{\n  ')
+      .replace(/}/g, '\n}\n')
+      .replace(/:/g, ': ')
+      .replace(/,/g, ',\n  ') +
+    '\n```'
+
+  // メッセージを更新
+  await msg.edit(text)
 }
