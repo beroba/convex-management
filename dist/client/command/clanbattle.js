@@ -95,16 +95,16 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb convex/.test(command): return [3, 1];
                     case /cb boss now/.test(command): return [3, 2];
                     case /cb boss next/.test(command): return [3, 3];
-                    case /cb boss previous/.test(command): return [3, 4];
-                    case /cb boss/.test(command): return [3, 5];
-                    case /cb complete plan/.test(command): return [3, 7];
-                    case /cb plan/.test(command): return [3, 8];
-                    case /cb over/.test(command): return [3, 9];
-                    case /cb task/.test(command): return [3, 10];
-                    case /cb update report/.test(command): return [3, 11];
-                    case /cb help/.test(command): return [3, 12];
+                    case /cb boss previous/.test(command): return [3, 6];
+                    case /cb boss/.test(command): return [3, 9];
+                    case /cb complete plan/.test(command): return [3, 11];
+                    case /cb plan/.test(command): return [3, 12];
+                    case /cb over/.test(command): return [3, 13];
+                    case /cb task/.test(command): return [3, 14];
+                    case /cb update report/.test(command): return [3, 15];
+                    case /cb help/.test(command): return [3, 16];
                 }
-                return [3, 13];
+                return [3, 17];
             case 1:
                 {
                     arg = command.replace('/cb convex ', '');
@@ -114,68 +114,70 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                 _b.label = 2;
             case 2:
                 {
-                    currentBossReport();
-                    return [2, 'Show ckurrent boss'];
+                    lapAndBoss.ProgressReport();
+                    return [2, 'Show current boss'];
                 }
                 _b.label = 3;
-            case 3:
-                {
-                    moveForward();
-                    return [2, 'Advance to next lap and boss'];
-                }
-                _b.label = 4;
+            case 3: return [4, lapAndBoss.Next()];
             case 4:
-                {
-                    moveReturn();
-                    return [2, 'Advance to previous lap and boss'];
-                }
-                _b.label = 5;
+                _b.sent();
+                return [4, situation.Report()];
             case 5:
+                _b.sent();
+                return [2, 'Advance to next lap and boss'];
+            case 6: return [4, lapAndBoss.Previous()];
+            case 7:
+                _b.sent();
+                return [4, situation.Report()];
+            case 8:
+                _b.sent();
+                return [2, 'Advance to previous lap and boss'];
+            case 9:
                 arg = command.replace('/cb boss ', '');
                 return [4, changeBoss(arg, msg)];
-            case 6:
+            case 10:
                 _b.sent();
                 return [2, 'Change laps and boss'];
-            case 7:
+            case 11:
                 {
                     arg = command.replace('/cb complete plan ', '');
                     planComplete(arg, msg);
                     return [2, 'All reset plan'];
                 }
-                _b.label = 8;
-            case 8:
+                _b.label = 12;
+            case 12:
                 {
                     arg = command.replace('/cb plan ', '');
                     planList(arg);
                     return [2, 'Display convex plan list'];
                 }
-                _b.label = 9;
-            case 9:
+                _b.label = 13;
+            case 13:
                 {
                     arg = command.replace('/cb over ', '');
                     simultConvexCalc(arg, msg);
                     return [2, 'Simultaneous convex carryover calculation'];
                 }
-                _b.label = 10;
-            case 10:
+                _b.label = 14;
+            case 14:
                 {
                     addTaskKillRoll(msg);
                     return [2, 'Add task kill roll'];
                 }
-                _b.label = 11;
-            case 11:
+                _b.label = 15;
+            case 15:
                 {
                     updateReport(msg);
                     return [2, 'Convex situation updated'];
                 }
-                _b.label = 12;
-            case 12:
+                _b.label = 16;
+            case 16:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 13;
-            case 13: return [2];
+                _b.label = 17;
+            case 17: return [2];
         }
     });
 }); };
@@ -188,34 +190,6 @@ var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0
                 result = _a.sent();
                 if (!result)
                     return [2];
-                situation.Report();
-                return [2];
-        }
-    });
-}); };
-var currentBossReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        lapAndBoss.ProgressReport();
-        return [2];
-    });
-}); };
-var moveForward = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, lapAndBoss.Next()];
-            case 1:
-                _a.sent();
-                situation.Report();
-                return [2];
-        }
-    });
-}); };
-var moveReturn = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, lapAndBoss.Previous()];
-            case 1:
-                _a.sent();
                 situation.Report();
                 return [2];
         }

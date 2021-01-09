@@ -68,7 +68,7 @@ export const Management = async (command: string, msg: Discord.Message): Promise
     }
 
     case /cb manage sheet/.test(command): {
-      spreadsheetLink(msg)
+      msg.reply(Settings.URL.SPREADSHEET)
       return 'Show spreadsheet link'
     }
   }
@@ -146,7 +146,7 @@ const updateSisters = async (msg: Discord.Message) => {
 }
 
 /**
- * 指定されたシートにメンバーの名前とidをp保存する
+ * 指定されたシートにメンバーの名前とidを保存する
  * @param members メンバーの情報
  * @param sheet 書き込むシート
  */
@@ -163,12 +163,4 @@ const fetchNameAndId = async (members: Option<Members[]>, sheet: any) => {
     const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
     id_cell.setValue(m.id)
   })
-}
-
-/**
- * スプレッドシートのリンクを送信する
- * @param msg DiscordからのMessage
- */
-const spreadsheetLink = (msg: Discord.Message) => {
-  msg.reply(Settings.URL.SPREADSHEET)
 }

@@ -12,6 +12,7 @@ export const Command = async (msg: Discord.Message) => {
   // botのメッセージは実行しない
   if (msg.author.bot) return
 
+  // 全角を全て半角にする
   const content = util.Format(msg.content)
 
   let comment: Option<string>

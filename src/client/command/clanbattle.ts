@@ -27,17 +27,24 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
     }
 
     case /cb boss now/.test(command): {
-      currentBossReport()
-      return 'Show ckurrent boss'
+      // #進行に現在の周回数とボスを報告
+      lapAndBoss.ProgressReport()
+      return 'Show current boss'
     }
 
     case /cb boss next/.test(command): {
-      moveForward()
+      // 次のボスに進める
+      await lapAndBoss.Next()
+      // 凸状況に報告
+      await situation.Report()
       return 'Advance to next lap and boss'
     }
 
     case /cb boss previous/.test(command): {
-      moveReturn()
+      // 前のボスに戻す
+      await lapAndBoss.Previous()
+      // 凸状況に報告
+      await situation.Report()
       return 'Advance to previous lap and boss'
     }
 
@@ -92,34 +99,6 @@ const changeConvex = async (arg: string, msg: Discord.Message) => {
   const result = await manage.Update(arg, msg)
   if (!result) return
 
-  // 凸状況に報告
-  situation.Report()
-}
-
-/**
- * #進行に現在の周回数とボスを報告
- */
-const currentBossReport = async () => {
-  // #進行に現在の周回数とボスを報告
-  lapAndBoss.ProgressReport()
-}
-
-/**
- * 現在の周回数とボスを次に進め、報告をする
- */
-const moveForward = async () => {
-  // 次のボスに進める
-  await lapAndBoss.Next()
-  // 凸状況に報告
-  situation.Report()
-}
-
-/**
- * 現在の周回数とボスを前に戻し、報告をする
- */
-const moveReturn = async () => {
-  // 前のボスに戻す
-  await lapAndBoss.Previous()
   // 凸状況に報告
   situation.Report()
 }
@@ -219,7 +198,7 @@ const addTaskKillRoll = (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const updateReport = async (msg: Discord.Message) => {
-  // 凸状況を更新
+  // #凸状況を更新
   situation.Report()
   await list.SituationEdit()
 

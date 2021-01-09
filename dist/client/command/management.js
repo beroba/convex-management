@@ -135,7 +135,7 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                 _c.label = 10;
             case 10:
                 {
-                    spreadsheetLink(msg);
+                    msg.reply(const_settings_1["default"].URL.SPREADSHEET);
                     return [2, 'Show spreadsheet link'];
                 }
                 _c.label = 11;
@@ -211,6 +211,3 @@ var fetchNameAndId = function (members, sheet) { return __awaiter(void 0, void 0
         return [2];
     });
 }); };
-var spreadsheetLink = function (msg) {
-    msg.reply(const_settings_1["default"].URL.SPREADSHEET);
-};
