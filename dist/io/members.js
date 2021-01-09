@@ -58,17 +58,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Ready = void 0;
+exports.Fetch = exports.UpdateUser = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var index_1 = require("../index");
-var util = __importStar(require("../util"));
-exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    var _a;
-    return __generator(this, function (_b) {
-        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-        channel.send('きゃるきゃるーん');
-        console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
-        return [2];
+var io = __importStar(require("."));
+exports.UpdateUser = function (users) { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                members = users === null || users === void 0 ? void 0 : users.map(function (u) { return ({
+                    name: u.name,
+                    id: u.id,
+                    convex: '',
+                    over: '',
+                    leave: ''
+                }); });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
+            case 1:
+                _a.sent();
+                return [2];
+        }
     });
 }); };
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.MEMBERS)];
+}); }); };

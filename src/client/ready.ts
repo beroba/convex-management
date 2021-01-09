@@ -1,34 +1,29 @@
 import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
-// import * as current from '../io/current'
+// import * as members from '../io/members'
 
 /**
  * キャルが起動した際に通知を送る
  */
-export const Ready = () => {
+export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('きゃるきゃるーん')
 
-  /*
-  ;(async () => {
-    const c = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-    const t = `\`\`\`json
-{
-  "stage": "",
-  "lap": "",
-  "boss": "",
-  "num": "",
-  "alpha": "",
-  "hp": ""
-}
-\`\`\``
-    // c.send(t)
+  // const state = await members.Fetch()
+  // console.log(state)
 
-    const msg = await c.messages.fetch('796419468045582437')
-    msg.edit(t)
-  })()
-  /**/
+  // const c = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
+  //     c.send('メンバーの状態 `member`')
+  //     const t = `\`\`\`json
+  // [
+  //   {"name": "", "id": "", "convex": "", "over": "", "leave": ""},
+  // ]
+  // \`\`\``
+  //     c.send(t)
+
+  // const msg = await c.messages.fetch('796419466404691979')
+  // msg.edit('現在の状況 `current`')
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

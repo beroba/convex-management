@@ -4,6 +4,8 @@ import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
+import * as members from '../../io/members'
+import {User} from '../../io/type'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as category from './category'
@@ -92,20 +94,12 @@ const removeRole = (msg: Discord.Message) => {
 }
 
 /**
- * メンバーの情報
- */
-type Members = {
-  name: string
-  id: string
-}
-
-/**
  * スプレッドシートのメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
 const updateMembers = async (msg: Discord.Message) => {
   // クランメンバー一覧をニックネームで取得
-  const members: Option<Members[]> = msg.guild?.roles.cache
+  const users: Option<User[]> = msg.guild?.roles.cache
     .get(Settings.ROLE_ID.CLAN_MEMBERS)
     ?.members.map(m => ({
       name: util.GetUserName(m),
@@ -113,11 +107,13 @@ const updateMembers = async (msg: Discord.Message) => {
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1))
 
+  members.UpdateUser(users)
+
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // シートに名前とidを保存する
-  fetchNameAndId(members, sheet)
+  fetchNameAndId(users, sheet)
 
   msg.reply('クランメンバー一覧を更新したわよ！')
 }
@@ -128,7 +124,7 @@ const updateMembers = async (msg: Discord.Message) => {
  */
 const updateSisters = async (msg: Discord.Message) => {
   // 妹クランメンバー一覧をニックネームで取得
-  const members: Option<Members[]> = msg.guild?.roles.cache
+  const users: Option<User[]> = msg.guild?.roles.cache
     .get(Settings.ROLE_ID.SISTER_MEMBERS)
     ?.members.map(m => ({
       name: util.GetUserName(m),
@@ -140,7 +136,7 @@ const updateSisters = async (msg: Discord.Message) => {
   const sheet = await spreadsheet.GetWorksheet(Settings.SISTER_SHEET.SHEET_NAME)
 
   // シートに名前とidを保存する
-  fetchNameAndId(members, sheet)
+  fetchNameAndId(users, sheet)
 
   msg.reply('妹クランメンバー一覧を更新したわよ！')
 }
@@ -150,9 +146,9 @@ const updateSisters = async (msg: Discord.Message) => {
  * @param members メンバーの情報
  * @param sheet 書き込むシート
  */
-const fetchNameAndId = async (members: Option<Members[]>, sheet: any) => {
+const fetchNameAndId = async (users: Option<User[]>, sheet: any) => {
   // メンバー一覧を更新
-  members?.forEach(async (m, i) => {
+  users?.forEach(async (m, i) => {
     const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
 
     // 名前を更新

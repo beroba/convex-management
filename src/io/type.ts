@@ -27,3 +27,22 @@ export type Current = {
   alpha: string
   hp: string
 }
+
+/**
+ * メンバーの状態
+ */
+export type Members = {
+  name: string
+  id: string
+  convex: string
+  over: string
+  leave: string
+}
+
+/**
+ * ユーザー情報
+ */
+export type User = {
+  name: string
+  id: string
+}
