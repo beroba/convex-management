@@ -74,13 +74,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.stageConfirm = exports.ProgressReport = exports.Previous = exports.Next = exports.Update = void 0;
+exports.ProgressReport = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var current = __importStar(require("../../io/current"));
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var category = __importStar(require("../command/category"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, alpha;
     return __generator(this, function (_b) {
@@ -105,6 +104,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 _b.sent();
                 exports.ProgressReport();
                 current.SetCells();
+                stageConfirm();
                 return [2, true];
         }
     });
@@ -132,6 +132,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 _a.sent();
                 exports.ProgressReport();
                 current.SetCells();
+                stageConfirm();
                 return [2];
         }
     });
@@ -159,6 +160,7 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 _a.sent();
                 exports.ProgressReport();
                 current.SetCells();
+                stageConfirm();
                 return [2];
         }
     });
@@ -177,75 +179,29 @@ exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, range, _a, lap, num, stage, cells, _b, col;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _c.sent();
-                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [4, spreadsheet.GetCells(sheet, range[0] + ":" + range[2])];
-            case 2:
-                _a = __read.apply(void 0, [_c.sent(), 3]), lap = _a[0], num = _a[2];
-                stage = getStageNow(Number(lap));
-                switchStageRole(stage);
-                if (num !== 'a')
-                    return [2];
-                _b = pieces_each_1["default"];
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.STAGE_CELLS)];
-            case 3:
-                cells = _b.apply(void 0, [_c.sent(), 2]);
-                col = const_settings_1["default"].INFORMATION_SHEET.STAGE_COLUMN;
-                switch (lap) {
-                    case '4': {
-                        if (cells[1][1])
-                            return [2];
-                        return [2, fetchStage(2, sheet, col)];
-                    }
-                    case '11': {
-                        if (cells[2][1])
-                            return [2];
-                        return [2, fetchStage(3, sheet, col)];
-                    }
-                    case '35': {
-                        if (cells[3][1])
-                            return [2];
-                        return [2, fetchStage(4, sheet, col)];
-                    }
-                }
-                return [2];
-        }
-    });
-}); };
-var getStageNow = function (lap) {
-    switch (true) {
-        case lap < 4:
-            return 'first';
-        case lap < 11:
-            return 'second';
-        case lap < 35:
-            return 'third';
-        case lap < 45:
-            return 'fourth';
-        default:
-            return 'fifth';
-    }
-};
-var switchStageRole = function (stage) {
-    var cal = util.GetCalInfo();
-    Object.values(const_settings_1["default"].STAGE_ROLE_ID).forEach(function (id) { return cal === null || cal === void 0 ? void 0 : cal.roles.remove(id); });
-    cal === null || cal === void 0 ? void 0 : cal.roles.add(const_settings_1["default"].STAGE_ROLE_ID[stage]);
-    console.log("Switch Cal's stage role");
-};
-var fetchStage = function (n, sheet, col) { return __awaiter(void 0, void 0, void 0, function () {
-    var cell;
+var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var state;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, sheet.getCell("" + col + (n + 2))];
+            case 0: return [4, current.Fetch()];
             case 1:
-                cell = _a.sent();
-                cell.setValue(1);
+                state = _a.sent();
+                if (state.alpha !== 'a')
+                    return [2];
+                switch (state.lap) {
+                    case '4': {
+                        return [2, category.CheckTheStage(2)];
+                    }
+                    case '11': {
+                        return [2, category.CheckTheStage(3)];
+                    }
+                    case '35': {
+                        return [2, category.CheckTheStage(4)];
+                    }
+                    case '45': {
+                        return [2, category.CheckTheStage(5)];
+                    }
+                }
                 return [2];
         }
     });

@@ -1,9 +1,8 @@
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
 import {NtoA} from 'alphabet-to-number'
 import * as current from '../../io/current'
 import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
+import * as category from '../command/category'
 
 /**
  * 現在の周回数とボスを変更する
@@ -31,7 +30,7 @@ export const Update = async (arg: string): Promise<boolean> => {
   current.SetCells()
 
   // 段階数の区切りを付ける
-  // stageConfirm()
+  stageConfirm()
 
   return true
 }
@@ -60,7 +59,7 @@ export const Next = async () => {
   current.SetCells()
 
   // 段階数の区切りを付ける
-  // stageConfirm()
+  stageConfirm()
 }
 
 /**
@@ -87,7 +86,7 @@ export const Previous = async () => {
   current.SetCells()
 
   // 段階数の区切りを付ける
-  // stageConfirm()
+  stageConfirm()
 }
 
 /**
@@ -106,89 +105,31 @@ export const ProgressReport = async () => {
 }
 
 /**
- * 段階が切り替わるか確認をする
+ * 段階が切り替わるタイミングを確認する
  */
-export const stageConfirm = async () => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+const stageConfirm = async () => {
+  // 現在の状況を取得
+  const state = await current.Fetch()
 
-  // 周回数とボス番号を取得
-  const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
-  const [lap, , num] = await spreadsheet.GetCells(sheet, `${range[0]}:${range[2]}`)
+  // 1ボスでない場合は終了
+  if (state.alpha !== 'a') return
 
-  // キャルの段階ロールを切り替える
-  const stage = getStageNow(Number(lap))
-  switchStageRole(stage)
-
-  // 1ボスない場合は終了
-  if (num !== 'a') return
-
-  // 段階数のセル
-  const cells: string[][] = PiecesEach(await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.STAGE_CELLS), 2)
-  const col = Settings.INFORMATION_SHEET.STAGE_COLUMN
-
-  switch (lap) {
+  switch (state.lap) {
+    // 2段階目
     case '4': {
-      if (cells[1][1]) return
-      return fetchStage(2, sheet, col)
+      return category.CheckTheStage(2)
     }
-
+    // 3段階目
     case '11': {
-      if (cells[2][1]) return
-      return fetchStage(3, sheet, col)
+      return category.CheckTheStage(3)
     }
-
+    // 4段階目
     case '35': {
-      if (cells[3][1]) return
-      return fetchStage(4, sheet, col)
+      return category.CheckTheStage(4)
+    }
+    // 5段階目
+    case '45': {
+      return category.CheckTheStage(5)
     }
   }
-}
-
-/**
- * 現在の周回数から段階名を返す
- * @param n 周回数
- * @return 段階名
- */
-const getStageNow = (lap: number) => {
-  switch (true) {
-    case lap < 4:
-      return 'first'
-    case lap < 11:
-      return 'second'
-    case lap < 35:
-      return 'third'
-    case lap < 45:
-      return 'fourth'
-    default:
-      return 'fifth'
-  }
-}
-
-/**
- * キャルの段階ロールを切り替える
- * @param stage 段階名
- */
-const switchStageRole = (stage: string) => {
-  // キャルのユーザー情報を取得
-  const cal = util.GetCalInfo()
-
-  // 全ての段階ロールを外す
-  Object.values(Settings.STAGE_ROLE_ID as string[]).forEach(id => cal?.roles.remove(id))
-
-  // 現在の段階ロールを付ける
-  cal?.roles.add(Settings.STAGE_ROLE_ID[stage])
-
-  console.log("Switch Cal's stage role")
-}
-
-/**
- * 段階数の区切りとフラグを立てる
- * @param n 段階数
- * @param sheet 情報のシート
- * @param col フラグの列
- */
-const fetchStage = async (n: number, sheet: any, col: string) => {
-  const cell = await sheet.getCell(`${col}${n + 2}`)
-  cell.setValue(1)
 }
