@@ -107,7 +107,7 @@ const updateMembers = async (msg: Discord.Message) => {
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1))
 
-  members.UpdateUser(users)
+  members.UpdateUsers(users)
 
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)

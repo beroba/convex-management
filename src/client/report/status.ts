@@ -6,7 +6,6 @@ import {DateTable} from '../../io/type'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as convex from '../convex'
-import * as lapAndBoss from '../convex/lapAndBoss'
 import {Status} from './'
 
 /**
@@ -83,9 +82,6 @@ const statusUpdate = (num_cell: any, over_cell: any, content: string) => {
 
   // ボスを倒した場合はtrue、倒していない場合はfalse
   if (/^k|kill/i.test(content)) {
-    // 次のボスに進める
-    lapAndBoss.Next()
-
     // 持ち越しフラグが立っていたらtrue
     if (over) {
       // 持ち越しフラグを折る

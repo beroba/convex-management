@@ -60,32 +60,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var members = __importStar(require("../../io/members"));
+var util = __importStar(require("../../util"));
 var carryover = __importStar(require("../convex/carryover"));
 var situation = __importStar(require("../convex/situation"));
 var status = __importStar(require("./status"));
 var cancel = __importStar(require("../plan/cancel"));
+var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, result;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var member, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 if (msg.author.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
-                if (!isRole) {
+                return [4, members.FetchMember(msg.author.id)];
+            case 1:
+                member = _a.sent();
+                if (!member) {
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
                 }
-                return [4, status.Update(msg)];
-            case 1:
-                result = _b.sent();
-                if (result.already) {
+                if (member.end === '1') {
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];
                 }
+                killConfirm(msg);
+                return [4, status.Update(msg)];
+            case 2:
+                result = _a.sent();
                 if (result.over)
                     carryover.AllDelete(msg);
                 if (result.end) {
@@ -99,3 +104,9 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
+var killConfirm = function (msg) {
+    var content = util.Format(msg.content);
+    if (!/^k|kill/i.test(content))
+        return;
+    lapAndBoss.Next();
+};

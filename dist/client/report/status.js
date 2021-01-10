@@ -65,7 +65,6 @@ var dateTable = __importStar(require("../../io/dateTable"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var convex = __importStar(require("../convex"));
-var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, members, row, date, num_cell, over_cell, end_cell, hist_cell, over, content, end;
     var _a;
@@ -127,7 +126,6 @@ var statusUpdate = function (num_cell, over_cell, content) {
     var num = Number(num_cell.getValue());
     var over = over_cell.getValue();
     if (/^k|kill/i.test(content)) {
-        lapAndBoss.Next();
         if (over) {
             over_cell.setValue();
         }

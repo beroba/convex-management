@@ -31,12 +31,13 @@ export type Current = {
 /**
  * メンバーの状態
  */
-export type Members = {
+export type Member = {
   name: string
   id: string
   convex: string
   over: string
-  leave: string
+  end: string
+  history: string
 }
 
 /**

@@ -19,15 +19,15 @@ export const Update = async (arg: string): Promise<boolean> => {
 
   // 現在の状況を更新
   await current.UpdateLap(lap)
-  await util.sleep(100)
+  await util.Sleep(100)
   await current.UpdateBoss(alpha)
-  await util.sleep(100)
+  await util.Sleep(100)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
   // 現在の状況をスプレッドシートに反映
-  current.SetCells()
+  current.ReflectOnSheet()
 
   // 段階数の区切りを付ける
   stageConfirm()
@@ -48,15 +48,15 @@ export const Next = async () => {
 
   // 現在の状況を更新
   await current.UpdateLap(lap)
-  await util.sleep(100)
+  await util.Sleep(100)
   await current.UpdateBoss(alpha)
-  await util.sleep(100)
+  await util.Sleep(100)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
   // 現在の状況をスプレッドシートに反映
-  current.SetCells()
+  current.ReflectOnSheet()
 
   // 段階数の区切りを付ける
   stageConfirm()
@@ -75,15 +75,15 @@ export const Previous = async () => {
 
   // 現在の状況を更新
   await current.UpdateLap(lap)
-  await util.sleep(100)
+  await util.Sleep(100)
   await current.UpdateBoss(alpha)
-  await util.sleep(100)
+  await util.Sleep(100)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
   // 現在の状況をスプレッドシートに反映
-  current.SetCells()
+  current.ReflectOnSheet()
 
   // 段階数の区切りを付ける
   stageConfirm()

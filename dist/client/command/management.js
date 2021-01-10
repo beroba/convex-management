@@ -161,7 +161,7 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     name: util.GetUserName(m),
                     id: m.id
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                members.UpdateUser(users);
+                members.UpdateUsers(users);
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _c.sent();

@@ -21,7 +21,7 @@ export const Format = (str: string): string =>
  * 特定の秒数遅延させる
  * @param ms 遅延させる秒数
  */
-export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
+export const Sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 /**
  * クランサーバーのguildを取得する
@@ -43,6 +43,15 @@ export const GetCalInfo = (): Option<Discord.GuildMember> => GetGuild()?.members
  */
 export const IsChannel = (array: string[], channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel) =>
   array.some((c: string) => c === (channel as Discord.TextChannel).name)
+
+/**
+ * メンバーに指定のロールが付いているか確認する
+ * @param member 確認するメンバー
+ * @param role 確認したいロール
+ * @return 真偽値
+ */
+export const IsRole = (member: Option<Discord.GuildMember>, role: string): Option<boolean> =>
+  member?.roles.cache.some(r => r.id === role)
 
 /**
  * Userの名前を取得する。

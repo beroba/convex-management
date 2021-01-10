@@ -108,7 +108,7 @@ export const AllComplete = async (id: string) => {
   // 10秒起きに削除を実行
   for (const m of list) {
     m.delete()
-    await util.sleep(10000)
+    await util.Sleep(10000)
   }
 
   console.log('Delete all convex schedules')

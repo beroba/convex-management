@@ -172,7 +172,7 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
                 if (!!list_1_1.done) return [3, 6];
                 m = list_1_1.value;
                 m["delete"]();
-                return [4, util.sleep(10000)];
+                return [4, util.Sleep(10000)];
             case 4:
                 _b.sent();
                 _b.label = 5;

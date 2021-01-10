@@ -93,17 +93,17 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, current.UpdateLap(lap)];
             case 1:
                 _b.sent();
-                return [4, util.sleep(100)];
+                return [4, util.Sleep(100)];
             case 2:
                 _b.sent();
                 return [4, current.UpdateBoss(alpha)];
             case 3:
                 _b.sent();
-                return [4, util.sleep(100)];
+                return [4, util.Sleep(100)];
             case 4:
                 _b.sent();
                 exports.ProgressReport();
-                current.SetCells();
+                current.ReflectOnSheet();
                 stageConfirm();
                 return [2, true];
         }
@@ -121,17 +121,17 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, current.UpdateLap(lap)];
             case 2:
                 _a.sent();
-                return [4, util.sleep(100)];
+                return [4, util.Sleep(100)];
             case 3:
                 _a.sent();
                 return [4, current.UpdateBoss(alpha)];
             case 4:
                 _a.sent();
-                return [4, util.sleep(100)];
+                return [4, util.Sleep(100)];
             case 5:
                 _a.sent();
                 exports.ProgressReport();
-                current.SetCells();
+                current.ReflectOnSheet();
                 stageConfirm();
                 return [2];
         }
@@ -149,17 +149,17 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, current.UpdateLap(lap)];
             case 2:
                 _a.sent();
-                return [4, util.sleep(100)];
+                return [4, util.Sleep(100)];
             case 3:
                 _a.sent();
                 return [4, current.UpdateBoss(alpha)];
             case 4:
                 _a.sent();
-                return [4, util.sleep(100)];
+                return [4, util.Sleep(100)];
             case 5:
                 _a.sent();
                 exports.ProgressReport();
-                current.SetCells();
+                current.ReflectOnSheet();
                 stageConfirm();
                 return [2];
         }

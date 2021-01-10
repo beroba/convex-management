@@ -10,17 +10,37 @@ export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('きゃるきゃるーん')
 
-  // const state = await members.Fetch()
-  // console.log(state)
+  /*
+  console.log(1)
+  {
+    const member = await members.FetchMember('420084355105423367')
+    if (!member) return
+    console.log(member)
+
+    member.convex = ''
+    member.over = ''
+    member.end = ''
+    member.history = ''
+
+    await members.UpdateMember(member)
+  }
+  {
+    const member = await members.FetchMember('420084355105423367')
+    if (!member) return
+    console.log(member)
+    await members.ReflectOnSheet(member)
+  }
+  console.log(2)
+  /**/
 
   // const c = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-  //     c.send('メンバーの状態 `member`')
-  //     const t = `\`\`\`json
+  // c.send('メンバーの状態 `member`')
+  // const t = `\`\`\`json
   // [
   //   {"name": "", "id": "", "convex": "", "over": "", "leave": ""},
   // ]
   // \`\`\``
-  //     c.send(t)
+  // c.send(t)
 
   // const msg = await c.messages.fetch('796419466404691979')
   // msg.edit('現在の状況 `current`')

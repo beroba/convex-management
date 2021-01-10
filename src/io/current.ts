@@ -85,9 +85,9 @@ export const UpdateHp = async (hp: string) => {
 export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CAL_STATUS_ID.CURRENT)
 
 /**
- * 現在の状況を更新する
+ * スプレッドシートに現在の状況を反映させる
  */
-export const SetCells = async () => {
+export const ReflectOnSheet = async () => {
   // キャルステータスから現在の状況を取得
   const json: Current = await Fetch()
 
@@ -97,15 +97,15 @@ export const SetCells = async () => {
   // 周回数、ボス名、ボス番号の番地を取得
   const [lap, boss, alpha] = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
 
-  // 周回数を更新する
+  // 周回数を更新
   const lap_cell = await sheet.getCell(lap)
   lap_cell.setValue(json.lap)
 
-  // ボス名を更新する
+  // ボス名を更新
   const boss_cell = await sheet.getCell(boss)
   boss_cell.setValue(json.boss)
 
-  // ボス番号を更新する
+  // ボス番号を更新
   const alpha_cell = await sheet.getCell(alpha)
   alpha_cell.setValue(json.alpha)
 }

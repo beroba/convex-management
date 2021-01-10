@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SetCells = exports.Fetch = exports.UpdateHp = exports.UpdateBoss = exports.GetStageName = exports.UpdateLap = void 0;
+exports.ReflectOnSheet = exports.Fetch = exports.UpdateHp = exports.UpdateBoss = exports.GetStageName = exports.UpdateLap = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
@@ -156,7 +156,7 @@ exports.UpdateHp = function (hp) { return __awaiter(void 0, void 0, void 0, func
 exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.CURRENT)];
 }); }); };
-exports.SetCells = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
     var json, sheet, _a, lap, boss, alpha, lap_cell, boss_cell, alpha_cell;
     return __generator(this, function (_b) {
         switch (_b.label) {
