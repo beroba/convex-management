@@ -92,10 +92,12 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, status.Update(msg)];
             case 2:
                 _a.sent();
-                util.Sleep(100);
                 return [4, members.FetchMember(msg.author.id)];
             case 3:
                 member = _a.sent();
+                if (!member)
+                    return [2];
+                members.ReflectOnSheet(member);
                 if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
                     cancel.AllComplete(msg.author.id);
                 }

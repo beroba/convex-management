@@ -55,11 +55,14 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // 凸状況を更新
   await status.Update(msg)
-  util.Sleep(100)
 
   {
     // メンバーの状態を取得
     const member = await members.FetchMember(msg.author.id)
+    if (!member) return
+
+    members.ReflectOnSheet(member)
+
     // 凸予定の削除
     if (member?.end === '1') {
       cancel.AllComplete(msg.author.id)

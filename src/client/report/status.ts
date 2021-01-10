@@ -1,161 +1,126 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import * as dateTable from '../../io/dateTable'
-import {DateTable} from '../../io/type'
+import * as members from '../../io/members'
 import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
-import * as convex from '../convex'
-import {Status} from './'
+
+/**
+ * 凸数と持ち越し
+ */
+type State = {
+  convex: string
+  over: string
+}
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
- * @return 持ち越しかどうかの真偽値
  */
-export const Update = async (msg: Discord.Message): Promise<Status> => {
-  // 凸報告のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // メンバーのセル一覧から凸報告者の行を取得
-  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const row = convex.GetMemberRow(members, msg.member?.id || '')
-
-  // 凸数、持ち越し、3凸終了のセルを取得
-  const date = await dateTable.TakeDate()
-  const num_cell = await convex.GetCell(0, date.col, row, sheet)
-  const over_cell = await convex.GetCell(1, date.col, row, sheet)
-  const end_cell = await convex.GetCell(2, date.col, row, sheet)
-  const hist_cell = await convex.GetCell(3, date.col, row, sheet)
-
-  // 既に3凸している人は終了する
-  if (end_cell.getValue()) return {already: true, over: false, end: false}
-
-  // 現在の凸状況を履歴に残しておく
-  saveHistory(num_cell, over_cell, hist_cell)
-
-  // 持ち越し状況の真偽値を保存
-  const over = over_cell.getValue() ? true : false
+export const Update = async (msg: Discord.Message) => {
+  // 現在の凸状況を履歴に残す
+  await saveHistory(msg)
 
   // 凸数と持ち越しの状態を更新する
   const content = util.Format(msg.content)
-  statusUpdate(num_cell, over_cell, content)
+  const state = await statusUpdate(msg, content)
 
   // 凸報告に取消の絵文字をつける
   msg.react(Settings.EMOJI_ID.TORIKESHI)
 
   // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸状況を報告
-  const end = await isThreeConvex(num_cell, over_cell)
+  const end = await isThreeConvex(state)
   if (end) {
-    convexEndProcess(end_cell, sheet, date, msg)
+    await convexEndProcess(msg)
   } else {
-    updateProcess(num_cell, over_cell, msg)
+    // 凸状況を報告する
+    await msg.reply(`${state.convex}凸目 ${state.over ? '持ち越し' : '終了'}`)
   }
-
-  return {already: false, over: over, end: end}
 }
 
 /**
  * 現在の凸状況を履歴に残す
- * @param num_cell 凸数のセル
- * @param over_cell 持ち越しのセル
- * @param hist_cell 履歴のセル
+ * @param msg DiscordからのMessage
  */
-const saveHistory = async (num_cell: any, over_cell: any, hist_cell: any) => {
-  const num = num_cell.getValue()
-  const over = over_cell.getValue()
+const saveHistory = async (msg: Discord.Message) => {
+  // メンバーの状態を取得
+  const member = await members.FetchMember(msg.author.id)
+  if (!member) return
 
-  hist_cell.setValue(`${num}${over ? `,${over}` : ''}`)
+  // 現在の凸状況を履歴に残す
+  member.history = `${member.convex}${member.over ? '+' : ''}`
+
+  await members.UpdateMember(member)
 }
 
 /**
  * 凸数と持ち越しの状態を変更する
- * @param num_cell 凸数のセル
- * @param over_cell 持ち越しのセル
+ * @param msg DiscordからのMessage
  * @param content 凸報告の内容
  */
-const statusUpdate = (num_cell: any, over_cell: any, content: string) => {
-  // セルの値を取得
-  const num = Number(num_cell.getValue())
-  const over = over_cell.getValue()
+const statusUpdate = async (msg: Discord.Message, content: string): Promise<State> => {
+  // メンバーの状態を取得
+  const member = await members.FetchMember(msg.author.id)
+  if (!member) return {convex: '', over: ''}
+
+  // 凸数を増やす
+  const countUp = (convex: string): string => String(Number(convex) + 1)
 
   // ボスを倒した場合はtrue、倒していない場合はfalse
   if (/^k|kill/i.test(content)) {
-    // 持ち越しフラグが立っていたらtrue
-    if (over) {
-      // 持ち越しフラグを折る
-      over_cell.setValue()
+    if (member.over === '1') {
+      member.over = ''
     } else {
-      // 凸数を増やす
-      num_cell.setValue(num + 1)
-      // 持ち越しフラグを立てる
-      over_cell.setValue(1)
+      member.convex = countUp(member.convex)
+      member.over = '1'
     }
   } else {
-    // 持ち越しフラグが立っていたらtrue
-    if (over) {
-      // 持ち越しフラグを折る
-      over_cell.setValue()
+    if (member.over === '1') {
+      member.over = ''
     } else {
-      // 凸数を増やす
-      num_cell.setValue(num + 1)
+      member.convex = countUp(member.convex)
     }
   }
+
+  await members.UpdateMember(member)
+
+  return {convex: member.convex, over: member.over}
 }
 
 /**
- * 3凸終了しているかの真偽値を返す。
- * @param num_cell 凸数のセル
- * @param over_cell 持ち越しのセル
- * @param end_cell 3凸終了のセル
+ * 3凸終了しているかの真偽値を返す
+ * @param 凸数と持ち越し
  * @return 3凸しているかの真偽値
  */
-const isThreeConvex = async (num_cell: any, over_cell: any): Promise<boolean> => {
+const isThreeConvex = async (state: State): Promise<boolean> => {
   // 3凸目じゃなければfalse
-  const num = num_cell.getValue()
-  if (num !== '3') return false
+  if (state.convex !== '3') return false
 
   // 持ち越し状態があればfalse
-  const over = over_cell.getValue()
-  if (over) return false
+  if (state.over === '1') return false
 
   // 3凸目で持ち越しがなければ3凸終了者なのでtrue
   return true
 }
 
 /**
- * 3凸終了の扱いにし、凸残ロールを削除し、何人目の3凸終了者か報告をする。
- * 全凸終了時だったら全凸終了報告もする
- * @param end_cell 3凸終了のセル
- * @param sheet 凸報告のシート
- * @param days 日付情報
+ * 3凸終了の扱いにし、凸残ロールを削除し、何人目の3凸終了者か報告をする
  * @param msg DiscordからのMessage
  */
-const convexEndProcess = async (end_cell: any, sheet: any, date: DateTable, msg: Discord.Message) => {
+const convexEndProcess = async (msg: Discord.Message) => {
+  // メンバーの状態を取得
+  const member = await members.FetchMember(msg.author.id)
+  if (!member) return false
+
   // 3凸終了のフラグを立てる
-  await end_cell.setValue(1)
+  member.end = '1'
+
+  await members.UpdateMember(member)
+  util.Sleep(100)
 
   // 凸残ロールを削除
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const people_cell = await convex.GetCell(2, date.col, 1, sheet)
-  const n = people_cell.getValue()
+  const state = await members.Fetch()
+  const n = state.filter(s => s.end === '1').length
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
-}
-
-/**
- * 凸報告者の凸状況を報告する
- * @param num_cell 凸数のセル
- * @param over_cell 持ち越しのセル
- * @param msg DiscordからのMessage
- */
-const updateProcess = async (num_cell: any, over_cell: any, msg: Discord.Message) => {
-  // セルの値を取得
-  const num = Number(num_cell.getValue())
-  const over = over_cell.getValue()
-
-  // 凸状況を報告する
-  await msg.reply(`${num}凸目 ${over ? '持ち越し' : '終了'}`)
 }

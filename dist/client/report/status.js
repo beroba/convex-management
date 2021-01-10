@@ -60,133 +60,121 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var dateTable = __importStar(require("../../io/dateTable"));
+var members = __importStar(require("../../io/members"));
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var convex = __importStar(require("../convex"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, members, row, date, num_cell, over_cell, end_cell, hist_cell, over, content, end;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+    var content, state, end;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, saveHistory(msg)];
             case 1:
-                sheet = _b.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                cells = _b.sent();
-                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                row = convex.GetMemberRow(members, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '');
-                return [4, dateTable.TakeDate()];
-            case 3:
-                date = _b.sent();
-                return [4, convex.GetCell(0, date.col, row, sheet)];
-            case 4:
-                num_cell = _b.sent();
-                return [4, convex.GetCell(1, date.col, row, sheet)];
-            case 5:
-                over_cell = _b.sent();
-                return [4, convex.GetCell(2, date.col, row, sheet)];
-            case 6:
-                end_cell = _b.sent();
-                return [4, convex.GetCell(3, date.col, row, sheet)];
-            case 7:
-                hist_cell = _b.sent();
-                if (end_cell.getValue())
-                    return [2, { already: true, over: false, end: false }];
-                saveHistory(num_cell, over_cell, hist_cell);
-                over = over_cell.getValue() ? true : false;
+                _a.sent();
                 content = util.Format(msg.content);
-                statusUpdate(num_cell, over_cell, content);
-                msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
-                return [4, isThreeConvex(num_cell, over_cell)];
-            case 8:
-                end = _b.sent();
-                if (end) {
-                    convexEndProcess(end_cell, sheet, date, msg);
-                }
-                else {
-                    updateProcess(num_cell, over_cell, msg);
-                }
-                return [2, { already: false, over: over, end: end }];
-        }
-    });
-}); };
-var saveHistory = function (num_cell, over_cell, hist_cell) { return __awaiter(void 0, void 0, void 0, function () {
-    var num, over;
-    return __generator(this, function (_a) {
-        num = num_cell.getValue();
-        over = over_cell.getValue();
-        hist_cell.setValue("" + num + (over ? "," + over : ''));
-        return [2];
-    });
-}); };
-var statusUpdate = function (num_cell, over_cell, content) {
-    var num = Number(num_cell.getValue());
-    var over = over_cell.getValue();
-    if (/^k|kill/i.test(content)) {
-        if (over) {
-            over_cell.setValue();
-        }
-        else {
-            num_cell.setValue(num + 1);
-            over_cell.setValue(1);
-        }
-    }
-    else {
-        if (over) {
-            over_cell.setValue();
-        }
-        else {
-            num_cell.setValue(num + 1);
-        }
-    }
-};
-var isThreeConvex = function (num_cell, over_cell) { return __awaiter(void 0, void 0, void 0, function () {
-    var num, over;
-    return __generator(this, function (_a) {
-        num = num_cell.getValue();
-        if (num !== '3')
-            return [2, false];
-        over = over_cell.getValue();
-        if (over)
-            return [2, false];
-        return [2, true];
-    });
-}); };
-var convexEndProcess = function (end_cell, sheet, date, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var people_cell, n;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, end_cell.setValue(1)];
-            case 1:
-                _b.sent();
-                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+                return [4, statusUpdate(msg, content)];
             case 2:
-                _b.sent();
-                return [4, convex.GetCell(2, date.col, 1, sheet)];
+                state = _a.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
+                return [4, isThreeConvex(state)];
             case 3:
-                people_cell = _b.sent();
-                n = people_cell.getValue();
-                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
+                end = _a.sent();
+                if (!end) return [3, 5];
+                return [4, convexEndProcess(msg)];
             case 4:
-                _b.sent();
+                _a.sent();
+                return [3, 7];
+            case 5: return [4, msg.reply(state.convex + "\u51F8\u76EE " + (state.over ? '持ち越し' : '終了'))];
+            case 6:
+                _a.sent();
+                _a.label = 7;
+            case 7: return [2];
+        }
+    });
+}); };
+var saveHistory = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var member;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, members.FetchMember(msg.author.id)];
+            case 1:
+                member = _a.sent();
+                if (!member)
+                    return [2];
+                member.history = "" + member.convex + (member.over ? '+' : '');
+                return [4, members.UpdateMember(member)];
+            case 2:
+                _a.sent();
                 return [2];
         }
     });
 }); };
-var updateProcess = function (num_cell, over_cell, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var num, over;
+var statusUpdate = function (msg, content) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, countUp;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                num = Number(num_cell.getValue());
-                over = over_cell.getValue();
-                return [4, msg.reply(num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了'))];
+            case 0: return [4, members.FetchMember(msg.author.id)];
             case 1:
+                member = _a.sent();
+                if (!member)
+                    return [2, { convex: '', over: '' }];
+                countUp = function (convex) { return String(Number(convex) + 1); };
+                if (/^k|kill/i.test(content)) {
+                    if (member.over === '1') {
+                        member.over = '';
+                    }
+                    else {
+                        member.convex = countUp(member.convex);
+                        member.over = '1';
+                    }
+                }
+                else {
+                    if (member.over === '1') {
+                        member.over = '';
+                    }
+                    else {
+                        member.convex = countUp(member.convex);
+                    }
+                }
+                return [4, members.UpdateMember(member)];
+            case 2:
                 _a.sent();
+                return [2, { convex: member.convex, over: member.over }];
+        }
+    });
+}); };
+var isThreeConvex = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (state.convex !== '3')
+            return [2, false];
+        if (state.over === '1')
+            return [2, false];
+        return [2, true];
+    });
+}); };
+var convexEndProcess = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, state, n;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, members.FetchMember(msg.author.id)];
+            case 1:
+                member = _b.sent();
+                if (!member)
+                    return [2, false];
+                member.end = '1';
+                return [4, members.UpdateMember(member)];
+            case 2:
+                _b.sent();
+                util.Sleep(100);
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+            case 3:
+                _b.sent();
+                return [4, members.Fetch()];
+            case 4:
+                state = _b.sent();
+                n = state.filter(function (s) { return s.end === '1'; }).length;
+                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
+            case 5:
+                _b.sent();
                 return [2];
         }
     });
