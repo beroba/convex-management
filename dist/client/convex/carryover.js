@@ -89,7 +89,7 @@ exports.React = function (msg) {
     msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
     return 'React Kanryou';
 };
-exports.AllDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.AllDelete = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -99,7 +99,7 @@ exports.AllDelete = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 1:
                 (_a.sent())
                     .map(function (v) { return v; })
-                    .filter(function (m) { return m.author.id === msg.author.id; })
+                    .filter(function (m) { return m.author.id === (member === null || member === void 0 ? void 0 : member.id); })
                     .forEach(function (m) { return m["delete"](); });
                 console.log('Delete carryover message');
                 return [2];

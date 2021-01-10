@@ -15,20 +15,20 @@ export const Ready = async () => {
   {
     const member = await members.FetchMember('420084355105423367')
     if (!member) return
-    console.log(member)
+    // console.log(member)
 
-    member.convex = ''
-    member.over = ''
-    member.end = ''
-    member.history = ''
+    //   member.convex = '3'
+    //   member.over = ''
+    //   member.end = '1'
+    //   member.history = ''
 
-    await members.UpdateMember(member)
-  }
-  {
-    const member = await members.FetchMember('420084355105423367')
-    if (!member) return
-    console.log(member)
-    await members.ReflectOnSheet(member)
+    //   await members.UpdateMember(member)
+    // }
+    // {
+    //   const member = await members.FetchMember('420084355105423367')
+    //   if (!member) return
+    //   console.log(member)
+    //   await members.ReflectOnSheet(member)
   }
   console.log(2)
   /**/

@@ -68,7 +68,7 @@ var status = __importStar(require("./status"));
 var cancel = __importStar(require("../plan/cancel"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, result;
+    var member, member;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -88,12 +88,15 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2, '3 Convex is finished'];
                 }
                 killConfirm(msg);
+                overDelete(msg);
                 return [4, status.Update(msg)];
             case 2:
-                result = _a.sent();
-                if (result.over)
-                    carryover.AllDelete(msg);
-                if (result.end) {
+                _a.sent();
+                util.Sleep(100);
+                return [4, members.FetchMember(msg.author.id)];
+            case 3:
+                member = _a.sent();
+                if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
                     cancel.AllComplete(msg.author.id);
                 }
                 else {
@@ -110,3 +113,17 @@ var killConfirm = function (msg) {
         return;
     lapAndBoss.Next();
 };
+var overDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var member;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, members.FetchMember(msg.author.id)];
+            case 1:
+                member = _a.sent();
+                if ((member === null || member === void 0 ? void 0 : member.over) !== '1')
+                    return [2];
+                carryover.AllDelete(msg.member);
+                return [2];
+        }
+    });
+}); };

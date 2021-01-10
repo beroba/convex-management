@@ -50,17 +50,22 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // ボスが討伐されていたら次のボスへ進める
   killConfirm(msg)
 
+  // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
+  overDelete(msg)
+
   // 凸状況を更新
-  const result = await status.Update(msg)
+  await status.Update(msg)
+  util.Sleep(100)
 
-  // 持ち越しがある場合、持ち越し状況を削除
-  if (result.over) carryover.AllDelete(msg)
-
-  // 凸予定の削除
-  if (result.end) {
-    cancel.AllComplete(msg.author.id)
-  } else {
-    cancel.Report(msg)
+  {
+    // メンバーの状態を取得
+    const member = await members.FetchMember(msg.author.id)
+    // 凸予定の削除
+    if (member?.end === '1') {
+      cancel.AllComplete(msg.author.id)
+    } else {
+      cancel.Report(msg)
+    }
   }
 
   // 凸状況に報告
@@ -82,4 +87,17 @@ const killConfirm = (msg: Discord.Message) => {
 
   // 次のボスへ進める
   lapAndBoss.Next()
+}
+
+/**
+ * 持ち越しがある場合、持ち越し状況のメッセージを全て削除する
+ * @param msg DiscordからのMessage
+ */
+const overDelete = async (msg: Discord.Message) => {
+  // 持ち越しがなければ終了
+  const member = await members.FetchMember(msg.author.id)
+  if (member?.over !== '1') return
+
+  // 持ち越しを持っている人のメッセージを削除
+  carryover.AllDelete(msg.member)
 }
