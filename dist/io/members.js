@@ -66,13 +66,13 @@ var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var dateTable = __importStar(require("./dateTable"));
 exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {
-    var states, members;
+    var status, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                states = _a.sent();
-                members = states.map(function (s) { return (s.id === member.id ? member : s); });
+                status = _a.sent();
+                members = status.map(function (s) { return (s.id === member.id ? member : s); });
                 return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
             case 2:
                 _a.sent();
@@ -101,13 +101,13 @@ exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0
     });
 }); };
 exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var states, members;
+    var status, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                states = _a.sent();
-                members = states.map(function (s) { return ({
+                status = _a.sent();
+                members = status.map(function (s) { return ({
                     name: s.name,
                     id: s.id,
                     convex: '',
@@ -126,13 +126,13 @@ exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function 
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.MEMBERS)];
 }); }); };
 exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var states, member;
+    var status, member;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                states = _a.sent();
-                member = states.filter(function (s) { return s.id === id; });
+                status = _a.sent();
+                member = status.filter(function (s) { return s.id === id; });
                 return [2, member.length === 0 ? undefined : member[0]];
         }
     });

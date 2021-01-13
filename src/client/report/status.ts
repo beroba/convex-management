@@ -18,6 +18,7 @@ type State = {
 export const Update = async (msg: Discord.Message) => {
   // 現在の凸状況を履歴に残す
   await saveHistory(msg)
+  await util.Sleep(50)
 
   // 凸数と持ち越しの状態を更新する
   const content = util.Format(msg.content)
@@ -48,6 +49,7 @@ const saveHistory = async (msg: Discord.Message) => {
   // 現在の凸状況を履歴に残す
   member.history = `${member.convex}${member.over ? '+' : ''}`
 
+  // ステータスを更新
   await members.UpdateMember(member)
 }
 
@@ -80,6 +82,7 @@ const statusUpdate = async (msg: Discord.Message, content: string): Promise<Stat
     }
   }
 
+  // ステータスを更新
   await members.UpdateMember(member)
 
   return {convex: member.convex, over: member.over}
@@ -111,10 +114,13 @@ const convexEndProcess = async (msg: Discord.Message) => {
   if (!member) return false
 
   // 3凸終了のフラグを立てる
+  member.convex = '3'
+  member.over = ''
   member.end = '1'
 
+  // ステータスを更新
   await members.UpdateMember(member)
-  util.Sleep(100)
+  await util.Sleep(50)
 
   // 凸残ロールを削除
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)

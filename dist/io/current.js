@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReflectOnSheet = exports.Fetch = exports.UpdateHp = exports.UpdateBoss = exports.GetStageName = exports.UpdateLap = void 0;
+exports.ReflectOnSheet = exports.Fetch = exports.UpdateHp = exports.UpdateBoss = exports.UpdateLap = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
@@ -87,7 +87,7 @@ exports.UpdateLap = function (lap) { return __awaiter(void 0, void 0, void 0, fu
             case 1:
                 state = _a.sent();
                 state.lap = lap;
-                state.stage = exports.GetStageName(lap);
+                state.stage = getStageName(lap);
                 return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
             case 2:
                 _a.sent();
@@ -95,7 +95,7 @@ exports.UpdateLap = function (lap) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
-exports.GetStageName = function (lap) {
+var getStageName = function (lap) {
     var l = Number(lap);
     switch (true) {
         case l < 4:

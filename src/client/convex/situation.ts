@@ -1,29 +1,16 @@
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import {AtoA} from 'alphabet-to-number'
 import * as dateTable from '../../io/dateTable'
 import * as current from '../../io/current'
+import * as members from '../../io/members'
+import {Member} from '../../io/type'
 import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
-
-/**
- * メンバー毎の凸状況
- */
-type ConvexStatus = {
-  member: string
-  number: number
-  over: number
-}
 
 /**
  * 凸状況に報告をする
  */
 export const Report = async () => {
-  // 凸状況を取得
-  const status: ConvexStatus[] = await fetchConvexStatus()
-
-  // 現在の凸状況を取得
-  const text = await createMessage(status)
+  // 凸状況のテキストを作成
+  const text = await createMessage()
 
   // 凸状況を更新
   const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
@@ -37,47 +24,12 @@ export const Report = async () => {
   console.log('Report convex situation')
 }
 
-/**
- * 凸状況をスプレッドシートから取得する
- */
-const fetchConvexStatus = async (): Promise<ConvexStatus[]> => {
-  // 凸報告のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // 凸状況を取得
-  const date = await dateTable.TakeDate()
-  const range = `${date.col}3:${AtoA(date.col, 1)}32`
-  const status: number[][] = PiecesEach((await spreadsheet.GetCells(sheet, range)).map(Number), 2)
-
-  // メンバー一覧を取得
-  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-
-  // 1つにマージして返す
-  return mergeList(status, members)
-}
-
-/**
- * 凸状況とクランメンバー一覧を1つにまとめる
- * @param status 凸状況一覧
- * @param members クランメンバー一覧
- * @return メンバー毎の凸状況一覧
- */
-const mergeList = (status: number[][], members: string[][]): ConvexStatus[] =>
-  status
-    .map((v, i) => ({
-      member: members[i][0],
-      number: v[0],
-      over: v[1],
-    }))
-    .filter(v => v.member !== '')
-
 // prettier-ignore
 /**
- * 送信するメッセージを作成する
- * @param list 凸状況一覧
+ * 凸状況のテキストを作成する
+ * @return 作成したテキスト
  */
-const createMessage = async (list: ConvexStatus[]): Promise<string> => {
+const createMessage = async (): Promise<string> => {
   // 現在の日付と時刻を取得
   const time = getCurrentDate()
 
@@ -86,23 +38,25 @@ const createMessage = async (list: ConvexStatus[]): Promise<string> => {
 
   // 現在の状況を取得
   const state = await current.Fetch()
-  const boss = `\`${state.lap}\`周目の\`${state.boss}\``
+
+  // メンバー全員の状態を取得
+  const status = await members.Fetch()
 
   // 残り凸数を計算する
-  const remaining = remainingConvexNumber(list)
+  const remaining = remainingConvexNumber(status)
 
   // 全員の凸状況を見て振り分ける
-  const 未凸  = userSorting(list, 0, 0)
-  const 持越1 = userSorting(list, 1, 1)
-  const 凸1   = userSorting(list, 1, 0)
-  const 持越2 = userSorting(list, 2, 1)
-  const 凸2   = userSorting(list, 2, 0)
-  const 持越3 = userSorting(list, 3, 1)
-  const 凸3   = userSorting(list, 3, 0)
+  const 未凸  = userSorting(status, 0, 0)
+  const 持越1 = userSorting(status, 1, 1)
+  const 凸1   = userSorting(status, 1, 0)
+  const 持越2 = userSorting(status, 2, 1)
+  const 凸2   = userSorting(status, 2, 0)
+  const 持越3 = userSorting(status, 3, 1)
+  const 凸3   = userSorting(status, 3, 0)
 
   return (
     `\`${time}\` ${date.num} 凸状況一覧\n` +
-    `${boss} \`${remaining}\`\n` +
+    `\`${state.lap}\`周目の\`${state.boss}\` \`${remaining}\`\n` +
     '```\n' +
     `未凸: ${未凸}\n` +
     '\n' +
@@ -130,26 +84,28 @@ const getCurrentDate = (): string => {
 }
 
 /**
- * 凸状況のに一覧したユーザーを取得
- * @param list 凸状況のリスト
- * @param number 凸数
- * @param over 持ち越し状況
- * @return 取得したユーザー一覧
- */
-const userSorting = (list: ConvexStatus[], number: number, over: number): string =>
-  list
-    .filter(l => l.number === number)
-    .filter(l => l.over === over)
-    .map(l => l.member)
-    .join(', ')
-
-/**
  * 残り凸数を計算
- * @param list 凸状況のリスト
+ * @param status メンバー全員の状態
  * @return 計算結果
  */
-const remainingConvexNumber = (list: ConvexStatus[]): string => {
-  const remaining = list.map(l => 3 - l.number + l.over).reduce((a, b) => a + b)
-  const over = list.map(l => l.over).reduce((a, b) => a + b)
-  return `${remaining}/${list.length * 3}(${over})`
+const remainingConvexNumber = (status: Member[]): string => {
+  // 残り凸数を計算
+  const remaining = status.map(s => 3 - Number(s.convex) + Number(s.over)).reduce((a, b) => a + b)
+  // 残り持ち越し数を計算
+  const over = status.map(s => Number(s.over)).reduce((a, b) => a + b)
+  return `${remaining}/${status.length * 3}(${over})`
 }
+
+/**
+ * 引数で渡された凸数と持ち越しのメンバーを取得
+ * @param status メンバー全員の状態
+ * @param convex 凸数
+ * @param over 持ち越し状況
+ * @return 取得したメンバー一覧
+ */
+const userSorting = (status: Member[], convex: number, over: number): string =>
+  status
+    .filter(l => Number(l.convex) === convex)
+    .filter(l => Number(l.over) === over)
+    .map(l => l.name)
+    .join(', ')

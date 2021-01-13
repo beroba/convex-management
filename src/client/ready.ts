@@ -1,7 +1,7 @@
 import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
-// import * as members from '../io/members'
+import * as members from '../io/members'
 
 /**
  * キャルが起動した際に通知を送る
@@ -10,13 +10,13 @@ export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('きゃるきゃるーん')
 
-  /*
+  // /*
   console.log(1)
   {
     const member = await members.FetchMember('420084355105423367')
     if (!member) return
 
-    member.convex = ''
+    member.convex = '1'
     member.over = ''
     member.end = ''
     member.history = ''

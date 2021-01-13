@@ -69,24 +69,27 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 0: return [4, saveHistory(msg)];
             case 1:
                 _a.sent();
+                return [4, util.Sleep(50)];
+            case 2:
+                _a.sent();
                 content = util.Format(msg.content);
                 return [4, statusUpdate(msg, content)];
-            case 2:
+            case 3:
                 state = _a.sent();
                 msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
                 return [4, isThreeConvex(state)];
-            case 3:
-                end = _a.sent();
-                if (!end) return [3, 5];
-                return [4, convexEndProcess(msg)];
             case 4:
+                end = _a.sent();
+                if (!end) return [3, 6];
+                return [4, convexEndProcess(msg)];
+            case 5:
                 _a.sent();
-                return [3, 7];
-            case 5: return [4, msg.reply(state.convex + "\u51F8\u76EE " + (state.over ? '持ち越し' : '終了'))];
-            case 6:
+                return [3, 8];
+            case 6: return [4, msg.reply(state.convex + "\u51F8\u76EE " + (state.over ? '持ち越し' : '終了'))];
+            case 7:
                 _a.sent();
-                _a.label = 7;
-            case 7: return [2];
+                _a.label = 8;
+            case 8: return [2];
         }
     });
 }); };
@@ -160,20 +163,24 @@ var convexEndProcess = function (msg) { return __awaiter(void 0, void 0, void 0,
                 member = _b.sent();
                 if (!member)
                     return [2, false];
+                member.convex = '3';
+                member.over = '';
                 member.end = '1';
                 return [4, members.UpdateMember(member)];
             case 2:
                 _b.sent();
-                util.Sleep(100);
-                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+                return [4, util.Sleep(50)];
             case 3:
                 _b.sent();
-                return [4, members.Fetch()];
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 4:
+                _b.sent();
+                return [4, members.Fetch()];
+            case 5:
                 state = _b.sent();
                 n = state.filter(function (s) { return s.end === '1'; }).length;
                 return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
-            case 5:
+            case 6:
                 _b.sent();
                 return [2];
         }

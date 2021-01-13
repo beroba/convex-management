@@ -14,7 +14,7 @@ export const UpdateLap = async (lap: string) => {
 
   // 値を更新
   state.lap = lap
-  state.stage = GetStageName(lap)
+  state.stage = getStageName(lap)
 
   // キャルステータスを更新する
   await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
@@ -25,7 +25,7 @@ export const UpdateLap = async (lap: string) => {
  * @param lap 周回数
  * @return 段階名
  */
-export const GetStageName = (lap: string): string => {
+const getStageName = (lap: string): string => {
   const l = Number(lap)
   switch (true) {
     case l < 4:

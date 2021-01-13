@@ -62,13 +62,31 @@ exports.Ready = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
+var members = __importStar(require("../io/members"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
+    var channel, member;
     var _a;
     return __generator(this, function (_b) {
-        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-        channel.send('きゃるきゃるーん');
-        console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
-        return [2];
+        switch (_b.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+                channel.send('きゃるきゃるーん');
+                console.log(1);
+                return [4, members.FetchMember('420084355105423367')];
+            case 1:
+                member = _b.sent();
+                if (!member)
+                    return [2];
+                member.convex = '1';
+                member.over = '';
+                member.end = '';
+                member.history = '';
+                return [4, members.UpdateMember(member)];
+            case 2:
+                _b.sent();
+                console.log(2);
+                console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+                return [2];
+        }
     });
 }); };

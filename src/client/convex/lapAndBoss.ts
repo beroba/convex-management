@@ -19,9 +19,9 @@ export const Update = async (arg: string): Promise<boolean> => {
 
   // 現在の状況を更新
   await current.UpdateLap(lap)
-  await util.Sleep(100)
+  await util.Sleep(50)
   await current.UpdateBoss(alpha)
-  await util.Sleep(100)
+  await util.Sleep(50)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
@@ -48,9 +48,9 @@ export const Next = async () => {
 
   // 現在の状況を更新
   await current.UpdateLap(lap)
-  await util.Sleep(100)
+  await util.Sleep(50)
   await current.UpdateBoss(alpha)
-  await util.Sleep(100)
+  await util.Sleep(50)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
@@ -75,9 +75,9 @@ export const Previous = async () => {
 
   // 現在の状況を更新
   await current.UpdateLap(lap)
-  await util.Sleep(100)
+  await util.Sleep(50)
   await current.UpdateBoss(alpha)
-  await util.Sleep(100)
+  await util.Sleep(50)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()

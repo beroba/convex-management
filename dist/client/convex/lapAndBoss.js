@@ -93,13 +93,13 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, current.UpdateLap(lap)];
             case 1:
                 _b.sent();
-                return [4, util.Sleep(100)];
+                return [4, util.Sleep(50)];
             case 2:
                 _b.sent();
                 return [4, current.UpdateBoss(alpha)];
             case 3:
                 _b.sent();
-                return [4, util.Sleep(100)];
+                return [4, util.Sleep(50)];
             case 4:
                 _b.sent();
                 exports.ProgressReport();
@@ -121,13 +121,13 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, current.UpdateLap(lap)];
             case 2:
                 _a.sent();
-                return [4, util.Sleep(100)];
+                return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
                 return [4, current.UpdateBoss(alpha)];
             case 4:
                 _a.sent();
-                return [4, util.Sleep(100)];
+                return [4, util.Sleep(50)];
             case 5:
                 _a.sent();
                 exports.ProgressReport();
@@ -149,13 +149,13 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, current.UpdateLap(lap)];
             case 2:
                 _a.sent();
-                return [4, util.Sleep(100)];
+                return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
                 return [4, current.UpdateBoss(alpha)];
             case 4:
                 _a.sent();
-                return [4, util.Sleep(100)];
+                return [4, util.Sleep(50)];
             case 5:
                 _a.sent();
                 exports.ProgressReport();

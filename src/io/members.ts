@@ -12,8 +12,8 @@ import {Member, User} from './type'
  * @param メンバー情報
  */
 export const UpdateMember = async (member: Member) => {
-  const states = await Fetch()
-  const members = states.map(s => (s.id === member.id ? member : s))
+  const status = await Fetch()
+  const members = status.map(s => (s.id === member.id ? member : s))
 
   // キャルステータスを更新する
   await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
@@ -41,8 +41,8 @@ export const UpdateUsers = async (users: Option<User[]>) => {
  * メンバー全員の凸状況をリセットする
  */
 export const ResetConvex = async () => {
-  const states = await Fetch()
-  const members: Member[] = states.map(s => ({
+  const status = await Fetch()
+  const members: Member[] = status.map(s => ({
     name: s.name,
     id: s.id,
     convex: '',
@@ -66,8 +66,8 @@ export const Fetch = async (): Promise<Member[]> => io.Fetch<Member[]>(Settings.
  * @return メンバーの状態
  */
 export const FetchMember = async (id: string): Promise<Option<Member>> => {
-  const states = await Fetch()
-  const member = states.filter(s => s.id === id)
+  const status = await Fetch()
+  const member = status.filter(s => s.id === id)
   return member.length === 0 ? undefined : member[0]
 }
 
