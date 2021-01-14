@@ -100,8 +100,7 @@ const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
 
   // 凸報告に凸状況を報告
   const convex = member.convex ? `${member.convex}凸目 ${member.over ? '持ち越し' : '終了'}` : '未凸'
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
-  channel.send(`<@!${msg.member?.id}> 取消を行ったわよ\n${convex}`)
+  msg.reply(`取消を行ったわよ\n${convex}`)
 
   // ボス倒していたかを判別
   killConfirm(msg)
@@ -110,7 +109,7 @@ const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
   await members.UpdateMember(member)
   await util.Sleep(50)
 
-  // スプレッドシートに反映させる
+  // 凸状況をスプレッドシートに反映
   members.ReflectOnSheet(member)
 
   return true
@@ -118,7 +117,7 @@ const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
 
 /**
  * 2回キャンセルしてないか確認
- * @param member 確認するメンバーの状態
+ * @param member 確認するメンバー
  * @return 2回キャンセルしていたかの真偽値
  */
 const confirmCancelTwice = (member: Member): boolean => {
@@ -127,8 +126,8 @@ const confirmCancelTwice = (member: Member): boolean => {
 
 /**
  * 凸状況を1つ前に戻す
- * @param member 更新するメンバーの状態
- * @return 更新したメンバーの状態
+ * @param member 更新するメンバー
+ * @return 更新したメンバー
  */
 const rollback = (member: Member): Member => {
   member.convex = member.history[0] ? member.history[0] : ''
@@ -138,9 +137,9 @@ const rollback = (member: Member): Member => {
 
 /**
  * 3凸目の取消の場合に凸残ロールを付与する
- * @param member 更新するメンバーの状態
+ * @param member 更新するメンバー
  * @param msg DiscordからのMessage
- * @return 更新したメンバーの状態
+ * @return 更新したメンバー
  */
 const endConfirm = (member: Member, msg: Discord.Message): Member => {
   // 3凸終了のフラグを折る

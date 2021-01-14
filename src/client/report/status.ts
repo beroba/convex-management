@@ -38,8 +38,8 @@ export const Update = async (msg: Discord.Message) => {
 
 /**
  * 現在の凸状況を履歴に残し返す
- * @param member 更新するメンバーの状態
- * @return 更新したメンバーの状態
+ * @param member 更新するメンバー
+ * @return 更新したメンバー
  */
 const saveHistory = async (member: Member): Promise<Member> => {
   // 現在の凸状況を履歴に残す
@@ -49,9 +49,9 @@ const saveHistory = async (member: Member): Promise<Member> => {
 
 /**
  * 凸数と持ち越しの状態を変更し返す
- * @param member 更新するメンバーの状態
+ * @param member 更新するメンバー
  * @param content 凸報告の内容
- * @return 更新したメンバーの状態
+ * @return 更新したメンバー
  */
 const statusUpdate = async (member: Member, content: string): Promise<Member> => {
   // 凸数を増やす
@@ -94,9 +94,9 @@ const isThreeConvex = async (member: Member): Promise<boolean> => {
 
 /**
  * 凸残ロールを削除し、何人目の3凸終了者か報告し、3凸終了の扱いにして返す
- * @param member 更新するメンバーの状態
+ * @param member 更新するメンバー
  * @param msg DiscordからのMessage
- * @return 更新したメンバーの状態
+ * @return 更新したメンバー
  */
 const convexEndProcess = async (member: Member, msg: Discord.Message): Promise<Member> => {
   // 3凸終了のフラグを立てる

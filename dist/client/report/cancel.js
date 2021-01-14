@@ -122,13 +122,12 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, result, convex, channel;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var member, result, convex;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0: return [4, members.FetchMember(msg.author.id)];
             case 1:
-                member = _b.sent();
+                member = _a.sent();
                 if (!member)
                     return [2, false];
                 result = confirmCancelTwice(member);
@@ -139,15 +138,14 @@ var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     member = endConfirm(member, msg);
                 }
                 convex = member.convex ? member.convex + "\u51F8\u76EE " + (member.over ? '持ち越し' : '終了') : '未凸';
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
-                channel.send("<@!" + ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) + "> \u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n" + convex);
+                msg.reply("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n" + convex);
                 killConfirm(msg);
                 return [4, members.UpdateMember(member)];
             case 2:
-                _b.sent();
+                _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
-                _b.sent();
+                _a.sent();
                 members.ReflectOnSheet(member);
                 return [2, true];
         }

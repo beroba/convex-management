@@ -1,142 +1,116 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import * as dateTable from '../../io/dateTable'
-import {DateTable} from '../../io/type'
+import * as members from '../../io/members'
+import {Member} from '../../io/type'
 import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
-import * as convex from '.'
+import * as situation from './situation'
 
 /**
  * 引数で渡されたプレイヤーidの凸状況を変更する
  * @param arg プレイヤーidと凸状況
  * @param msg DiscordからのMessage
- * @return 実行結果の真偽値
  */
-export const Update = async (arg: string, msg: Discord.Message): Promise<boolean> => {
-  // idと凸状況を取得
-  const [user, status] = util.Format(arg).split(' ')
-  // メンションからユーザーidだけを取り除く
-  const id = user.replace(/[^0-9]/g, '')
+export const Update = async (arg: string, msg: Discord.Message) => {
+  // 凸状況を取得
+  const status = util.Format(arg).replace(/<.+>/, '').trim()
 
   // 凸状況の書式がおかしい場合は終了
-  if (!convexFormatConfirm(status)) {
+  if (!/^(0|[1-3]\+?)$/.test(status)) {
     msg.reply('凸状況の書式が違うわ')
-    return false
+    return
   }
 
-  // 凸報告のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // メンバーのセル一覧から凸報告者の行を取得
-  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const members: string[][] = PiecesEach(cells, 2).filter(v => v)
-  const row = convex.GetMemberRow(members, id)
-
-  // ユーザーidが存在しない場合は終了
-  if (row === 2) {
-    msg.reply('クランメンバーにそのidの人は居なかったわよ')
-    return false
+  // 凸状況を更新するユーザーを取得する
+  const user = msg.mentions.users.first()
+  if (!user) {
+    msg.reply('メンションで誰の凸状況を変更したいか指定しなさい')
+    return
   }
 
-  // 変更者のユーザーネームを取得
-  const name = members.filter(m => m[1] === id)[0][0]
-
-  // クラバトの日付情報を取得
-  const date = await dateTable.TakeDate()
+  // メンバーの状態を取得
+  let member = await members.FetchMember(user.id)
+  if (!member) {
+    msg.reply('その人はクランメンバーじゃないわ')
+    return
+  }
 
   // 3凸終了とそれ以外に処理を分ける
   if (status === '3') {
-    const cells = await readCells(row, sheet, date)
-    convexEndProcess(cells, name)
+    member = await convexEndProcess(member, user, msg)
   } else {
-    const cells = await readCells(row, sheet, date)
-    updateProcess(cells, status, name)
+    member = await updateProcess(member, status, user, msg)
   }
 
-  return true
-}
+  // ステータスを更新
+  await members.UpdateMember(member)
+  await util.Sleep(50)
 
-/**
- * 凸状況の書式が正しいか判別
- * @param status 凸状況
- * @return 真偽値
- */
-const convexFormatConfirm = (status: string): boolean => {
-  // 未凸の場合は持ち越しが発生しないので長さが1の場合のみtrue、それ以外はfalse
-  if (status[0] === '0') return status.length === 1 ? true : false
+  // 凸状況をスプレッドシートに反映
+  members.ReflectOnSheet(member)
 
-  // 先頭が1-3はtrue、それ以外はfalse
-  return /^[1-3]/.test(status[0])
-}
-
-/**
- * [num_cell, over_cell, end_cell, people_cell]をまとめた配列を返す
- * @param row 更新者の行
- * @param sheet 凸報告のシート
- * @param date 日付情報
- * @return cellsの配列
- */
-const readCells = async (row: number, sheet: any, date: DateTable): Promise<any[]> => {
-  const num_cell = await convex.GetCell(0, date.col, row, sheet)
-  const over_cell = await convex.GetCell(1, date.col, row, sheet)
-  const end_cell = await convex.GetCell(2, date.col, row, sheet)
-  const people_cell = await convex.GetCell(2, date.col, 1, sheet)
-  return [num_cell, over_cell, end_cell, people_cell]
+  // 凸状況に報告
+  situation.Report()
 }
 
 /**
  * 3凸状態に更新する処理
- * @param cells [num_cell, over_cell, end_cell]の配列
+ * @param member 更新するメンバー
+ * @param user 更新したいユーザー
  * @param msg DiscordからのMessage
+ * @return 更新したメンバー
  */
-const convexEndProcess = async (cells: any[], name: string) => {
-  const [num_cell, over_cell, end_cell, people_cell] = [...cells]
+const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord.Message): Promise<Member> => {
+  // 凸状況を変更
+  member.convex = '3'
+  member.over = ''
+  member.end = '1'
 
-  // 3凸状態に更新
-  num_cell.setValue(3)
-  over_cell.setValue('')
-  end_cell.setValue('1')
+  // 凸残ロールを削除
+  const guildMember = await memberFromUser(user, msg)
+  guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const n = Number(people_cell.getValue()) + 1
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`${name}, 3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
+  const state = await members.Fetch()
+  const n = state.filter(s => s.end === '1').length + 1
+  msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
+
+  return member
 }
 
 /**
  * 凸状況を更新する処理
- * @param cells [num_cell, over_cell, end_cell, people_cell]の配列
- * @param status 凸状況
+ * @param member 更新するメンバー
+ * @param state 更新する凸状況
+ * @param user 更新したいユーザー
  * @param msg DiscordからのMessage
+ * @return 更新したメンバー
  */
-const updateProcess = async (cells: any[], status: string, name: string) => {
-  // people_cellは使用しない
-  const [num_cell, over_cell, end_cell] = [...cells]
+const updateProcess = async (
+  member: Member,
+  state: string,
+  user: Discord.User,
+  msg: Discord.Message
+): Promise<Member> => {
+  // 凸状況を変更
+  member.convex = state[0] === '0' ? '' : state[0]
+  member.over = state.includes('+') ? '1' : ''
+  member.end = ''
 
-  // 凸状況から凸数と持ち越しに分ける
-  const [num, over] = divideNumOver(status)
-  // 凸状況を更新
-  num_cell.setValue(num)
-  over_cell.setValue(over)
-  end_cell.setValue('')
+  // 凸残ロールを付与
+  const guildMember = await memberFromUser(user, msg)
+  guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 凸状況を報告する
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`${name}, ` + (num ? `${num}凸目 ${over ? '持ち越し' : '終了'}` : '未凸'))
+  msg.reply(member.convex ? `${member.convex}凸目 ${member.over ? '持ち越し' : '終了'}` : '未凸')
+
+  return member
 }
 
 /**
- * 凸状況を凸数と持ち越しに分ける
- * @param status 凸状況
+ * UserからMemberを取得する
+ * @param user 更新したいユーザー
+ * @param msg DiscordからのMessage
+ * @return 取得したMember
  */
-const divideNumOver = (status: string): string[] => {
-  if (status.length === 1) {
-    return [status === '0' ? '' : status, '']
-  } else {
-    return status
-      .replace(/ /g, '')
-      .split(',')
-      .map(n => (n === '0' ? '' : n))
-  }
-}
+const memberFromUser = async (user: Discord.User, msg: Discord.Message): Promise<Discord.GuildMember> =>
+  (await msg.guild?.members.fetch())?.map(m => m).filter(m => m.id === user.id)[0] as Discord.GuildMember

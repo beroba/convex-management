@@ -10,15 +10,6 @@ import * as cancel from '../plan/cancel'
 import * as lapAndBoss from '../convex/lapAndBoss'
 
 /**
- * 凸状況の状態
- */
-export type Status = {
-  already: boolean
-  over: boolean
-  end: boolean
-}
-
-/**
  * 凸報告の管理を行う
  * @param msg DiscordからのMessage
  * @return 凸報告の実行結果
@@ -62,7 +53,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     const member = await members.FetchMember(msg.author.id)
     if (!member) return
 
-    // スプレッドシートに反映させる
+    // 凸状況をスプレッドシートに反映
     members.ReflectOnSheet(member)
 
     // 凸予定の削除

@@ -22,7 +22,7 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
   switch (true) {
     case /cb convex/.test(command): {
       const arg = command.replace('/cb convex ', '')
-      changeConvex(arg, msg)
+      await manage.Update(arg, msg)
       return 'Change of convex management'
     }
 
@@ -87,20 +87,6 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Show help'
     }
   }
-}
-
-/**
- * 引数で渡されたプレイヤーidの凸状況を変更する
- * @param arg プレイヤーidと凸状況
- * @param msg DiscordからのMessage
- */
-const changeConvex = async (arg: string, msg: Discord.Message) => {
-  // 凸状況を更新
-  const result = await manage.Update(arg, msg)
-  if (!result) return
-
-  // 凸状況に報告
-  situation.Report()
 }
 
 /**

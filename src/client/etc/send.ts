@@ -7,7 +7,7 @@ import * as util from '../../util'
  * 特定のメッセージに絵文字を付ける
  * @param msg DiscordからのMessage
  */
-export const Emoji = (msg: Discord.Message) => {
+export const Emoji = async (msg: Discord.Message) => {
   // 指定のチャンネルでは実行されない用にする
   if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
 

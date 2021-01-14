@@ -61,16 +61,19 @@ exports.__esModule = true;
 exports.SendEmoji = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.Emoji = function (msg) {
-    if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
-        return;
-    yuiKusanoEmoji(msg);
-    mazarashiEmoji(msg);
-    usamaruEmoji(msg);
-    macchaDesuyoEmoji(msg);
-    nikuEmoji(msg);
-    pantiesEmoji(msg);
-};
+exports.Emoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
+            return [2];
+        yuiKusanoEmoji(msg);
+        mazarashiEmoji(msg);
+        usamaruEmoji(msg);
+        macchaDesuyoEmoji(msg);
+        nikuEmoji(msg);
+        pantiesEmoji(msg);
+        return [2];
+    });
+}); };
 var yuiKusanoEmoji = function (msg) {
     var match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/);
     if (!match)
