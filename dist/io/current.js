@@ -74,13 +74,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReflectOnSheet = exports.Fetch = exports.UpdateHp = exports.UpdateBoss = exports.UpdateLap = void 0;
+exports.ReflectOnSheet = exports.Fetch = exports.UpdateBossHp = exports.UpdateLapAndBoss = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var bossTable = __importStar(require("./bossTable"));
-exports.UpdateLap = function (lap) { return __awaiter(void 0, void 0, void 0, function () {
-    var state;
+exports.UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void 0, void 0, function () {
+    var state, num, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
@@ -88,35 +88,6 @@ exports.UpdateLap = function (lap) { return __awaiter(void 0, void 0, void 0, fu
                 state = _a.sent();
                 state.lap = lap;
                 state.stage = getStageName(lap);
-                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
-            case 2:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-var getStageName = function (lap) {
-    var l = Number(lap);
-    switch (true) {
-        case l < 4:
-            return 'first';
-        case l < 11:
-            return 'second';
-        case l < 35:
-            return 'third';
-        case l < 45:
-            return 'fourth';
-        default:
-            return 'fifth';
-    }
-};
-exports.UpdateBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, num, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                state = _a.sent();
                 state.alpha = alpha;
                 return [4, bossTable.TakeNum(alpha)];
             case 2:
@@ -138,7 +109,22 @@ exports.UpdateBoss = function (alpha) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
-exports.UpdateHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
+var getStageName = function (lap) {
+    var l = Number(lap);
+    switch (true) {
+        case l < 4:
+            return 'first';
+        case l < 11:
+            return 'second';
+        case l < 35:
+            return 'third';
+        case l < 45:
+            return 'fourth';
+        default:
+            return 'fifth';
+    }
+};
+exports.UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
     var json;
     return __generator(this, function (_a) {
         switch (_a.label) {

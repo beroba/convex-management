@@ -90,17 +90,11 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2, false];
                 if (!/[a-e]/i.test(alpha))
                     return [2, false];
-                return [4, current.UpdateLap(lap)];
+                return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 1:
                 _b.sent();
                 return [4, util.Sleep(50)];
             case 2:
-                _b.sent();
-                return [4, current.UpdateBoss(alpha)];
-            case 3:
-                _b.sent();
-                return [4, util.Sleep(50)];
-            case 4:
                 _b.sent();
                 exports.ProgressReport();
                 current.ReflectOnSheet();
@@ -118,17 +112,11 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 state = _a.sent();
                 lap = String(Number(state.lap) + (state.alpha === 'e' ? 1 : 0));
                 alpha = alphabet_to_number_1.NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1);
-                return [4, current.UpdateLap(lap)];
+                return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 2:
                 _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
-                _a.sent();
-                return [4, current.UpdateBoss(alpha)];
-            case 4:
-                _a.sent();
-                return [4, util.Sleep(50)];
-            case 5:
                 _a.sent();
                 exports.ProgressReport();
                 current.ReflectOnSheet();
@@ -146,17 +134,11 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 state = _a.sent();
                 lap = String(Number(state.lap) - (state.alpha === 'a' ? 1 : 0));
                 alpha = alphabet_to_number_1.NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1);
-                return [4, current.UpdateLap(lap)];
+                return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 2:
                 _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
-                _a.sent();
-                return [4, current.UpdateBoss(alpha)];
-            case 4:
-                _a.sent();
-                return [4, util.Sleep(50)];
-            case 5:
                 _a.sent();
                 exports.ProgressReport();
                 current.ReflectOnSheet();

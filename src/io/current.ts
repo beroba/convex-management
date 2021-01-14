@@ -7,14 +7,23 @@ import {Current} from './type'
 /**
  * 現在の状況の段階と周回数を設定する
  * @param lap 周回数
+ * @param alpha ボス番号
  */
-export const UpdateLap = async (lap: string) => {
+export const UpdateLapAndBoss = async (lap: string, alpha: string) => {
   // キャルステータスから現在の状況を取得
   const state: Current = await Fetch()
 
   // 値を更新
   state.lap = lap
   state.stage = getStageName(lap)
+  state.alpha = alpha
+  const num = await bossTable.TakeNum(alpha)
+  if (!num) return
+  state.num = num
+  const boss = await bossTable.TakeName(alpha)
+  if (!boss) return
+  state.boss = boss
+  state.hp = Settings.STAGE_HP[state.stage][alpha]
 
   // キャルステータスを更新する
   await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
@@ -42,32 +51,10 @@ const getStageName = (lap: string): string => {
 }
 
 /**
- * 現在の状況のボス名とボス番号を設定する
- * @param alpha ボス番号
- */
-export const UpdateBoss = async (alpha: string) => {
-  // キャルステータスから現在の状況を取得
-  const state: Current = await Fetch()
-
-  // 値を更新
-  state.alpha = alpha
-  const num = await bossTable.TakeNum(alpha)
-  if (!num) return
-  state.num = num
-  const boss = await bossTable.TakeName(alpha)
-  if (!boss) return
-  state.boss = boss
-  state.hp = Settings.STAGE_HP[state.stage][alpha]
-
-  // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
-}
-
-/**
  * 現在の状況のボスhpを設定する
  * @param hp ボスhp
  */
-export const UpdateHp = async (hp: string) => {
+export const UpdateBossHp = async (hp: string) => {
   // キャルステータスから現在の状況を取得
   const json: Current = await Fetch()
 

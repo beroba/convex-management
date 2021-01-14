@@ -92,8 +92,11 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, status.Update(msg)];
             case 2:
                 _a.sent();
-                return [4, members.FetchMember(msg.author.id)];
+                return [4, util.Sleep(50)];
             case 3:
+                _a.sent();
+                return [4, members.FetchMember(msg.author.id)];
+            case 4:
                 member = _a.sent();
                 if (!member)
                     return [2];

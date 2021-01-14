@@ -63,38 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var members = __importStar(require("../../io/members"));
 var util = __importStar(require("../../util"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, state, end;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, saveHistory(msg)];
-            case 1:
-                _a.sent();
-                return [4, util.Sleep(50)];
-            case 2:
-                _a.sent();
-                content = util.Format(msg.content);
-                return [4, statusUpdate(msg, content)];
-            case 3:
-                state = _a.sent();
-                msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
-                return [4, isThreeConvex(state)];
-            case 4:
-                end = _a.sent();
-                if (!end) return [3, 6];
-                return [4, convexEndProcess(msg)];
-            case 5:
-                _a.sent();
-                return [3, 8];
-            case 6: return [4, msg.reply(state.convex + "\u51F8\u76EE " + (state.over ? '持ち越し' : '終了'))];
-            case 7:
-                _a.sent();
-                _a.label = 8;
-            case 8: return [2];
-        }
-    });
-}); };
-var saveHistory = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member;
+    var member, content, end;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, members.FetchMember(msg.author.id)];
@@ -102,87 +71,90 @@ var saveHistory = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 member = _a.sent();
                 if (!member)
                     return [2];
-                member.history = "" + member.convex + (member.over ? '+' : '');
-                return [4, members.UpdateMember(member)];
+                return [4, saveHistory(member)];
             case 2:
+                member = _a.sent();
+                content = util.Format(msg.content);
+                return [4, statusUpdate(member, content)];
+            case 3:
+                member = _a.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
+                return [4, isThreeConvex(member)];
+            case 4:
+                end = _a.sent();
+                if (!end) return [3, 6];
+                return [4, convexEndProcess(member, msg)];
+            case 5:
+                member = _a.sent();
+                return [3, 8];
+            case 6: return [4, msg.reply(member.convex + "\u51F8\u76EE " + (member.over ? '持ち越し' : '終了'))];
+            case 7:
+                _a.sent();
+                _a.label = 8;
+            case 8: return [4, members.UpdateMember(member)];
+            case 9:
                 _a.sent();
                 return [2];
         }
     });
 }); };
-var statusUpdate = function (msg, content) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, countUp;
+var saveHistory = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, members.FetchMember(msg.author.id)];
-            case 1:
-                member = _a.sent();
-                if (!member)
-                    return [2, { convex: '', over: '' }];
-                countUp = function (convex) { return String(Number(convex) + 1); };
-                if (/^k|kill/i.test(content)) {
-                    if (member.over === '1') {
-                        member.over = '';
-                    }
-                    else {
-                        member.convex = countUp(member.convex);
-                        member.over = '1';
-                    }
-                }
-                else {
-                    if (member.over === '1') {
-                        member.over = '';
-                    }
-                    else {
-                        member.convex = countUp(member.convex);
-                    }
-                }
-                return [4, members.UpdateMember(member)];
-            case 2:
-                _a.sent();
-                return [2, { convex: member.convex, over: member.over }];
-        }
+        member.history = "" + member.convex + (member.over ? '+' : '');
+        return [2, member];
     });
 }); };
-var isThreeConvex = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+var statusUpdate = function (member, content) { return __awaiter(void 0, void 0, void 0, function () {
+    var countUp;
     return __generator(this, function (_a) {
-        if (state.convex !== '3')
+        countUp = function (convex) { return String(Number(convex) + 1); };
+        if (/^k|kill/i.test(content)) {
+            if (member.over === '1') {
+                member.over = '';
+            }
+            else {
+                member.convex = countUp(member.convex);
+                member.over = '1';
+            }
+        }
+        else {
+            if (member.over === '1') {
+                member.over = '';
+            }
+            else {
+                member.convex = countUp(member.convex);
+            }
+        }
+        return [2, member];
+    });
+}); };
+var isThreeConvex = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (member.convex !== '3')
             return [2, false];
-        if (state.over === '1')
+        if (member.over === '1')
             return [2, false];
         return [2, true];
     });
 }); };
-var convexEndProcess = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, state, n;
+var convexEndProcess = function (member, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var state, n;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4, members.FetchMember(msg.author.id)];
-            case 1:
-                member = _b.sent();
-                if (!member)
-                    return [2, false];
-                member.convex = '3';
-                member.over = '';
+            case 0:
                 member.end = '1';
-                return [4, members.UpdateMember(member)];
-            case 2:
-                _b.sent();
-                return [4, util.Sleep(50)];
-            case 3:
-                _b.sent();
                 return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
-            case 4:
+            case 1:
                 _b.sent();
                 return [4, members.Fetch()];
-            case 5:
+            case 2:
                 state = _b.sent();
-                n = state.filter(function (s) { return s.end === '1'; }).length;
+                n = state.filter(function (s) { return s.end === '1'; }).length + 1;
                 return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
-            case 6:
+            case 3:
                 _b.sent();
-                return [2];
+                return [2, member];
         }
     });
 }); };

@@ -18,9 +18,7 @@ export const Update = async (arg: string): Promise<boolean> => {
   if (!/[a-e]/i.test(alpha)) return false
 
   // 現在の状況を更新
-  await current.UpdateLap(lap)
-  await util.Sleep(50)
-  await current.UpdateBoss(alpha)
+  await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
 
   // 進行に現在のボスと周回数を報告
@@ -47,9 +45,7 @@ export const Next = async () => {
   const alpha = NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1)
 
   // 現在の状況を更新
-  await current.UpdateLap(lap)
-  await util.Sleep(50)
-  await current.UpdateBoss(alpha)
+  await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
 
   // 進行に現在のボスと周回数を報告
@@ -74,9 +70,7 @@ export const Previous = async () => {
   const alpha = NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1)
 
   // 現在の状況を更新
-  await current.UpdateLap(lap)
-  await util.Sleep(50)
-  await current.UpdateBoss(alpha)
+  await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
 
   // 進行に現在のボスと周回数を報告
