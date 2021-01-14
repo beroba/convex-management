@@ -2,6 +2,8 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
+import * as current from '../../io/current'
+import * as members from '../../io/members'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -80,6 +82,11 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
     case /cb update report/.test(command): {
       updateReport(msg)
       return 'Convex situation updated'
+    }
+
+    case /cb reflect cal/.test(command): {
+      reflectOnCal(msg)
+      return 'Reflect spreadsheet values ​​in Cal'
     }
 
     case /cb help/.test(command): {
@@ -189,4 +196,19 @@ const updateReport = async (msg: Discord.Message) => {
   await list.SituationEdit()
 
   msg.reply('凸状況を更新したわよ！')
+}
+
+/**
+ * スプレッドシートの値をキャルに反映させる
+ * @param msg DiscordからのMessage
+ */
+const reflectOnCal = async (msg: Discord.Message) => {
+  // スプレッドシートの値を反映
+  await current.ReflectOnCal()
+  await members.ReflectOnCal()
+
+  // #凸状況を更新
+  situation.Report()
+
+  msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
 }

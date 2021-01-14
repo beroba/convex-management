@@ -74,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReflectOnSheet = exports.Fetch = exports.UpdateBossHp = exports.UpdateLapAndBoss = void 0;
+exports.ReflectOnCal = exports.ReflectOnSheet = exports.Fetch = exports.UpdateBossHp = exports.UpdateLapAndBoss = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
@@ -165,6 +165,27 @@ exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, 
             case 5:
                 alpha_cell = _b.sent();
                 alpha_cell.setValue(json.alpha);
+                return [2];
+        }
+    });
+}); };
+exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, _a, lap_cell, alpha_cell, lap, alpha;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _b.sent();
+                _a = __read(const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(','), 3), lap_cell = _a[0], alpha_cell = _a[2];
+                return [4, sheet.getCell(lap_cell)];
+            case 2:
+                lap = (_b.sent()).getValue();
+                return [4, sheet.getCell(alpha_cell)];
+            case 3:
+                alpha = (_b.sent()).getValue();
+                return [4, exports.UpdateLapAndBoss(lap, alpha)];
+            case 4:
+                _b.sent();
                 return [2];
         }
     });

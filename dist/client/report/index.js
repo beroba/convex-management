@@ -62,11 +62,11 @@ exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var members = __importStar(require("../../io/members"));
 var util = __importStar(require("../../util"));
+var status = __importStar(require("./status"));
 var carryover = __importStar(require("../convex/carryover"));
 var situation = __importStar(require("../convex/situation"));
-var status = __importStar(require("./status"));
-var cancel = __importStar(require("../plan/cancel"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var cancel = __importStar(require("../plan/cancel"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member, member;
     return __generator(this, function (_a) {

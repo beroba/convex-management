@@ -28,7 +28,6 @@
         "src/client/command/index.ts",
         "src/client/command/management.ts",
         "src/client/convex/carryover.ts",
-        "src/client/convex/index.ts",
         "src/client/convex/lapAndBoss.ts",
         "src/client/convex/manage.ts",
         "src/client/convex/report.ts",

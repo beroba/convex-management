@@ -3,11 +3,11 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as members from '../../io/members'
 import * as util from '../../util'
+import * as status from './status'
 import * as carryover from '../convex/carryover'
 import * as situation from '../convex/situation'
-import * as status from './status'
-import * as cancel from '../plan/cancel'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as cancel from '../plan/cancel'
 
 /**
  * 凸報告の管理を行う

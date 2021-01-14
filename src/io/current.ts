@@ -96,3 +96,21 @@ export const ReflectOnSheet = async () => {
   const alpha_cell = await sheet.getCell(alpha)
   alpha_cell.setValue(json.alpha)
 }
+
+/**
+ * スプレッドの現在の状況をキャルに反映させる
+ */
+export const ReflectOnCal = async () => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  // 周回数、ボス名、ボス番号の番地を取得
+  const [lap_cell, , alpha_cell] = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
+
+  // 周回数を更新
+  const lap = (await sheet.getCell(lap_cell)).getValue()
+  const alpha = (await sheet.getCell(alpha_cell)).getValue()
+
+  // 現在の状況を更新
+  await UpdateLapAndBoss(lap, alpha)
+}

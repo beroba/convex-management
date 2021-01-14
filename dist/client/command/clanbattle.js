@@ -77,6 +77,8 @@ exports.__esModule = true;
 exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
+var members = __importStar(require("../../io/members"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
@@ -102,9 +104,10 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb over/.test(command): return [3, 14];
                     case /cb task/.test(command): return [3, 15];
                     case /cb update report/.test(command): return [3, 16];
-                    case /cb help/.test(command): return [3, 17];
+                    case /cb reflect cal/.test(command): return [3, 17];
+                    case /cb help/.test(command): return [3, 18];
                 }
-                return [3, 18];
+                return [3, 19];
             case 1:
                 arg = command.replace('/cb convex ', '');
                 return [4, manage.Update(arg, msg)];
@@ -172,11 +175,17 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                 _b.label = 17;
             case 17:
                 {
+                    reflectOnCal(msg);
+                    return [2, 'Reflect spreadsheet values ​​in Cal'];
+                }
+                _b.label = 18;
+            case 18:
+                {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 18;
-            case 18: return [2];
+                _b.label = 19;
+            case 19: return [2];
         }
     });
 }); };
@@ -250,6 +259,21 @@ var updateReport = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 1:
                 _a.sent();
                 msg.reply('凸状況を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+var reflectOnCal = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, current.ReflectOnCal()];
+            case 1:
+                _a.sent();
+                return [4, members.ReflectOnCal()];
+            case 2:
+                _a.sent();
+                situation.Report();
+                msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
                 return [2];
         }
     });
