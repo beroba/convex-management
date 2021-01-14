@@ -62,6 +62,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     const member = await members.FetchMember(msg.author.id)
     if (!member) return
 
+    // スプレッドシートに反映させる
     members.ReflectOnSheet(member)
 
     // 凸予定の削除
