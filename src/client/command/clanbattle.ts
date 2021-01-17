@@ -85,7 +85,7 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Convex situation updated'
     }
 
-    case /cb reflect cal/.test(command): {
+    case /cb reflect/.test(command): {
       reflectOnCal(msg)
       return 'Reflect spreadsheet values ​​in Cal'
     }

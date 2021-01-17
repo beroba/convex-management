@@ -38,7 +38,7 @@
         "src/client/plan/cancel.ts",
         "src/client/plan/index.ts",
         "src/client/plan/list.ts",
-        "src/client/plan/status.ts",
+        "src/client/plan/state.ts",
         "src/client/plan/update.ts",
         "src/client/report/cancel.ts",
         "src/client/report/index.ts",

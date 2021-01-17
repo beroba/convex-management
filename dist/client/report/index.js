@@ -68,7 +68,7 @@ var situation = __importStar(require("../convex/situation"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var cancel = __importStar(require("../plan/cancel"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, member;
+    var member_1, content, member;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -78,16 +78,17 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 return [4, status.FetchMember(msg.author.id)];
             case 1:
-                member = _a.sent();
-                if (!member) {
+                member_1 = _a.sent();
+                if (!member_1) {
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
                 }
-                if (member.end === '1') {
+                if (member_1.end === '1') {
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];
                 }
-                killConfirm(msg);
+                content = util.Format(msg.content);
+                killConfirm(content);
                 overDelete(msg);
                 return [4, update.Status(msg)];
             case 2:
@@ -101,19 +102,21 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 if (!member)
                     return [2];
                 status.ReflectOnSheet(member);
-                if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
-                    cancel.AllComplete(msg.author.id);
-                }
-                else {
-                    cancel.Report(msg);
+                if (!/;/i.test(content)) {
+                    console.log(1);
+                    if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
+                        cancel.AllComplete(msg.author.id);
+                    }
+                    else {
+                        cancel.Report(msg);
+                    }
                 }
                 situation.Report();
                 return [2, 'Update status'];
         }
     });
 }); };
-var killConfirm = function (msg) {
-    var content = util.Format(msg.content);
+var killConfirm = function (content) {
     if (!/^k|kill/i.test(content))
         return;
     lapAndBoss.Next();

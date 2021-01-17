@@ -105,7 +105,7 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb over/.test(command): return [3, 14];
                     case /cb task/.test(command): return [3, 15];
                     case /cb update report/.test(command): return [3, 16];
-                    case /cb reflect cal/.test(command): return [3, 17];
+                    case /cb reflect/.test(command): return [3, 17];
                     case /cb help/.test(command): return [3, 18];
                 }
                 return [3, 19];

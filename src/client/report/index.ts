@@ -38,8 +38,11 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     }
   }
 
+  // 全角を半角に変換
+  const content = util.Format(msg.content)
+
   // ボスが討伐されていたら次のボスへ進める
-  killConfirm(msg)
+  killConfirm(content)
 
   // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
   overDelete(msg)
@@ -48,15 +51,17 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   await update.Status(msg)
   await util.Sleep(50)
 
-  {
-    // メンバーの状態を取得
-    const member = await status.FetchMember(msg.author.id)
-    if (!member) return
+  // メンバーの状態を取得
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
 
-    // 凸状況をスプレッドシートに反映
-    status.ReflectOnSheet(member)
+  // 凸状況をスプレッドシートに反映
+  status.ReflectOnSheet(member)
 
-    // 凸予定の削除
+  // `/`が入っている場合は凸予定を取り消さない
+  if (!/;/i.test(content)) {
+    console.log(1)
+    // 3凸終了していたら全ての凸予定を削除、そうでない場合は現在のボスの凸予定を削除
     if (member?.end === '1') {
       cancel.AllComplete(msg.author.id)
     } else {
@@ -72,12 +77,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
 /**
  * ボスが討伐されていたら次のボスへ進める
- * @param msg DiscordからのMessage
+ * @param content 整形後のメッセージ内容
  */
-const killConfirm = (msg: Discord.Message) => {
-  // 全角を半角に変換
-  const content = util.Format(msg.content)
-
+const killConfirm = (content: string) => {
   // killが入って居なければ終了
   if (!/^k|kill/i.test(content)) return
 

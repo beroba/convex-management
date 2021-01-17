@@ -58,53 +58,76 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Convex = void 0;
+exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var status = __importStar(require("../../io/status"));
+var alphabet_to_number_1 = require("alphabet-to-number");
+var bossTable = __importStar(require("../../io/bossTable"));
 var util = __importStar(require("../../util"));
-var list = __importStar(require("./list"));
-var state = __importStar(require("./state"));
-exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, cal_1, cal_2, cal_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var res, name, _a;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                if (msg.author.bot)
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
-                    return [2];
-                return [4, status.FetchMember(msg.author.id)];
+                res = planObject(msg);
+                return [4, bossTable.TakeName(res.alpha)];
             case 1:
-                member = _a.sent();
-                if (!!member) return [3, 3];
-                return [4, msg.reply('クランメンバーじゃないわ\n※10秒にこのメッセージは消えます')];
+                name = _c.sent();
+                if (!name)
+                    return [2];
+                res.boss = name;
+                _a = res;
+                return [4, msg.reply(res.boss + "\u3092\u4E88\u5B9A\u3057\u305F\u308F\u3088\uFF01")];
             case 2:
-                cal_1 = _a.sent();
-                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 10000);
-                return [2, 'Not a clan member'];
+                _a.cal = (_c.sent()).id;
+                return [4, fetchPlan(res)];
             case 3:
-                if (!!formatConfirm(msg)) return [3, 5];
-                return [4, msg.reply('書式が違うから予定できないわ\n※10秒にこのメッセージは消えます')];
-            case 4:
-                cal_2 = _a.sent();
-                setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 10000);
-                return [2, 'The format of the boss number is different'];
-            case 5:
-                if (!(msg.content.length === 1)) return [3, 7];
-                return [4, msg.reply('予想ダメージが書いてないと動かないわ\n※10秒にこのメッセージは消えます')];
-            case 6:
-                cal_3 = _a.sent();
-                setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 10000);
-                return [2, "I didn't write the expected damage"];
-            case 7: return [4, state.Update(msg)];
-            case 8:
-                _a.sent();
-                list.SituationEdit();
-                return [2, 'Make a convex reservation'];
+                _c.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+                (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(const_settings_1["default"].BOSS_ROLE_ID[res.alpha]);
+                return [2];
         }
     });
 }); };
-var formatConfirm = function (msg) {
-    var num = util.Format(msg.content).split(' ')[0];
-    return /[1-5]/.test(num);
+var planObject = function (msg) {
+    var _a;
+    var content = util.Format(msg.content);
+    return {
+        person: msg.id,
+        cal: '',
+        member: util.GetUserName(msg.member),
+        id: ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '',
+        alpha: alphabet_to_number_1.NtoA(content[0]),
+        boss: '',
+        message: content.slice(1).trim()
+    };
 };
+var fetchPlan = function (res) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PERSON_CELLS)];
+            case 2:
+                cells = (_a.sent()).filter(function (v) { return v; });
+                return [4, Promise.all(Object.values(res).map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('B', i) + (cells.length + 3))];
+                                case 1:
+                                    cell = _a.sent();
+                                    cell.setValue(v);
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 3:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
