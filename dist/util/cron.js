@@ -62,14 +62,16 @@ exports.CronOperation = void 0;
 var cron = __importStar(require("node-cron"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var dateTable = __importStar(require("../io/dateTable"));
+var status = __importStar(require("../io/status"));
 var util = __importStar(require("../util"));
 exports.CronOperation = function () {
-    setRemainConvex();
-    removeTaskKillRoll();
-    notifyDailyMission();
+    setRemainConvex('0 10 5 * * *');
+    removeTaskillRoll('0 0 5 * * *');
+    resetConvex('0 0 5 * * *');
+    notifyDailyMission('0 30 4 * * *');
 };
-var setRemainConvex = function () {
-    cron.schedule('0 10 5 * * *', function () { return __awaiter(void 0, void 0, void 0, function () {
+var setRemainConvex = function (expression) {
+    cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
         var date, clanMembers, channel;
         var _a, _b;
         return __generator(this, function (_c) {
@@ -90,8 +92,8 @@ var setRemainConvex = function () {
         });
     }); });
 };
-var removeTaskKillRoll = function () {
-    cron.schedule('0 0 5 * * *', function () {
+var removeTaskillRoll = function (expression) {
+    cron.schedule(expression, function () {
         var _a;
         var guildMembers = (_a = util.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m; });
         guildMembers === null || guildMembers === void 0 ? void 0 : guildMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.TASK_KILL); });
@@ -100,8 +102,27 @@ var removeTaskKillRoll = function () {
         console.log('remove task kill role');
     });
 };
-var notifyDailyMission = function () {
-    cron.schedule('0 30 4 * * *', function () {
+var resetConvex = function (expression) {
+    cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
+        var channel;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, status.ResetConvexOnCal()];
+                case 1:
+                    _a.sent();
+                    return [4, status.ResetConvexOnSheet()];
+                case 2:
+                    _a.sent();
+                    channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+                    channel.send('全員の凸状況をリセットしたわ');
+                    console.log('Reset convex');
+                    return [2];
+            }
+        });
+    }); });
+};
+var notifyDailyMission = function (expression) {
+    cron.schedule(expression, function () {
         var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CHAT);
         channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！');
         console.log('Notify daily mission digestion');

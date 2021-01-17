@@ -152,7 +152,7 @@ var removeRole = function (msg) {
     msg.reply('凸残ロール全て外したわよ！');
 };
 var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var users, sheet;
+    var users;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -161,18 +161,22 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     name: util.GetUserName(m),
                     id: m.id
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                status.UpdateUsers(users);
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+                return [4, status.UpdateUsers(users)];
             case 1:
-                sheet = _c.sent();
-                fetchNameAndID(users, sheet);
+                _c.sent();
+                return [4, util.Sleep(50)];
+            case 2:
+                _c.sent();
+                return [4, fetchNameAndID(users, const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 3:
+                _c.sent();
                 msg.reply('クランメンバー一覧を更新したわよ！');
                 return [2];
         }
     });
 }); };
 var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var users, sheet;
+    var users;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -181,35 +185,45 @@ var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     name: util.GetUserName(m),
                     id: m.id
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
+                return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _c.sent();
-                fetchNameAndID(users, sheet);
+                _c.sent();
                 msg.reply('妹クランメンバー一覧を更新したわよ！');
                 return [2];
         }
     });
 }); };
-var fetchNameAndID = function (users, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+var fetchNameAndID = function (users, name) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet;
     return __generator(this, function (_a) {
-        users === null || users === void 0 ? void 0 : users.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
-            var col, name_cell, id_cell;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
-                        return [4, sheet.getCell("" + col + (i + 3))];
-                    case 1:
-                        name_cell = _a.sent();
-                        name_cell.setValue(m.name);
-                        return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
-                    case 2:
-                        id_cell = _a.sent();
-                        id_cell.setValue(m.id);
-                        return [2];
-                }
-            });
-        }); });
-        return [2];
+        switch (_a.label) {
+            case 0:
+                if (!users)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(name)];
+            case 1:
+                sheet = _a.sent();
+                return [4, Promise.all(users.map(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var col, name_cell, id_cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
+                                    return [4, sheet.getCell("" + col + (i + 3))];
+                                case 1:
+                                    name_cell = _a.sent();
+                                    name_cell.setValue(m.name);
+                                    return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
+                                case 2:
+                                    id_cell = _a.sent();
+                                    id_cell.setValue(m.id);
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 2:
+                _a.sent();
+                return [2];
+        }
     });
 }); };

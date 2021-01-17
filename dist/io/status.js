@@ -69,7 +69,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = void 0;
+exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvexOnCal = exports.UpdateUsers = exports.UpdateMember = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
@@ -112,7 +112,7 @@ exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.ResetConvexOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -150,7 +150,7 @@ exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, users, col, row;
+    var sheet, users_cells, users, col, row;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
@@ -158,8 +158,8 @@ exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, vo
                 sheet = _a.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
             case 2:
-                cells = _a.sent();
-                users = pieces_each_1["default"](cells, 2)
+                users_cells = _a.sent();
+                users = pieces_each_1["default"](users_cells, 2)
                     .filter(util.Omit)
                     .map(function (u) { return ({
                     name: u[0],
@@ -169,39 +169,44 @@ exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, vo
             case 3:
                 col = (_a.sent()).col;
                 row = users.map(function (u) { return u.id; }).indexOf(member.id) + 3;
-                Promise.all([
-                    member.convex,
-                    member.over,
-                    member.end,
-                    member.history
-                ].map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
-                    var cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, i) + row)];
-                            case 1:
-                                cell = _a.sent();
-                                return [4, cell.setValue(v)];
-                            case 2:
-                                _a.sent();
-                                return [2];
-                        }
-                    });
-                }); }));
+                return [4, Promise.all([
+                        member.convex,
+                        member.over,
+                        member.end,
+                        member.history
+                    ].map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, i) + row)];
+                                case 1:
+                                    cell = _a.sent();
+                                    return [4, cell.setValue(v)];
+                                case 2:
+                                    _a.sent();
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 4:
+                _a.sent();
                 return [2];
         }
     });
 }); };
 exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, users_cells, users, col, status_cells, status, state, members, members_1, members_1_1, m, e_1_1;
+    var state, sheet, users_cells, users, col, status_cells, status, members, members_1, members_1_1, m, e_1_1;
     var e_1, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 0: return [4, exports.Fetch()];
             case 1:
+                state = _b.sent();
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 2:
                 sheet = _b.sent();
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
+            case 3:
                 users_cells = _b.sent();
                 users = pieces_each_1["default"](users_cells, 2)
                     .filter(util.Omit)
@@ -210,10 +215,10 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                     id: u[1]
                 }); });
                 return [4, dateTable.TakeDate()];
-            case 3:
+            case 4:
                 col = (_b.sent()).col;
                 return [4, spreadsheet.GetCells(sheet, col + "3:" + alphabet_to_number_1.AtoA(col, 3) + "32")];
-            case 4:
+            case 5:
                 status_cells = _b.sent();
                 status = pieces_each_1["default"](status_cells, 4)
                     .slice(0, users.length)
@@ -223,9 +228,6 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                     end: s[2],
                     history: s[3]
                 }); });
-                return [4, exports.Fetch()];
-            case 5:
-                state = _b.sent();
                 members = users.map(function (u, i) {
                     var member = state.find(function (s) { return s.id === u.id; });
                     if (!member)
@@ -270,6 +272,51 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                 finally { if (e_1) throw e_1.error; }
                 return [7];
             case 14: return [2];
+        }
+    });
+}); };
+exports.ResetConvexOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var state, sheet, col;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                state = _a.sent();
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 2:
+                sheet = _a.sent();
+                return [4, dateTable.TakeDate()];
+            case 3:
+                col = (_a.sent()).col;
+                return [4, Promise.all(state.map(function (_, j) { return __awaiter(void 0, void 0, void 0, function () {
+                        var row;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    row = j + 3;
+                                    return [4, Promise.all(Array(4).fill('').map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                                            var cell;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, i) + row)];
+                                                    case 1:
+                                                        cell = _a.sent();
+                                                        return [4, cell.setValue(v)];
+                                                    case 2:
+                                                        _a.sent();
+                                                        return [2];
+                                                }
+                                            });
+                                        }); }))];
+                                case 1:
+                                    _a.sent();
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 4:
+                _a.sent();
+                return [2];
         }
     });
 }); };

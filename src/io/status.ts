@@ -14,6 +14,8 @@ import * as spreadsheet from '../util/spreadsheet'
  */
 export const UpdateMember = async (member: Member) => {
   let members = await Fetch()
+
+  // メンバーの状態を更新
   members = members.map(s => (s.id === member.id ? member : s))
 
   // キャルステータスを更新する
@@ -41,8 +43,10 @@ export const UpdateUsers = async (users: Option<User[]>) => {
 /**
  * メンバー全員の凸状況をリセットする
  */
-export const ResetConvex = async () => {
+export const ResetConvexOnCal = async () => {
   let members = await Fetch()
+
+  // 全員の凸状況をリセット
   members = members.map(s => ({
     name: s.name,
     id: s.id,
@@ -79,8 +83,10 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 export const ReflectOnSheet = async (member: Member) => {
   // 凸状況のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-  const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
-  const users: User[] = PiecesEach(cells, 2)
+
+  // ユーザー一覧を取得
+  const users_cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
+  const users: User[] = PiecesEach(users_cells, 2)
     .filter(util.Omit)
     .map(u => ({
       name: u[0],
@@ -93,7 +99,7 @@ export const ReflectOnSheet = async (member: Member) => {
 
   // prettier-ignore
   // 凸数、持ち越し、3凸終了、履歴を更新する
-  Promise.all(
+  await Promise.all(
     [
       member.convex,
       member.over,
@@ -110,10 +116,13 @@ export const ReflectOnSheet = async (member: Member) => {
  * スプレッドシートの凸状況をキャルに反映させる
  */
 export const ReflectOnCal = async () => {
+  // メンバー全体の状態を取得
+  const state = await Fetch()
+
   // 凸状況のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
-  // メンバー一覧を取得
+  // ユーザー一覧を取得
   const users_cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   const users: User[] = PiecesEach(users_cells, 2)
     .filter(util.Omit)
@@ -133,9 +142,6 @@ export const ReflectOnCal = async () => {
       end: s[2],
       history: s[3],
     }))
-
-  // メンバー全体の状態を取得
-  const state = await Fetch()
 
   const members = users.map((u, i) => {
     // メンバー一覧と一致するメンバーの状態を取得
@@ -159,4 +165,33 @@ export const ReflectOnCal = async () => {
     await UpdateMember(m)
     await util.Sleep(50)
   }
+}
+
+/**
+ * スプレッドシートの凸状況をリセットする
+ */
+export const ResetConvexOnSheet = async () => {
+  // メンバー全体の状態を取得
+  const state = await Fetch()
+
+  // 凸状況のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+
+  // 列を取得
+  const col = (await dateTable.TakeDate()).col
+
+  await Promise.all(
+    state.map(async (_, j) => {
+      // 行を取得
+      const row = j + 3
+      // prettier-ignore
+      // 凸数、持ち越し、3凸終了、履歴をリセットする
+      await Promise.all(
+        Array(4).fill('').map(async (v, i) => {
+          const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
+          await cell.setValue(v)
+        })
+      )
+    })
+  )
 }

@@ -105,15 +105,14 @@ const updateMembers = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
     }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1))
+    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
-  status.UpdateUsers(users)
+  // ステータスを更新
+  await status.UpdateUsers(users)
+  await util.Sleep(50)
 
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // シートに名前とidを保存する
-  fetchNameAndID(users, sheet)
+  // スプレッドシートに名前とidを保存する
+  await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
 
   msg.reply('クランメンバー一覧を更新したわよ！')
 }
@@ -130,13 +129,10 @@ const updateSisters = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
     }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1))
+    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
-  // 妹クランのシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.SISTER_SHEET.SHEET_NAME)
-
-  // シートに名前とidを保存する
-  fetchNameAndID(users, sheet)
+  // スプレッドシートに名前とidを保存する
+  await fetchNameAndID(users, Settings.SISTER_SHEET.SHEET_NAME)
 
   msg.reply('妹クランメンバー一覧を更新したわよ！')
 }
@@ -144,19 +140,27 @@ const updateSisters = async (msg: Discord.Message) => {
 /**
  * 指定されたシートにメンバーの名前とidを保存する
  * @param members メンバーの情報
- * @param sheet 書き込むシート
+ * @param name 書き込むシートの名前
  */
-const fetchNameAndID = async (users: Option<User[]>, sheet: any) => {
+const fetchNameAndID = async (users: Option<User[]>, name: string) => {
+  // 値がない場合は終了
+  if (!users) return
+
+  // 書き込み先のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(name)
+
   // メンバー一覧を更新
-  users?.forEach(async (m, i) => {
-    const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
+  await Promise.all(
+    users.map(async (m, i) => {
+      const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
 
-    // 名前を更新
-    const name_cell = await sheet.getCell(`${col}${i + 3}`)
-    name_cell.setValue(m.name)
+      // 名前を更新
+      const name_cell = await sheet.getCell(`${col}${i + 3}`)
+      name_cell.setValue(m.name)
 
-    // idを更新
-    const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
-    id_cell.setValue(m.id)
-  })
+      // idを更新
+      const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
+      id_cell.setValue(m.id)
+    })
+  )
 }

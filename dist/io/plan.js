@@ -58,9 +58,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Fetch = void 0;
+exports.Fetch = exports.UpdateMember = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var io = __importStar(require("."));
+exports.UpdateMember = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                plans = _a.sent();
+                plans.push(plan);
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, plans)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
 exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.PLANS)];
 }); }); };
