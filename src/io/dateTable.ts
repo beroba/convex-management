@@ -69,6 +69,7 @@ export const Fetch = async (): Promise<DateTable[]> => io.Fetch<DateTable[]>(Set
  * @return 日付の情報
  */
 export const TakeDate = async (): Promise<DateTable> => {
+  // 日付テーブルを取得
   const table = await Fetch()
 
   // クラバトの日を取得

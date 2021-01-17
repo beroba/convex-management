@@ -98,10 +98,10 @@ exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, f
             case 0: return [4, exports.Fetch()];
             case 1:
                 table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
+                boss = table.find(function (t) { return t.alpha === alpha; });
+                if (!boss)
                     return [2];
-                return [2, boss[0].name];
+                return [2, boss.name];
         }
     });
 }); };
@@ -112,10 +112,10 @@ exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, f
             case 0: return [4, exports.Fetch()];
             case 1:
                 table = _a.sent();
-                boss = table.filter(function (t) { return t.name === name; });
-                if (boss.length === 0)
+                boss = table.find(function (t) { return t.name === name; });
+                if (!boss)
                     return [2];
-                return [2, boss[0].alpha];
+                return [2, boss.alpha];
         }
     });
 }); };
@@ -126,10 +126,10 @@ exports.TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, fu
             case 0: return [4, exports.Fetch()];
             case 1:
                 table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
+                boss = table.find(function (t) { return t.alpha === alpha; });
+                if (!boss)
                     return [2];
-                return [2, boss[0].num];
+                return [2, boss.num];
         }
     });
 }); };

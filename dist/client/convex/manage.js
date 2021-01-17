@@ -147,6 +147,6 @@ var updateProcess = function (member, state, user, msg) { return __awaiter(void 
 var memberFromUser = function (user, msg) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
     switch (_c.label) {
         case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.fetch())];
-        case 1: return [2, (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.map(function (m) { return m; }).filter(function (m) { return m.id === user.id; })[0]];
+        case 1: return [2, (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.map(function (m) { return m; }).find(function (m) { return m.id === user.id; })];
     }
 }); }); };

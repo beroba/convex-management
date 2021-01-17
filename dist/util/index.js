@@ -27,6 +27,6 @@ exports.GetUserName = function (m) {
     return (m === null || m === void 0 ? void 0 : m.nickname) ? m === null || m === void 0 ? void 0 : m.nickname : (m === null || m === void 0 ? void 0 : m.user.username) || '';
 };
 exports.GetMembersFromUser = function (member, user) {
-    return member === null || member === void 0 ? void 0 : member.cache.map(function (m) { return m; }).filter(function (m) { return m.user.id === user.id; })[0];
+    return member === null || member === void 0 ? void 0 : member.cache.map(function (m) { return m; }).find(function (m) { return m.user.id === user.id; });
 };
 exports.GetTextChannel = function (id) { return index_1.Client.channels.cache.get(id); };

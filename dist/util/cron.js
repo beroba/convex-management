@@ -107,7 +107,7 @@ var resetConvex = function (expression) {
         var channel;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4, status.ResetConvexOnCal()];
+                case 0: return [4, status.ResetConvex()];
                 case 1:
                     _a.sent();
                     return [4, status.ResetConvexOnSheet()];

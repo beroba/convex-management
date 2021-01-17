@@ -79,7 +79,7 @@ export const GetMembersFromUser = (
   member: Option<Discord.GuildMemberManager>,
   user: Discord.User
 ): Option<Discord.GuildMember> => {
-  return member?.cache.map(m => m).filter(m => m.user.id === user.id)[0]
+  return member?.cache.map(m => m).find(m => m.user.id === user.id)
 }
 
 /**

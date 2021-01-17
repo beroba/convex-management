@@ -39,15 +39,15 @@ export const Fetch = async (): Promise<BossTable[]> => io.Fetch<BossTable[]>(Set
  * @return ボス名
  */
 export const TakeName = async (alpha: string): Promise<Option<string>> => {
-  // キャルステータスからボステーブルを取得
+  // ボステーブルを取得
   const table = await Fetch()
 
   // ボス番号がない場合は終了
-  const boss = table.filter(t => t.alpha === alpha)
-  if (boss.length === 0) return
+  const boss = table.find(t => t.alpha === alpha)
+  if (!boss) return
 
   // ボス名を返す
-  return boss[0].name
+  return boss.name
 }
 
 /**
@@ -56,15 +56,15 @@ export const TakeName = async (alpha: string): Promise<Option<string>> => {
  * @return ボス番号
  */
 export const TakeAlpha = async (name: string): Promise<Option<string>> => {
-  // キャルステータスからボステーブルを取得
+  // ボステーブルを取得
   const table = await Fetch()
 
   // ボス名がない場合は終了
-  const boss = table.filter(t => t.name === name)
-  if (boss.length === 0) return
+  const boss = table.find(t => t.name === name)
+  if (!boss) return
 
   // ボス番号を返す
-  return boss[0].alpha
+  return boss.alpha
 }
 
 /**
@@ -73,13 +73,13 @@ export const TakeAlpha = async (name: string): Promise<Option<string>> => {
  * @return ボス番号
  */
 export const TakeNum = async (alpha: string): Promise<Option<string>> => {
-  // キャルステータスからボステーブルを取得
+  // ボステーブルを取得
   const table = await Fetch()
 
   // ボス名がない場合は終了
-  const boss = table.filter(t => t.alpha === alpha)
-  if (boss.length === 0) return
+  const boss = table.find(t => t.alpha === alpha)
+  if (!boss) return
 
   // ボス番号を返す
-  return boss[0].num
+  return boss.num
 }

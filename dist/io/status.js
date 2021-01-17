@@ -54,22 +54,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvexOnCal = exports.UpdateUsers = exports.UpdateMember = void 0;
+exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
@@ -112,7 +101,7 @@ exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.ResetConvexOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -150,31 +139,20 @@ exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, users_cells, users, col, row;
+    var sheet, users, col, row;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+                return [4, fetchUserFromSheet(sheet)];
             case 2:
-                users_cells = _a.sent();
-                users = pieces_each_1["default"](users_cells, 2)
-                    .filter(util.Omit)
-                    .map(function (u) { return ({
-                    name: u[0],
-                    id: u[1]
-                }); });
+                users = _a.sent();
                 return [4, dateTable.TakeDate()];
             case 3:
                 col = (_a.sent()).col;
                 row = users.map(function (u) { return u.id; }).indexOf(member.id) + 3;
-                return [4, Promise.all([
-                        member.convex,
-                        member.over,
-                        member.end,
-                        member.history
-                    ].map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                return [4, Promise.all([member.convex, member.over, member.end, member.history].map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
                         var cell;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
@@ -195,83 +173,30 @@ exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, sheet, users_cells, users, col, status_cells, status, members, members_1, members_1_1, m, e_1_1;
-    var e_1, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, exports.Fetch()];
+    var sheet, users, status, members;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
-                state = _b.sent();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+                sheet = _a.sent();
+                return [4, fetchUserFromSheet(sheet)];
             case 2:
-                sheet = _b.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+                users = _a.sent();
+                return [4, fetchStatusFromSheet(users, sheet)];
             case 3:
-                users_cells = _b.sent();
-                users = pieces_each_1["default"](users_cells, 2)
-                    .filter(util.Omit)
-                    .map(function (u) { return ({
-                    name: u[0],
-                    id: u[1]
+                status = _a.sent();
+                members = status.map(function (s, i) { return ({
+                    name: users[i].name,
+                    id: users[i].id,
+                    convex: s.convex,
+                    over: s.over,
+                    end: s.end,
+                    history: s.history
                 }); });
-                return [4, dateTable.TakeDate()];
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
             case 4:
-                col = (_b.sent()).col;
-                return [4, spreadsheet.GetCells(sheet, col + "3:" + alphabet_to_number_1.AtoA(col, 3) + "32")];
-            case 5:
-                status_cells = _b.sent();
-                status = pieces_each_1["default"](status_cells, 4)
-                    .slice(0, users.length)
-                    .map(function (s) { return ({
-                    convex: s[0],
-                    over: s[1],
-                    end: s[2],
-                    history: s[3]
-                }); });
-                members = users.map(function (u, i) {
-                    var member = state.find(function (s) { return s.id === u.id; });
-                    if (!member)
-                        return;
-                    var s = status[i];
-                    member.name = u.name;
-                    member.convex = s.convex;
-                    member.over = s.over;
-                    member.end = s.end;
-                    member.history = s.history;
-                    return member;
-                });
-                _b.label = 6;
-            case 6:
-                _b.trys.push([6, 12, 13, 14]);
-                members_1 = __values(members), members_1_1 = members_1.next();
-                _b.label = 7;
-            case 7:
-                if (!!members_1_1.done) return [3, 11];
-                m = members_1_1.value;
-                if (!m)
-                    return [2];
-                return [4, exports.UpdateMember(m)];
-            case 8:
-                _b.sent();
-                return [4, util.Sleep(50)];
-            case 9:
-                _b.sent();
-                _b.label = 10;
-            case 10:
-                members_1_1 = members_1.next();
-                return [3, 7];
-            case 11: return [3, 14];
-            case 12:
-                e_1_1 = _b.sent();
-                e_1 = { error: e_1_1 };
-                return [3, 14];
-            case 13:
-                try {
-                    if (members_1_1 && !members_1_1.done && (_a = members_1["return"])) _a.call(members_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-                return [7];
-            case 14: return [2];
+                _a.sent();
+                return [2];
         }
     });
 }); };
@@ -317,6 +242,43 @@ exports.ResetConvexOnSheet = function () { return __awaiter(void 0, void 0, void
             case 4:
                 _a.sent();
                 return [2];
+        }
+    });
+}); };
+var fetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 1:
+                cells = _a.sent();
+                return [2, pieces_each_1["default"](cells, 2)
+                        .filter(util.Omit)
+                        .map(function (u) { return ({
+                        name: u[0],
+                        id: u[1]
+                    }); })];
+        }
+    });
+}); };
+var fetchStatusFromSheet = function (users, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var col, cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, dateTable.TakeDate()];
+            case 1:
+                col = (_a.sent()).col;
+                return [4, spreadsheet.GetCells(sheet, col + "3:" + alphabet_to_number_1.AtoA(col, 3) + "32")];
+            case 2:
+                cells = _a.sent();
+                return [2, pieces_each_1["default"](cells, 4)
+                        .slice(0, users.length)
+                        .map(function (s) { return ({
+                        convex: s[0],
+                        over: s[1],
+                        end: s[2],
+                        history: s[3]
+                    }); })];
         }
     });
 }); };

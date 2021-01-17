@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.AddToSheet = exports.Fetch = exports.Add = void 0;
+exports.ReflectOnCal = exports.DeleteOnSheet = exports.AddToSheet = exports.FetchBoss = exports.Fetch = exports.Delete = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
@@ -73,7 +73,25 @@ exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, functio
             case 1:
                 plans = _a.sent();
                 plans.push(plan);
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, plans)];
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans, plan;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                plans = _a.sent();
+                plan = plans.find(function (p) { return p.senderID === id; });
+                if (!plan)
+                    return [2];
+                plans = plans.filter(function (p) { return p.senderID !== id; });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
             case 2:
                 _a.sent();
                 return [2];
@@ -83,24 +101,32 @@ exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, functio
 exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.PLANS)];
 }); }); };
+exports.FetchBoss = function (num) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                plans = _a.sent();
+                return [2, plans.filter(function (p) { return p.num === num; })];
+        }
+    });
+}); };
 exports.AddToSheet = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, len;
+    var sheet, plans;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+                return [4, fetchPlansFromSheet(sheet)];
             case 2:
-                cells = _a.sent();
-                len = pieces_each_1["default"](cells, 9).filter(util.Omit).length;
+                plans = _a.sent();
                 return [4, Promise.all(Object.values(plan).map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
                         var cell;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0:
-                                    console.log("" + alphabet_to_number_1.AtoA('A', i) + (len + 3));
-                                    return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('A', i) + (len + 3))];
+                                case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('A', i) + (plans.length + 3))];
                                 case 1:
                                     cell = _a.sent();
                                     return [4, cell.setValue(v)];
@@ -113,6 +139,68 @@ exports.AddToSheet = function (plan) { return __awaiter(void 0, void 0, void 0, 
             case 3:
                 _a.sent();
                 return [2];
+        }
+    });
+}); };
+exports.DeleteOnSheet = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, plans, row, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, fetchPlansFromSheet(sheet)];
+            case 2:
+                plans = _a.sent();
+                row = plans.map(function (p) { return p.senderID; }).indexOf(id) + 3;
+                if (row === 2)
+                    return [2, console.log(1)];
+                return [4, sheet.getCell("A" + row)];
+            case 3:
+                cell = _a.sent();
+                cell.setValue('1');
+                return [2];
+        }
+    });
+}); };
+exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, plans, incomplete;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, fetchPlansFromSheet(sheet)];
+            case 2:
+                plans = _a.sent();
+                incomplete = plans.filter(function (p) { return !p.done; });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, incomplete)];
+            case 3:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var fetchPlansFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var cells;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+            case 1:
+                cells = _a.sent();
+                return [2, pieces_each_1["default"](cells, 9)
+                        .filter(util.Omit)
+                        .map(function (p) { return ({
+                        done: p[0],
+                        senderID: p[1],
+                        calID: p[2],
+                        name: p[3],
+                        playerID: p[4],
+                        num: p[5],
+                        alpha: p[6],
+                        boss: p[7],
+                        msg: p[8]
+                    }); })];
         }
     });
 }); };

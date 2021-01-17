@@ -47,7 +47,7 @@
       "src/io/current.ts",
       "src/io/dateTable.ts",
       "src/io/index.ts",
-      "src/io/plan.ts",
+      "src/io/schedule.ts",
       "src/io/status.ts",
       "src/io/type.ts",
       "src/util/cron.ts",

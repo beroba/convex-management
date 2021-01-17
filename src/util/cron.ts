@@ -70,7 +70,7 @@ const removeTaskillRoll = (expression: string) => {
 const resetConvex = (expression: string) => {
   cron.schedule(expression, async () => {
     // 全員の凸状況をリセット
-    await status.ResetConvexOnCal()
+    await status.ResetConvex()
     await status.ResetConvexOnSheet()
 
     // bot-notifyに通知をする

@@ -113,4 +113,4 @@ const updateProcess = async (
  * @return 取得したMember
  */
 const memberFromUser = async (user: Discord.User, msg: Discord.Message): Promise<Discord.GuildMember> =>
-  (await msg.guild?.members.fetch())?.map(m => m).filter(m => m.id === user.id)[0] as Discord.GuildMember
+  (await msg.guild?.members.fetch())?.map(m => m).find(m => m.id === user.id) as Discord.GuildMember

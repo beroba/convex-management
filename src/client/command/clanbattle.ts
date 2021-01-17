@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
+import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -206,6 +207,7 @@ const reflectOnCal = async (msg: Discord.Message) => {
   // スプレッドシートの値を反映
   await current.ReflectOnCal()
   await status.ReflectOnCal()
+  await schedule.ReflectOnCal()
 
   // #凸状況を更新
   situation.Report()

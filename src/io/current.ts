@@ -10,19 +10,22 @@ import {Current} from './type'
  * @param alpha ボス番号
  */
 export const UpdateLapAndBoss = async (lap: string, alpha: string) => {
-  // キャルステータスから現在の状況を取得
+  // 現在の状況を取得
   const state: Current = await Fetch()
 
   // 値を更新
   state.lap = lap
   state.stage = getStageName(lap)
   state.alpha = alpha
+
   const num = await bossTable.TakeNum(alpha)
   if (!num) return
   state.num = num
+
   const boss = await bossTable.TakeName(alpha)
   if (!boss) return
   state.boss = boss
+
   state.hp = Settings.STAGE_HP[state.stage][alpha]
 
   // キャルステータスを更新する
@@ -55,7 +58,7 @@ const getStageName = (lap: string): string => {
  * @param hp ボスhp
  */
 export const UpdateBossHp = async (hp: string) => {
-  // キャルステータスから現在の状況を取得
+  // 現在の状況を取得
   const json: Current = await Fetch()
 
   // 値を更新
@@ -75,7 +78,7 @@ export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CA
  * スプレッドシートに現在の状況を反映させる
  */
 export const ReflectOnSheet = async () => {
-  // キャルステータスから現在の状況を取得
+  // 現在の状況を取得
   const json: Current = await Fetch()
 
   // 情報のシートを取得
