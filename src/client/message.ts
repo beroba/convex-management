@@ -4,7 +4,7 @@ import ThrowEnv from 'throw-env'
 import {Command} from './command'
 import * as report from './report'
 import * as plan from './plan'
-import * as carryover from './convex/carryover'
+import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
@@ -34,7 +34,7 @@ export const Message = async (msg: Discord.Message) => {
   if (comment) return console.log(comment)
 
   // 持ち越し状況に絵文字をつける
-  comment = carryover.React(msg)
+  comment = over.React(msg)
   if (comment) return console.log(comment)
 
   // 持ち越し凸先に絵文字をつける

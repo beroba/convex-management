@@ -58,78 +58,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.TakeNum = exports.TakeAlpha = exports.TakeName = exports.Fetch = exports.Update = void 0;
+exports.Fetch = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var util = __importStar(require("../util"));
-var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
-exports.Update = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, table;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _a.sent();
-                table = pieces_each_1["default"](cells, 2)
-                    .filter(util.Omit)
-                    .map(function (v) { return ({
-                    num: v[0],
-                    alpha: v[1],
-                    name: v[2]
-                }); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE, table)];
-            case 3:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
 exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE)];
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.PLANS)];
 }); }); };
-exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].name];
-        }
-    });
-}); };
-exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.name === name; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].alpha];
-        }
-    });
-}); };
-exports.TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].num];
-        }
-    });
-}); };

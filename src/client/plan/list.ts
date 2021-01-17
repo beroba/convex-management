@@ -88,8 +88,8 @@ const readPlanList = async (): Promise<string[][]> => {
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
 
   // 空の値と完了済みの値を省いて返す
-  return PiecesEach(cells, 8)
-    .filter(v => !/^,+$/.test(v.toString()))
+  return PiecesEach(cells, 9)
+    .filter(util.Omit)
     .filter(v => !v[0])
 }
 

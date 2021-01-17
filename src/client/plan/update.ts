@@ -42,7 +42,7 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
 const planUpdate = async (sheet: any, cells: string[], msg: Discord.Message): Promise<Boolean> => {
   // 行を取得
   const row =
-    PiecesEach(cells, 8)
+    PiecesEach(cells, 9)
       .map(v => v[1])
       .indexOf(msg.id) + 3
 

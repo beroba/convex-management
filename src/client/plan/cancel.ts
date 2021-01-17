@@ -72,7 +72,7 @@ export const Report = async (msg: Discord.Message) => {
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
 
   // ボス番号から凸予定のメッセージidを取得
-  const id = readPlanMessageId(cells, msg.author.id, num)
+  const id = readPlanMessageID(cells, msg.author.id, num)
   // 凸予定がなければ終了
   if (!id) return
 
@@ -80,11 +80,11 @@ export const Report = async (msg: Discord.Message) => {
   await convexComplete(sheet, cells, id)
 
   // メッセージを削除
-  msgDelete(PiecesEach(cells, 8).filter(v => v[1] === id)[0][1])
-  msgDelete(PiecesEach(cells, 8).filter(v => v[1] === id)[0][2])
+  msgDelete(PiecesEach(cells, 9).filter(v => v[1] === id)[0][1])
+  msgDelete(PiecesEach(cells, 9).filter(v => v[1] === id)[0][2])
 
   // ボスのロールを外す
-  const plans = PiecesEach(cells, 8)
+  const plans = PiecesEach(cells, 9)
     .filter(c => c[4] === msg.author.id)
     .filter(v => v[5] === num)
     .filter(c => !c[0])
@@ -127,7 +127,7 @@ const planComplete = async (msg: Discord.Message) => {
   await convexComplete(sheet, cells, msg.id)
 
   // メッセージを削除
-  const id = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][2]
+  const id = PiecesEach(cells, 9).filter(v => v[1] === msg.id)[0][2]
   await msgDelete(id)
 
   // ボスのロールを外す
@@ -163,7 +163,7 @@ const msgDelete = async (id: string) => {
 const convexComplete = async (sheet: any, cells: string[], id: string) => {
   // 行を取得
   const row =
-    PiecesEach(cells, 8)
+    PiecesEach(cells, 9)
       .map(v => v[1])
       .indexOf(id) + 3
 
@@ -182,10 +182,10 @@ const convexComplete = async (sheet: any, cells: string[], id: string) => {
  */
 const deleteBossRole = (cells: string[], msg: Discord.Message) => {
   // メッセージのボス番号を取得
-  const num = PiecesEach(cells, 8).filter(v => v[1] === msg.id)[0][5]
+  const num = PiecesEach(cells, 9).filter(v => v[1] === msg.id)[0][5]
 
   // 凸予定が残り2つ以上だった場合は終了
-  const plans = PiecesEach(cells, 8)
+  const plans = PiecesEach(cells, 9)
     .filter(c => c[4] === msg.author.id)
     .filter(v => v[5] === num)
     .filter(c => !c[0])
@@ -231,9 +231,9 @@ const checkBossNumber = async (content: string): Promise<string> => {
  * @param num ボス番号
  * @return 取得したid
  */
-const readPlanMessageId = (cells: string[], id: string, num: string): Option<string> => {
+const readPlanMessageID = (cells: string[], id: string, num: string): Option<string> => {
   // 報告者の凸予定一覧を取得
-  const plans = PiecesEach(cells, 8)
+  const plans = PiecesEach(cells, 9)
     .filter(c => c[4] === id)
     .filter(c => !c[0])
 

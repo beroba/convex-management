@@ -29,11 +29,17 @@ export type Current = {
 }
 
 /**
- * メンバーの状態
+ * ユーザー情報
  */
-export type Member = {
+export type User = {
   name: string
   id: string
+}
+
+/**
+ * 凸管理状況
+ */
+export type Status = {
   convex: string
   over: string
   end: string
@@ -41,9 +47,27 @@ export type Member = {
 }
 
 /**
- * ユーザー情報
+ * メンバーの状態
+ * @type name: string
+ * @type id: string
+ * @type convex: string
+ * @type over: string
+ * @type end: string
+ * @type history: string
  */
-export type User = {
+export type Member = User & Status
+
+/**
+ * 凸予定の情報
+ */
+export type Plan = {
+  done: string
+  senderID: string
+  calID: string
   name: string
-  id: string
+  playerID: string
+  num: string
+  alpha: string
+  boss: string
+  msg: string
 }

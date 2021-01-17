@@ -60,10 +60,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
-var status = __importStar(require("./status"));
-var carryover = __importStar(require("../convex/carryover"));
+var update = __importStar(require("./update"));
+var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var cancel = __importStar(require("../plan/cancel"));
@@ -76,7 +76,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                return [4, members.FetchMember(msg.author.id)];
+                return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _a.sent();
                 if (!member) {
@@ -89,18 +89,18 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 }
                 killConfirm(msg);
                 overDelete(msg);
-                return [4, status.Update(msg)];
+                return [4, update.Status(msg)];
             case 2:
                 _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
-                return [4, members.FetchMember(msg.author.id)];
+                return [4, status.FetchMember(msg.author.id)];
             case 4:
                 member = _a.sent();
                 if (!member)
                     return [2];
-                members.ReflectOnSheet(member);
+                status.ReflectOnSheet(member);
                 if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
                     cancel.AllComplete(msg.author.id);
                 }
@@ -122,12 +122,12 @@ var overDelete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     var member;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, members.FetchMember(msg.author.id)];
+            case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _a.sent();
                 if ((member === null || member === void 0 ? void 0 : member.over) !== '1')
                     return [2];
-                carryover.AllDelete(msg.member);
+                over.AllDelete(msg.member);
                 return [2];
         }
     });

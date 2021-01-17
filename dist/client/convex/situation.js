@@ -62,7 +62,7 @@ exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var current = __importStar(require("../../io/current"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
     var text, situation, msg, history;
@@ -84,7 +84,7 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 var createMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var time, date, state, status, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+    var time, date, state, members, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -95,17 +95,17 @@ var createMessage = function () { return __awaiter(void 0, void 0, void 0, funct
                 return [4, current.Fetch()];
             case 2:
                 state = _a.sent();
-                return [4, members.Fetch()];
+                return [4, status.Fetch()];
             case 3:
-                status = _a.sent();
-                remaining = remainingConvexNumber(status);
-                未凸 = userSorting(status, 0, 0);
-                持越1 = userSorting(status, 1, 1);
-                凸1 = userSorting(status, 1, 0);
-                持越2 = userSorting(status, 2, 1);
-                凸2 = userSorting(status, 2, 0);
-                持越3 = userSorting(status, 3, 1);
-                凸3 = userSorting(status, 3, 0);
+                members = _a.sent();
+                remaining = remainingConvexNumber(members);
+                未凸 = userSorting(members, 0, 0);
+                持越1 = userSorting(members, 1, 1);
+                凸1 = userSorting(members, 1, 0);
+                持越2 = userSorting(members, 2, 1);
+                凸2 = userSorting(members, 2, 0);
+                持越3 = userSorting(members, 3, 1);
+                凸3 = userSorting(members, 3, 0);
                 return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
                         ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "` `" + remaining + "`\n") +
                         '```\n' +
@@ -129,13 +129,13 @@ var getCurrentDate = function () {
     var d = new Date();
     return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
 };
-var remainingConvexNumber = function (status) {
-    var remaining = status.map(function (s) { return 3 - Number(s.convex) + Number(s.over); }).reduce(function (a, b) { return a + b; });
-    var over = status.map(function (s) { return Number(s.over); }).reduce(function (a, b) { return a + b; });
-    return remaining + "/" + status.length * 3 + "(" + over + ")";
+var remainingConvexNumber = function (members) {
+    var remaining = members.map(function (s) { return 3 - Number(s.convex) + Number(s.over); }).reduce(function (a, b) { return a + b; });
+    var over = members.map(function (s) { return Number(s.over); }).reduce(function (a, b) { return a + b; });
+    return remaining + "/" + members.length * 3 + "(" + over + ")";
 };
-var userSorting = function (status, convex, over) {
-    return status
+var userSorting = function (members, convex, over) {
+    return members
         .filter(function (l) { return Number(l.convex) === convex; })
         .filter(function (l) { return Number(l.over) === over; })
         .map(function (l) { return l.name; })

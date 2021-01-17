@@ -96,14 +96,6 @@ BOSS_ROLE_ID:
   d: '756495357340286977'
   e: '756495432535769108'
 
-# 段階名
-STAGE_NAMES:
-  - 'first'
-  - 'second'
-  - 'third'
-  - 'fourth'
-  - 'fifth'
-
 # 段階毎のHP
 STAGE_HP:
   first:
@@ -148,6 +140,7 @@ CAL_STATUS_ID:
   DAYS_TABLE: '796394876404236309'
   CURRENT: '796419468045582437'
   MEMBERS: '797543309269794886'
+  PLANS: '799393326067482664'
 
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
@@ -167,12 +160,20 @@ COMMAND_CHANNEL:
 # 特定メッセージを入力した際にbotがあれこれするチャンネル
 THIS_AND_THAT_CHANNEL:
   - 雑談
+  - 進行-連携
+  - 茶室
   - vc用
+  - vc用-運営
   - くらばと-vc用
   - bot-test
 
 # 絵文字を押さないチャンネル
 NOT_EMOJI_CHANNEL:
+  - 凸宣言-ボス状況
+  - 凸報告
+  - 持ち越し状況
+  - 凸可能時間
+  - 凸予定
   - 凸状況
   - 凸状況履歴
 
@@ -194,7 +195,7 @@ MANAGEMENT_SHEET:
 PLAN_SHEET:
   SHEET_NAME: 凸予定
   PERSON_CELLS: B3:B1002
-  PLAN_CELLS: A3:H1002
+  PLAN_CELLS: A3:I1002
 
 # 情報のシート情報
 INFORMATION_SHEET:

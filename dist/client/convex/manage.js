@@ -60,16 +60,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var situation = __importStar(require("./situation"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var status, user, member;
+    var state, user, member;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                status = util.Format(arg).replace(/<.+>/, '').trim();
-                if (!/^(0|[1-3]\+?)$/.test(status)) {
+                state = util.Format(arg).replace(/<.+>/, '').trim();
+                if (!/^(0|[1-3]\+?)$/.test(state)) {
                     msg.reply('凸状況の書式が違うわ');
                     return [2];
                 }
@@ -78,29 +78,29 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     msg.reply('メンションで誰の凸状況を変更したいか指定しなさい');
                     return [2];
                 }
-                return [4, members.FetchMember(user.id)];
+                return [4, status.FetchMember(user.id)];
             case 1:
                 member = _a.sent();
                 if (!member) {
                     msg.reply('その人はクランメンバーじゃないわ');
                     return [2];
                 }
-                if (!(status === '3')) return [3, 3];
+                if (!(state === '3')) return [3, 3];
                 return [4, convexEndProcess(member, user, msg)];
             case 2:
                 member = _a.sent();
                 return [3, 5];
-            case 3: return [4, updateProcess(member, status, user, msg)];
+            case 3: return [4, updateProcess(member, state, user, msg)];
             case 4:
                 member = _a.sent();
                 _a.label = 5;
-            case 5: return [4, members.UpdateMember(member)];
+            case 5: return [4, status.UpdateMember(member)];
             case 6:
                 _a.sent();
                 return [4, util.Sleep(50)];
             case 7:
                 _a.sent();
-                members.ReflectOnSheet(member);
+                status.ReflectOnSheet(member);
                 situation.Report();
                 return [2];
         }
@@ -118,7 +118,7 @@ var convexEndProcess = function (member, user, msg) { return __awaiter(void 0, v
             case 1:
                 guildMember = _a.sent();
                 guildMember.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
-                return [4, members.Fetch()];
+                return [4, status.Fetch()];
             case 2:
                 state = _a.sent();
                 n = state.filter(function (s) { return s.end === '1'; }).length + 1;

@@ -94,7 +94,7 @@ var planUpdate = function (sheet, cells, msg) { return __awaiter(void 0, void 0,
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                row = pieces_each_1["default"](cells, 8)
+                row = pieces_each_1["default"](cells, 9)
                     .map(function (v) { return v[1]; })
                     .indexOf(msg.id) + 3;
                 if (row === 2)

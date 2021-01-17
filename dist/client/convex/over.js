@@ -58,78 +58,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.TakeNum = exports.TakeAlpha = exports.TakeName = exports.Fetch = exports.Update = void 0;
+exports.AllDelete = exports.React = exports.Delete = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var util = __importStar(require("../util"));
-var spreadsheet = __importStar(require("../util/spreadsheet"));
-var io = __importStar(require("."));
-exports.Update = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, table;
+var util = __importStar(require("../../util"));
+exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 0:
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
+                    return [2];
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KANRYOU)
+                    return [2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
+                return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _a.sent();
-                table = pieces_each_1["default"](cells, 2)
-                    .filter(util.Omit)
-                    .map(function (v) { return ({
-                    num: v[0],
-                    alpha: v[1],
-                    name: v[2]
-                }); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE, table)];
-            case 3:
                 _a.sent();
+                if (react.message.author.id !== user.id)
+                    return [2];
+                react.message["delete"]();
+                return [2, 'Delete completed message'];
+        }
+    });
+}); };
+exports.React = function (msg) {
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+    return 'React Kanryou';
+};
+exports.AllDelete = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
+                return [4, channel.messages.fetch()];
+            case 1:
+                (_a.sent())
+                    .map(function (v) { return v; })
+                    .filter(function (m) { return m.author.id === (member === null || member === void 0 ? void 0 : member.id); })
+                    .forEach(function (m) { return m["delete"](); });
+                console.log('Delete carryover message');
                 return [2];
-        }
-    });
-}); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE)];
-}); }); };
-exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].name];
-        }
-    });
-}); };
-exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.name === name; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].alpha];
-        }
-    });
-}); };
-exports.TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var table, boss;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, exports.Fetch()];
-            case 1:
-                table = _a.sent();
-                boss = table.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].num];
         }
     });
 }); };

@@ -93,7 +93,7 @@ export const CheckTheStage = async (n: number) => {
   if (stage[n - 1][1]) return
 
   PiecesEach(category, 2)
-    .filter(c => !/^,+$/.test(c.toString())) // 空の値を省く
+    .filter(util.Omit) // 空の値を省く
     .forEach(c => {
       // ボスのチャンネルに区切りを送信する
       const channel = util.GetTextChannel(c[1])

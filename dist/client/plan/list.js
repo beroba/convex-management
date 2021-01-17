@@ -165,8 +165,8 @@ var readPlanList = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 2:
                 cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 8)
-                        .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                return [2, pieces_each_1["default"](cells, 9)
+                        .filter(util.Omit)
                         .filter(function (v) { return !v[0]; })];
         }
     });

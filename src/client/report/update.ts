@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as members from '../../io/members'
+import * as status from '../../io/status'
 import {Member} from '../../io/type'
 import * as util from '../../util'
 
@@ -8,9 +8,9 @@ import * as util from '../../util'
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
  */
-export const Update = async (msg: Discord.Message) => {
+export const Status = async (msg: Discord.Message) => {
   // メンバーの状態を取得
-  let member = await members.FetchMember(msg.author.id)
+  let member = await status.FetchMember(msg.author.id)
   if (!member) return
 
   // 現在の凸状況を履歴に残す
@@ -33,7 +33,7 @@ export const Update = async (msg: Discord.Message) => {
   }
 
   // ステータスを更新
-  await members.UpdateMember(member)
+  await status.UpdateMember(member)
 }
 
 /**
@@ -106,8 +106,8 @@ const convexEndProcess = async (member: Member, msg: Discord.Message): Promise<M
   await msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const state = await members.Fetch()
-  const n = state.filter(s => s.end === '1').length + 1
+  const members = await status.Fetch()
+  const n = members.filter(s => s.end === '1').length + 1
   await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
 
   return member

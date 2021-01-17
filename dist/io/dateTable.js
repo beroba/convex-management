@@ -61,6 +61,7 @@ exports.__esModule = true;
 exports.TakeDate = exports.Fetch = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -79,7 +80,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
             case 4:
                 cells = _a.sent();
                 table = pieces_each_1["default"](cells, 3)
-                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
+                    .filter(util.Omit)
                     .map(function (v) { return ({
                     num: v[0],
                     day: parseZero(v[1]),

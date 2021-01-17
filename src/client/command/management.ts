@@ -4,7 +4,7 @@ import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
-import * as members from '../../io/members'
+import * as status from '../../io/status'
 import {User} from '../../io/type'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
@@ -107,13 +107,13 @@ const updateMembers = async (msg: Discord.Message) => {
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1))
 
-  members.UpdateUsers(users)
+  status.UpdateUsers(users)
 
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // シートに名前とidを保存する
-  fetchNameAndId(users, sheet)
+  fetchNameAndID(users, sheet)
 
   msg.reply('クランメンバー一覧を更新したわよ！')
 }
@@ -136,7 +136,7 @@ const updateSisters = async (msg: Discord.Message) => {
   const sheet = await spreadsheet.GetWorksheet(Settings.SISTER_SHEET.SHEET_NAME)
 
   // シートに名前とidを保存する
-  fetchNameAndId(users, sheet)
+  fetchNameAndID(users, sheet)
 
   msg.reply('妹クランメンバー一覧を更新したわよ！')
 }
@@ -146,7 +146,7 @@ const updateSisters = async (msg: Discord.Message) => {
  * @param members メンバーの情報
  * @param sheet 書き込むシート
  */
-const fetchNameAndId = async (users: Option<User[]>, sheet: any) => {
+const fetchNameAndID = async (users: Option<User[]>, sheet: any) => {
   // メンバー一覧を更新
   users?.forEach(async (m, i) => {
     const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN

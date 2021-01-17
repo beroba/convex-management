@@ -1,6 +1,7 @@
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
+import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import {DateTable} from './type'
@@ -20,7 +21,7 @@ export const Update = async (arg: string) => {
 
   // スプレッドシートからボステーブルを作成する
   const table: DateTable[] = PiecesEach(cells, 3)
-    .filter(v => !/^,+$/.test(v.toString()))
+    .filter(util.Omit)
     .map(v => ({
       num: v[0],
       day: parseZero(v[1]),

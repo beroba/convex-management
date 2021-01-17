@@ -152,7 +152,7 @@ exports.CheckTheStage = function (n) { return __awaiter(void 0, void 0, void 0, 
                 if (stage[n - 1][1])
                     return [2];
                 pieces_each_1["default"](category, 2)
-                    .filter(function (c) { return !/^,+$/.test(c.toString()); })
+                    .filter(util.Omit)
                     .forEach(function (c) {
                     var channel = util.GetTextChannel(c[1]);
                     channel.send(separate(n));

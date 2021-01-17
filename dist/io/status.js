@@ -54,67 +54,222 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.TakeBossAlpha = exports.TakeBossName = exports.FetchBossTable = exports.UpdateBossTable = void 0;
+exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
+var io = __importStar(require("."));
+var dateTable = __importStar(require("./dateTable"));
+var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
-var io = __importStar(require("./"));
-exports.UpdateBossTable = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, bossTable;
+exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 0: return [4, exports.Fetch()];
             case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+                members = _a.sent();
+                members = members.map(function (s) { return (s.id === member.id ? member : s); });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
             case 2:
-                cells = _a.sent();
-                bossTable = pieces_each_1["default"](cells, 2)
-                    .filter(function (v) { return !/^,+$/.test(v.toString()); })
-                    .map(function (v) { return ({
-                    num: v[0],
-                    alpha: v[1],
-                    name: v[2]
-                }); });
-                return [4, io.Update(const_settings_1["default"].CAL_STATUS_ID.BOSSTABLE, bossTable)];
-            case 3:
                 _a.sent();
                 return [2];
         }
     });
 }); };
-exports.FetchBossTable = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.BOSSTABLE)];
-}); }); };
-exports.TakeBossName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var bossTable, boss;
+exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, exports.FetchBossTable()];
+            case 0:
+                members = users === null || users === void 0 ? void 0 : users.map(function (u) { return ({
+                    name: u.name,
+                    id: u.id,
+                    convex: '',
+                    over: '',
+                    end: '',
+                    history: ''
+                }); });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
             case 1:
-                bossTable = _a.sent();
-                boss = bossTable.filter(function (t) { return t.alpha === alpha; });
-                if (boss.length === 0)
-                    return [2];
-                return [2, boss[0].name];
+                _a.sent();
+                return [2];
         }
     });
 }); };
-exports.TakeBossAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
-    var bossTable, boss;
+exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, exports.FetchBossTable()];
+            case 0: return [4, exports.Fetch()];
             case 1:
-                bossTable = _a.sent();
-                boss = bossTable.filter(function (t) { return t.name === name; });
-                if (boss.length === 0)
+                members = _a.sent();
+                members = members.map(function (s) { return ({
+                    name: s.name,
+                    id: s.id,
+                    convex: '',
+                    over: '',
+                    end: '',
+                    history: ''
+                }); });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.MEMBERS)];
+}); }); };
+exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var members, member;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                members = _a.sent();
+                member = members.filter(function (s) { return s.id === id; });
+                return [2, member.length === 0 ? undefined : member[0]];
+        }
+    });
+}); };
+exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, users, col, row;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                cells = _a.sent();
+                users = pieces_each_1["default"](cells, 2)
+                    .filter(util.Omit)
+                    .map(function (u) { return ({
+                    name: u[0],
+                    id: u[1]
+                }); });
+                return [4, dateTable.TakeDate()];
+            case 3:
+                col = (_a.sent()).col;
+                row = users.map(function (u) { return u.id; }).indexOf(member.id) + 3;
+                Promise.all([
+                    member.convex,
+                    member.over,
+                    member.end,
+                    member.history
+                ].map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
+                    var cell;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, i) + row)];
+                            case 1:
+                                cell = _a.sent();
+                                return [4, cell.setValue(v)];
+                            case 2:
+                                _a.sent();
+                                return [2];
+                        }
+                    });
+                }); }));
+                return [2];
+        }
+    });
+}); };
+exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, users_cells, users, col, status_cells, status, state, members, members_1, members_1_1, m, e_1_1;
+    var e_1, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _b.sent();
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 2:
+                users_cells = _b.sent();
+                users = pieces_each_1["default"](users_cells, 2)
+                    .filter(util.Omit)
+                    .map(function (u) { return ({
+                    name: u[0],
+                    id: u[1]
+                }); });
+                return [4, dateTable.TakeDate()];
+            case 3:
+                col = (_b.sent()).col;
+                return [4, spreadsheet.GetCells(sheet, col + "3:" + alphabet_to_number_1.AtoA(col, 3) + "32")];
+            case 4:
+                status_cells = _b.sent();
+                status = pieces_each_1["default"](status_cells, 4)
+                    .slice(0, users.length)
+                    .map(function (s) { return ({
+                    convex: s[0],
+                    over: s[1],
+                    end: s[2],
+                    history: s[3]
+                }); });
+                return [4, exports.Fetch()];
+            case 5:
+                state = _b.sent();
+                members = users.map(function (u, i) {
+                    var member = state.find(function (s) { return s.id === u.id; });
+                    if (!member)
+                        return;
+                    var s = status[i];
+                    member.name = u.name;
+                    member.convex = s.convex;
+                    member.over = s.over;
+                    member.end = s.end;
+                    member.history = s.history;
+                    return member;
+                });
+                _b.label = 6;
+            case 6:
+                _b.trys.push([6, 12, 13, 14]);
+                members_1 = __values(members), members_1_1 = members_1.next();
+                _b.label = 7;
+            case 7:
+                if (!!members_1_1.done) return [3, 11];
+                m = members_1_1.value;
+                if (!m)
                     return [2];
-                return [2, boss[0].alpha];
+                return [4, exports.UpdateMember(m)];
+            case 8:
+                _b.sent();
+                return [4, util.Sleep(50)];
+            case 9:
+                _b.sent();
+                _b.label = 10;
+            case 10:
+                members_1_1 = members_1.next();
+                return [3, 7];
+            case 11: return [3, 14];
+            case 12:
+                e_1_1 = _b.sent();
+                e_1 = { error: e_1_1 };
+                return [3, 14];
+            case 13:
+                try {
+                    if (members_1_1 && !members_1_1.done && (_a = members_1["return"])) _a.call(members_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+                return [7];
+            case 14: return [2];
         }
     });
 }); };

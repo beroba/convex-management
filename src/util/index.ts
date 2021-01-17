@@ -24,6 +24,13 @@ export const Format = (str: string): string =>
 export const Sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 /**
+ * 空の配列を省く
+ * @param v 配列
+ * @return 真偽値
+ */
+export const Omit = (v: any): boolean => !/^,+$/.test(v.toString())
+
+/**
  * クランサーバーのguildを取得する
  * @return クランサーバーのguild
  */

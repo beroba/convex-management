@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import * as members from '../../io/members'
+import * as status from '../../io/status'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -205,7 +205,7 @@ const updateReport = async (msg: Discord.Message) => {
 const reflectOnCal = async (msg: Discord.Message) => {
   // スプレッドシートの値を反映
   await current.ReflectOnCal()
-  await members.ReflectOnCal()
+  await status.ReflectOnCal()
 
   // #凸状況を更新
   situation.Report()

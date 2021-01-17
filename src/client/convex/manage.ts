@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as members from '../../io/members'
+import * as status from '../../io/status'
 import {Member} from '../../io/type'
 import * as util from '../../util'
 import * as situation from './situation'
@@ -12,10 +12,10 @@ import * as situation from './situation'
  */
 export const Update = async (arg: string, msg: Discord.Message) => {
   // 凸状況を取得
-  const status = util.Format(arg).replace(/<.+>/, '').trim()
+  const state = util.Format(arg).replace(/<.+>/, '').trim()
 
   // 凸状況の書式がおかしい場合は終了
-  if (!/^(0|[1-3]\+?)$/.test(status)) {
+  if (!/^(0|[1-3]\+?)$/.test(state)) {
     msg.reply('凸状況の書式が違うわ')
     return
   }
@@ -28,25 +28,25 @@ export const Update = async (arg: string, msg: Discord.Message) => {
   }
 
   // メンバーの状態を取得
-  let member = await members.FetchMember(user.id)
+  let member = await status.FetchMember(user.id)
   if (!member) {
     msg.reply('その人はクランメンバーじゃないわ')
     return
   }
 
   // 3凸終了とそれ以外に処理を分ける
-  if (status === '3') {
+  if (state === '3') {
     member = await convexEndProcess(member, user, msg)
   } else {
-    member = await updateProcess(member, status, user, msg)
+    member = await updateProcess(member, state, user, msg)
   }
 
   // ステータスを更新
-  await members.UpdateMember(member)
+  await status.UpdateMember(member)
   await util.Sleep(50)
 
   // 凸状況をスプレッドシートに反映
-  members.ReflectOnSheet(member)
+  status.ReflectOnSheet(member)
 
   // 凸状況に報告
   situation.Report()
@@ -70,7 +70,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const state = await members.Fetch()
+  const state = await status.Fetch()
   const n = state.filter(s => s.end === '1').length + 1
   msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
 

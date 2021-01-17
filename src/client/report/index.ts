@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as members from '../../io/members'
+import * as status from '../../io/status'
 import * as util from '../../util'
-import * as status from './status'
-import * as carryover from '../convex/carryover'
+import * as update from './update'
+import * as over from '../convex/over'
 import * as situation from '../convex/situation'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as cancel from '../plan/cancel'
@@ -23,7 +23,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   {
     // メンバーの状態を取得
-    const member = await members.FetchMember(msg.author.id)
+    const member = await status.FetchMember(msg.author.id)
 
     // クランメンバーでなければ終了
     if (!member) {
@@ -45,16 +45,16 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   overDelete(msg)
 
   // 凸状況を更新
-  await status.Update(msg)
+  await update.Status(msg)
   await util.Sleep(50)
 
   {
     // メンバーの状態を取得
-    const member = await members.FetchMember(msg.author.id)
+    const member = await status.FetchMember(msg.author.id)
     if (!member) return
 
     // 凸状況をスプレッドシートに反映
-    members.ReflectOnSheet(member)
+    status.ReflectOnSheet(member)
 
     // 凸予定の削除
     if (member?.end === '1') {
@@ -91,9 +91,9 @@ const killConfirm = (msg: Discord.Message) => {
  */
 const overDelete = async (msg: Discord.Message) => {
   // 持ち越しがなければ終了
-  const member = await members.FetchMember(msg.author.id)
+  const member = await status.FetchMember(msg.author.id)
   if (member?.over !== '1') return
 
   // 持ち越しを持っている人のメッセージを削除
-  carryover.AllDelete(msg.member)
+  over.AllDelete(msg.member)
 }

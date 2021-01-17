@@ -78,7 +78,7 @@ exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
@@ -269,7 +269,7 @@ var reflectOnCal = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 0: return [4, current.ReflectOnCal()];
             case 1:
                 _a.sent();
-                return [4, members.ReflectOnCal()];
+                return [4, status.ReflectOnCal()];
             case 2:
                 _a.sent();
                 situation.Report();

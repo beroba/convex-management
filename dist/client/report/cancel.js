@@ -60,7 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Delete = exports.Cancel = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
@@ -81,7 +81,7 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                 _a.sent();
                 if (react.message.author.id !== user.id)
                     return [2];
-                return [4, members.FetchMember(react.message.author.id)];
+                return [4, status.FetchMember(react.message.author.id)];
             case 2:
                 member = _a.sent();
                 if (!member)
@@ -106,7 +106,7 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
-                return [4, members.FetchMember(msg.author.id)];
+                return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _b.sent();
                 if (!member)
@@ -125,7 +125,7 @@ var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, fu
     var member, result, convex;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, members.FetchMember(msg.author.id)];
+            case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _a.sent();
                 if (!member)
@@ -140,13 +140,13 @@ var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 convex = member.convex ? member.convex + "\u51F8\u76EE " + (member.over ? '持ち越し' : '終了') : '未凸';
                 msg.reply("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n" + convex);
                 killConfirm(msg);
-                return [4, members.UpdateMember(member)];
+                return [4, status.UpdateMember(member)];
             case 2:
                 _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
-                members.ReflectOnSheet(member);
+                status.ReflectOnSheet(member);
                 return [2, true];
         }
     });

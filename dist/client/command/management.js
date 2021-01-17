@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var bossTable = __importStar(require("../../io/bossTable"));
 var dateTable = __importStar(require("../../io/dateTable"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
@@ -161,11 +161,11 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                     name: util.GetUserName(m),
                     id: m.id
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                members.UpdateUsers(users);
+                status.UpdateUsers(users);
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _c.sent();
-                fetchNameAndId(users, sheet);
+                fetchNameAndID(users, sheet);
                 msg.reply('クランメンバー一覧を更新したわよ！');
                 return [2];
         }
@@ -184,13 +184,13 @@ var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _c.sent();
-                fetchNameAndId(users, sheet);
+                fetchNameAndID(users, sheet);
                 msg.reply('妹クランメンバー一覧を更新したわよ！');
                 return [2];
         }
     });
 }); };
-var fetchNameAndId = function (users, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+var fetchNameAndID = function (users, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         users === null || users === void 0 ? void 0 : users.forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
             var col, name_cell, id_cell;

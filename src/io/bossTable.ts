@@ -1,6 +1,7 @@
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import Option from 'type-of-option'
+import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import {BossTable} from './type'
@@ -15,7 +16,7 @@ export const Update = async () => {
 
   // スプレッドシートからボステーブルを作成する
   const table: BossTable[] = PiecesEach(cells, 2)
-    .filter(v => !/^,+$/.test(v.toString()))
+    .filter(util.Omit)
     .map(v => ({
       num: v[0],
       alpha: v[1],

@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as members from '../../io/members'
+import * as status from '../../io/status'
 import {Member} from '../../io/type'
 import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
@@ -31,7 +31,7 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   if (react.message.author.id !== user.id) return
 
   // メンバーの状態を取得
-  const member = await members.FetchMember(react.message.author.id)
+  const member = await status.FetchMember(react.message.author.id)
   // クランメンバーでなければ終了
   if (!member) return
 
@@ -59,7 +59,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
 
   // メンバーの状態を取得
-  const member = await members.FetchMember(msg.author.id)
+  const member = await status.FetchMember(msg.author.id)
   // クランメンバーでなければ終了
   if (!member) return
 
@@ -82,7 +82,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
   // メンバーの状態を取得
-  let member = await members.FetchMember(msg.author.id)
+  let member = await status.FetchMember(msg.author.id)
   if (!member) return false
 
   // 2回キャンセルしてないか確認
@@ -106,11 +106,11 @@ const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
   killConfirm(msg)
 
   // ステータスを更新
-  await members.UpdateMember(member)
+  await status.UpdateMember(member)
   await util.Sleep(50)
 
   // 凸状況をスプレッドシートに反映
-  members.ReflectOnSheet(member)
+  status.ReflectOnSheet(member)
 
   return true
 }

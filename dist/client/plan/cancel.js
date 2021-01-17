@@ -133,15 +133,15 @@ exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
             case 3:
                 cells = _b.sent();
-                id = readPlanMessageId(cells, msg.author.id, num);
+                id = readPlanMessageID(cells, msg.author.id, num);
                 if (!id)
                     return [2];
                 return [4, convexComplete(sheet, cells, id)];
             case 4:
                 _b.sent();
-                msgDelete(pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === id; })[0][1]);
-                msgDelete(pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === id; })[0][2]);
-                plans = pieces_each_1["default"](cells, 8)
+                msgDelete(pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === id; })[0][1]);
+                msgDelete(pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === id; })[0][2]);
+                plans = pieces_each_1["default"](cells, 9)
                     .filter(function (c) { return c[4] === msg.author.id; })
                     .filter(function (v) { return v[5] === num; })
                     .filter(function (c) { return !c[0]; });
@@ -209,7 +209,7 @@ var planComplete = function (msg) { return __awaiter(void 0, void 0, void 0, fun
                 return [4, convexComplete(sheet, cells, msg.id)];
             case 3:
                 _a.sent();
-                id = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][2];
+                id = pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === msg.id; })[0][2];
                 return [4, msgDelete(id)];
             case 4:
                 _a.sent();
@@ -241,7 +241,7 @@ var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                row = pieces_each_1["default"](cells, 8)
+                row = pieces_each_1["default"](cells, 9)
                     .map(function (v) { return v[1]; })
                     .indexOf(id) + 3;
                 if (row === 2)
@@ -256,8 +256,8 @@ var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void
 }); };
 var deleteBossRole = function (cells, msg) {
     var _a;
-    var num = pieces_each_1["default"](cells, 8).filter(function (v) { return v[1] === msg.id; })[0][5];
-    var plans = pieces_each_1["default"](cells, 8)
+    var num = pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === msg.id; })[0][5];
+    var plans = pieces_each_1["default"](cells, 9)
         .filter(function (c) { return c[4] === msg.author.id; })
         .filter(function (v) { return v[5] === num; })
         .filter(function (c) { return !c[0]; });
@@ -288,8 +288,8 @@ var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-var readPlanMessageId = function (cells, id, num) {
-    var plans = pieces_each_1["default"](cells, 8)
+var readPlanMessageID = function (cells, id, num) {
+    var plans = pieces_each_1["default"](cells, 9)
         .filter(function (c) { return c[4] === id; })
         .filter(function (c) { return !c[0]; });
     var index = plans.findIndex(function (v) { return v[5] === num; });

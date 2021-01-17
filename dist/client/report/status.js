@@ -60,13 +60,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var members = __importStar(require("../../io/members"));
+var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member, content, end;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, members.FetchMember(msg.author.id)];
+            case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _a.sent();
                 if (!member)
@@ -91,7 +91,7 @@ exports.Update = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 7:
                 _a.sent();
                 _a.label = 8;
-            case 8: return [4, members.UpdateMember(member)];
+            case 8: return [4, status.UpdateMember(member)];
             case 9:
                 _a.sent();
                 return [2];
@@ -138,7 +138,7 @@ var isThreeConvex = function (member) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 var convexEndProcess = function (member, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, n;
+    var members, n;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -147,10 +147,10 @@ var convexEndProcess = function (member, msg) { return __awaiter(void 0, void 0,
                 return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
             case 1:
                 _b.sent();
-                return [4, members.Fetch()];
+                return [4, status.Fetch()];
             case 2:
-                state = _b.sent();
-                n = state.filter(function (s) { return s.end === '1'; }).length + 1;
+                members = _b.sent();
+                n = members.filter(function (s) { return s.end === '1'; }).length + 1;
                 return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
             case 3:
                 _b.sent();
