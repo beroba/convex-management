@@ -206,7 +206,9 @@ const updateReport = async (msg: Discord.Message) => {
 const reflectOnCal = async (msg: Discord.Message) => {
   // スプレッドシートの値を反映
   await current.ReflectOnCal()
+  await util.Sleep(50)
   await status.ReflectOnCal()
+  await util.Sleep(50)
   await schedule.ReflectOnCal()
 
   // #凸状況を更新

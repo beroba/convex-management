@@ -59,11 +59,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.PlanOnly = exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
-var alphabet_to_number_1 = require("alphabet-to-number");
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
+var schedule = __importStar(require("../../io/schedule"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
@@ -96,14 +96,14 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var text, situation, msg;
+    var text, channel, msg;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, createAllPlanText()];
             case 1:
                 text = _a.sent();
-                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
-                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.PLAN)];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.PLAN)];
             case 2:
                 msg = _a.sent();
                 msg.edit(text);
@@ -113,32 +113,31 @@ exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var list, state, planTexts;
+    var state, texts;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, readPlanList()];
+            case 0: return [4, current.Fetch()];
             case 1:
-                list = _a.sent();
-                return [4, current.Fetch()];
-            case 2:
                 state = _a.sent();
-                return [4, Promise.all(Array.from(Array(5), function (_, i) { return i; }).map(function (i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var alpha, name, hp;
+                return [4, Promise.all('abcde'.split('').map(function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+                        var plans, name, hp, text;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0:
-                                    alpha = alphabet_to_number_1.NtoA(i + 1);
-                                    return [4, bossTable.TakeName(alpha)];
+                                case 0: return [4, schedule.FetchBoss(alpha)];
                                 case 1:
+                                    plans = _a.sent();
+                                    return [4, bossTable.TakeName(alpha)];
+                                case 2:
                                     name = _a.sent();
                                     hp = const_settings_1["default"].STAGE_HP[state.stage][alpha];
-                                    return [2, name + " `" + hp + "`\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```'];
+                                    text = plans.map(function (p) { return p.name + " " + p.msg; }).join('\n');
+                                    return [2, name + " `" + hp + "`\n```\n" + (text ? text : ' ') + "\n```"];
                             }
                         });
                     }); }))];
-            case 3:
-                planTexts = _a.sent();
-                return [2, planTexts.join('')];
+            case 2:
+                texts = _a.sent();
+                return [2, texts.join('\n')];
         }
     });
 }); };

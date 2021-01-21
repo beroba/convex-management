@@ -1,59 +1,59 @@
 import * as Discord from 'discord.js'
-import Option from 'type-of-option'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
+import {NtoA} from 'alphabet-to-number'
+import * as bossTable from '../../io/bossTable'
+import * as schedule from '../../io/schedule'
+import {Plan} from '../../io/type'
 import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
-import * as list from './list'
 
 /**
- * 凸予定のメッセージ更新に合わせてスプレッドシートの値も更新する
+ * 凸予定を更新する
  * @param msg DiscordからのMessage
- * @return 更新処理の実行結果
  */
-export const Message = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.author.bot) return
+export const Plans = async (msg: Discord.Message) => {
+  // 凸予定のオブジェクトを作成
+  const plan = await createPlan(msg)
 
-  // #凸予定でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
+  // 予定したボスを報告し、報告したキャルのメッセージIDを取得
+  plan.calID = (await msg.reply(`${plan.boss}を予定したわよ！`)).id
 
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
+  // 凸予定シートの値を更新
+  await schedule.Add(plan)
+  util.Sleep(50)
 
-  // 凸予定の更新
-  const result = await planUpdate(sheet, cells, msg)
-  if (!result) return
+  // 完了の絵文字をつける
+  msg.react(Settings.EMOJI_ID.KANRYOU)
 
-  // 凸状況を更新
-  list.SituationEdit()
+  // ボス番号のロールを付与
+  const roleID = Settings.BOSS_ROLE_ID[plan.alpha]
+  msg.member?.roles.add(roleID)
 
-  return 'Edit appointment message'
+  // スプレッドシートの値も更新
+  schedule.AddToSheet(plan)
 }
 
 /**
- * 凸予定のメッセージを更新をする
- * @param sheet 凸予定のシート
- * @param cells 凸予定の一覧
+ * 凸予定のオブジェクトを作成する
  * @param msg DiscordからのMessage
- * @return 実行結果の真偽値
+ * @return 作成した凸予定
  */
-const planUpdate = async (sheet: any, cells: string[], msg: Discord.Message): Promise<Boolean> => {
-  // 行を取得
-  const row =
-    PiecesEach(cells, 9)
-      .map(v => v[1])
-      .indexOf(msg.id) + 3
+const createPlan = async (msg: Discord.Message): Promise<Plan> => {
+  // prettier-ignore
+  const content = util.Format(msg.content)
 
-  // idが存在しなければ終了
-  if (row === 2) return false
+  // ボス番号とボス名を取得
+  const alpha = NtoA(content[0])
+  const boss = await bossTable.TakeName(alpha)
 
-  // ボス番号を除いたメッセージを取得
-  const content = util.Format(msg.content).slice(1).trim()
-
-  // 値の更新
-  const cell = await sheet.getCell(`H${row}`)
-  cell.setValue(content)
-  return true
+  return {
+    done: '',
+    senderID: msg.id,
+    calID: '',
+    name: util.GetUserName(msg.member),
+    playerID: msg.member?.id || '',
+    num: content[0],
+    alpha: alpha,
+    boss: boss || '',
+    msg: content.slice(1).trim(),
+  }
 }

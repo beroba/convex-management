@@ -101,14 +101,14 @@ exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, functi
 exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.PLANS)];
 }); }); };
-exports.FetchBoss = function (num) { return __awaiter(void 0, void 0, void 0, function () {
+exports.FetchBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
                 plans = _a.sent();
-                return [2, plans.filter(function (p) { return p.num === num; })];
+                return [2, plans.filter(function (p) { return p.alpha === alpha; })];
         }
     });
 }); };

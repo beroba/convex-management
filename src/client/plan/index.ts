@@ -4,7 +4,7 @@ import Settings from 'const-settings'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import * as list from './list'
-import * as state from './state'
+import * as update from './update'
 
 /**
  * 凸予定を行う
@@ -41,7 +41,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 凸予定を更新
-  await state.Update(msg)
+  await update.Plans(msg)
 
   // 凸状況を更新
   list.SituationEdit()

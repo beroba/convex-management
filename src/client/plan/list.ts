@@ -1,8 +1,8 @@
-import {NtoA} from 'alphabet-to-number'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
+import * as schedule from '../../io/schedule'
 import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
@@ -33,11 +33,12 @@ export const AllOutput = async () => {
  * #凸状況の凸予定を編集
  */
 export const SituationEdit = async () => {
+  // 凸予定者一覧のリストを生成
   const text = await createAllPlanText()
 
   // 凸状況を更新
-  const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const msg = await situation.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
   msg.edit(text)
 
   console.log('Edit the convex schedule of the convex situation')
@@ -48,22 +49,25 @@ export const SituationEdit = async () => {
  * @return 作成したテキスト
  */
 const createAllPlanText = async (): Promise<string> => {
-  const list = await readPlanList()
-
   // 現在の状況を取得
   const state = await current.Fetch()
 
-  const planTexts = await Promise.all(
-    Array.from(Array(5), (_, i) => i).map(async i => {
-      // ボス番号を取得
-      const alpha = NtoA(i + 1)
+  const texts = await Promise.all(
+    'abcde'.split('').map(async alpha => {
+      // 凸予定一覧を取得
+      const plans = await schedule.FetchBoss(alpha)
+
+      // ボス名とHPを取得
       const name = await bossTable.TakeName(alpha)
       const hp = Settings.STAGE_HP[state.stage][alpha]
 
-      return `${name} \`${hp}\`\n` + '```\n' + `${createPlanList(alpha, list)}\n` + '```'
+      // 凸予定一覧を1つにまとめる
+      const text = plans.map(p => `${p.name} ${p.msg}`).join('\n')
+      return `${name} \`${hp}\`\n\`\`\`\n${text ? text : ' '}\n\`\`\``
     })
   )
-  return planTexts.join('')
+
+  return texts.join('\n')
 }
 
 /**

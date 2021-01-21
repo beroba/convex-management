@@ -270,11 +270,17 @@ var reflectOnCal = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 0: return [4, current.ReflectOnCal()];
             case 1:
                 _a.sent();
-                return [4, status.ReflectOnCal()];
+                return [4, util.Sleep(50)];
             case 2:
                 _a.sent();
-                return [4, schedule.ReflectOnCal()];
+                return [4, status.ReflectOnCal()];
             case 3:
+                _a.sent();
+                return [4, util.Sleep(50)];
+            case 4:
+                _a.sent();
+                return [4, schedule.ReflectOnCal()];
+            case 5:
                 _a.sent();
                 situation.Report();
                 msg.reply('スプレッドシートの値をキャルに反映させたわよ！');

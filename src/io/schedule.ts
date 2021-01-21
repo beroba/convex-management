@@ -48,14 +48,14 @@ export const Fetch = async (): Promise<Plan[]> => io.Fetch<Plan[]>(Settings.CAL_
 
 /**
  * 渡されたボス番号の凸予定一覧を取得する
- * @param num ボス番号
+ * @param alpha ボス番号
  */
-export const FetchBoss = async (num: string): Promise<Plan[]> => {
+export const FetchBoss = async (alpha: string): Promise<Plan[]> => {
   // 凸予定一覧を取得
   const plans = await Fetch()
 
   // 特定のボス番号の値だけ返す
-  return plans.filter(p => p.num === num)
+  return plans.filter(p => p.alpha === alpha)
 }
 
 /**

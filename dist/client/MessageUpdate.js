@@ -60,7 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.MessageUpdate = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
-var update = __importStar(require("./plan/update"));
+var edit = __importStar(require("./plan/edit"));
 exports.MessageUpdate = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
@@ -69,7 +69,7 @@ exports.MessageUpdate = function (msg) { return __awaiter(void 0, void 0, void 0
             case 0:
                 if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                return [4, update.Message(msg)];
+                return [4, edit.Message(msg)];
             case 1:
                 comment = _b.sent();
                 if (comment)

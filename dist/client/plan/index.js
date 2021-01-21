@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var list = __importStar(require("./list"));
-var state = __importStar(require("./state"));
+var update = __importStar(require("./update"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member, cal_1, cal_2, cal_3;
     return __generator(this, function (_a) {
@@ -96,7 +96,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 cal_3 = _a.sent();
                 setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 10000);
                 return [2, "I didn't write the expected damage"];
-            case 7: return [4, state.Update(msg)];
+            case 7: return [4, update.Plans(msg)];
             case 8:
                 _a.sent();
                 list.SituationEdit();
