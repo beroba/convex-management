@@ -94,7 +94,7 @@ exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, functi
                 return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
             case 2:
                 _a.sent();
-                return [2];
+                return [2, plan];
         }
     });
 }); };

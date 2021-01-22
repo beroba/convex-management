@@ -71,11 +71,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.AllComplete = exports.Report = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var alphabet_to_number_1 = require("alphabet-to-number");
-var bossTable = __importStar(require("../../io/bossTable"));
+var schedule = __importStar(require("../../io/schedule"));
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
 exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
@@ -108,7 +105,7 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
-                return [4, planComplete(msg)];
+                return [4, planDelete(msg)];
             case 1:
                 _b.sent();
                 return [4, list.SituationEdit()];
@@ -119,39 +116,9 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, num, sheet, cells, id, plans;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                content = util.Format(msg.content);
-                return [4, checkBossNumber(content)];
-            case 1:
-                num = _b.sent();
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
-            case 2:
-                sheet = _b.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
-            case 3:
-                cells = _b.sent();
-                id = readPlanMessageID(cells, msg.author.id, num);
-                if (!id)
-                    return [2];
-                return [4, convexComplete(sheet, cells, id)];
-            case 4:
-                _b.sent();
-                msgDelete(pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === id; })[0][1]);
-                msgDelete(pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === id; })[0][2]);
-                plans = pieces_each_1["default"](cells, 9)
-                    .filter(function (c) { return c[4] === msg.author.id; })
-                    .filter(function (v) { return v[5] === num; })
-                    .filter(function (c) { return !c[0]; });
-                if (plans.length <= 1) {
-                    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
-                }
-                console.log('Delete completed message');
-                return [2];
-        }
+    return __generator(this, function (_a) {
+        msg;
+        return [2];
     });
 }); };
 exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
@@ -197,24 +164,21 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-var planComplete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, id;
+var planDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var plan;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 0: return [4, schedule.Delete(msg.id)];
             case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+                plan = _a.sent();
+                if (!plan)
+                    return [2];
+                return [4, util.Sleep(50)];
             case 2:
-                cells = _a.sent();
-                return [4, convexComplete(sheet, cells, msg.id)];
-            case 3:
                 _a.sent();
-                id = pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === msg.id; })[0][2];
-                return [4, msgDelete(id)];
-            case 4:
-                _a.sent();
-                deleteBossRole(cells, msg);
+                msgDelete(plan.calID);
+                deleteBossRole(plan, msg);
+                schedule.DeleteOnSheet(msg.id);
                 return [2];
         }
     });
@@ -237,64 +201,19 @@ var msgDelete = function (id) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var convexComplete = function (sheet, cells, id) { return __awaiter(void 0, void 0, void 0, function () {
-    var row, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                row = pieces_each_1["default"](cells, 9)
-                    .map(function (v) { return v[1]; })
-                    .indexOf(id) + 3;
-                if (row === 2)
-                    return [2];
-                return [4, sheet.getCell("A" + row)];
+var deleteBossRole = function (plan, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans, find;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, schedule.FetchBoss(plan.alpha)];
             case 1:
-                cell = _a.sent();
-                cell.setValue('1');
+                plans = _b.sent();
+                find = plans.find(function (p) { return p.playerID === plan.playerID; });
+                if (find)
+                    return [2];
+                (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[plan.alpha]);
                 return [2];
         }
     });
 }); };
-var deleteBossRole = function (cells, msg) {
-    var _a;
-    var num = pieces_each_1["default"](cells, 9).filter(function (v) { return v[1] === msg.id; })[0][5];
-    var plans = pieces_each_1["default"](cells, 9)
-        .filter(function (c) { return c[4] === msg.author.id; })
-        .filter(function (v) { return v[5] === num; })
-        .filter(function (c) { return !c[0]; });
-    if (plans.length > 1)
-        return;
-    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[num]);
-};
-var checkBossNumber = function (content) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, alpha, num, range;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, bossTable.TakeAlpha(content)];
-            case 2:
-                alpha = _a.sent();
-                if (alpha)
-                    return [2, alpha];
-                num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0];
-                if (/[1-5]/.test(num))
-                    return [2, alphabet_to_number_1.NtoA(num)];
-                if (/[a-e]/i.test(num))
-                    return [2, num];
-                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [4, sheet.getCell(range[2])];
-            case 3: return [2, (_a.sent()).getValue()];
-        }
-    });
-}); };
-var readPlanMessageID = function (cells, id, num) {
-    var plans = pieces_each_1["default"](cells, 9)
-        .filter(function (c) { return c[4] === id; })
-        .filter(function (c) { return !c[0]; });
-    var index = plans.findIndex(function (v) { return v[5] === num; });
-    if (index === -1)
-        return;
-    return plans[index][1];
-};

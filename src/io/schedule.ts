@@ -5,6 +5,7 @@ import * as io from '.'
 import {Plan} from './type'
 import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
+import Option from 'type-of-option'
 
 /**
  * 凸予定を追加する
@@ -24,8 +25,9 @@ export const Add = async (plan: Plan) => {
 /**
  * 渡されたidの凸予定を削除する
  * @param id 削除したい凸予定のid
+ * @return 削除したPlanの値
  */
-export const Delete = async (id: string) => {
+export const Delete = async (id: string): Promise<Option<Plan>> => {
   // 凸予定一覧を取得
   let plans = await Fetch()
 
@@ -38,6 +40,8 @@ export const Delete = async (id: string) => {
 
   // キャルステータスを更新する
   await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS, plans)
+
+  return plan
 }
 
 /**

@@ -60,7 +60,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // `/`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(content)) {
-    console.log(1)
     // 3凸終了していたら全ての凸予定を削除、そうでない場合は現在のボスの凸予定を削除
     if (member?.end === '1') {
       cancel.AllComplete(msg.author.id)

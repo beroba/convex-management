@@ -1,11 +1,13 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import {NtoA} from 'alphabet-to-number'
-import * as bossTable from '../../io/bossTable'
+// import PiecesEach from 'pieces-each'
+// import {NtoA} from 'alphabet-to-number'
+// import * as bossTable from '../../io/bossTable'
+import * as schedule from '../../io/schedule'
+import {Plan} from '../../io/type'
 import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
+// import * as spreadsheet from '../../util/spreadsheet'
 import * as list from './list'
 
 /**
@@ -50,7 +52,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.member?.user.bot) return
 
   // 凸予定を削除
-  await planComplete(msg)
+  await planDelete(msg)
 
   // 凸状況を更新
   await list.SituationEdit()
@@ -63,38 +65,39 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
  * @param msg DiscordからのMessage
  */
 export const Report = async (msg: Discord.Message) => {
-  // ボス番号を取得
-  const content = util.Format(msg.content)
-  const num = await checkBossNumber(content)
+  msg
+  // // ボス番号を取得
+  // const content = util.Format(msg.content)
+  // const num = await checkBossNumber(content)
 
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
+  // // 凸予定のシートを取得
+  // const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
+  // const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
 
-  // ボス番号から凸予定のメッセージidを取得
-  const id = readPlanMessageID(cells, msg.author.id, num)
-  // 凸予定がなければ終了
-  if (!id) return
+  // // ボス番号から凸予定のメッセージidを取得
+  // const id = readPlanMessageID(cells, msg.author.id, num)
+  // // 凸予定がなければ終了
+  // if (!id) return
 
-  // 凸予定の完了を付ける
-  await convexComplete(sheet, cells, id)
+  // // 凸予定の完了を付ける
+  // await convexComplete(sheet, cells, id)
 
-  // メッセージを削除
-  msgDelete(PiecesEach(cells, 9).filter(v => v[1] === id)[0][1])
-  msgDelete(PiecesEach(cells, 9).filter(v => v[1] === id)[0][2])
+  // // メッセージを削除
+  // msgDelete(PiecesEach(cells, 9).filter(v => v[1] === id)[0][1])
+  // msgDelete(PiecesEach(cells, 9).filter(v => v[1] === id)[0][2])
 
-  // ボスのロールを外す
-  const plans = PiecesEach(cells, 9)
-    .filter(c => c[4] === msg.author.id)
-    .filter(v => v[5] === num)
-    .filter(c => !c[0])
+  // // ボスのロールを外す
+  // const plans = PiecesEach(cells, 9)
+  //   .filter(c => c[4] === msg.author.id)
+  //   .filter(v => v[5] === num)
+  //   .filter(c => !c[0])
 
-  // 凸予定が残り1つ以下だったら実行
-  if (plans.length <= 1) {
-    msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
-  }
+  // // 凸予定が残り1つ以下だったら実行
+  // if (plans.length <= 1) {
+  //   msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
+  // }
 
-  console.log('Delete completed message')
+  // console.log('Delete completed message')
 }
 
 /**
@@ -115,23 +118,22 @@ export const AllComplete = async (id: string) => {
 }
 
 /**
- * 凸予定を完了する
+ * 凸予定を削除する
  * @param msg DiscordからのMessage
  */
-const planComplete = async (msg: Discord.Message) => {
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
-
+const planDelete = async (msg: Discord.Message) => {
   // 凸予定の完了を付ける
-  await convexComplete(sheet, cells, msg.id)
+  const plan = await schedule.Delete(msg.id)
+  if (!plan) return
+  await util.Sleep(50)
 
   // メッセージを削除
-  const id = PiecesEach(cells, 9).filter(v => v[1] === msg.id)[0][2]
-  await msgDelete(id)
+  msgDelete(plan.calID)
 
   // ボスのロールを外す
-  deleteBossRole(cells, msg)
+  deleteBossRole(plan, msg)
+
+  schedule.DeleteOnSheet(msg.id)
 }
 
 /**
@@ -155,44 +157,20 @@ const msgDelete = async (id: string) => {
 }
 
 /**
- * 凸予定の完了をする
- * @param sheet 凸予定のシート
- * @param cells 凸予定の一覧
- * @param id 送信者のメッセージid
- */
-const convexComplete = async (sheet: any, cells: string[], id: string) => {
-  // 行を取得
-  const row =
-    PiecesEach(cells, 9)
-      .map(v => v[1])
-      .indexOf(id) + 3
-
-  // idが存在しなければ終了
-  if (row === 2) return
-
-  // 値の更新
-  const cell = await sheet.getCell(`A${row}`)
-  cell.setValue('1')
-}
-
-/**
  * 削除されたメッセージのボスのロールを外す
- * @param cells 凸予定の一覧
+ * @param plan 削除されたPlanの値
  * @param msg DiscordからのMessage
  */
-const deleteBossRole = (cells: string[], msg: Discord.Message) => {
-  // メッセージのボス番号を取得
-  const num = PiecesEach(cells, 9).filter(v => v[1] === msg.id)[0][5]
+const deleteBossRole = async (plan: Plan, msg: Discord.Message) => {
+  // 削除したボスの凸予定一覧を取得
+  const plans = await schedule.FetchBoss(plan.alpha)
 
-  // 凸予定が残り2つ以上だった場合は終了
-  const plans = PiecesEach(cells, 9)
-    .filter(c => c[4] === msg.author.id)
-    .filter(v => v[5] === num)
-    .filter(c => !c[0])
-  if (plans.length > 1) return
+  // 他に同じボスの凸予定がある場合は終了
+  const find = plans.find(p => p.playerID === plan.playerID)
+  if (find) return
 
   // ボス番号のロールを削除
-  msg.member?.roles.remove(Settings.BOSS_ROLE_ID[num])
+  msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
 }
 
 /**
@@ -201,28 +179,28 @@ const deleteBossRole = (cells: string[], msg: Discord.Message) => {
  * @param content 凸報告のメッセージ
  * @return ボス番号
  */
-const checkBossNumber = async (content: string): Promise<string> => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+// const checkBossNumber = async (content: string): Promise<string> => {
+//   // 情報のシートを取得
+//   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
-  // ボス名からボス番号を取得
-  const alpha = await bossTable.TakeAlpha(content)
+//   // ボス名からボス番号を取得
+//   const alpha = await bossTable.TakeAlpha(content)
 
-  // ボス番号が合った場合を返す
-  if (alpha) return alpha
+//   // ボス番号が合った場合を返す
+//   if (alpha) return alpha
 
-  // /^k|kill/を取り除いた先頭文字
-  const num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0]
+//   // /^k|kill/を取り除いた先頭文字
+//   const num = content.replace(/kill/i, '').replace(/^k/i, '').trim()[0]
 
-  // 先頭文字がボス番号(1-5)なら(a-e)に変換して返す
-  if (/[1-5]/.test(num)) return NtoA(num)
-  // 先頭文字がボス番号(a-e)ならそのまま返す
-  if (/[a-e]/i.test(num)) return num
+//   // 先頭文字がボス番号(1-5)なら(a-e)に変換して返す
+//   if (/[1-5]/.test(num)) return NtoA(num)
+//   // 先頭文字がボス番号(a-e)ならそのまま返す
+//   if (/[a-e]/i.test(num)) return num
 
-  // 一致しなければ現在のボス番号を返す
-  const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
-  return (await sheet.getCell(range[2])).getValue()
-}
+//   // 一致しなければ現在のボス番号を返す
+//   const range = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
+//   return (await sheet.getCell(range[2])).getValue()
+// }
 
 /**
  * ボス番号から凸予定のメッセージidを取得
@@ -231,17 +209,17 @@ const checkBossNumber = async (content: string): Promise<string> => {
  * @param num ボス番号
  * @return 取得したid
  */
-const readPlanMessageID = (cells: string[], id: string, num: string): Option<string> => {
-  // 報告者の凸予定一覧を取得
-  const plans = PiecesEach(cells, 9)
-    .filter(c => c[4] === id)
-    .filter(c => !c[0])
+// const readPlanMessageID = (cells: string[], id: string, num: string): Option<string> => {
+//   // 報告者の凸予定一覧を取得
+//   const plans = PiecesEach(cells, 9)
+//     .filter(c => c[4] === id)
+//     .filter(c => !c[0])
 
-  // 凸予定から先頭のボス番号のインデックスを取得
-  const index = plans.findIndex(v => v[5] === num)
-  // 凸予定が無ければ終了
-  if (index === -1) return
+//   // 凸予定から先頭のボス番号のインデックスを取得
+//   const index = plans.findIndex(v => v[5] === num)
+//   // 凸予定が無ければ終了
+//   if (index === -1) return
 
-  // メッセージidを返す
-  return plans[index][1]
-}
+//   // メッセージidを返す
+//   return plans[index][1]
+// }

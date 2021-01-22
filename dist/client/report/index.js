@@ -104,7 +104,6 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 status.ReflectOnSheet(member);
                 if (!/;/i.test(content)) {
-                    console.log(1);
                     if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
                         cancel.AllComplete(msg.author.id);
                     }
