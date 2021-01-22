@@ -60,10 +60,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
-var util = __importStar(require("../../util"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var state, text, channel;
     return __generator(this, function (_a) {

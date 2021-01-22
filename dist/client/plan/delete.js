@@ -71,8 +71,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.AllRemove = exports.Remove = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var schedule = __importStar(require("../../io/schedule"));
 var util = __importStar(require("../../util"));
+var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("./list"));
 exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;

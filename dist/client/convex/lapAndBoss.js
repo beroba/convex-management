@@ -77,8 +77,8 @@ exports.__esModule = true;
 exports.ProgressReport = exports.Previous = exports.Next = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-var current = __importStar(require("../../io/current"));
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
 var category = __importStar(require("../command/category"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, alpha;

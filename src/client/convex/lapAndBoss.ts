@@ -1,7 +1,7 @@
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
-import * as current from '../../io/current'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as category from '../command/category'
 
 /**

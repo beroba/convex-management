@@ -61,9 +61,9 @@ exports.__esModule = true;
 exports.Plans = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var schedule = __importStar(require("../../io/schedule"));
-var util = __importStar(require("../../util"));
 exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var plan, _a, roleID;
     var _b;
@@ -79,7 +79,9 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
                 return [4, schedule.Add(plan)];
             case 3:
                 _c.sent();
-                util.Sleep(50);
+                return [4, util.Sleep(50)];
+            case 4:
+                _c.sent();
                 msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
                 roleID = const_settings_1["default"].BOSS_ROLE_ID[plan.alpha];
                 (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(roleID);

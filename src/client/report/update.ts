@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
+import * as util from '../../util'
 import Settings from 'const-settings'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
-import * as util from '../../util'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする

@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
+import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
-import * as util from '../../util'
 
 /**
  * 凸予定を更新する
@@ -19,7 +19,7 @@ export const Plans = async (msg: Discord.Message) => {
 
   // 凸予定シートの値を更新
   await schedule.Add(plan)
-  util.Sleep(50)
+  await util.Sleep(50)
 
   // 完了の絵文字をつける
   msg.react(Settings.EMOJI_ID.KANRYOU)

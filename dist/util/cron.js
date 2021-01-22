@@ -61,9 +61,9 @@ exports.__esModule = true;
 exports.CronOperation = void 0;
 var cron = __importStar(require("node-cron"));
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../util"));
 var dateTable = __importStar(require("../io/dateTable"));
 var status = __importStar(require("../io/status"));
-var util = __importStar(require("../util"));
 exports.CronOperation = function () {
     setRemainConvex('0 10 5 * * *');
     removeTaskillRoll('0 0 5 * * *');

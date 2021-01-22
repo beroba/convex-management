@@ -30,7 +30,6 @@
         "src/client/convex/lapAndBoss.ts",
         "src/client/convex/manage.ts",
         "src/client/convex/over.ts",
-        "src/client/convex/report.ts",
         "src/client/convex/sister.ts",
         "src/client/convex/situation.ts",
         "src/client/etc/playerID.ts",

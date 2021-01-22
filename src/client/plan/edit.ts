@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as schedule from '../../io/schedule'
 import * as util from '../../util'
+import * as schedule from '../../io/schedule'
 import * as list from './list'
 
 /**

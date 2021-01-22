@@ -61,11 +61,11 @@ exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
+var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var status = __importStar(require("../../io/status"));
-var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var category = __importStar(require("./category"));
 exports.Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, _a, arg, arg, arg;

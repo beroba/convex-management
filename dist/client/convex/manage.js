@@ -60,8 +60,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
+var status = __importStar(require("../../io/status"));
 var situation = __importStar(require("./situation"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var state, user, member;

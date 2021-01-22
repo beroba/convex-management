@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as status from '../../io/status'
 import * as util from '../../util'
+import * as status from '../../io/status'
 import * as list from './list'
 import * as update from './update'
 

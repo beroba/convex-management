@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as util from '../../util'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
-import * as util from '../../util'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 

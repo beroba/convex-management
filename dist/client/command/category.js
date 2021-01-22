@@ -77,9 +77,9 @@ exports.__esModule = true;
 exports.CheckTheStage = exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
-var bossTable = __importStar(require("../../io/bossTable"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var bossTable = __importStar(require("../../io/bossTable"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, year, day, channel, names, list, sheet;
     var _b;

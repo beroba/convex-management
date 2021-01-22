@@ -1,13 +1,13 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import * as util from '../../util'
 import * as update from './update'
+import * as lapAndBoss from '../convex/lapAndBoss'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
-import * as lapAndBoss from '../convex/lapAndBoss'
 import * as cancel from '../plan/delete'
 
 /**

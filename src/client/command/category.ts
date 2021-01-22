@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
-import * as bossTable from '../../io/bossTable'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as util from '../../util'
+import * as spreadsheet from '../../util/spreadsheet'
+import * as bossTable from '../../io/bossTable'
 
 /**
  * チャンネル情報

@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as report from './report/cancel'
-import * as plan from './plan/delete'
 import * as over from './convex/over'
 import * as sister from './convex/sister'
+import * as plan from './plan/delete'
+import * as report from './report/cancel'
 import * as playerID from './etc/playerID'
 
 /**

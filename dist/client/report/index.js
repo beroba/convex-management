@@ -60,13 +60,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
-var util = __importStar(require("../../util"));
 var update = __importStar(require("./update"));
+var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
-var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var cancel = __importStar(require("../plan/delete"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member_1, state, content, member;

@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import * as util from '../../util'
-import {Management} from './management'
 import {ClanBattle} from './clanbattle'
+import {Management} from './management'
 
 /**
  * `/`から始まるコマンドの処理をする

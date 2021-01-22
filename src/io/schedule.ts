@@ -1,7 +1,7 @@
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as io from '.'
 import {Plan} from './type'
-import Option from 'type-of-option'
 
 /**
  * 凸予定を追加する

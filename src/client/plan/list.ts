@@ -1,8 +1,8 @@
 import Settings from 'const-settings'
+import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
-import * as util from '../../util'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力

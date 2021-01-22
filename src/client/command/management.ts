@@ -2,12 +2,12 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
+import * as util from '../../util'
+import * as spreadsheet from '../../util/spreadsheet'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
 import * as status from '../../io/status'
 import {User} from '../../io/type'
-import * as util from '../../util'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as category from './category'
 
 /**
@@ -41,16 +41,16 @@ export const Management = async (command: string, msg: Discord.Message): Promise
       const arg = command.replace('/cb manage set days ', '')
       // 日付テーブルを更新する
       await dateTable.Update(arg)
-      msg.reply('クランバトルの日付を設定したわよ！')
 
+      msg.reply('クランバトルの日付を設定したわよ！')
       return 'Set convex days'
     }
 
     case /cb manage set bossTable/.test(command): {
       // ボステーブルを更新する
       await bossTable.Update()
-      msg.reply('クランバトルのボステーブルを設定したわよ！')
 
+      msg.reply('クランバトルのボステーブルを設定したわよ！')
       return 'Set convex bossTable'
     }
 
@@ -87,7 +87,7 @@ const removeRole = (msg: Discord.Message) => {
     ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
     ?.members.map(m => m)
 
-  // クランメンバーに凸残ロールを付与する
+  // クランメンバーの凸残ロールを全て外す
   clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
 
   msg.reply('凸残ロール全て外したわよ！')

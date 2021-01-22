@@ -57,8 +57,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.Command = void 0;
 var util = __importStar(require("../../util"));
-var management_1 = require("./management");
 var clanbattle_1 = require("./clanbattle");
+var management_1 = require("./management");
 exports.Command = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content, comment;
     var _a;

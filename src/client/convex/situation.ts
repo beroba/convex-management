@@ -1,9 +1,9 @@
 import Settings from 'const-settings'
+import * as util from '../../util'
 import * as dateTable from '../../io/dateTable'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
-import * as util from '../../util'
 
 /**
  * 凸状況に報告をする

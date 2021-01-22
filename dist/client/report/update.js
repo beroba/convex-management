@@ -59,9 +59,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Status = void 0;
+var util = __importStar(require("../../util"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var status = __importStar(require("../../io/status"));
-var util = __importStar(require("../../util"));
 exports.Status = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member, content, end;
     return __generator(this, function (_a) {

@@ -71,10 +71,10 @@ exports.RoleGrant = function (react, user) { return __awaiter(void 0, void 0, vo
                     return [2];
                 member = util.GetMembersFromUser((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members, user);
                 member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND);
-                return [4, react.message.reply("<@!" + user.id + ">  <#" + const_settings_1["default"].CHANNEL_ID.PLAYER_ID_SEND + "> \u3053\u3053\u3067\u30B9\u30AF\u30B7\u30E7\u3092\u9001\u3063\u3066\u306D\uFF01\n\u203B15\u79D2\u306B\u3053\u306E\u30E1\u30C3\u30BB\u30FC\u30B8\u306F\u6D88\u3048\u307E\u3059")];
+                return [4, react.message.reply("<@!" + user.id + ">  <#" + const_settings_1["default"].CHANNEL_ID.PLAYER_ID_SEND + "> \u3053\u3053\u3067\u30B9\u30AF\u30B7\u30E7\u3092\u9001\u3063\u3066\u306D\uFF01\n\u203B10\u79D2\u306B\u3053\u306E\u30E1\u30C3\u30BB\u30FC\u30B8\u306F\u6D88\u3048\u307E\u3059")];
             case 1:
                 msg = _b.sent();
-                setTimeout(function () { return msg["delete"](); }, 15000);
+                setTimeout(function () { return msg["delete"](); }, 10000);
                 return [2, 'Grant player id send role'];
         }
     });

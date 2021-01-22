@@ -60,10 +60,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
-var util = __importStar(require("../../util"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
     var text, situation, msg, history;
     return __generator(this, function (_a) {

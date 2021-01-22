@@ -2,11 +2,11 @@ import Settings from 'const-settings'
 import Option from 'type-of-option'
 import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
+import * as util from '../util'
+import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as dateTable from './dateTable'
 import {User, Status, Member} from './type'
-import * as util from '../util'
-import * as spreadsheet from '../util/spreadsheet'
 
 /**
  * メンバー個々の状態を設定する

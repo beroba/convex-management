@@ -62,10 +62,10 @@ exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exp
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
-var io = __importStar(require("."));
-var dateTable = __importStar(require("./dateTable"));
 var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
+var io = __importStar(require("."));
+var dateTable = __importStar(require("./dateTable"));
 exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
