@@ -34,7 +34,7 @@ export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.Us
  */
 export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // #id送信チャンネルでなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_SEND) return

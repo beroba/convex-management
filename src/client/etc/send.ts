@@ -138,7 +138,7 @@ const pantiesEmoji = (msg: Discord.Message) => {
  */
 export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
@@ -173,7 +173,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 export const AorB = (msg: Discord.Message): Option<string> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
@@ -252,7 +252,7 @@ const createRandNumber = (n: number): number => require('get-random-values')(new
  */
 export const GoodMorning = (msg: Discord.Message): Option<string> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return

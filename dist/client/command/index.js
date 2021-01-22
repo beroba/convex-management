@@ -61,20 +61,21 @@ var management_1 = require("./management");
 var clanbattle_1 = require("./clanbattle");
 exports.Command = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content, comment;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if (msg.author.bot)
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 content = util.Format(msg.content);
                 return [4, clanbattle_1.ClanBattle(content, msg)];
             case 1:
-                comment = _a.sent();
+                comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, management_1.Management(content, msg)];
             case 2:
-                comment = _a.sent();
+                comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [2];

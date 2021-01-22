@@ -7,7 +7,7 @@ import * as update from './update'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
 import * as lapAndBoss from '../convex/lapAndBoss'
-import * as cancel from '../plan/cancel'
+import * as cancel from '../plan/delete'
 
 /**
  * 凸報告の管理を行う
@@ -16,7 +16,7 @@ import * as cancel from '../plan/cancel'
  */
 export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // #凸報告でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return

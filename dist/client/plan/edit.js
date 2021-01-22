@@ -60,51 +60,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Message = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
+var schedule = __importStar(require("../../io/schedule"));
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var list = __importStar(require("./list"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var text;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if (msg.author.bot)
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+                text = util.Format(msg.content).slice(1).trim();
+                return [4, schedule.Edit(text, msg.id)];
             case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+                _b.sent();
+                return [4, util.Sleep(50)];
             case 2:
-                cells = _a.sent();
-                return [4, planUpdate(sheet, cells, msg)];
-            case 3:
-                result = _a.sent();
-                if (!result)
-                    return [2];
+                _b.sent();
+                schedule.EditOnSheet(text, msg.id);
                 list.SituationEdit();
                 return [2, 'Edit appointment message'];
-        }
-    });
-}); };
-var planUpdate = function (sheet, cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var row, content, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                row = pieces_each_1["default"](cells, 9)
-                    .map(function (v) { return v[1]; })
-                    .indexOf(msg.id) + 3;
-                if (row === 2)
-                    return [2, false];
-                content = util.Format(msg.content).slice(1).trim();
-                return [4, sheet.getCell("H" + row)];
-            case 1:
-                cell = _a.sent();
-                cell.setValue(content);
-                return [2, true];
         }
     });
 }); };

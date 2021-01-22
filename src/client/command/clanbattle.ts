@@ -8,7 +8,7 @@ import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
-import * as cancel from '../plan/cancel'
+import * as cancel from '../plan/delete'
 import * as list from '../plan/list'
 import {NtoA} from 'alphabet-to-number'
 

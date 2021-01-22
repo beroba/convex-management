@@ -13,7 +13,7 @@ import * as update from './update'
  */
 export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // #凸予定でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return

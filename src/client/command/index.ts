@@ -10,7 +10,7 @@ import {ClanBattle} from './clanbattle'
  */
 export const Command = async (msg: Discord.Message) => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 全角を全て半角にする
   const content = util.Format(msg.content)

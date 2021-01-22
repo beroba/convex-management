@@ -66,39 +66,40 @@ var list = __importStar(require("./list"));
 var update = __importStar(require("./update"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member, cal_1, cal_2, cal_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if (msg.author.bot)
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
                 return [4, status.FetchMember(msg.author.id)];
             case 1:
-                member = _a.sent();
+                member = _b.sent();
                 if (!!member) return [3, 3];
                 return [4, msg.reply('クランメンバーじゃないわ\n※10秒にこのメッセージは消えます')];
             case 2:
-                cal_1 = _a.sent();
+                cal_1 = _b.sent();
                 setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 10000);
                 return [2, 'Not a clan member'];
             case 3:
                 if (!!formatConfirm(msg)) return [3, 5];
                 return [4, msg.reply('書式が違うから予定できないわ\n※10秒にこのメッセージは消えます')];
             case 4:
-                cal_2 = _a.sent();
+                cal_2 = _b.sent();
                 setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 10000);
                 return [2, 'The format of the boss number is different'];
             case 5:
                 if (!(msg.content.length === 1)) return [3, 7];
                 return [4, msg.reply('予想ダメージが書いてないと動かないわ\n※10秒にこのメッセージは消えます')];
             case 6:
-                cal_3 = _a.sent();
+                cal_3 = _b.sent();
                 setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 10000);
                 return [2, "I didn't write the expected damage"];
             case 7: return [4, update.Plans(msg)];
             case 8:
-                _a.sent();
+                _b.sent();
                 list.SituationEdit();
                 return [2, 'Make a convex reservation'];
         }

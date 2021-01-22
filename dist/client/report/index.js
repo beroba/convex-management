@@ -66,19 +66,20 @@ var update = __importStar(require("./update"));
 var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
-var cancel = __importStar(require("../plan/cancel"));
+var cancel = __importStar(require("../plan/delete"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member_1, content, member;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                if (msg.author.bot)
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
                 return [4, status.FetchMember(msg.author.id)];
             case 1:
-                member_1 = _a.sent();
+                member_1 = _b.sent();
                 if (!member_1) {
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
@@ -92,13 +93,13 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 overDelete(msg);
                 return [4, update.Status(msg)];
             case 2:
-                _a.sent();
+                _b.sent();
                 return [4, util.Sleep(50)];
             case 3:
-                _a.sent();
+                _b.sent();
                 return [4, status.FetchMember(msg.author.id)];
             case 4:
-                member = _a.sent();
+                member = _b.sent();
                 if (!member)
                     return [2];
                 status.ReflectOnSheet(member);

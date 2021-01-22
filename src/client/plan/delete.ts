@@ -46,8 +46,8 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // #凸予定でなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
 
-  // botのメッセージでは実行しない
-  if (msg.author.bot) return
+  // botのメッセージは実行しない
+  if (msg.member?.user.bot) return
 
   // 凸予定を削除
   await planComplete(msg)

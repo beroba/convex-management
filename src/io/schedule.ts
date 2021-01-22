@@ -41,6 +41,29 @@ export const Delete = async (id: string) => {
 }
 
 /**
+ * 渡されたidの凸予定のメッセージを編集する
+ * @param text 変更するテキスト
+ * @param id 変更したいの凸予定のid
+ */
+export const Edit = async (text: string, id: string) => {
+  // 凸予定一覧を取得s
+  let plans = await Fetch()
+
+  // 凸予定一覧から渡されたidの凸予定を取り除く
+  plans = plans.map(p => {
+    // 一致する凸予定以外はそのまま帰す
+    if (p.senderID !== id) return p
+
+    // メッセージを変更して返す
+    p.msg = text
+    return p
+  })
+
+  // キャルステータスを更新する
+  await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS, plans)
+}
+
+/**
  * キャルステータスからメンバーの状態を取得する
  * @return メンバーの状態
  */
@@ -89,15 +112,40 @@ export const DeleteOnSheet = async (id: string) => {
   // スプレッドシートから凸予定一覧を取得
   const plans = await fetchPlansFromSheet(sheet)
 
-  // 行を取得
+  // 列,行を取得
+  const col = Settings.PLAN_SHEET.DONE_COLUMN
   const row = plans.map(p => p.senderID).indexOf(id) + 3
 
   // idが存在しなければ終了
-  if (row === 2) return console.log(1)
+  if (row === 2) return
 
   // 値の更新
-  const cell = await sheet.getCell(`A${row}`)
+  const cell = await sheet.getCell(`${col}${row}`)
   cell.setValue('1')
+}
+
+/**
+ * 渡されたidの凸予定のメッセージをスプレッドシート上で編集する
+ * @param text 変更するテキスト
+ * @param id 変更したいの凸予定のid
+ */
+export const EditOnSheet = async (text: string, id: string) => {
+  // 凸予定のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
+
+  // スプレッドシートから凸予定一覧を取得
+  const plans = await fetchPlansFromSheet(sheet)
+
+  // 列,行を取得
+  const col = Settings.PLAN_SHEET.MESSAGE_COLUMN
+  const row = plans.map(p => p.senderID).indexOf(id) + 3
+
+  // idが存在しなければ終了
+  if (row === 2) return
+
+  // 値の更新
+  const cell = await sheet.getCell(`${col}${row}`)
+  cell.setValue(text)
 }
 
 /**

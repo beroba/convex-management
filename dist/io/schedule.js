@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReflectOnCal = exports.DeleteOnSheet = exports.AddToSheet = exports.FetchBoss = exports.Fetch = exports.Delete = exports.Add = void 0;
+exports.ReflectOnCal = exports.EditOnSheet = exports.DeleteOnSheet = exports.AddToSheet = exports.FetchBoss = exports.Fetch = exports.Edit = exports.Delete = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
@@ -91,6 +91,26 @@ exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, functi
                 if (!plan)
                     return [2];
                 plans = plans.filter(function (p) { return p.senderID !== id; });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.Edit = function (text, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                plans = _a.sent();
+                plans = plans.map(function (p) {
+                    if (p.senderID !== id)
+                        return p;
+                    p.msg = text;
+                    return p;
+                });
                 return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
             case 2:
                 _a.sent();
@@ -143,7 +163,7 @@ exports.AddToSheet = function (plan) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.DeleteOnSheet = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, plans, row, cell;
+    var sheet, plans, col, row, cell;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
@@ -152,13 +172,36 @@ exports.DeleteOnSheet = function (id) { return __awaiter(void 0, void 0, void 0,
                 return [4, fetchPlansFromSheet(sheet)];
             case 2:
                 plans = _a.sent();
+                col = const_settings_1["default"].PLAN_SHEET.DONE_COLUMN;
                 row = plans.map(function (p) { return p.senderID; }).indexOf(id) + 3;
                 if (row === 2)
-                    return [2, console.log(1)];
-                return [4, sheet.getCell("A" + row)];
+                    return [2];
+                return [4, sheet.getCell("" + col + row)];
             case 3:
                 cell = _a.sent();
                 cell.setValue('1');
+                return [2];
+        }
+    });
+}); };
+exports.EditOnSheet = function (text, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, plans, col, row, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, fetchPlansFromSheet(sheet)];
+            case 2:
+                plans = _a.sent();
+                col = const_settings_1["default"].PLAN_SHEET.MESSAGE_COLUMN;
+                row = plans.map(function (p) { return p.senderID; }).indexOf(id) + 3;
+                if (row === 2)
+                    return [2];
+                return [4, sheet.getCell("" + col + row)];
+            case 3:
+                cell = _a.sent();
+                cell.setValue(text);
                 return [2];
         }
     });

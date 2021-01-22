@@ -28,7 +28,7 @@ export const Plans = async (msg: Discord.Message) => {
   const roleID = Settings.BOSS_ROLE_ID[plan.alpha]
   msg.member?.roles.add(roleID)
 
-  // スプレッドシートの値も更新
+  // スプレッドシートの値を更新
   schedule.AddToSheet(plan)
 }
 
