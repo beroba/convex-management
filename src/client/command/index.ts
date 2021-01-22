@@ -1,26 +1,27 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import * as util from '../../util'
-import {Management} from './management'
 import {ClanBattle} from './clanbattle'
+import {Management} from './management'
 
 /**
  * `/`から始まるコマンドの処理をする
  * @param msg DiscordからのMessage
  */
-export const Command = (msg: Discord.Message) => {
+export const Command = async (msg: Discord.Message) => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
+  // 全角を全て半角にする
   const content = util.Format(msg.content)
 
   let comment: Option<string>
 
   // クラバト用コマンドを実行
-  comment = ClanBattle(content, msg)
+  comment = await ClanBattle(content, msg)
   if (comment) return console.log(comment)
 
   // 運営管理用コマンドを実行
-  comment = Management(content, msg)
+  comment = await Management(content, msg)
   if (comment) return console.log(comment)
 }

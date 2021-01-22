@@ -54,39 +54,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
 exports.Delete = exports.Cancel = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
-var convex = __importStar(require("../convex"));
+var status = __importStar(require("../../io/status"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, isRole, result;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var channel, member, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 if (user.bot)
                     return [2];
@@ -97,13 +78,40 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
                 return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                _b.sent();
+                _a.sent();
                 if (react.message.author.id !== user.id)
                     return [2];
-                isRole = (_a = react.message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
-                if (!isRole)
+                return [4, status.FetchMember(react.message.author.id)];
+            case 2:
+                member = _a.sent();
+                if (!member)
                     return [2];
-                return [4, statusRestore(react.message, user)];
+                return [4, statusRestore(react.message)];
+            case 3:
+                result = _a.sent();
+                if (!result)
+                    return [2];
+                situation.Report();
+                return [2, 'Convex cancellation'];
+        }
+    });
+}); };
+exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, result;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                    return [2];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
+                    return [2];
+                return [4, status.FetchMember(msg.author.id)];
+            case 1:
+                member = _b.sent();
+                if (!member)
+                    return [2];
+                return [4, statusRestore(msg)];
             case 2:
                 result = _b.sent();
                 if (!result)
@@ -113,103 +121,53 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
-exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, user, result;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                if (msg.author.bot)
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
-                    return [2];
-                isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
-                if (!isRole)
-                    return [2];
-                user = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.user;
-                if (!user)
-                    return [2];
-                return [4, statusRestore(msg, user)];
+var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, result, convex;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
-                result = _c.sent();
-                if (!result)
-                    return [2];
-                situation.Report();
-                return [2, 'Convex cancellation'];
-        }
-    });
-}); };
-var statusRestore = function (msg, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, members, member, row, days, num_cell, over_cell, end_cell, hist_cell, result;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _b.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                cells = _b.sent();
-                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                member = util.GetMembersFromUser((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members, user);
-                row = convex.GetMemberRow(members, user.id);
-                return [4, convex.GetDays()];
-            case 3:
-                days = _b.sent();
-                return [4, convex.GetCell(0, days.col, row, sheet)];
-            case 4:
-                num_cell = _b.sent();
-                return [4, convex.GetCell(1, days.col, row, sheet)];
-            case 5:
-                over_cell = _b.sent();
-                return [4, convex.GetCell(2, days.col, row, sheet)];
-            case 6:
-                end_cell = _b.sent();
-                return [4, convex.GetCell(3, days.col, row, sheet)];
-            case 7:
-                hist_cell = _b.sent();
-                result = checkCancelTwice(num_cell, over_cell, hist_cell);
+                member = _a.sent();
+                if (!member)
+                    return [2, false];
+                result = confirmCancelTwice(member);
                 if (result)
                     return [2, false];
-                rollback(num_cell, over_cell, hist_cell);
-                endConfirm(end_cell, member);
-                feedback(num_cell, over_cell, user);
+                member = rollback(member);
+                if (member.end) {
+                    member = endConfirm(member, msg);
+                }
+                convex = member.convex ? member.convex + "\u51F8\u76EE " + (member.over ? '持ち越し' : '終了') : '未凸';
+                msg.reply("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n" + convex);
                 killConfirm(msg);
+                return [4, status.UpdateMember(member)];
+            case 2:
+                _a.sent();
+                return [4, util.Sleep(50)];
+            case 3:
+                _a.sent();
+                status.ReflectOnSheet(member);
                 return [2, true];
         }
     });
 }); };
-var checkCancelTwice = function (num_cell, over_cell, hist_cell) {
-    var num = num_cell.getValue();
-    var over = over_cell.getValue();
-    var hist = hist_cell.getValue();
-    return num + over === hist.replace(',', '');
+var confirmCancelTwice = function (member) {
+    return "" + member.convex + (member.over ? '+' : '') === member.history;
 };
-var rollback = function (num_cell, over_cell, hist_cell) {
-    var _a = __read(hist_cell.getValue().split(','), 2), num = _a[0], over = _a[1];
-    num_cell.setValue(num);
-    over_cell.setValue(over);
+var rollback = function (member) {
+    member.convex = member.history[0] ? member.history[0] : '';
+    member.over = member.history.length === 2 ? '1' : '';
+    return member;
 };
-var endConfirm = function (end_cell, member) {
-    var end = end_cell.getValue();
-    if (!end)
+var endConfirm = function (member, msg) {
+    var _a;
+    member.end = '';
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+    return member;
+};
+var killConfirm = function (msg) {
+    var content = util.Format(msg.content);
+    if (!/^k|kill/i.test(content))
         return;
-    end_cell.setValue();
-    member === null || member === void 0 ? void 0 : member.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+    lapAndBoss.Previous();
 };
-var feedback = function (num_cell, over_cell, user) {
-    var num = Number(num_cell.getValue());
-    var over = over_cell.getValue();
-    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT);
-    channel.send("\u53D6\u6D88\u3092\u884C\u3063\u305F\u308F\u3088\n<@!" + user.id + ">, " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
-};
-var killConfirm = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content;
-    return __generator(this, function (_a) {
-        content = util.Format(msg.content);
-        if (!/^k|kill/i.test(content))
-            return [2];
-        lapAndBoss.Previous();
-        return [2];
-    });
-}); };

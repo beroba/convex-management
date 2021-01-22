@@ -7,7 +7,7 @@ import * as util from '../../util'
  * 特定のメッセージに絵文字を付ける
  * @param msg DiscordからのMessage
  */
-export const Emoji = (msg: Discord.Message) => {
+export const Emoji = async (msg: Discord.Message) => {
   // 指定のチャンネルでは実行されない用にする
   if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
 
@@ -48,7 +48,9 @@ const yuiKusanoEmoji = (msg: Discord.Message) => {
  */
 const mazarashiEmoji = (msg: Discord.Message) => {
   // まざらしっぽい文字が含まれているか確認
-  const match = msg.content.replace(/ま.+らし|厚着|下着|冷凍|解凍|722547140487938181/g, 'まらざし').match(/まらざし/)
+  const match = msg.content
+    .replace(/ま.+らし|厚着|下着|冷凍|解凍|むちむち|722547140487938181/g, 'まらざし')
+    .match(/まらざし/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -136,7 +138,7 @@ const pantiesEmoji = (msg: Discord.Message) => {
  */
 export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
@@ -171,7 +173,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 export const AorB = (msg: Discord.Message): Option<string> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
@@ -250,7 +252,7 @@ const createRandNumber = (n: number): number => require('get-random-values')(new
  */
 export const GoodMorning = (msg: Discord.Message): Option<string> => {
   // botのメッセージは実行しない
-  if (msg.author.bot) return
+  if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return

@@ -48,15 +48,15 @@ export const React = (msg: Discord.Message): Option<string> => {
 }
 
 /**
- * メッセージ送信者の持ち越し状況を全て削除する
- * @param msg DiscordからのMessage
+ * メンバーの持ち越し状況を全て削除する
+ * @param member 削除したいメンバーの情報
  */
-export const AllDelete = async (msg: Discord.Message) => {
+export const AllDelete = async (member: Option<Discord.GuildMember>) => {
   // 持ち越し状況を全て削除
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   ;(await channel.messages.fetch())
     .map(v => v)
-    .filter(m => m.author.id === msg.author.id)
+    .filter(m => m.author.id === member?.id)
     .forEach(m => m.delete())
 
   console.log('Delete carryover message')

@@ -58,44 +58,81 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Convex = void 0;
+exports.TakeDate = exports.Fetch = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var date = __importStar(require("../convex/date"));
-var status = __importStar(require("./status"));
-var moji = require('moji');
-exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var cal_1, day;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
-                    return [2];
-                if (!!formatConfirm(msg)) return [3, 2];
-                return [4, msg.reply('書式が違うから予約できないわ')];
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var util = __importStar(require("../util"));
+var spreadsheet = __importStar(require("../util/spreadsheet"));
+var io = __importStar(require("."));
+exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, cells, table;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                cal_1 = _b.sent();
-                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 30000);
-                return [2, 'The format of the boss number is different'];
-            case 2: return [4, date.GetDay()];
-            case 3:
-                day = _b.sent();
-                if (!day) {
-                    msg.reply('今日はクラバトの日じゃないわ');
-                    return [2, "It's not ClanBattle days"];
-                }
-                status.Update(msg);
-                return [2, 'Make a convex reservation'];
+                sheet = _a.sent();
+                if (!(arg !== '/cb manage set days')) return [3, 3];
+                return [4, setDate(arg, sheet)];
+            case 2:
+                _a.sent();
+                _a.label = 3;
+            case 3: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
+            case 4:
+                cells = _a.sent();
+                table = pieces_each_1["default"](cells, 3)
+                    .filter(util.Omit)
+                    .map(function (v) { return ({
+                    num: v[0],
+                    day: parseZero(v[1]),
+                    col: v[2]
+                }); });
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.DAYS_TABLE, table)];
+            case 5:
+                _a.sent();
+                return [2];
         }
     });
 }); };
-var formatConfirm = function (msg) {
-    var num = moji(msg.content)
-        .convert('ZE', 'HE')
-        .convert('ZS', 'HS')
-        .toString()
-        .split(' ')[0];
-    return /[1-5]/.test(num);
-};
+var setDate = function (arg, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var days;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                days = Array.from(Array(5), function (_, i) { return arg.split('/')[0] + "/" + (Number(arg.split('/')[1]) + i); });
+                return [4, Promise.all(days.map(function (d, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, sheet.getCell("" + const_settings_1["default"].INFORMATION_SHEET.DATE_COLUMN + (i + 3))];
+                                case 1:
+                                    cell = _a.sent();
+                                    return [4, cell.setValue(d)];
+                                case 2:
+                                    _a.sent();
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 1:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var parseZero = function (d) { return d.split('/').map(Number).join('/'); };
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.DAYS_TABLE)];
+}); }); };
+exports.TakeDate = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var table, date;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                table = _a.sent();
+                date = table.find(function (d) { return d.day === mmdd(); });
+                return [2, date ? date : table[5]];
+        }
+    });
+}); };
+var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };

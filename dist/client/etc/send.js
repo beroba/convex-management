@@ -61,16 +61,19 @@ exports.__esModule = true;
 exports.SendEmoji = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.Emoji = function (msg) {
-    if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
-        return;
-    yuiKusanoEmoji(msg);
-    mazarashiEmoji(msg);
-    usamaruEmoji(msg);
-    macchaDesuyoEmoji(msg);
-    nikuEmoji(msg);
-    pantiesEmoji(msg);
-};
+exports.Emoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
+            return [2];
+        yuiKusanoEmoji(msg);
+        mazarashiEmoji(msg);
+        usamaruEmoji(msg);
+        macchaDesuyoEmoji(msg);
+        nikuEmoji(msg);
+        pantiesEmoji(msg);
+        return [2];
+    });
+}); };
 var yuiKusanoEmoji = function (msg) {
     var match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/);
     if (!match)
@@ -79,7 +82,9 @@ var yuiKusanoEmoji = function (msg) {
     console.log('React Yui Kusano emoji');
 };
 var mazarashiEmoji = function (msg) {
-    var match = msg.content.replace(/ま.+らし|厚着|下着|冷凍|解凍|722547140487938181/g, 'まらざし').match(/まらざし/);
+    var match = msg.content
+        .replace(/ま.+らし|厚着|下着|冷凍|解凍|むちむち|722547140487938181/g, 'まらざし')
+        .match(/まらざし/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
@@ -117,8 +122,9 @@ var pantiesEmoji = function (msg) {
 };
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var adjustment, match, content, channel;
-    return __generator(this, function (_a) {
-        if (msg.author.bot)
+    var _a;
+    return __generator(this, function (_b) {
+        if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
             return [2];
         if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
             return [2];
@@ -135,15 +141,15 @@ exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 exports.AorB = function (msg) {
-    var _a;
-    if (msg.author.bot)
+    var _a, _b;
+    if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/))
         return;
     var content = util.Format(msg.content);
-    var emoji = (_a = content.match(/<.*?>/g)) === null || _a === void 0 ? void 0 : _a.map(function (e) { return e; });
+    var emoji = (_b = content.match(/<.*?>/g)) === null || _b === void 0 ? void 0 : _b.map(function (e) { return e; });
     var line = content
         .replace(/<.*?>/g, '１')
         .split('\n')
@@ -171,7 +177,8 @@ var replaceEmoji = function (list, emoji) {
 };
 var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
 exports.GoodMorning = function (msg) {
-    if (msg.author.bot)
+    var _a;
+    if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;

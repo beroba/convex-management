@@ -63,7 +63,7 @@ var throw_env_1 = __importDefault(require("throw-env"));
 var command_1 = require("./command");
 var report = __importStar(require("./report"));
 var plan = __importStar(require("./plan"));
-var carryover = __importStar(require("./convex/carryover"));
+var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
@@ -75,27 +75,29 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
             case 0:
                 if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                if (msg.content.charAt(0) === '/')
-                    return [2, command_1.Command(msg)];
+                if (!(msg.content.charAt(0) === '/')) return [3, 2];
+                return [4, command_1.Command(msg)];
+            case 1: return [2, _b.sent()];
+            case 2:
                 send.Emoji(msg);
                 return [4, report.Convex(msg)];
-            case 1:
+            case 3:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, plan.Convex(msg)];
-            case 2:
+            case 4:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                comment = carryover.React(msg);
+                comment = over.React(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 comment = sister.React(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
-            case 3:
+            case 5:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
@@ -103,7 +105,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, send.Speak(msg)];
-            case 4:
+            case 6:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
@@ -114,7 +116,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, send.SendEmoji(msg)];
-            case 5:
+            case 7:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

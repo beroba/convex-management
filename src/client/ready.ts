@@ -5,7 +5,7 @@ import * as util from '../util'
 /**
  * キャルが起動した際に通知を送る
  */
-export const Ready = () => {
+export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('きゃるきゃるーん')
 

@@ -61,41 +61,44 @@ exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var status = __importStar(require("../../io/status"));
 var list = __importStar(require("./list"));
-var status = __importStar(require("./status"));
+var update = __importStar(require("./update"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, cal_1, cal_2, cal_3;
+    var member, cal_1, cal_2, cal_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (msg.author.bot)
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
                     return [2];
-                isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.CLAN_MEMBERS; });
-                if (!!isRole) return [3, 2];
-                return [4, msg.reply('クランメンバーじゃないわ\n※15秒にこのメッセージは消えます')];
+                return [4, status.FetchMember(msg.author.id)];
             case 1:
-                cal_1 = _b.sent();
-                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 15000);
-                return [2, 'Not a clan member'];
+                member = _b.sent();
+                if (!!member) return [3, 3];
+                return [4, msg.reply('クランメンバーじゃないわ\n※10秒にこのメッセージは消えます')];
             case 2:
-                if (!!formatConfirm(msg)) return [3, 4];
-                return [4, msg.reply('書式が違うから予定できないわ\n※15秒にこのメッセージは消えます')];
+                cal_1 = _b.sent();
+                setTimeout(function () { return (msg["delete"](), cal_1["delete"]()); }, 10000);
+                return [2, 'Not a clan member'];
             case 3:
-                cal_2 = _b.sent();
-                setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 15000);
-                return [2, 'The format of the boss number is different'];
+                if (!!formatConfirm(msg)) return [3, 5];
+                return [4, msg.reply('書式が違うから予定できないわ\n※10秒にこのメッセージは消えます')];
             case 4:
-                if (!(msg.content.length === 1)) return [3, 6];
-                return [4, msg.reply('予想ダメージが書いてないと動かないわ\n※15秒にこのメッセージは消えます')];
+                cal_2 = _b.sent();
+                setTimeout(function () { return (msg["delete"](), cal_2["delete"]()); }, 10000);
+                return [2, 'The format of the boss number is different'];
             case 5:
+                if (!(msg.content.length === 1)) return [3, 7];
+                return [4, msg.reply('予想ダメージが書いてないと動かないわ\n※10秒にこのメッセージは消えます')];
+            case 6:
                 cal_3 = _b.sent();
-                setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 15000);
+                setTimeout(function () { return (msg["delete"](), cal_3["delete"]()); }, 10000);
                 return [2, "I didn't write the expected damage"];
-            case 6: return [4, status.Update(msg)];
-            case 7:
+            case 7: return [4, update.Plans(msg)];
+            case 8:
                 _b.sent();
                 list.SituationEdit();
                 return [2, 'Make a convex reservation'];

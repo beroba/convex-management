@@ -74,108 +74,119 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Next = exports.CurrentMessage = exports.Update = void 0;
+exports.ReflectOnCal = exports.ReflectOnSheet = exports.Fetch = exports.UpdateBossHp = exports.UpdateLapAndBoss = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var util = __importStar(require("../../util"));
-exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, laps, num, infoSheet, boss, _b, laps_cell, boss_cell, num_cell, _c, _d;
-    return __generator(this, function (_e) {
-        switch (_e.label) {
-            case 0:
-                _a = __read(arg.replace('　', ' ').split(' '), 2), laps = _a[0], num = _a[1];
-                if (!/\d/.test(laps))
-                    return [2, msg.reply('形式が違うわ、やりなおし！')];
-                if (!/[a-e]|[A-E]/.test(num))
-                    return [2, msg.reply('形式が違うわ、やりなおし！')];
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _e.sent();
-                return [4, getBossName(infoSheet, num)];
-            case 2:
-                boss = _e.sent();
-                return [4, getCurrentCell(infoSheet)];
-            case 3:
-                _b = __read.apply(void 0, [_e.sent(), 3]), laps_cell = _b[0], boss_cell = _b[1], num_cell = _b[2];
-                return [4, spreadsheet.SetValue(laps_cell, laps)];
-            case 4:
-                _e.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss)];
-            case 5:
-                _e.sent();
-                return [4, spreadsheet.SetValue(num_cell, num)];
-            case 6:
-                _e.sent();
-                _d = (_c = msg).reply;
-                return [4, exports.CurrentMessage()];
-            case 7:
-                _d.apply(_c, [_e.sent()]);
-                return [2];
-        }
-    });
-}); };
-exports.CurrentMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, range, _a, laps, boss;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _b.sent();
-                range = const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',');
-                return [4, spreadsheet.GetCells(infoSheet, range[0] + ":" + range[1])];
-            case 2:
-                _a = __read.apply(void 0, [_b.sent(), 2]), laps = _a[0], boss = _a[1];
-                return [2, "\u73FE\u5728\u3001`" + laps + "`\u5468\u76EE\u306E`" + boss + "`\u3088"];
-        }
-    });
-}); };
-exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, _a, laps_cell, boss_cell, num_cell, laps, num, numberList, n, num_, laps_, boss_;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                infoSheet = _b.sent();
-                return [4, getCurrentCell(infoSheet)];
-            case 2:
-                _a = __read.apply(void 0, [_b.sent(), 3]), laps_cell = _a[0], boss_cell = _a[1], num_cell = _a[2];
-                return [4, spreadsheet.GetValue(laps_cell)];
-            case 3:
-                laps = _b.sent();
-                return [4, spreadsheet.GetValue(num_cell)];
-            case 4:
-                num = _b.sent();
-                numberList = ['a', 'b', 'c', 'd', 'e'];
-                n = (function (n) { return (n === 4 ? 0 : n + 1); })(numberList.indexOf(num));
-                num_ = numberList[n];
-                laps_ = n ? laps : Number(laps) + 1;
-                return [4, getBossName(infoSheet, num_)];
-            case 5:
-                boss_ = _b.sent();
-                return [4, spreadsheet.SetValue(laps_cell, laps_)];
-            case 6:
-                _b.sent();
-                return [4, spreadsheet.SetValue(boss_cell, boss_)];
-            case 7:
-                _b.sent();
-                return [4, spreadsheet.SetValue(num_cell, num_)];
-            case 8:
-                _b.sent();
-                return [2];
-        }
-    });
-}); };
-var getBossName = function (infoSheet, num) { return __awaiter(void 0, void 0, void 0, function () {
-    var cells;
+var spreadsheet = __importStar(require("../util/spreadsheet"));
+var io = __importStar(require("."));
+var bossTable = __importStar(require("./bossTable"));
+exports.UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void 0, void 0, function () {
+    var state, num, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
+            case 0: return [4, exports.Fetch()];
             case 1:
-                cells = _a.sent();
-                return [2, util.PiecesEach(cells, 2).filter(function (v) { return v[0] === num.toLowerCase(); })[0][1]];
+                state = _a.sent();
+                state.lap = lap;
+                state.stage = getStageName(lap);
+                state.alpha = alpha;
+                return [4, bossTable.TakeNum(alpha)];
+            case 2:
+                num = _a.sent();
+                if (!num)
+                    return [2];
+                state.num = num;
+                return [4, bossTable.TakeName(alpha)];
+            case 3:
+                boss = _a.sent();
+                if (!boss)
+                    return [2];
+                state.boss = boss;
+                state.hp = const_settings_1["default"].STAGE_HP[state.stage][alpha];
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
+            case 4:
+                _a.sent();
+                return [2];
         }
     });
 }); };
-var getCurrentCell = function (infoSheet) {
-    return const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(',').map(function (cell) { return infoSheet.getCell(cell); });
+var getStageName = function (lap) {
+    var l = Number(lap);
+    switch (true) {
+        case l < 4:
+            return 'first';
+        case l < 11:
+            return 'second';
+        case l < 35:
+            return 'third';
+        case l < 45:
+            return 'fourth';
+        default:
+            return 'fifth';
+    }
 };
+exports.UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
+    var json;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                json = _a.sent();
+                json.hp = hp;
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.CURRENT)];
+}); }); };
+exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var json, sheet, _a, lap, boss, alpha, lap_cell, boss_cell, alpha_cell;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, exports.Fetch()];
+            case 1:
+                json = _b.sent();
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 2:
+                sheet = _b.sent();
+                _a = __read(const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(','), 3), lap = _a[0], boss = _a[1], alpha = _a[2];
+                return [4, sheet.getCell(lap)];
+            case 3:
+                lap_cell = _b.sent();
+                lap_cell.setValue(json.lap);
+                return [4, sheet.getCell(boss)];
+            case 4:
+                boss_cell = _b.sent();
+                boss_cell.setValue(json.boss);
+                return [4, sheet.getCell(alpha)];
+            case 5:
+                alpha_cell = _b.sent();
+                alpha_cell.setValue(json.alpha);
+                return [2];
+        }
+    });
+}); };
+exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, _a, lap_cell, alpha_cell, lap, alpha;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _b.sent();
+                _a = __read(const_settings_1["default"].INFORMATION_SHEET.CURRENT_CELL.split(','), 3), lap_cell = _a[0], alpha_cell = _a[2];
+                return [4, sheet.getCell(lap_cell)];
+            case 2:
+                lap = (_b.sent()).getValue();
+                return [4, sheet.getCell(alpha_cell)];
+            case 3:
+                alpha = (_b.sent()).getValue();
+                return [4, exports.UpdateLapAndBoss(lap, alpha)];
+            case 4:
+                _b.sent();
+                return [2];
+        }
+    });
+}); };

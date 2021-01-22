@@ -58,35 +58,103 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetCell = exports.GetDay = void 0;
+exports.Status = void 0;
+var util = __importStar(require("../../util"));
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var alphabet_to_number_1 = require("alphabet-to-number");
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.GetDay = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, days, day;
+var status = __importStar(require("../../io/status"));
+exports.Status = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, content, end;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
+                member = _a.sent();
+                if (!member)
+                    return [2];
+                return [4, saveHistory(member)];
             case 2:
-                cells = _a.sent();
-                days = pieces_each_1["default"](cells, 3).map(function (c) { return [c[0], c[1].split('/').map(Number).join('/'), c[2]]; });
-                day = days.find(function (d) { return d[1] === mmdd(); });
-                return [2, day ? day : days[5]];
+                member = _a.sent();
+                content = util.Format(msg.content);
+                return [4, statusUpdate(member, content)];
+            case 3:
+                member = _a.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.TORIKESHI);
+                return [4, isThreeConvex(member)];
+            case 4:
+                end = _a.sent();
+                if (!end) return [3, 6];
+                return [4, convexEndProcess(member, msg)];
+            case 5:
+                member = _a.sent();
+                return [3, 8];
+            case 6: return [4, msg.reply(member.convex + "\u51F8\u76EE " + (member.over ? '持ち越し' : '終了'))];
+            case 7:
+                _a.sent();
+                _a.label = 8;
+            case 8: return [4, status.UpdateMember(member)];
+            case 9:
+                _a.sent();
+                return [2];
         }
     });
 }); };
-exports.GetCell = function (n, row, sheet, days) {
-    if (n === void 0) { n = 0; }
-    return __awaiter(void 0, void 0, void 0, function () {
-        var col;
-        return __generator(this, function (_a) {
-            col = alphabet_to_number_1.AtoA(days[2], n);
-            return [2, sheet.getCell("" + col + row)];
-        });
+var saveHistory = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        member.history = "" + member.convex + (member.over ? '+' : '');
+        return [2, member];
     });
-};
-var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };
+}); };
+var statusUpdate = function (member, content) { return __awaiter(void 0, void 0, void 0, function () {
+    var countUp;
+    return __generator(this, function (_a) {
+        countUp = function (convex) { return String(Number(convex) + 1); };
+        if (/^k|kill/i.test(content)) {
+            if (member.over === '1') {
+                member.over = '';
+            }
+            else {
+                member.convex = countUp(member.convex);
+                member.over = '1';
+            }
+        }
+        else {
+            if (member.over === '1') {
+                member.over = '';
+            }
+            else {
+                member.convex = countUp(member.convex);
+            }
+        }
+        return [2, member];
+    });
+}); };
+var isThreeConvex = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (member.convex !== '3')
+            return [2, false];
+        if (member.over === '1')
+            return [2, false];
+        return [2, true];
+    });
+}); };
+var convexEndProcess = function (member, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var members, n;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                member.end = '1';
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+            case 1:
+                _b.sent();
+                return [4, status.Fetch()];
+            case 2:
+                members = _b.sent();
+                n = members.filter(function (s) { return s.end === '1'; }).length + 1;
+                return [4, msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01")];
+            case 3:
+                _b.sent();
+                return [2, member];
+        }
+    });
+}); };

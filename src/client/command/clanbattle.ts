@@ -1,13 +1,15 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
+import * as current from '../../io/current'
+import * as status from '../../io/status'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
-import * as cancel from '../plan/cancel'
+import * as cancel from '../plan/delete'
 import * as list from '../plan/list'
-import {NtoA} from 'alphabet-to-number'
 
 /**
  * クラバト用のコマンド
@@ -15,41 +17,52 @@ import {NtoA} from 'alphabet-to-number'
  * @param msg DiscordからのMessage
  * @return 実行したコマンドの結果
  */
-export const ClanBattle = (command: string, msg: Discord.Message): Option<string> => {
+export const ClanBattle = async (command: string, msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)) return
 
   switch (true) {
     case /cb convex/.test(command): {
       const arg = command.replace('/cb convex ', '')
-      changeConvex(arg, msg)
+      await manage.Update(arg, msg)
       return 'Change of convex management'
     }
 
     case /cb boss now/.test(command): {
-      currentBossNow()
-      return 'Show ckurrent boss'
+      // #進行に現在の周回数とボスを報告
+      lapAndBoss.ProgressReport()
+      return 'Show current boss'
     }
 
     case /cb boss next/.test(command): {
-      moveForward()
+      // 次のボスに進める
+      await lapAndBoss.Next()
+
+      // 凸状況に報告
+      await situation.Report()
+
       return 'Advance to next lap and boss'
     }
 
     case /cb boss previous/.test(command): {
-      moveReturn()
+      // 前のボスに戻す
+      await lapAndBoss.Previous()
+
+      // 凸状況に報告
+      await situation.Report()
+
       return 'Advance to previous lap and boss'
     }
 
     case /cb boss/.test(command): {
       const arg = command.replace('/cb boss ', '')
-      changeBoss(arg, msg)
+      await changeBoss(arg, msg)
       return 'Change laps and boss'
     }
 
-    case /cb complete plan/.test(command): {
+    case /cb remove plan/.test(command): {
       const arg = command.replace('/cb complete plan ', '')
-      planComplete(arg, msg)
+      removePlan(arg, msg)
       return 'All reset plan'
     }
 
@@ -71,8 +84,26 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
     }
 
     case /cb update report/.test(command): {
-      updateReport(msg)
+      // #凸状況を更新
+      await situation.Report()
+      await list.SituationEdit()
+
+      msg.reply('凸状況を更新したわよ！')
       return 'Convex situation updated'
+    }
+
+    case /cb reflect/.test(command): {
+      // スプレッドシートの値を反映
+      await current.ReflectOnCal()
+      await util.Sleep(50)
+      await status.ReflectOnCal()
+      await util.Sleep(50)
+
+      // #凸状況を更新
+      situation.Report()
+
+      msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
+      return 'Reflect spreadsheet values ​​in Cal'
     }
 
     case /cb help/.test(command): {
@@ -80,48 +111,6 @@ export const ClanBattle = (command: string, msg: Discord.Message): Option<string
       return 'Show help'
     }
   }
-}
-
-/**
- * 引数で渡されたプレイヤーidの凸状況を変更する
- * @param arg プレイヤーidと凸状況
- * @param msg DiscordからのMessage
- */
-const changeConvex = async (arg: string, msg: Discord.Message) => {
-  // 凸状況を更新
-  const result = await manage.Update(arg, msg)
-  if (!result) return
-
-  // 凸状況に報告
-  situation.Report()
-}
-
-/**
- * #進行に現在の周回数とボスを報告
- */
-const currentBossNow = async () => {
-  // #進行に現在の周回数とボスを報告
-  lapAndBoss.ProgressReport()
-}
-
-/**
- * 現在の周回数とボスを次に進め、報告をする
- */
-const moveForward = async () => {
-  // 次のボスに進める
-  await lapAndBoss.Next()
-  // 凸状況に報告
-  situation.Report()
-}
-
-/**
- * 現在の周回数とボスを前に戻し、報告をする
- */
-const moveReturn = async () => {
-  // 前のボスに戻す
-  await lapAndBoss.Previous()
-  // 凸状況に報告
-  situation.Report()
 }
 
 /**
@@ -143,7 +132,7 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
  * @param arg 凸予定を消すユーザーのidかメンション
  * @param msg DiscordからのMessage
  */
-const planComplete = async (arg: string, msg: Discord.Message) => {
+const removePlan = async (arg: string, msg: Discord.Message) => {
   // 引数が無い場合は終了
   if (arg === '/cb complete plan') return msg.reply('凸予定をリセットする人が分からないわ')
 
@@ -151,7 +140,7 @@ const planComplete = async (arg: string, msg: Discord.Message) => {
   const id = util.Format(arg).replace(/[^0-9]/g, '')
 
   // 凸予定を全て削除する
-  await cancel.AllComplete(id)
+  await cancel.AllRemove(id)
 
   msg.reply('凸予定をリセットしたわ')
 }
@@ -202,7 +191,7 @@ const overCalc = (HP: number, a: number, b: number): number => Math.ceil(90 - ((
  */
 const addTaskKillRoll = (msg: Discord.Message) => {
   // 既にタスキルしてるか確認する
-  const isRole = msg.member?.roles.cache.some(r => r.id === Settings.ROLE_ID.TASK_KILL)
+  const isRole = util.IsRole(msg.member, Settings.ROLE_ID.TASK_KILL)
 
   if (isRole) {
     msg.reply('既にタスキルしてるわ')
@@ -212,16 +201,4 @@ const addTaskKillRoll = (msg: Discord.Message) => {
 
     msg.reply('タスキルロールを付けたわよ！')
   }
-}
-
-/**
- * 凸状況を更新する
- * @param msg DiscordからのMessage
- */
-const updateReport = async (msg: Discord.Message) => {
-  // 凸状況を更新
-  situation.Report()
-  await list.SituationEdit()
-
-  msg.reply('凸状況を更新したわよ！')
 }

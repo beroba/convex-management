@@ -76,107 +76,127 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.ClanBattle = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
+var status = __importStar(require("../../io/status"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
-var cancel = __importStar(require("../plan/cancel"));
+var cancel = __importStar(require("../plan/delete"));
 var list = __importStar(require("../plan/list"));
-var alphabet_to_number_1 = require("alphabet-to-number");
-exports.ClanBattle = function (command, msg) {
-    if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
-        return;
-    switch (true) {
-        case /cb convex/.test(command): {
-            var arg = command.replace('/cb convex ', '');
-            changeConvex(arg, msg);
-            return 'Change of convex management';
-        }
-        case /cb boss now/.test(command): {
-            currentBossNow();
-            return 'Show ckurrent boss';
-        }
-        case /cb boss next/.test(command): {
-            moveForward();
-            return 'Advance to next lap and boss';
-        }
-        case /cb boss previous/.test(command): {
-            moveReturn();
-            return 'Advance to previous lap and boss';
-        }
-        case /cb boss/.test(command): {
-            var arg = command.replace('/cb boss ', '');
-            changeBoss(arg, msg);
-            return 'Change laps and boss';
-        }
-        case /cb complete plan/.test(command): {
-            var arg = command.replace('/cb complete plan ', '');
-            planComplete(arg, msg);
-            return 'All reset plan';
-        }
-        case /cb plan/.test(command): {
-            var arg = command.replace('/cb plan ', '');
-            planList(arg);
-            return 'Display convex plan list';
-        }
-        case /cb over/.test(command): {
-            var arg = command.replace('/cb over ', '');
-            simultConvexCalc(arg, msg);
-            return 'Simultaneous convex carryover calculation';
-        }
-        case /cb task/.test(command): {
-            addTaskKillRoll(msg);
-            return 'Add task kill roll';
-        }
-        case /cb update report/.test(command): {
-            updateReport(msg);
-            return 'Convex situation updated';
-        }
-        case /cb help/.test(command): {
-            msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
-            return 'Show help';
-        }
-    }
-};
-var changeConvex = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, manage.Update(arg, msg)];
-            case 1:
-                result = _a.sent();
-                if (!result)
+exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, arg, arg, arg, arg, arg;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if (!util.IsChannel(const_settings_1["default"].COMMAND_CHANNEL.CLAN_BATTLE, msg.channel))
                     return [2];
-                situation.Report();
-                return [2];
-        }
-    });
-}); };
-var currentBossNow = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        lapAndBoss.ProgressReport();
-        return [2];
-    });
-}); };
-var moveForward = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, lapAndBoss.Next()];
+                _a = true;
+                switch (_a) {
+                    case /cb convex/.test(command): return [3, 1];
+                    case /cb boss now/.test(command): return [3, 3];
+                    case /cb boss next/.test(command): return [3, 4];
+                    case /cb boss previous/.test(command): return [3, 7];
+                    case /cb boss/.test(command): return [3, 10];
+                    case /cb remove plan/.test(command): return [3, 12];
+                    case /cb plan/.test(command): return [3, 13];
+                    case /cb over/.test(command): return [3, 14];
+                    case /cb task/.test(command): return [3, 15];
+                    case /cb update report/.test(command): return [3, 16];
+                    case /cb reflect/.test(command): return [3, 19];
+                    case /cb help/.test(command): return [3, 24];
+                }
+                return [3, 25];
             case 1:
-                _a.sent();
+                arg = command.replace('/cb convex ', '');
+                return [4, manage.Update(arg, msg)];
+            case 2:
+                _b.sent();
+                return [2, 'Change of convex management'];
+            case 3:
+                {
+                    lapAndBoss.ProgressReport();
+                    return [2, 'Show current boss'];
+                }
+                _b.label = 4;
+            case 4: return [4, lapAndBoss.Next()];
+            case 5:
+                _b.sent();
+                return [4, situation.Report()];
+            case 6:
+                _b.sent();
+                return [2, 'Advance to next lap and boss'];
+            case 7: return [4, lapAndBoss.Previous()];
+            case 8:
+                _b.sent();
+                return [4, situation.Report()];
+            case 9:
+                _b.sent();
+                return [2, 'Advance to previous lap and boss'];
+            case 10:
+                arg = command.replace('/cb boss ', '');
+                return [4, changeBoss(arg, msg)];
+            case 11:
+                _b.sent();
+                return [2, 'Change laps and boss'];
+            case 12:
+                {
+                    arg = command.replace('/cb complete plan ', '');
+                    removePlan(arg, msg);
+                    return [2, 'All reset plan'];
+                }
+                _b.label = 13;
+            case 13:
+                {
+                    arg = command.replace('/cb plan ', '');
+                    planList(arg);
+                    return [2, 'Display convex plan list'];
+                }
+                _b.label = 14;
+            case 14:
+                {
+                    arg = command.replace('/cb over ', '');
+                    simultConvexCalc(arg, msg);
+                    return [2, 'Simultaneous convex carryover calculation'];
+                }
+                _b.label = 15;
+            case 15:
+                {
+                    addTaskKillRoll(msg);
+                    return [2, 'Add task kill roll'];
+                }
+                _b.label = 16;
+            case 16: return [4, situation.Report()];
+            case 17:
+                _b.sent();
+                return [4, list.SituationEdit()];
+            case 18:
+                _b.sent();
+                msg.reply('凸状況を更新したわよ！');
+                return [2, 'Convex situation updated'];
+            case 19: return [4, current.ReflectOnCal()];
+            case 20:
+                _b.sent();
+                return [4, util.Sleep(50)];
+            case 21:
+                _b.sent();
+                return [4, status.ReflectOnCal()];
+            case 22:
+                _b.sent();
+                return [4, util.Sleep(50)];
+            case 23:
+                _b.sent();
                 situation.Report();
-                return [2];
-        }
-    });
-}); };
-var moveReturn = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, lapAndBoss.Previous()];
-            case 1:
-                _a.sent();
-                situation.Report();
-                return [2];
+                msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
+                return [2, 'Reflect spreadsheet values ​​in Cal'];
+            case 24:
+                {
+                    msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
+                    return [2, 'Show help'];
+                }
+                _b.label = 25;
+            case 25: return [2];
         }
     });
 }); };
@@ -194,7 +214,7 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var planComplete = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var removePlan = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var id;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -202,7 +222,7 @@ var planComplete = function (arg, msg) { return __awaiter(void 0, void 0, void 0
                 if (arg === '/cb complete plan')
                     return [2, msg.reply('凸予定をリセットする人が分からないわ')];
                 id = util.Format(arg).replace(/[^0-9]/g, '');
-                return [4, cancel.AllComplete(id)];
+                return [4, cancel.AllRemove(id)];
             case 1:
                 _a.sent();
                 msg.reply('凸予定をリセットしたわ');
@@ -231,26 +251,13 @@ var simultConvexCalc = function (arg, msg) {
 };
 var overCalc = function (HP, a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
 var addTaskKillRoll = function (msg) {
-    var _a, _b;
-    var isRole = (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.some(function (r) { return r.id === const_settings_1["default"].ROLE_ID.TASK_KILL; });
+    var _a;
+    var isRole = util.IsRole(msg.member, const_settings_1["default"].ROLE_ID.TASK_KILL);
     if (isRole) {
         msg.reply('既にタスキルしてるわ');
     }
     else {
-        (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(const_settings_1["default"].ROLE_ID.TASK_KILL);
+        (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.add(const_settings_1["default"].ROLE_ID.TASK_KILL);
         msg.reply('タスキルロールを付けたわよ！');
     }
 };
-var updateReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                situation.Report();
-                return [4, list.SituationEdit()];
-            case 1:
-                _a.sent();
-                msg.reply('凸状況を更新したわよ！');
-                return [2];
-        }
-    });
-}); };

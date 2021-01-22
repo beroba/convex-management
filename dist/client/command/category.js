@@ -74,13 +74,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SetSeparate = exports.Delete = exports.Create = void 0;
+exports.CheckTheStage = exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
+var bossTable = __importStar(require("../../io/bossTable"));
 exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, year, day, channel, list;
+    var _a, year, day, channel, names, list, sheet;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -93,23 +94,29 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                     }))];
             case 1:
                 channel = _c.sent();
-                return [4, channelNameList()];
+                return [4, createChannelInfo()];
             case 2:
-                list = (_c.sent()).map(function (info) { return __awaiter(void 0, void 0, void 0, function () {
-                    var c;
-                    var _a;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
-                            case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(info.name, { type: 'text', parent: channel === null || channel === void 0 ? void 0 : channel.id }))];
-                            case 1:
-                                c = _b.sent();
-                                c === null || c === void 0 ? void 0 : c.send(info.row ? separate(1) : info.name);
-                                return [2, { name: info.name, row: info.row, id: c === null || c === void 0 ? void 0 : c.id }];
-                        }
-                    });
-                }); });
-                fetchChannelID(list);
-                resetStageFlag();
+                names = _c.sent();
+                return [4, Promise.all(names.map(function (info) { return __awaiter(void 0, void 0, void 0, function () {
+                        var c;
+                        var _a;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(info.name, { type: 'text', parent: channel === null || channel === void 0 ? void 0 : channel.id }))];
+                                case 1:
+                                    c = _b.sent();
+                                    c === null || c === void 0 ? void 0 : c.send(info.row ? separate(1) : info.name);
+                                    return [2, { name: info.name, row: info.row, id: c === null || c === void 0 ? void 0 : c.id }];
+                            }
+                        });
+                    }); }))];
+            case 3:
+                list = _c.sent();
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 4:
+                sheet = _c.sent();
+                fetchChannelID(list, sheet);
+                resetStageFlag(sheet);
                 msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
                 return [2];
         }
@@ -128,30 +135,38 @@ exports.Delete = function (arg, msg) {
     channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
     msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
 };
-exports.SetSeparate = function (n) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+exports.CheckTheStage = function (n) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, stage, _a, category, col, cell;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.CATEGORY_CELLS)];
+                sheet = _b.sent();
+                _a = pieces_each_1["default"];
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.STAGE_CELLS)];
             case 2:
-                cells = _a.sent();
-                pieces_each_1["default"](cells, 2)
-                    .filter(function (c) { return !/^,+$/.test(c.toString()); })
-                    .forEach(function (c) { return __awaiter(void 0, void 0, void 0, function () {
-                    var channel;
-                    return __generator(this, function (_a) {
-                        channel = util.GetTextChannel(c[1]);
-                        channel.send(separate(n));
-                        return [2];
-                    });
-                }); });
+                stage = _a.apply(void 0, [_b.sent(), 2]);
+                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.CATEGORY_CELLS)];
+            case 3:
+                category = _b.sent();
+                if (stage[n - 1][1])
+                    return [2];
+                pieces_each_1["default"](category, 2)
+                    .filter(util.Omit)
+                    .forEach(function (c) {
+                    var channel = util.GetTextChannel(c[1]);
+                    channel.send(separate(n));
+                });
+                col = const_settings_1["default"].INFORMATION_SHEET.STAGE_COLUMN;
+                return [4, sheet.getCell("" + col + (n + 2))];
+            case 4:
+                cell = _b.sent();
+                cell.setValue(1);
                 return [2];
         }
     });
 }); };
+var separate = function (n) { return "\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC" + n + "\u6BB5\u968E\u76EE\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC"; };
 var settingPermissions = function (msg) {
     var _a, _b, _c, _d, _e, _f;
     var leader = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.LEADER);
@@ -181,21 +196,19 @@ var settingPermissions = function (msg) {
         { id: everyone.id, deny: ['VIEW_CHANNEL', 'MENTION_EVERYONE'] },
     ];
 };
-var channelNameList = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, _a, _b, a, _c, b, _d, c, _e, d, _f, e;
-    return __generator(this, function (_g) {
-        switch (_g.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+var createChannelInfo = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var month, table, _a, a, b, c, d, e;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                month = new Date().getMonth() + 1 + "\u6708";
+                return [4, bossTable.Fetch()];
             case 1:
-                infoSheet = _g.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
-            case 2:
-                cells = _g.sent();
-                _a = __read(pieces_each_1["default"](cells, 2).map(function (v) { return v[1]; }), 5), _b = _a[0], a = _b === void 0 ? 'a' : _b, _c = _a[1], b = _c === void 0 ? 'b' : _c, _d = _a[2], c = _d === void 0 ? 'c' : _d, _e = _a[3], d = _e === void 0 ? 'd' : _e, _f = _a[4], e = _f === void 0 ? 'e' : _f;
+                table = _b.sent();
+                _a = __read(table.map(function (t) { return t.name; }), 5), a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4];
                 return [2, [
-                        { name: '検証総合', row: 0, id: '' },
-                        { name: '凸ルート案', row: 0, id: '' },
-                        { name: '編成・tl質問', row: 0, id: '' },
+                        { name: month + "-\u51F8\u30EB\u30FC\u30C8\u6848", row: 0, id: '' },
+                        { name: month + "-\u691C\u8A3C\u7DCF\u5408", row: 0, id: '' },
                         { name: "" + a, row: 3, id: '' },
                         { name: a + "-\u30AA\u30FC\u30C8", row: 4, id: '' },
                         { name: "" + b, row: 5, id: '' },
@@ -206,66 +219,49 @@ var channelNameList = function () { return __awaiter(void 0, void 0, void 0, fun
                         { name: d + "-\u30AA\u30FC\u30C8", row: 10, id: '' },
                         { name: "" + e, row: 11, id: '' },
                         { name: e + "-\u30AA\u30FC\u30C8", row: 12, id: '' },
-                        { name: '持ち越し用', row: 0, id: '' },
+                        { name: '持ち越し編成', row: 0, id: '' },
                     ]];
         }
     });
 }); };
-var separate = function (n) { return "\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC" + n + "\u6BB5\u968E\u76EE\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC"; };
-var fetchChannelID = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet;
+var fetchChannelID = function (list, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                list.forEach(function (c) { return __awaiter(void 0, void 0, void 0, function () {
-                    var col, row, cell, _a, _b;
-                    return __generator(this, function (_c) {
-                        switch (_c.label) {
-                            case 0:
-                                col = const_settings_1["default"].INFORMATION_SHEET.CATEGORY_COLUMN;
-                                return [4, c];
-                            case 1:
-                                row = (_c.sent()).row;
-                                if (!row)
-                                    return [2];
-                                return [4, sheet.getCell("" + col + row)];
-                            case 2:
-                                cell = _c.sent();
-                                _b = (_a = cell).setValue;
-                                return [4, c];
-                            case 3:
-                                _b.apply(_a, [(_c.sent()).id]);
-                                return [2];
-                        }
-                    });
-                }); });
-                return [2];
-        }
+        list.forEach(function (c) { return __awaiter(void 0, void 0, void 0, function () {
+            var col, row, cell;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        col = const_settings_1["default"].INFORMATION_SHEET.CATEGORY_COLUMN;
+                        row = c.row;
+                        if (!row)
+                            return [2];
+                        return [4, sheet.getCell("" + col + row)];
+                    case 1:
+                        cell = _a.sent();
+                        cell.setValue(c.id);
+                        return [2];
+                }
+            });
+        }); });
+        return [2];
     });
 }); };
-var resetStageFlag = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, col;
+var resetStageFlag = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
+    var col;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                col = const_settings_1["default"].INFORMATION_SHEET.STAGE_COLUMN;
-                [2, 3, 4].forEach(function (n) { return __awaiter(void 0, void 0, void 0, function () {
-                    var cell;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, sheet.getCell("" + col + (n + 2))];
-                            case 1:
-                                cell = _a.sent();
-                                cell.setValue('');
-                                return [2];
-                        }
-                    });
-                }); });
-                return [2];
-        }
+        col = const_settings_1["default"].INFORMATION_SHEET.STAGE_COLUMN;
+        [2, 3, 4, 5].forEach(function (n) { return __awaiter(void 0, void 0, void 0, function () {
+            var cell;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, sheet.getCell("" + col + (n + 2))];
+                    case 1:
+                        cell = _a.sent();
+                        cell.setValue('');
+                        return [2];
+                }
+            });
+        }); });
+        return [2];
     });
 }); };

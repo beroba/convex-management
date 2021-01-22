@@ -1,3 +1,6 @@
+# キャルbotのID
+CAL_ID: '687337133572096021'
+
 # キャルbotの管理者のID
 ADMIN_ID: '420084355105423367'
 
@@ -31,6 +34,8 @@ CHANNEL_ID:
   PLAYER_ID_SEND: '745817773552304159'
   # プレイヤーIDのスクショを保存しておくチャンネル
   PLAYER_ID_LIST: '743312873195044864'
+  # キャルステータスのチャンネル
+  CAL_STATUS: '791537113459589192'
 
 # カスタム絵文字のID
 EMOJI_ID:
@@ -91,16 +96,57 @@ BOSS_ROLE_ID:
   d: '756495357340286977'
   e: '756495432535769108'
 
+# 段階毎のHP
+STAGE_HP:
+  first:
+    a: "600"
+    b: "800"
+    c: "1000"
+    d: "1200"
+    e: "1500"
+  second:
+    a: "600"
+    b: "800"
+    c: "1000"
+    d: "1200"
+    e: "1500"
+  third:
+    a: "700"
+    b: "900"
+    c: "1300"
+    d: "1500"
+    e: "2000"
+  fourth:
+    a: "1700"
+    b: "1800"
+    c: "2000"
+    d: "2100"
+    e: "2300"
+  fifth:
+    a: "8500"
+    b: "9000"
+    c: "9500"
+    d: "10000"
+    e: "11000"
+
 # 凸状況のメッセージID
 CONVEX_MESSAGE_ID:
   SITUATION: '762861794803843073'
   PLAN: '762861796217716817'
 
+# キャルステータスのメッセージID
+CAL_STATUS_ID:
+  BOSS_TABLE: '793374466402418708'
+  DAYS_TABLE: '796394876404236309'
+  CURRENT: '796419468045582437'
+  MEMBERS: '797543309269794886'
+  PLANS: '799393326067482664'
+
 # コマンド入力が出来るチャンネル
 COMMAND_CHANNEL:
   # クラバトコマンドが入力できるチャンネル
   CLAN_BATTLE:
-    - 進行
+    - 進行-連携
     - bot-test
   # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
@@ -114,14 +160,20 @@ COMMAND_CHANNEL:
 # 特定メッセージを入力した際にbotがあれこれするチャンネル
 THIS_AND_THAT_CHANNEL:
   - 雑談
-  - くらばと
-  - クラバト雑談
+  - 進行-連携
+  - 茶室
   - vc用
-  - vc用-姉
+  - vc用-運営
+  - くらばと-vc用
   - bot-test
 
 # 絵文字を押さないチャンネル
 NOT_EMOJI_CHANNEL:
+  - 凸宣言-ボス状況
+  - 凸報告
+  - 持ち越し状況
+  - 凸可能時間
+  - 凸予定
   - 凸状況
   - 凸状況履歴
 
@@ -139,25 +191,19 @@ MANAGEMENT_SHEET:
   SHEET_NAME: 凸管理
   MEMBER_CELLS: A3:B32
 
-# 凸予定のシート情報
-PLAN_SHEET:
-  SHEET_NAME: 凸予定
-  PERSON_CELLS: B3:B1002
-  PLAN_CELLS: A3:H1002
-
 # 情報のシート情報
 INFORMATION_SHEET:
   SHEET_NAME: 情報
   MEMBER_CELLS: A3:B32
   DATE_CELLS: D3:F8
-  BOSS_CELLS: H3:I7
-  CATEGORY_CELLS: O3:P12
-  STAGE_CELLS: R3:S6
-  CURRENT_CELL: K3,L3,M3
+  BOSS_CELLS: H3:J7
+  CURRENT_CELL: L3,M3,N3
+  CATEGORY_CELLS: P3:Q12
+  STAGE_CELLS: S3:T7
   MEMBER_COLUMN: A
   DATE_COLUMN: E
-  CATEGORY_COLUMN: P
-  STAGE_COLUMN: S
+  CATEGORY_COLUMN: Q
+  STAGE_COLUMN: T
 
 # 妹クランのシート情報
 SISTER_SHEET:

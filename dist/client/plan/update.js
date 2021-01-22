@@ -58,53 +58,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Message = void 0;
+exports.Plans = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var list = __importStar(require("./list"));
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells, result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (msg.author.bot)
-                    return [2];
-                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE)
-                    return [2];
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
+var bossTable = __importStar(require("../../io/bossTable"));
+var schedule = __importStar(require("../../io/schedule"));
+exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var plan, _a, roleID;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, createPlan(msg)];
             case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
+                plan = _c.sent();
+                _a = plan;
+                return [4, msg.reply(plan.boss + "\u3092\u4E88\u5B9A\u3057\u305F\u308F\u3088\uFF01")];
             case 2:
-                cells = _a.sent();
-                return [4, planUpdate(sheet, cells, msg)];
+                _a.calID = (_c.sent()).id;
+                return [4, schedule.Add(plan)];
             case 3:
-                result = _a.sent();
-                if (!result)
-                    return [2];
-                list.SituationEdit();
-                return [2, 'Edit appointment message'];
+                _c.sent();
+                return [4, util.Sleep(50)];
+            case 4:
+                _c.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+                roleID = const_settings_1["default"].BOSS_ROLE_ID[plan.alpha];
+                (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(roleID);
+                return [2];
         }
     });
 }); };
-var planUpdate = function (sheet, cells, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var row, content, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var createPlan = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var content, alpha, boss;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                row = pieces_each_1["default"](cells, 8)
-                    .map(function (v) { return v[1]; })
-                    .indexOf(msg.id) + 3;
-                if (row === 2)
-                    return [2, false];
-                content = util.Format(msg.content).slice(1).trim();
-                return [4, sheet.getCell("H" + row)];
+                content = util.Format(msg.content);
+                alpha = alphabet_to_number_1.NtoA(content[0]);
+                return [4, bossTable.TakeName(alpha)];
             case 1:
-                cell = _a.sent();
-                cell.setValue(content);
-                return [2, true];
+                boss = _b.sent();
+                return [2, {
+                        done: '',
+                        senderID: msg.id,
+                        calID: '',
+                        name: util.GetUserName(msg.member),
+                        playerID: ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '',
+                        num: content[0],
+                        alpha: alpha,
+                        boss: boss || '',
+                        msg: content.slice(1).trim()
+                    }];
         }
     });
 }); };

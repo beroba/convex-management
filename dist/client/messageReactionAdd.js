@@ -60,10 +60,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.MessageReactionAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
-var report = __importStar(require("./report/cancel"));
-var plan = __importStar(require("./plan/cancel"));
-var carryover = __importStar(require("./convex/carryover"));
+var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
+var plan = __importStar(require("./plan/delete"));
+var report = __importStar(require("./report/cancel"));
 var playerID = __importStar(require("./etc/playerID"));
 exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
@@ -83,7 +83,7 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, carryover.Delete(react, user)];
+                return [4, over.Delete(react, user)];
             case 3:
                 comment = _b.sent();
                 if (comment)

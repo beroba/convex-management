@@ -54,137 +54,99 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
 exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var convex = __importStar(require("."));
+var status = __importStar(require("../../io/status"));
+var situation = __importStar(require("./situation"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, user, status, id, sheet, cells, members, row, name, days, cells_1, cells_2;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = __read(util.Format(arg).split(' '), 2), user = _a[0], status = _a[1];
-                id = user.replace(/[^0-9]/g, '');
-                if (!convexFormatConfirm(status)) {
-                    msg.reply('凸状況の書式が違うわ');
-                    return [2, false];
-                }
-                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _b.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 2:
-                cells = _b.sent();
-                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                row = convex.GetMemberRow(members, id);
-                if (row === 2) {
-                    msg.reply('クランメンバーにそのidの人は居なかったわよ');
-                    return [2, false];
-                }
-                name = members.filter(function (m) { return m[1] === id; })[0][0];
-                return [4, convex.GetDays()];
-            case 3:
-                days = _b.sent();
-                if (!(status === '3')) return [3, 5];
-                return [4, readCells(row, sheet, days)];
-            case 4:
-                cells_1 = _b.sent();
-                convexEndProcess(cells_1, name);
-                return [3, 7];
-            case 5: return [4, readCells(row, sheet, days)];
-            case 6:
-                cells_2 = _b.sent();
-                updateProcess(cells_2, status, name);
-                _b.label = 7;
-            case 7: return [2, true];
-        }
-    });
-}); };
-var convexFormatConfirm = function (status) {
-    if (status[0] === '0')
-        return status.length === 1 ? true : false;
-    return /^[1-3]/.test(status[0]);
-};
-var readCells = function (row, sheet, days) { return __awaiter(void 0, void 0, void 0, function () {
-    var num_cell, over_cell, end_cell, people_cell;
+    var state, user, member;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, convex.GetCell(0, days.col, row, sheet)];
+            case 0:
+                state = util.Format(arg).replace(/<.+>/, '').trim();
+                if (!/^(0|[1-3]\+?)$/.test(state)) {
+                    msg.reply('凸状況の書式が違うわ');
+                    return [2];
+                }
+                user = msg.mentions.users.first();
+                if (!user) {
+                    msg.reply('メンションで誰の凸状況を変更したいか指定しなさい');
+                    return [2];
+                }
+                return [4, status.FetchMember(user.id)];
             case 1:
-                num_cell = _a.sent();
-                return [4, convex.GetCell(1, days.col, row, sheet)];
+                member = _a.sent();
+                if (!member) {
+                    msg.reply('その人はクランメンバーじゃないわ');
+                    return [2];
+                }
+                if (!(state === '3')) return [3, 3];
+                return [4, convexEndProcess(member, user, msg)];
             case 2:
-                over_cell = _a.sent();
-                return [4, convex.GetCell(2, days.col, row, sheet)];
-            case 3:
-                end_cell = _a.sent();
-                return [4, convex.GetCell(2, days.col, 1, sheet)];
+                member = _a.sent();
+                return [3, 5];
+            case 3: return [4, updateProcess(member, state, user, msg)];
             case 4:
-                people_cell = _a.sent();
-                return [2, [num_cell, over_cell, end_cell, people_cell]];
+                member = _a.sent();
+                _a.label = 5;
+            case 5: return [4, status.UpdateMember(member)];
+            case 6:
+                _a.sent();
+                return [4, util.Sleep(50)];
+            case 7:
+                _a.sent();
+                status.ReflectOnSheet(member);
+                situation.Report();
+                return [2];
         }
     });
 }); };
-var convexEndProcess = function (cells, name) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, num_cell, over_cell, end_cell, people_cell, n, channel;
-    return __generator(this, function (_b) {
-        _a = __read(__spread(cells), 4), num_cell = _a[0], over_cell = _a[1], end_cell = _a[2], people_cell = _a[3];
-        num_cell.setValue(3);
-        over_cell.setValue('');
-        end_cell.setValue('1');
-        n = Number(people_cell.getValue()) + 1;
-        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-        channel.send(name + ", 3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01");
-        return [2];
+var convexEndProcess = function (member, user, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var guildMember, state, n;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                member.convex = '3';
+                member.over = '';
+                member.end = '1';
+                return [4, memberFromUser(user, msg)];
+            case 1:
+                guildMember = _a.sent();
+                guildMember.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+                return [4, status.Fetch()];
+            case 2:
+                state = _a.sent();
+                n = state.filter(function (s) { return s.end === '1'; }).length + 1;
+                msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01");
+                return [2, member];
+        }
     });
 }); };
-var updateProcess = function (cells, status, name) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, num_cell, over_cell, end_cell, _b, num, over, channel;
-    return __generator(this, function (_c) {
-        _a = __read(__spread(cells), 3), num_cell = _a[0], over_cell = _a[1], end_cell = _a[2];
-        _b = __read(divideNumOver(status), 2), num = _b[0], over = _b[1];
-        num_cell.setValue(num);
-        over_cell.setValue(over);
-        end_cell.setValue('');
-        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-        channel.send(name + ", " + (num ? num + "\u51F8\u76EE " + (over ? '持ち越し' : '終了') : '未凸'));
-        return [2];
+var updateProcess = function (member, state, user, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var guildMember;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                member.convex = state[0] === '0' ? '' : state[0];
+                member.over = state.includes('+') ? '1' : '';
+                member.end = '';
+                return [4, memberFromUser(user, msg)];
+            case 1:
+                guildMember = _a.sent();
+                guildMember.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
+                msg.reply(member.convex ? member.convex + "\u51F8\u76EE " + (member.over ? '持ち越し' : '終了') : '未凸');
+                return [2, member];
+        }
     });
 }); };
-var divideNumOver = function (status) {
-    if (status.length === 1) {
-        return [status === '0' ? '' : status, ''];
+var memberFromUser = function (user, msg) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
+    switch (_c.label) {
+        case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.fetch())];
+        case 1: return [2, (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.map(function (m) { return m; }).find(function (m) { return m.id === user.id; })];
     }
-    else {
-        return status
-            .replace(/ /g, '')
-            .split(',')
-            .map(function (n) { return (n === '0' ? '' : n); });
-    }
-};
+}); }); };

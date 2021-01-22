@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.MessageDelete = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var report = __importStar(require("./report/cancel"));
-var plan = __importStar(require("./plan/cancel"));
+var plan = __importStar(require("./plan/delete"));
 exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;

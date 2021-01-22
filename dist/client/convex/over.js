@@ -58,35 +58,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetMemberRow = exports.GetCell = exports.GetDays = void 0;
+exports.AllDelete = exports.React = exports.Delete = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var alphabet_to_number_1 = require("alphabet-to-number");
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.GetDays = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var infoSheet, cells, days, day;
+var util = __importStar(require("../../util"));
+exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 0:
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
+                    return [2];
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KANRYOU)
+                    return [2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
+                return [4, channel.messages.fetch(react.message.id)];
             case 1:
-                infoSheet = _a.sent();
-                return [4, spreadsheet.GetCells(infoSheet, const_settings_1["default"].INFORMATION_SHEET.DATE_CELLS)];
-            case 2:
-                cells = _a.sent();
-                days = pieces_each_1["default"](cells, 3).map(function (c) { return ({
-                    number: c[0],
-                    date: c[1].split('/').map(Number).join('/'),
-                    col: c[2]
-                }); });
-                day = days.find(function (d) { return d.date === mmdd(); });
-                return [2, day ? day : days[5]];
+                _a.sent();
+                if (react.message.author.id !== user.id)
+                    return [2];
+                react.message["delete"]();
+                return [2, 'Delete completed message'];
         }
     });
 }); };
-exports.GetCell = function (n, col, row, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+exports.React = function (msg) {
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+    return 'React Kanryou';
+};
+exports.AllDelete = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
     return __generator(this, function (_a) {
-        return [2, sheet.getCell("" + alphabet_to_number_1.AtoA(col, n) + row)];
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION);
+                return [4, channel.messages.fetch()];
+            case 1:
+                (_a.sent())
+                    .map(function (v) { return v; })
+                    .filter(function (m) { return m.author.id === (member === null || member === void 0 ? void 0 : member.id); })
+                    .forEach(function (m) { return m["delete"](); });
+                console.log('Delete carryover message');
+                return [2];
+        }
     });
 }); };
-exports.GetMemberRow = function (members, id) { return members.map(function (v) { return v[1]; }).indexOf(id) + 3; };
-var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };

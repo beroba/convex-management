@@ -60,39 +60,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Report = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
-var lapAndBoss = __importStar(require("./lapAndBoss"));
-var convex = __importStar(require("."));
+var dateTable = __importStar(require("../../io/dateTable"));
+var current = __importStar(require("../../io/current"));
+var status = __importStar(require("../../io/status"));
 exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, days, range, status, _a, cells, members, list, text, situation, msg, history;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+    var text, situation, msg, history;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, createMessage()];
             case 1:
-                sheet = _b.sent();
-                return [4, convex.GetDays()];
-            case 2:
-                days = _b.sent();
-                range = days.col + "3:" + alphabet_to_number_1.AtoA(days.col, 1) + "32";
-                _a = pieces_each_1["default"];
-                return [4, spreadsheet.GetCells(sheet, range)];
-            case 3:
-                status = _a.apply(void 0, [(_b.sent()).map(Number), 2]);
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
-            case 4:
-                cells = _b.sent();
-                members = pieces_each_1["default"](cells, 2).filter(function (v) { return v; });
-                list = mergeList(status, members);
-                return [4, createMessage(list)];
-            case 5:
-                text = _b.sent();
+                text = _a.sent();
                 situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
                 return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
-            case 6:
-                msg = _b.sent();
+            case 2:
+                msg = _a.sent();
                 msg.edit(text);
                 history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
                 history.send(text);
@@ -101,38 +83,31 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); };
-var mergeList = function (status, members) {
-    return status
-        .map(function (v, i) { return ({
-        member: members[i][0],
-        number: v[0],
-        over: v[1]
-    }); })
-        .filter(function (v) { return v.member !== ''; });
-};
-var createMessage = function (list) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, days, state, current, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+var createMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var time, date, state, members, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 time = getCurrentDate();
-                return [4, convex.GetDays()];
+                return [4, dateTable.TakeDate()];
             case 1:
-                days = _a.sent();
-                return [4, lapAndBoss.GetCurrent()];
+                date = _a.sent();
+                return [4, current.Fetch()];
             case 2:
                 state = _a.sent();
-                current = "`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "`";
-                remaining = remainingConvexNumber(list);
-                未凸 = userSorting(list, 0, 0);
-                持越1 = userSorting(list, 1, 1);
-                凸1 = userSorting(list, 1, 0);
-                持越2 = userSorting(list, 2, 1);
-                凸2 = userSorting(list, 2, 0);
-                持越3 = userSorting(list, 3, 1);
-                凸3 = userSorting(list, 3, 0);
-                return [2, ("`" + time + "` " + days.number + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
-                        (current + " `" + remaining + "`\n") +
+                return [4, status.Fetch()];
+            case 3:
+                members = _a.sent();
+                remaining = remainingConvexNumber(members);
+                未凸 = userSorting(members, 0, 0);
+                持越1 = userSorting(members, 1, 1);
+                凸1 = userSorting(members, 1, 0);
+                持越2 = userSorting(members, 2, 1);
+                凸2 = userSorting(members, 2, 0);
+                持越3 = userSorting(members, 3, 1);
+                凸3 = userSorting(members, 3, 0);
+                return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
+                        ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "` `" + remaining + "`\n") +
                         '```\n' +
                         ("\u672A\u51F8: " + 未凸 + "\n") +
                         '\n' +
@@ -154,15 +129,15 @@ var getCurrentDate = function () {
     var d = new Date();
     return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
 };
-var userSorting = function (list, number, over) {
-    return list
-        .filter(function (l) { return l.number === number; })
-        .filter(function (l) { return l.over === over; })
-        .map(function (l) { return l.member; })
-        .join(', ');
+var remainingConvexNumber = function (members) {
+    var remaining = members.map(function (s) { return 3 - Number(s.convex) + Number(s.over); }).reduce(function (a, b) { return a + b; });
+    var over = members.map(function (s) { return Number(s.over); }).reduce(function (a, b) { return a + b; });
+    return remaining + "/" + members.length * 3 + "(" + over + ")";
 };
-var remainingConvexNumber = function (list) {
-    var remaining = list.map(function (l) { return 3 - l.number + l.over; }).reduce(function (a, b) { return a + b; });
-    var over = list.map(function (l) { return l.over; }).reduce(function (a, b) { return a + b; });
-    return remaining + "/" + list.length * 3 + "(" + over + ")";
+var userSorting = function (members, convex, over) {
+    return members
+        .filter(function (l) { return Number(l.convex) === convex; })
+        .filter(function (l) { return Number(l.over) === over; })
+        .map(function (l) { return l.name; })
+        .join(', ');
 };
