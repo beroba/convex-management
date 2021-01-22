@@ -24,9 +24,6 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   await schedule.Edit(text, msg.id)
   await util.Sleep(50)
 
-  // スプレッドシートの値を更新
-  schedule.EditOnSheet(text, msg.id)
-
   // 凸状況を更新
   list.SituationEdit()
 

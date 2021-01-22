@@ -4,7 +4,6 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -57,9 +56,9 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Change laps and boss'
     }
 
-    case /cb complete plan/.test(command): {
+    case /cb remove plan/.test(command): {
       const arg = command.replace('/cb complete plan ', '')
-      planComplete(arg, msg)
+      removePlan(arg, msg)
       return 'All reset plan'
     }
 
@@ -116,7 +115,7 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
  * @param arg 凸予定を消すユーザーのidかメンション
  * @param msg DiscordからのMessage
  */
-const planComplete = async (arg: string, msg: Discord.Message) => {
+const removePlan = async (arg: string, msg: Discord.Message) => {
   // 引数が無い場合は終了
   if (arg === '/cb complete plan') return msg.reply('凸予定をリセットする人が分からないわ')
 
@@ -124,7 +123,7 @@ const planComplete = async (arg: string, msg: Discord.Message) => {
   const id = util.Format(arg).replace(/[^0-9]/g, '')
 
   // 凸予定を全て削除する
-  await cancel.AllComplete(id)
+  await cancel.AllRemove(id)
 
   msg.reply('凸予定をリセットしたわ')
 }
@@ -209,7 +208,6 @@ const reflectOnCal = async (msg: Discord.Message) => {
   await util.Sleep(50)
   await status.ReflectOnCal()
   await util.Sleep(50)
-  await schedule.ReflectOnCal()
 
   // #凸状況を更新
   situation.Report()

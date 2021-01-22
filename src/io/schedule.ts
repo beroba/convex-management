@@ -1,10 +1,6 @@
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import {AtoA} from 'alphabet-to-number'
 import * as io from '.'
 import {Plan} from './type'
-import * as util from '../util'
-import * as spreadsheet from '../util/spreadsheet'
 import Option from 'type-of-option'
 
 /**
@@ -83,108 +79,4 @@ export const FetchBoss = async (alpha: string): Promise<Plan[]> => {
 
   // 特定のボス番号の値だけ返す
   return plans.filter(p => p.alpha === alpha)
-}
-
-/**
- * スプレッドシートに凸予定を追加する
- * @param 追加する予定
- */
-export const AddToSheet = async (plan: Plan) => {
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-
-  // スプレッドシートから凸予定一覧を取得
-  const plans = await fetchPlansFromSheet(sheet)
-
-  // 凸予定を追加
-  await Promise.all(
-    Object.values(plan).map(async (v, i) => {
-      const cell = await sheet.getCell(`${AtoA('A', i)}${plans.length + 3}`)
-      await cell.setValue(v)
-    })
-  )
-}
-
-/**
- * 渡されたidの凸予定をスプレッドシート上で削除する
- * @param id 削除したい凸予定のid
- */
-export const DeleteOnSheet = async (id: string) => {
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-
-  // スプレッドシートから凸予定一覧を取得
-  const plans = await fetchPlansFromSheet(sheet)
-
-  // 列,行を取得
-  const col = Settings.PLAN_SHEET.DONE_COLUMN
-  const row = plans.map(p => p.senderID).indexOf(id) + 3
-
-  // idが存在しなければ終了
-  if (row === 2) return
-
-  // 値の更新
-  const cell = await sheet.getCell(`${col}${row}`)
-  cell.setValue('1')
-}
-
-/**
- * 渡されたidの凸予定のメッセージをスプレッドシート上で編集する
- * @param text 変更するテキスト
- * @param id 変更したいの凸予定のid
- */
-export const EditOnSheet = async (text: string, id: string) => {
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-
-  // スプレッドシートから凸予定一覧を取得
-  const plans = await fetchPlansFromSheet(sheet)
-
-  // 列,行を取得
-  const col = Settings.PLAN_SHEET.MESSAGE_COLUMN
-  const row = plans.map(p => p.senderID).indexOf(id) + 3
-
-  // idが存在しなければ終了
-  if (row === 2) return
-
-  // 値の更新
-  const cell = await sheet.getCell(`${col}${row}`)
-  cell.setValue(text)
-}
-
-/**
- * スプレッドシートの凸予定をキャルに反映させる
- */
-export const ReflectOnCal = async () => {
-  // 凸予定のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.PLAN_SHEET.SHEET_NAME)
-
-  // スプレッドシートから凸予定一覧を取得
-  const plans = await fetchPlansFromSheet(sheet)
-  const incomplete = plans.filter(p => !p.done)
-
-  // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS, incomplete)
-}
-
-/**
- * 凸予定のシートから凸予定一覧を取得する
- * @param sheet 凸予定のシート
- * @return 凸予定一覧
- */
-const fetchPlansFromSheet = async (sheet: any): Promise<Plan[]> => {
-  const cells = await spreadsheet.GetCells(sheet, Settings.PLAN_SHEET.PLAN_CELLS)
-  return PiecesEach(cells, 9)
-    .filter(util.Omit)
-    .map(p => ({
-      done: p[0],
-      senderID: p[1],
-      calID: p[2],
-      name: p[3],
-      playerID: p[4],
-      num: p[5],
-      alpha: p[6],
-      boss: p[7],
-      msg: p[8],
-    }))
 }

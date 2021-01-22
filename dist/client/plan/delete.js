@@ -69,7 +69,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.AllComplete = exports.Report = exports.Delete = exports.Already = void 0;
+exports.AllRemove = exports.Remove = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var schedule = __importStar(require("../../io/schedule"));
 var util = __importStar(require("../../util"));
@@ -115,14 +115,28 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-exports.Report = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Remove = function (alpha, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans, plan, channel, msg;
     return __generator(this, function (_a) {
-        msg;
-        return [2];
+        switch (_a.label) {
+            case 0: return [4, schedule.FetchBoss(alpha)];
+            case 1:
+                plans = _a.sent();
+                plan = plans.find(function (p) { return p.playerID === id; });
+                if (!plan)
+                    return [2];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.messages.fetch(plan.senderID)];
+            case 2:
+                msg = _a.sent();
+                msg["delete"]();
+                console.log('Delete completed message');
+                return [2];
+        }
     });
 }); };
-exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, list, list_1, list_1_1, m, e_1_1;
+exports.AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, msgs, list, list_1, list_1_1, m, e_1_1;
     var e_1, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -130,7 +144,8 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
                 return [4, channel.messages.fetch()];
             case 1:
-                list = (_b.sent()).map(function (v) { return v; }).filter(function (m) { return m.author.id === id; });
+                msgs = _b.sent();
+                list = msgs.map(function (v) { return v; }).filter(function (m) { return m.author.id === id; });
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 7, 8, 9]);
@@ -140,7 +155,7 @@ exports.AllComplete = function (id) { return __awaiter(void 0, void 0, void 0, f
                 if (!!list_1_1.done) return [3, 6];
                 m = list_1_1.value;
                 m["delete"]();
-                return [4, util.Sleep(10000)];
+                return [4, util.Sleep(3000)];
             case 4:
                 _b.sent();
                 _b.label = 5;
@@ -176,14 +191,13 @@ var planDelete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, util.Sleep(50)];
             case 2:
                 _a.sent();
-                msgDelete(plan.calID);
-                deleteBossRole(plan, msg);
-                schedule.DeleteOnSheet(msg.id);
+                calMsgDel(plan.calID);
+                unroleBoss(plan, msg);
                 return [2];
         }
     });
 }); };
-var msgDelete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+var calMsgDel = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -201,7 +215,7 @@ var msgDelete = function (id) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var deleteBossRole = function (plan, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var unroleBoss = function (plan, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var plans, find;
     var _a;
     return __generator(this, function (_b) {

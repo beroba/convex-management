@@ -27,9 +27,6 @@ export const Plans = async (msg: Discord.Message) => {
   // ボス番号のロールを付与
   const roleID = Settings.BOSS_ROLE_ID[plan.alpha]
   msg.member?.roles.add(roleID)
-
-  // スプレッドシートの値を更新
-  schedule.AddToSheet(plan)
 }
 
 /**

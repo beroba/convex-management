@@ -58,13 +58,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReflectOnCal = exports.EditOnSheet = exports.DeleteOnSheet = exports.AddToSheet = exports.FetchBoss = exports.Fetch = exports.Edit = exports.Delete = exports.Add = void 0;
+exports.FetchBoss = exports.Fetch = exports.Edit = exports.Delete = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
-var alphabet_to_number_1 = require("alphabet-to-number");
 var io = __importStar(require("."));
-var util = __importStar(require("../util"));
-var spreadsheet = __importStar(require("../util/spreadsheet"));
 exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {
@@ -129,121 +125,6 @@ exports.FetchBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, 
             case 1:
                 plans = _a.sent();
                 return [2, plans.filter(function (p) { return p.alpha === alpha; })];
-        }
-    });
-}); };
-exports.AddToSheet = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, plans;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, fetchPlansFromSheet(sheet)];
-            case 2:
-                plans = _a.sent();
-                return [4, Promise.all(Object.values(plan).map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var cell;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, sheet.getCell("" + alphabet_to_number_1.AtoA('A', i) + (plans.length + 3))];
-                                case 1:
-                                    cell = _a.sent();
-                                    return [4, cell.setValue(v)];
-                                case 2:
-                                    _a.sent();
-                                    return [2];
-                            }
-                        });
-                    }); }))];
-            case 3:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-exports.DeleteOnSheet = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, plans, col, row, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, fetchPlansFromSheet(sheet)];
-            case 2:
-                plans = _a.sent();
-                col = const_settings_1["default"].PLAN_SHEET.DONE_COLUMN;
-                row = plans.map(function (p) { return p.senderID; }).indexOf(id) + 3;
-                if (row === 2)
-                    return [2];
-                return [4, sheet.getCell("" + col + row)];
-            case 3:
-                cell = _a.sent();
-                cell.setValue('1');
-                return [2];
-        }
-    });
-}); };
-exports.EditOnSheet = function (text, id) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, plans, col, row, cell;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, fetchPlansFromSheet(sheet)];
-            case 2:
-                plans = _a.sent();
-                col = const_settings_1["default"].PLAN_SHEET.MESSAGE_COLUMN;
-                row = plans.map(function (p) { return p.senderID; }).indexOf(id) + 3;
-                if (row === 2)
-                    return [2];
-                return [4, sheet.getCell("" + col + row)];
-            case 3:
-                cell = _a.sent();
-                cell.setValue(text);
-                return [2];
-        }
-    });
-}); };
-exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, plans, incomplete;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, fetchPlansFromSheet(sheet)];
-            case 2:
-                plans = _a.sent();
-                incomplete = plans.filter(function (p) { return !p.done; });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, incomplete)];
-            case 3:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-var fetchPlansFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
-    var cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
-            case 1:
-                cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 9)
-                        .filter(util.Omit)
-                        .map(function (p) { return ({
-                        done: p[0],
-                        senderID: p[1],
-                        calID: p[2],
-                        name: p[3],
-                        playerID: p[4],
-                        num: p[5],
-                        alpha: p[6],
-                        boss: p[7],
-                        msg: p[8]
-                    }); })];
         }
     });
 }); };

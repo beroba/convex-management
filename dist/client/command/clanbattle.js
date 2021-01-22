@@ -79,7 +79,6 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
-var schedule = __importStar(require("../../io/schedule"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
@@ -100,7 +99,7 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb boss next/.test(command): return [3, 4];
                     case /cb boss previous/.test(command): return [3, 7];
                     case /cb boss/.test(command): return [3, 10];
-                    case /cb complete plan/.test(command): return [3, 12];
+                    case /cb remove plan/.test(command): return [3, 12];
                     case /cb plan/.test(command): return [3, 13];
                     case /cb over/.test(command): return [3, 14];
                     case /cb task/.test(command): return [3, 15];
@@ -144,7 +143,7 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
             case 12:
                 {
                     arg = command.replace('/cb complete plan ', '');
-                    planComplete(arg, msg);
+                    removePlan(arg, msg);
                     return [2, 'All reset plan'];
                 }
                 _b.label = 13;
@@ -204,7 +203,7 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var planComplete = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var removePlan = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var id;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -212,7 +211,7 @@ var planComplete = function (arg, msg) { return __awaiter(void 0, void 0, void 0
                 if (arg === '/cb complete plan')
                     return [2, msg.reply('凸予定をリセットする人が分からないわ')];
                 id = util.Format(arg).replace(/[^0-9]/g, '');
-                return [4, cancel.AllComplete(id)];
+                return [4, cancel.AllRemove(id)];
             case 1:
                 _a.sent();
                 msg.reply('凸予定をリセットしたわ');
@@ -279,9 +278,6 @@ var reflectOnCal = function (msg) { return __awaiter(void 0, void 0, void 0, fun
                 _a.sent();
                 return [4, util.Sleep(50)];
             case 4:
-                _a.sent();
-                return [4, schedule.ReflectOnCal()];
-            case 5:
                 _a.sent();
                 situation.Report();
                 msg.reply('スプレッドシートの値をキャルに反映させたわよ！');

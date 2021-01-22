@@ -80,7 +80,6 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 return [4, util.Sleep(50)];
             case 2:
                 _b.sent();
-                schedule.EditOnSheet(text, msg.id);
                 list.SituationEdit();
                 return [2, 'Edit appointment message'];
         }

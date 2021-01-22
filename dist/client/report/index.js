@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var update = __importStar(require("./update"));
@@ -68,7 +69,7 @@ var situation = __importStar(require("../convex/situation"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var cancel = __importStar(require("../plan/delete"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member_1, content, member;
+    var member_1, state, content, member;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -88,27 +89,30 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     msg.reply('もう3凸してるわ');
                     return [2, '3 Convex is finished'];
                 }
+                return [4, current.Fetch()];
+            case 2:
+                state = _b.sent();
                 content = util.Format(msg.content);
                 killConfirm(content);
                 overDelete(msg);
                 return [4, update.Status(msg)];
-            case 2:
-                _b.sent();
-                return [4, util.Sleep(50)];
             case 3:
                 _b.sent();
-                return [4, status.FetchMember(msg.author.id)];
+                return [4, util.Sleep(50)];
             case 4:
+                _b.sent();
+                return [4, status.FetchMember(msg.author.id)];
+            case 5:
                 member = _b.sent();
                 if (!member)
                     return [2];
                 status.ReflectOnSheet(member);
                 if (!/;/i.test(content)) {
                     if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
-                        cancel.AllComplete(msg.author.id);
+                        cancel.AllRemove(msg.author.id);
                     }
                     else {
-                        cancel.Report(msg);
+                        cancel.Remove(state.alpha, msg.author.id);
                     }
                 }
                 situation.Report();

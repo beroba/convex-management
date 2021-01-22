@@ -83,7 +83,6 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
                 msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
                 roleID = const_settings_1["default"].BOSS_ROLE_ID[plan.alpha];
                 (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(roleID);
-                schedule.AddToSheet(plan);
                 return [2];
         }
     });

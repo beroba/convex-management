@@ -19,9 +19,10 @@ export const Ready = async () => {
   // [
   // ]
   // \`\`\``
-  //   c.send(t)
+  // c.send(t)
 
-  // const msg = await c.messages.fetch('799393325106987028')
+  // const msg = await c.messages.fetch('799393326067482664')
+  // msg.edit(t)
   // msg.edit('凸予定の情報 `plan`')
 
   console.log(`Logged in as ${Client.user?.username}!`)

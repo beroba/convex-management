@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import * as update from './update'
@@ -38,6 +39,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     }
   }
 
+  // ボス更新前の状態を取得
+  const state = await current.Fetch()
+
   // 全角を半角に変換
   const content = util.Format(msg.content)
 
@@ -62,9 +66,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!/;/i.test(content)) {
     // 3凸終了していたら全ての凸予定を削除、そうでない場合は現在のボスの凸予定を削除
     if (member?.end === '1') {
-      cancel.AllComplete(msg.author.id)
+      cancel.AllRemove(msg.author.id)
     } else {
-      cancel.Report(msg)
+      cancel.Remove(state.alpha, msg.author.id)
     }
   }
 
