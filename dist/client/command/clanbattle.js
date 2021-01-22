@@ -254,10 +254,11 @@ var addTaskKillRoll = function (msg) {
 var updateReport = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                situation.Report();
-                return [4, list.SituationEdit()];
+            case 0: return [4, situation.Report()];
             case 1:
+                _a.sent();
+                return [4, list.SituationEdit()];
+            case 2:
                 _a.sent();
                 msg.reply('凸状況を更新したわよ！');
                 return [2];

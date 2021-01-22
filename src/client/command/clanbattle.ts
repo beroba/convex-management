@@ -193,7 +193,7 @@ const addTaskKillRoll = (msg: Discord.Message) => {
  */
 const updateReport = async (msg: Discord.Message) => {
   // #凸状況を更新
-  situation.Report()
+  await situation.Report()
   await list.SituationEdit()
 
   msg.reply('凸状況を更新したわよ！')

@@ -58,26 +58,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.PlanOnly = exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
+exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var pieces_each_1 = __importDefault(require("pieces-each"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 var util = __importStar(require("../../util"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var list, name, channel;
+    var state, text, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, readPlanList()];
+            case 0: return [4, current.Fetch()];
             case 1:
-                list = _a.sent();
-                return [4, bossTable.TakeName(alpha)];
+                state = _a.sent();
+                return [4, createPlanText(alpha, state.stage)];
             case 2:
-                name = _a.sent();
+                text = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send(name + "\n" + '```\n' + (createPlanList(alpha, list) + "\n") + '```');
+                channel.send(text);
                 return [2];
         }
     });
@@ -112,68 +110,46 @@ exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
+var createPlanText = function (alpha, stage) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans, text, name, hp;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, schedule.FetchBoss(alpha)];
+            case 1:
+                plans = _a.sent();
+                text = plans.map(function (p) { return p.name + " " + p.msg; }).join('\n');
+                return [4, bossTable.TakeName(alpha)];
+            case 2:
+                name = _a.sent();
+                hp = const_settings_1["default"].STAGE_HP[stage][alpha];
+                return [2, name + " `" + hp + "`\n```\n" + (text ? text : ' ') + "\n```"];
+        }
+    });
+}); };
 var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, texts;
+    var state, stage, a, b, c, d, e;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, current.Fetch()];
             case 1:
                 state = _a.sent();
-                return [4, Promise.all('abcde'.split('').map(function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-                        var plans, name, hp, text;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, schedule.FetchBoss(alpha)];
-                                case 1:
-                                    plans = _a.sent();
-                                    return [4, bossTable.TakeName(alpha)];
-                                case 2:
-                                    name = _a.sent();
-                                    hp = const_settings_1["default"].STAGE_HP[state.stage][alpha];
-                                    text = plans.map(function (p) { return p.name + " " + p.msg; }).join('\n');
-                                    return [2, name + " `" + hp + "`\n```\n" + (text ? text : ' ') + "\n```"];
-                            }
-                        });
-                    }); }))];
+                stage = state.stage;
+                return [4, createPlanText('a', stage)];
             case 2:
-                texts = _a.sent();
-                return [2, texts.join('\n')];
+                a = _a.sent();
+                return [4, createPlanText('b', stage)];
+            case 3:
+                b = _a.sent();
+                return [4, createPlanText('c', stage)];
+            case 4:
+                c = _a.sent();
+                return [4, createPlanText('d', stage)];
+            case 5:
+                d = _a.sent();
+                return [4, createPlanText('e', stage)];
+            case 6:
+                e = _a.sent();
+                return [2, [a, b, c, d, e].join('\n')];
         }
     });
 }); };
-exports.PlanOnly = function (num) { return __awaiter(void 0, void 0, void 0, function () {
-    var list, channel;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, readPlanList()];
-            case 1:
-                list = _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send('```\n' + (createPlanList(num, list) + "\n") + '```');
-                return [2];
-        }
-    });
-}); };
-var readPlanList = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, cells;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].PLAN_SHEET.SHEET_NAME)];
-            case 1:
-                sheet = _a.sent();
-                return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].PLAN_SHEET.PLAN_CELLS)];
-            case 2:
-                cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 9)
-                        .filter(util.Omit)
-                        .filter(function (v) { return !v[0]; })];
-        }
-    });
-}); };
-var createPlanList = function (num, list) {
-    var text = list
-        .filter(function (l) { return l[5] === num; })
-        .map(function (l) { return l[3] + " " + l[7]; })
-        .join('\n');
-    return text ? text : ' ';
-};
