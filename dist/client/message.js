@@ -67,6 +67,7 @@ var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
+var emoji = __importStar(require("./etc/emoji"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
@@ -79,7 +80,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 return [4, command_1.Command(msg)];
             case 1: return [2, _b.sent()];
             case 2:
-                send.Emoji(msg);
+                emoji.React(msg);
                 return [4, report.Convex(msg)];
             case 3:
                 comment = _b.sent();
@@ -115,7 +116,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, send.SendEmoji(msg)];
+                return [4, emoji.Send(msg)];
             case 7:
                 comment = _b.sent();
                 if (comment)

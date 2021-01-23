@@ -8,6 +8,7 @@ import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
+import * as emoji from './etc/emoji'
 
 /**
  * 入力されたメッセージに応じて適切な処理を実行する
@@ -23,7 +24,7 @@ export const Message = async (msg: Discord.Message) => {
   let comment: Option<string>
 
   // 特定のメッセージに絵文字を付ける
-  send.Emoji(msg)
+  emoji.React(msg)
 
   // 凸報告の処理を行う
   comment = await report.Convex(msg)
@@ -62,6 +63,6 @@ export const Message = async (msg: Discord.Message) => {
   if (comment) return console.log(comment)
 
   // 特定の文字が完全1位していた場合に対応した絵文字を送信
-  comment = await send.SendEmoji(msg)
+  comment = await emoji.Send(msg)
   if (comment) return console.log(comment)
 }
