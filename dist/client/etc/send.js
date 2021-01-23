@@ -58,68 +58,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SendEmoji = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = exports.Emoji = void 0;
+exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.Emoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
-            return [2];
-        yuiKusanoEmoji(msg);
-        mazarashiEmoji(msg);
-        usamaruEmoji(msg);
-        macchaDesuyoEmoji(msg);
-        nikuEmoji(msg);
-        pantiesEmoji(msg);
-        return [2];
-    });
-}); };
-var yuiKusanoEmoji = function (msg) {
-    var match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    console.log('React Yui Kusano emoji');
-};
-var mazarashiEmoji = function (msg) {
-    var match = msg.content
-        .replace(/ま.+らし|厚着|下着|冷凍|解凍|むちむち|722547140487938181/g, 'まらざし')
-        .match(/まらざし/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
-    console.log('React Mazarashi emoji');
-};
-var usamaruEmoji = function (msg) {
-    var match = msg.content
-        .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ...|..ギガス$|ｷﾞｶﾞ|652747597739589632/g, 'うさまる')
-        .match(/うさまる/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.USAMARU);
-    console.log('React Usamaru emoji');
-};
-var macchaDesuyoEmoji = function (msg) {
-    var match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.MACCHA_DESUYO);
-    console.log('React Maccha Desuyo emoji');
-};
-var nikuEmoji = function (msg) {
-    var match = msg.content.match(/肉/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.NIKU);
-    console.log('React Niku emoji');
-};
-var pantiesEmoji = function (msg) {
-    var match = msg.content.replace(/ぱんつ|パンツ|パンティ|下着/g, 'しろは').match(/しろは/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.PANTIES);
-    console.log('React Panties emoji');
-};
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var adjustment, match, content, channel;
     var _a;
@@ -198,58 +139,3 @@ exports.YabaiImage = function (msg) {
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
     return 'Send Yabai Image';
 };
-exports.SendEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var ruru, kmr, atsumori, kachikomi, panties;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                ruru = msg.content.replace(/るる/, 'ルル');
-                if (!(ruru === 'ルル')) return [3, 2];
-                return [4, msg.channel.send('<:8_:661486876246540298>')];
-            case 1:
-                _a.sent();
-                setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send ruru Emoji'];
-            case 2:
-                kmr = msg.content.replace(/kmr/i, 'kmr');
-                if (!(kmr === 'kmr')) return [3, 4];
-                return [4, msg.channel.send('<:emoji_39:618400519488143360>')];
-            case 3:
-                _a.sent();
-                setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kmr Emoji'];
-            case 4:
-                atsumori = msg.content.replace(/あつもり/, '熱盛');
-                if (!(atsumori === '熱盛')) return [3, 6];
-                return [4, msg.channel.send('<:heike:670116923127889924>')];
-            case 5:
-                _a.sent();
-                setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send atsumori Emoji'];
-            case 6:
-                kachikomi = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か/, '喧嘩か？');
-                if (!(kachikomi === '喧嘩か？')) return [3, 8];
-                return [4, msg.channel.send('<:kachikomi:620127181418397703>')];
-            case 7:
-                _a.sent();
-                setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kenkaka Emoji'];
-            case 8:
-                if (!(msg.content === 'kusa')) return [3, 10];
-                return [4, msg.channel.send('<:kusa:794298459024392232>')];
-            case 9:
-                _a.sent();
-                setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kusa Emoji'];
-            case 10:
-                panties = msg.content.replace(/ぱんつ|パンティ/, 'パンツ');
-                if (!(panties === 'パンツ')) return [3, 12];
-                return [4, msg.channel.send('<:panties:795221559975084043>')];
-            case 11:
-                _a.sent();
-                setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kusa Emoji'];
-            case 12: return [2];
-        }
-    });
-}); };
