@@ -74,7 +74,7 @@ exports.Update = function () { return __awaiter(void 0, void 0, void 0, function
                 return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.BOSS_CELLS)];
             case 2:
                 cells = _a.sent();
-                table = pieces_each_1["default"](cells, 2)
+                table = pieces_each_1["default"](cells, 3)
                     .filter(util.Omit)
                     .map(function (v) { return ({
                     num: v[0],

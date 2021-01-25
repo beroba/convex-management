@@ -15,7 +15,7 @@ export const Update = async () => {
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
 
   // スプレッドシートからボステーブルを作成する
-  const table: BossTable[] = PiecesEach(cells, 2)
+  const table: BossTable[] = PiecesEach(cells, 3)
     .filter(util.Omit)
     .map(v => ({
       num: v[0],

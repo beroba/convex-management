@@ -46,7 +46,7 @@ export const Management = async (command: string, msg: Discord.Message): Promise
       return 'Set convex days'
     }
 
-    case /cb manage set bossTable/.test(command): {
+    case /cb manage set boss/.test(command): {
       // ボステーブルを更新する
       await bossTable.Update()
 

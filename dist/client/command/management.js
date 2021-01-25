@@ -83,7 +83,7 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb manage create category/.test(command): return [3, 1];
                     case /cb manage delete category/.test(command): return [3, 2];
                     case /cb manage set days/.test(command): return [3, 3];
-                    case /cb manage set bossTable/.test(command): return [3, 5];
+                    case /cb manage set boss/.test(command): return [3, 5];
                     case /cb manage remove role/.test(command): return [3, 7];
                     case /cb manage update members/.test(command): return [3, 8];
                     case /cb manage update sisters/.test(command): return [3, 9];
