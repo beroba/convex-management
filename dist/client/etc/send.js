@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
+exports.ShinyTmoImage = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -88,6 +88,8 @@ exports.AorB = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/))
+        return;
+    if (/\`\`\`/.test(msg.content))
         return;
     var content = util.Format(msg.content);
     var emoji = (_b = content.match(/<.*?>/g)) === null || _b === void 0 ? void 0 : _b.map(function (e) { return e; });
@@ -137,5 +139,13 @@ exports.YabaiImage = function (msg) {
     if (!match)
         return;
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
+    return 'Send Yabai Image';
+};
+exports.ShinyTmoImage = function (msg) {
+    if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
+        return;
+    if (msg.content !== 'シャイニートモ')
+        return;
+    msg.channel.send('', { files: [const_settings_1["default"].URL.SHINYTMO] });
     return 'Send Yabai Image';
 };

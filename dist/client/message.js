@@ -116,6 +116,9 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
+                comment = send.ShinyTmoImage(msg);
+                if (comment)
+                    return [2, console.log(comment)];
                 return [4, emoji.Send(msg)];
             case 7:
                 comment = _b.sent();

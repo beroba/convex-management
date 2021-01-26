@@ -53,6 +53,9 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // urlの場合は終了する
   if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/)) return
 
+  // コードブロックの場合は終了
+  if (/\`\`\`/.test(msg.content)) return
+
   // 全角を半角に変換する
   const content = util.Format(msg.content)
 
@@ -160,6 +163,24 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
 
   // ヤバイわよ！の画像を送信
   msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
+
+  return 'Send Yabai Image'
+}
+
+/**
+ * 送信されたメッセージがシャイニートモの場合、シャイニートモの画像を送信する
+ * @param msg DiscordからのMessage
+ * @return 画像を送信したかの結果
+ */
+export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+
+  // シャイニートモの文字か確認
+  if (msg.content !== 'シャイニートモ') return
+
+  // ヤバイわよ！の画像を送信
+  msg.channel.send('', {files: [Settings.URL.SHINYTMO]})
 
   return 'Send Yabai Image'
 }
