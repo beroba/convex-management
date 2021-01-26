@@ -182,5 +182,8 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   // ヤバイわよ！の画像を送信
   msg.channel.send('', {files: [Settings.URL.SHINYTMO]})
 
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
   return 'Send Yabai Image'
 }
