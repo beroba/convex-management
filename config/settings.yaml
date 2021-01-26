@@ -80,6 +80,8 @@ EMOJI_FULL_ID:
   PANTIES: '<:panties:795221559975084043>'
   # りんごろうのカスタム絵文字のフル
   RINGOROU: '<:ringorou:796112633900171285>'
+  # んも…のカスタム絵文字のフル
+  NMO: '<:nmo:803688363885461504>'
 
 # ロールのID
 ROLE_ID:
@@ -205,6 +207,7 @@ CATEGORY:
 # URL一覧
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
+  SHINYTMO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/ShinyTmo.png
   SPREADSHEET: https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso
 
 # 凸管理のシート情報

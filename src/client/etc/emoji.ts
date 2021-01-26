@@ -211,6 +211,10 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   // りんごろうの絵文字を送信する
   content = msg.content
   if (content === 'りんごろう') return ringorouEmoji(msg)
+
+  // んも…の絵文字を送信する
+  content = content = msg.content.replace(/んも…|ンモ/, 'んも')
+  if (content === 'んも') return nmoEmoji(msg)
 }
 
 /**
@@ -309,4 +313,18 @@ const ringorouEmoji = async (msg: Discord.Message) => {
   setTimeout(() => msg.delete(), 100)
 
   return 'Send ringorou Emoji'
+}
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、んも…の絵文字を送信する
+ * @param msg DiscordからのMessage
+ */
+const nmoEmoji = async (msg: Discord.Message) => {
+  // スタンプ保管庫の絵文字を送信
+  await msg.channel.send(Settings.EMOJI_FULL_ID.NMO)
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return 'Send nmo Emoji'
 }
