@@ -147,5 +147,6 @@ exports.ShinyTmoImage = function (msg) {
     if (msg.content !== 'シャイニートモ')
         return;
     msg.channel.send('', { files: [const_settings_1["default"].URL.SHINYTMO] });
+    setTimeout(function () { return msg["delete"](); }, 100);
     return 'Send Yabai Image';
 };
