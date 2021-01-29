@@ -16,7 +16,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // 漢字でも動くようにする
-  const adjustment = msg.content.replace(/お話し|お話/, 'おはなし')
+  const adjustment = msg.content.replace('　', ' ').replace(/お話し|お話/, 'おはなし')
 
   // おはなしが先頭じゃない場合は終了
   const match = adjustment.match(/^おはなし /)
@@ -26,7 +26,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   setTimeout(() => msg.delete(), 500)
 
   // メッセージからおはなしを省く
-  const content = adjustment.replace('　', ' ').replace('おはなし ', '')
+  const content = adjustment.replace('おはなし ', '')
 
   // メッセージ送信先のチャンネルを取得
   const channel = util.GetTextChannel(msg.channel.id)

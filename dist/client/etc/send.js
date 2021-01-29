@@ -69,7 +69,7 @@ exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, functi
             return [2];
         if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
             return [2];
-        adjustment = msg.content.replace(/お話し|お話/, 'おはなし');
+        adjustment = msg.content.replace('　', ' ').replace(/お話し|お話/, 'おはなし');
         match = adjustment.match(/^おはなし /);
         if (!match)
             return [2];
