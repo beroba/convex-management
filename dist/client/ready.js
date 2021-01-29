@@ -63,11 +63,18 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
+    var channel, cn;
     var _a;
     return __generator(this, function (_b) {
         channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
         channel.send('きゃるきゃるーん');
+        cn = index_1.Client.channels.cache
+            .map(function (c) { return c; })
+            .filter(function (c) { return c.guild.id === '714020537231343653'; });
+        cn.forEach(function (c) {
+            console.log(c.name);
+            console.log(c.id);
+        });
         console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
         return [2];
     });

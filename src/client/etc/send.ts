@@ -26,7 +26,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   setTimeout(() => msg.delete(), 500)
 
   // メッセージからおはなしを省く
-  const content = adjustment.replace('おはなし ', '')
+  const content = adjustment.replace('　', ' ').replace('おはなし ', '')
 
   // メッセージ送信先のチャンネルを取得
   const channel = util.GetTextChannel(msg.channel.id)
