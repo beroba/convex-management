@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = void 0;
+exports.FetchUserFromSheet = exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
@@ -145,7 +145,7 @@ exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, vo
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, fetchUserFromSheet(sheet)];
+                return [4, exports.FetchUserFromSheet(sheet)];
             case 2:
                 users = _a.sent();
                 return [4, dateTable.TakeDate()];
@@ -179,7 +179,7 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, fetchUserFromSheet(sheet)];
+                return [4, exports.FetchUserFromSheet(sheet)];
             case 2:
                 users = _a.sent();
                 return [4, fetchStatusFromSheet(users, sheet)];
@@ -245,7 +245,7 @@ exports.ResetConvexOnSheet = function () { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-var fetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
+exports.FetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var cells;
     return __generator(this, function (_a) {
         switch (_a.label) {

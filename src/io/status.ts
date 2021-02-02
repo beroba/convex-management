@@ -90,7 +90,7 @@ export const ReflectOnSheet = async (member: Member) => {
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得
-  const users = await fetchUserFromSheet(sheet)
+  const users = await FetchUserFromSheet(sheet)
 
   // 行と列を取得
   const col = (await dateTable.TakeDate()).col
@@ -113,7 +113,7 @@ export const ReflectOnCal = async () => {
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得
-  const users = await fetchUserFromSheet(sheet)
+  const users = await FetchUserFromSheet(sheet)
 
   // スプレッドシートから凸状況一覧を取得
   const status = await fetchStatusFromSheet(users, sheet)
@@ -166,7 +166,7 @@ export const ResetConvexOnSheet = async () => {
  * @param sheet 凸状況のシート
  * @return ユーザー一覧
  */
-const fetchUserFromSheet = async (sheet: any): Promise<User[]> => {
+export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
   const cells = await spreadsheet.GetCells(sheet, Settings.MANAGEMENT_SHEET.MEMBER_CELLS)
   return PiecesEach(cells, 2)
     .filter(util.Omit)

@@ -235,11 +235,7 @@ URL:
 ACTIVITY_TIME_SHEET:
   SHEET_NAME: 活動時間
   MEMBER_CELLS: A3:B32
-  DAY1: [D, G, K, M, Q, U, 'Y']
-  DAY2: [AC, AF, AJ, AL, AP, AT, AX]
-  DAY3: [BB, BE, BI, BK, BO, BS, BW]
-  DAY4: [CA, CD, CH, CJ, CN, CR, CV]
-  DAY5: [CZ, DC, DG, DI, DM, DQ]
+  SEPARATE: [C, F, J, L, P, T, X]
   NUMBER: [3, 4, 2, 4, 4, 4, 3]
 
 # 凸管理のシート情報

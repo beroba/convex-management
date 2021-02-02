@@ -60,7 +60,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Remove = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
 var status = __importStar(require("../../io/status"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, day, section;
     return __generator(this, function (_a) {
@@ -87,8 +89,7 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
                     react.users.remove(user);
                     return [2];
                 }
-                console.log(const_settings_1["default"].ACTIVITY_TIME_SHEET[day][section - 1]);
-                console.log(const_settings_1["default"].ACTIVITY_TIME_SHEET.NUMBER[section - 1]);
+                changeValueOfSheet('1', day, section, user);
                 return [2, 'Activity time questionnaire add'];
         }
     });
@@ -119,19 +120,18 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
                     react.users.remove(user);
                     return [2];
                 }
-                console.log(const_settings_1["default"].ACTIVITY_TIME_SHEET[day][section]);
-                console.log(const_settings_1["default"].ACTIVITY_TIME_SHEET.NUMBER[section]);
+                changeValueOfSheet('', day, section, user);
                 return [2, 'Activity time questionnaire remove'];
         }
     });
 }); };
 var confirmDays = function (id) {
-    return id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY1 ? 'DAY1' :
-        id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY2 ? 'DAY2' :
-            id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY3 ? 'DAY3' :
-                id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY4 ? 'DAY4' :
-                    id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY5 ? 'DAY5' :
-                        '';
+    return id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY1 ? 1 :
+        id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY2 ? 2 :
+            id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY3 ? 3 :
+                id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY4 ? 4 :
+                    id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY5 ? 5 :
+                        null;
 };
 var confirmSection = function (id) {
     return id === const_settings_1["default"].ACTIVITY_TIME.EMOJI._1 ? 1 :
@@ -143,3 +143,40 @@ var confirmSection = function (id) {
                             id === const_settings_1["default"].ACTIVITY_TIME.EMOJI._7 ? 7 :
                                 null;
 };
+var changeValueOfSheet = function (value, day, section, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var col1, col2, count, sheet, users, row;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                col1 = day !== 1 ? alphabet_to_number_1.AtoA('A', day - 2) : '';
+                col2 = const_settings_1["default"].ACTIVITY_TIME_SHEET.SEPARATE[section - 1];
+                count = const_settings_1["default"].ACTIVITY_TIME_SHEET.NUMBER[section - 1];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].ACTIVITY_TIME_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, status.FetchUserFromSheet(sheet)];
+            case 2:
+                users = _a.sent();
+                row = users.map(function (u) { return u.id; }).indexOf(user.id) + 3;
+                return [4, Promise.all(Array(count)
+                        .fill('')
+                        .map(function (_, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, sheet.getCell("" + col1 + alphabet_to_number_1.AtoA(col2, i) + row)];
+                                case 1:
+                                    cell = _a.sent();
+                                    return [4, cell.setValue(value)];
+                                case 2:
+                                    _a.sent();
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 3:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };

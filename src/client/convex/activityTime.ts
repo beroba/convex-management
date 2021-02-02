@@ -1,7 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import {AtoA} from 'alphabet-to-number'
 import * as status from '../../io/status'
+import * as spreadsheet from '../../util/spreadsheet'
 
 /**
  * 活動時間の日付に区分の絵文字をつけたら追加する
@@ -40,8 +42,8 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
     return
   }
 
-  console.log(Settings.ACTIVITY_TIME_SHEET[day][section - 1])
-  console.log(Settings.ACTIVITY_TIME_SHEET.NUMBER[section - 1])
+  // スプレッドシートに値をつける
+  changeValueOfSheet('1', day, section, user)
 
   return 'Activity time questionnaire add'
 }
@@ -83,8 +85,8 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
     return
   }
 
-  console.log(Settings.ACTIVITY_TIME_SHEET[day][section])
-  console.log(Settings.ACTIVITY_TIME_SHEET.NUMBER[section])
+  // スプレッドシートの値を消す
+  changeValueOfSheet('', day, section, user)
 
   return 'Activity time questionnaire remove'
 }
@@ -94,14 +96,14 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
  * @param id リアクションしたメッセージのid
  * @return 日付の数字
  */
-const confirmDays = (id: string): string =>
+const confirmDays = (id: string): Option<number> =>
   // prettier-ignore
-  id === Settings.ACTIVITY_TIME.DAYS.DAY1 ? 'DAY1' :
-  id === Settings.ACTIVITY_TIME.DAYS.DAY2 ? 'DAY2' :
-  id === Settings.ACTIVITY_TIME.DAYS.DAY3 ? 'DAY3' :
-  id === Settings.ACTIVITY_TIME.DAYS.DAY4 ? 'DAY4' :
-  id === Settings.ACTIVITY_TIME.DAYS.DAY5 ? 'DAY5' :
-  ''
+  id === Settings.ACTIVITY_TIME.DAYS.DAY1 ? 1 :
+  id === Settings.ACTIVITY_TIME.DAYS.DAY2 ? 2 :
+  id === Settings.ACTIVITY_TIME.DAYS.DAY3 ? 3 :
+  id === Settings.ACTIVITY_TIME.DAYS.DAY4 ? 4 :
+  id === Settings.ACTIVITY_TIME.DAYS.DAY5 ? 5 :
+  null
 
 /**
  * リアクションした区分がどこだか確認
@@ -119,4 +121,33 @@ const confirmSection = (id: Option<string>): Option<number> =>
   id === Settings.ACTIVITY_TIME.EMOJI._7 ? 7 :
   null
 
-// const addValueToSheet = (day: string, section: number) => {}
+/**
+ * 値をシートに書き込む
+ * @param value 設定する値
+ * @param day 設定する日付
+ * @param section 設定する区分
+ * @param user 設定するユーザー
+ */
+const changeValueOfSheet = async (value: string, day: number, section: number, user: Discord.User) => {
+  // 列と長さを決める
+  const col1 = day !== 1 ? AtoA('A', day - 2) : ''
+  const col2 = Settings.ACTIVITY_TIME_SHEET.SEPARATE[section - 1]
+  const count = Settings.ACTIVITY_TIME_SHEET.NUMBER[section - 1]
+
+  // 凸状況のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.ACTIVITY_TIME_SHEET.SHEET_NAME)
+
+  // スプレッドシートからユーザー一覧を取得
+  const users = await status.FetchUserFromSheet(sheet)
+  const row = users.map(u => u.id).indexOf(user.id) + 3
+
+  await Promise.all(
+    // カウントの数だけ値をつける
+    Array(count)
+      .fill('')
+      .map(async (_, i) => {
+        const cell = await sheet.getCell(`${col1}${AtoA(col2, i)}${row}`)
+        await cell.setValue(value)
+      })
+  )
+}
