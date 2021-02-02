@@ -6,6 +6,7 @@ import {GuildMemberUpdate} from './client/guildMemberUpdate'
 import {Message} from './client/message'
 import {MessageDelete} from './client/messageDelete'
 import {MessageReactionAdd} from './client/messageReactionAdd'
+import {MessageReactionRemove} from './client/messageReactionRemove'
 import {MessageUpdate} from './client/messageUpdate'
 import {CronOperation} from './util/cron'
 
@@ -31,6 +32,9 @@ Client.on('messageDelete', msg => MessageDelete(msg))
 
 // リアクションが付与された際に実行
 Client.on('messageReactionAdd', (react, user) => MessageReactionAdd(react, user))
+
+// リアクションを外した際に実行
+Client.on('messageReactionRemove', (react, user) => MessageReactionRemove(react, user))
 
 // メッセージが更新された際に実行
 Client.on('messageUpdate', (_, msg) => MessageUpdate(msg))

@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
+import * as activityTime from './convex/activityTime'
 import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as plan from './plan/delete'
@@ -32,6 +33,10 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
 
   // 持ち越し凸先の削除を行う
   comment = await sister.Delete(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 活動時間の追加を行う
+  comment = await activityTime.Add(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // プレイヤーid送信ロールの付与を行う

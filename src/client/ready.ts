@@ -8,16 +8,9 @@ import * as util from '../util'
  */
 export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-  channel.send('きゃるきゃるーん')
-
-  // const cn = Client.channels.cache
-  //   .map(c => c as Discord.TextChannel | Discord.VoiceChannel)
-  //   .filter(c => c.guild.id === '714020537231343653')
-
-  // cn.forEach(c => {
-  //   console.log(c.name)
-  //   console.log(c.id)
-  // })
+  // channel.send('きゃるきゃるーん')
+  const m = await channel.send('きゃるきゃるーん')
+  m.member?.setNickname('キャル')
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }
