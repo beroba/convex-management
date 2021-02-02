@@ -31,6 +31,7 @@ var guildMemberUpdate_1 = require("./client/guildMemberUpdate");
 var message_1 = require("./client/message");
 var messageDelete_1 = require("./client/messageDelete");
 var messageReactionAdd_1 = require("./client/messageReactionAdd");
+var messageReactionRemove_1 = require("./client/messageReactionRemove");
 var messageUpdate_1 = require("./client/messageUpdate");
 var cron_1 = require("./util/cron");
 exports.Client = new Discord.Client({
@@ -43,6 +44,7 @@ exports.Client.on('guildMemberUpdate', function (_, member) { return guildMember
 exports.Client.on('message', function (msg) { return message_1.Message(msg); });
 exports.Client.on('messageDelete', function (msg) { return messageDelete_1.MessageDelete(msg); });
 exports.Client.on('messageReactionAdd', function (react, user) { return messageReactionAdd_1.MessageReactionAdd(react, user); });
+exports.Client.on('messageReactionRemove', function (react, user) { return messageReactionRemove_1.MessageReactionRemove(react, user); });
 exports.Client.on('messageUpdate', function (_, msg) { return messageUpdate_1.MessageUpdate(msg); });
 cron_1.CronOperation();
 exports.Client.login(throw_env_1["default"]('CAL_TOKEN'));

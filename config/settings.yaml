@@ -26,6 +26,8 @@ CHANNEL_ID:
   CARRYOVER_SITUATION: '739400220290449488'
   # 進行のチャンネル
   PROGRESS: '720773327395881130'
+  # 活動時間のチャンネル
+  ACTIVITY_TIME: '795629249754431488'
   # 持ち越し凸先チャンネル
   CARRYOVER_DESTINATION: '761073612261818378'
   # idスクショ送信のロールを付与するチャンネル
@@ -119,38 +121,57 @@ BOSS_ROLE_ID:
   d: '756495357340286977'
   e: '756495432535769108'
 
+# 活動時間の日付
+ACTIVITY_TIME:
+  # 活動時間の日付
+  DAYS:
+    DAY1: '805831409834393630'
+    DAY2: '805831412447707186'
+    DAY3: '805831415059972136'
+    DAY4: '805831417137201153'
+    DAY5: '805831420198125588'
+  # 活動時間で使用するカスタム絵文字
+  EMOJI:
+    _1: '805186917845958748'
+    _2: '805189029561499648'
+    _3: '805189038851096616'
+    _4: '805189049723125800'
+    _5: '805189059899031593'
+    _6: '805189079448420362'
+    _7: '805189090504998953'
+
 # 段階毎のHP
 STAGE_HP:
   first:
-    a: "600"
-    b: "800"
-    c: "1000"
-    d: "1200"
-    e: "1500"
+    a: '600'
+    b: '800'
+    c: '1000'
+    d: '1200'
+    e: '1500'
   second:
-    a: "600"
-    b: "800"
-    c: "1000"
-    d: "1200"
-    e: "1500"
+    a: '600'
+    b: '800'
+    c: '1000'
+    d: '1200'
+    e: '1500'
   third:
-    a: "700"
-    b: "900"
-    c: "1300"
-    d: "1500"
-    e: "2000"
+    a: '700'
+    b: '900'
+    c: '1300'
+    d: '1500'
+    e: '2000'
   fourth:
-    a: "1700"
-    b: "1800"
-    c: "2000"
-    d: "2100"
-    e: "2300"
+    a: '1700'
+    b: '1800'
+    c: '2000'
+    d: '2100'
+    e: '2300'
   fifth:
-    a: "8500"
-    b: "9000"
-    c: "9500"
-    d: "10000"
-    e: "11000"
+    a: '8500'
+    b: '9000'
+    c: '9500'
+    d: '10000'
+    e: '11000'
 
 # 凸状況のメッセージID
 CONVEX_MESSAGE_ID:
@@ -209,6 +230,17 @@ URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
   SHINYTMO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/ShinyTmo.png
   SPREADSHEET: https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso
+
+# 活動時間のシート情報
+ACTIVITY_TIME_SHEET:
+  SHEET_NAME: 活動時間
+  MEMBER_CELLS: A3:B32
+  DAY1: [D, G, K, M, Q, U, 'Y']
+  DAY2: [AC, AF, AJ, AL, AP, AT, AX]
+  DAY3: [BB, BE, BI, BK, BO, BS, BW]
+  DAY4: [CA, CD, CH, CJ, CN, CR, CV]
+  DAY5: [CZ, DC, DG, DI, DM, DQ]
+  NUMBER: [3, 4, 2, 4, 4, 4, 3]
 
 # 凸管理のシート情報
 MANAGEMENT_SHEET:

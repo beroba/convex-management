@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.MessageReactionAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
+var activityTime = __importStar(require("./convex/activityTime"));
 var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
 var plan = __importStar(require("./plan/delete"));
@@ -93,8 +94,13 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, playerID.RoleGrant(react, user)];
+                return [4, activityTime.Add(react, user)];
             case 5:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, playerID.RoleGrant(react, user)];
+            case 6:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

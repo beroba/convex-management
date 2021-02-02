@@ -58,22 +58,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Ready = void 0;
-var const_settings_1 = __importDefault(require("const-settings"));
-var index_1 = require("../index");
-var util = __importStar(require("../util"));
-exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, m;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+exports.MessageReactionRemove = void 0;
+var throw_env_1 = __importDefault(require("throw-env"));
+var activityTime = __importStar(require("./convex/activityTime"));
+exports.MessageReactionRemove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var comment;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-                return [4, channel.send('きゃるきゃるーん')];
+                if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                    return [2];
+                return [4, activityTime.Remove(react, user)];
             case 1:
-                m = _c.sent();
-                (_a = m.member) === null || _a === void 0 ? void 0 : _a.setNickname('キャル');
-                console.log("Logged in as " + ((_b = index_1.Client.user) === null || _b === void 0 ? void 0 : _b.username) + "!");
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
                 return [2];
         }
     });
