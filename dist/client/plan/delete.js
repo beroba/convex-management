@@ -65,6 +65,22 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -97,6 +113,7 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var plans;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -107,8 +124,8 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 return [4, planDelete(msg)];
             case 1:
-                _b.sent();
-                return [4, list.SituationEdit()];
+                plans = _b.sent();
+                return [4, list.SituationEdit(plans)];
             case 2:
                 _b.sent();
                 return [2, 'Delete completed message'];
@@ -136,7 +153,7 @@ exports.Remove = function (alpha, id) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msgs, list, list_1, list_1_1, m, e_1_1;
+    var channel, msgs, list, list_1, list_1_1, m, e_1_1, plans;
     var e_1, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -173,27 +190,39 @@ exports.AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, fun
                 }
                 finally { if (e_1) throw e_1.error; }
                 return [7];
-            case 9:
+            case 9: return [4, schedule.Fetch()];
+            case 10:
+                plans = _b.sent();
+                Promise.all(plans.filter(function (p) { return p.playerID === id; }).map(function (p) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, schedule.Delete(p.senderID)];
+                        case 1: return [2, _a.sent()];
+                    }
+                }); }); }));
                 console.log('Delete all convex schedules');
                 return [2];
         }
     });
 }); };
 var planDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var plan;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, plans, plan;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0: return [4, schedule.Delete(msg.id)];
             case 1:
-                plan = _a.sent();
+                _a = __read.apply(void 0, [_b.sent(), 2]), plans = _a[0], plan = _a[1];
                 if (!plan)
-                    return [2];
+                    return [2, plans];
                 return [4, util.Sleep(50)];
             case 2:
-                _a.sent();
-                calMsgDel(plan.calID);
-                unroleBoss(plan, msg);
-                return [2];
+                _b.sent();
+                return [4, calMsgDel(plan.calID)];
+            case 3:
+                _b.sent();
+                return [4, unroleBoss(plans, plan, msg)];
+            case 4:
+                _b.sent();
+                return [2, plans];
         }
     });
 }); };
@@ -215,18 +244,18 @@ var calMsgDel = function (id) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var unroleBoss = function (plan, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var plans, find;
+var unroleBoss = function (plans, plan, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var find;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4, schedule.FetchBoss(plan.alpha)];
-            case 1:
-                plans = _b.sent();
-                find = plans.find(function (p) { return p.playerID === plan.playerID; });
+            case 0:
+                find = plans.filter(function (p) { return p.alpha === plan.alpha; }).find(function (p) { return p.playerID === plan.playerID; });
                 if (find)
                     return [2];
-                (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[plan.alpha]);
+                return [4, ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.remove(const_settings_1["default"].BOSS_ROLE_ID[plan.alpha]))];
+            case 1:
+                _b.sent();
                 return [2];
         }
     });

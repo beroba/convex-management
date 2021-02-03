@@ -54,6 +54,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -69,18 +85,18 @@ var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
 var cancel = __importStar(require("../plan/delete"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member_1, state, content, member;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var member_1, state, content, _a, members, member;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                if ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.user.bot)
                     return [2];
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_REPORT)
                     return [2];
                 return [4, status.FetchMember(msg.author.id)];
             case 1:
-                member_1 = _b.sent();
+                member_1 = _c.sent();
                 if (!member_1) {
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
@@ -91,21 +107,18 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 }
                 return [4, current.Fetch()];
             case 2:
-                state = _b.sent();
+                state = _c.sent();
                 content = util.Format(msg.content);
                 killConfirm(content);
                 overDelete(msg);
                 return [4, update.Status(msg)];
             case 3:
-                _b.sent();
-                return [4, util.Sleep(50)];
-            case 4:
-                _b.sent();
-                return [4, status.FetchMember(msg.author.id)];
-            case 5:
-                member = _b.sent();
+                _a = __read.apply(void 0, [_c.sent(), 2]), members = _a[0], member = _a[1];
                 if (!member)
                     return [2];
+                return [4, util.Sleep(50)];
+            case 4:
+                _c.sent();
                 status.ReflectOnSheet(member);
                 if (!/;/i.test(content)) {
                     if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
@@ -115,7 +128,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                         cancel.Remove(state.alpha, msg.author.id);
                     }
                 }
-                situation.Report();
+                situation.Report(members);
                 return [2, 'Update status'];
         }
     });

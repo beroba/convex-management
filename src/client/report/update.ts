@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 import * as util from '../../util'
 import Settings from 'const-settings'
 import * as status from '../../io/status'
@@ -7,11 +8,12 @@ import {Member} from '../../io/type'
 /**
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
+ * @return メンバー一覧とメンバーの状態
  */
-export const Status = async (msg: Discord.Message) => {
+export const Status = async (msg: Discord.Message): Promise<[Member[], Option<Member>]> => {
   // メンバーの状態を取得
   let member = await status.FetchMember(msg.author.id)
-  if (!member) return
+  if (!member) return [[], null]
 
   // 現在の凸状況を履歴に残す
   member = await saveHistory(member)
@@ -33,7 +35,8 @@ export const Status = async (msg: Discord.Message) => {
   }
 
   // ステータスを更新
-  await status.UpdateMember(member)
+  const members = await status.UpdateMember(member)
+  return [members, member]
 }
 
 /**

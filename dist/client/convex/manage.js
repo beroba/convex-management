@@ -64,7 +64,7 @@ var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
 var situation = __importStar(require("./situation"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, user, member;
+    var state, user, member, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -96,12 +96,12 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 _a.label = 5;
             case 5: return [4, status.UpdateMember(member)];
             case 6:
-                _a.sent();
+                members = _a.sent();
                 return [4, util.Sleep(50)];
             case 7:
                 _a.sent();
                 status.ReflectOnSheet(member);
-                situation.Report();
+                situation.Report(members);
                 return [2];
         }
     });

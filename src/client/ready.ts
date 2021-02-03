@@ -8,9 +8,16 @@ import * as util from '../util'
  */
 export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-  // channel.send('きゃるきゃるーん')
-  const m = await channel.send('きゃるきゃるーん')
-  m.member?.setNickname('キャル')
+  channel.send('きゃるきゃるーん')
+  // const m = await channel.send('きゃるきゃるーん')
+  // m.member?.setNickname('キャル')
+
+  //   const c = util.GetTextChannel('791537113459589192')
+  //   const m = await c.messages.fetch('806336380967190588')
+  //   m.edit(`\`\`\`json
+  // [
+  // ]
+  // \`\`\``)
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

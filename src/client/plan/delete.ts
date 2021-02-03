@@ -48,10 +48,10 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.member?.user.bot) return
 
   // 凸予定を削除
-  await planDelete(msg)
+  const plans = await planDelete(msg)
 
   // 凸状況を更新
-  await list.SituationEdit()
+  await list.SituationEdit(plans)
 
   return 'Delete completed message'
 }
@@ -97,24 +97,31 @@ export const AllRemove = async (id: string) => {
     await util.Sleep(3000)
   }
 
+  // 残ってる凸予定を削除
+  const plans = await schedule.Fetch()
+  Promise.all(plans.filter(p => p.playerID === id).map(async p => await schedule.Delete(p.senderID)))
+
   console.log('Delete all convex schedules')
 }
 
 /**
  * 凸予定を削除する
  * @param msg DiscordからのMessage
+ * @return 凸予定一覧
  */
-const planDelete = async (msg: Discord.Message) => {
+const planDelete = async (msg: Discord.Message): Promise<Plan[]> => {
   // 凸予定の完了を付ける
-  const plan = await schedule.Delete(msg.id)
-  if (!plan) return
+  const [plans, plan] = await schedule.Delete(msg.id)
+  if (!plan) return plans
   await util.Sleep(50)
 
   // メッセージを削除
-  calMsgDel(plan.calID)
+  await calMsgDel(plan.calID)
 
   // ボスのロールを外す
-  unroleBoss(plan, msg)
+  await unroleBoss(plans, plan, msg)
+
+  return plans
 }
 
 /**
@@ -142,14 +149,11 @@ const calMsgDel = async (id: string) => {
  * @param plan 削除されたPlanの値
  * @param msg DiscordからのMessage
  */
-const unroleBoss = async (plan: Plan, msg: Discord.Message) => {
-  // 削除したボスの凸予定一覧を取得
-  const plans = await schedule.FetchBoss(plan.alpha)
-
+const unroleBoss = async (plans: Plan[], plan: Plan, msg: Discord.Message) => {
   // 他に同じボスの凸予定がある場合は終了
-  const find = plans.find(p => p.playerID === plan.playerID)
+  const find = plans.filter(p => p.alpha === plan.alpha).find(p => p.playerID === plan.playerID)
   if (find) return
 
   // ボス番号のロールを削除
-  msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
+  await msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
 }

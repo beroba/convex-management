@@ -2,15 +2,15 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as dateTable from '../../io/dateTable'
 import * as current from '../../io/current'
-import * as status from '../../io/status'
 import {Member} from '../../io/type'
 
 /**
  * 凸状況に報告をする
+ * @param members メンバー一覧
  */
-export const Report = async () => {
+export const Report = async (members: Member[]) => {
   // 凸状況のテキストを作成
-  const text = await createMessage()
+  const text = await createMessage(members)
 
   // 凸状況を更新
   const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
@@ -27,9 +27,10 @@ export const Report = async () => {
 // prettier-ignore
 /**
  * 凸状況のテキストを作成する
+ * @param members メンバー一覧
  * @return 作成したテキスト
  */
-const createMessage = async (): Promise<string> => {
+const createMessage = async (members: Member[]): Promise<string> => {
   // 現在の日付と時刻を取得
   const time = getCurrentDate()
 
@@ -38,9 +39,6 @@ const createMessage = async (): Promise<string> => {
 
   // 現在の状況を取得
   const state = await current.Fetch()
-
-  // メンバー全員の状態を取得
-  const members = await status.Fetch()
 
   // 残り凸数を計算する
   const remaining = remainingConvexNumber(members)

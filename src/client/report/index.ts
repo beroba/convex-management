@@ -52,12 +52,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   overDelete(msg)
 
   // 凸状況を更新
-  await update.Status(msg)
-  await util.Sleep(50)
-
-  // メンバーの状態を取得
-  const member = await status.FetchMember(msg.author.id)
+  const [members, member] = await update.Status(msg)
   if (!member) return
+  await util.Sleep(50)
 
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)
@@ -73,7 +70,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 凸状況に報告
-  situation.Report()
+  situation.Report(members)
 
   return 'Update status'
 }

@@ -21,11 +21,11 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   const text = util.Format(msg.content).slice(1).trim()
 
   // 凸予定のメッセージを更新
-  await schedule.Edit(text, msg.id)
+  const plans = await schedule.Edit(text, msg.id)
   await util.Sleep(50)
 
   // 凸状況を更新
-  list.SituationEdit()
+  await list.SituationEdit(plans)
 
   return 'Edit appointment message'
 }

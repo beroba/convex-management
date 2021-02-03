@@ -5,6 +5,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
+import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -38,8 +39,10 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       // 次のボスに進める
       await lapAndBoss.Next()
 
+      // メンバー全員の状態を取得
+      const members = await status.Fetch()
       // 凸状況に報告
-      await situation.Report()
+      situation.Report(members)
 
       return 'Advance to next lap and boss'
     }
@@ -48,8 +51,10 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       // 前のボスに戻す
       await lapAndBoss.Previous()
 
+      // メンバー全員の状態を取得
+      const members = await status.Fetch()
       // 凸状況に報告
-      await situation.Report()
+      situation.Report(members)
 
       return 'Advance to previous lap and boss'
     }
@@ -84,9 +89,14 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
     }
 
     case /cb update report/.test(command): {
-      // #凸状況を更新
-      await situation.Report()
-      await list.SituationEdit()
+      // メンバー全員の状態を取得
+      const members = await status.Fetch()
+      // 凸状況に報告
+      situation.Report(members)
+
+      // 凸予定一覧を取得
+      const plans = await schedule.Fetch()
+      await list.SituationEdit(plans)
 
       msg.reply('凸状況を更新したわよ！')
       return 'Convex situation updated'
@@ -99,8 +109,10 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       await status.ReflectOnCal()
       await util.Sleep(50)
 
-      // #凸状況を更新
-      situation.Report()
+      // メンバー全員の状態を取得
+      const members = await status.Fetch()
+      // 凸状況に報告
+      situation.Report(members)
 
       msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
       return 'Reflect spreadsheet values ​​in Cal'
@@ -123,8 +135,10 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
   const result = await lapAndBoss.Update(arg)
   if (!result) return msg.reply('形式が違うわ、やりなおし！')
 
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
   // 凸状況に報告
-  situation.Report()
+  situation.Report(members)
 }
 
 /**

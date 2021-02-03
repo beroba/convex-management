@@ -63,14 +63,14 @@ var util = __importStar(require("../../util"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var status = __importStar(require("../../io/status"));
 exports.Status = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, content, end;
+    var member, content, end, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _a.sent();
                 if (!member)
-                    return [2];
+                    return [2, [[], null]];
                 return [4, saveHistory(member)];
             case 2:
                 member = _a.sent();
@@ -93,8 +93,8 @@ exports.Status = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 _a.label = 8;
             case 8: return [4, status.UpdateMember(member)];
             case 9:
-                _a.sent();
-                return [2];
+                members = _a.sent();
+                return [2, [members, member]];
         }
     });
 }); };

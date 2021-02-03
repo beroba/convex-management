@@ -54,13 +54,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.FetchBoss = exports.Fetch = exports.Edit = exports.Delete = exports.Add = void 0;
+exports.FetchBoss = exports.Fetch = exports.Edit = exports.Delete = exports.Add = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var pieces_each_1 = __importDefault(require("pieces-each"));
+var util = __importStar(require("../util"));
 var io = __importStar(require("."));
+exports.Update = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        pieces_each_1["default"](plans, 8).forEach(function (p, i) { return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS[i], p)];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        }); });
+        return [2];
+    });
+}); };
 exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {
@@ -69,10 +97,10 @@ exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, functio
             case 1:
                 plans = _a.sent();
                 plans.push(plan);
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
+                return [4, exports.Update(plans)];
             case 2:
                 _a.sent();
-                return [2];
+                return [2, plans];
         }
     });
 }); };
@@ -85,12 +113,20 @@ exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, functi
                 plans = _a.sent();
                 plan = plans.find(function (p) { return p.senderID === id; });
                 if (!plan)
-                    return [2];
+                    return [2, [plans, null]];
                 plans = plans.filter(function (p) { return p.senderID !== id; });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
+                if (!(plans.length % 8 === 0)) return [3, 4];
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS[(plans.length / 8) | 0], [])];
             case 2:
                 _a.sent();
-                return [2, plan];
+                return [4, util.Sleep(50)];
+            case 3:
+                _a.sent();
+                _a.label = 4;
+            case 4: return [4, exports.Update(plans)];
+            case 5:
+                _a.sent();
+                return [2, [plans, plan]];
         }
     });
 }); };
@@ -107,16 +143,54 @@ exports.Edit = function (text, id) { return __awaiter(void 0, void 0, void 0, fu
                     p.msg = text;
                     return p;
                 });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS, plans)];
+                return [4, exports.Update(plans)];
             case 2:
                 _a.sent();
-                return [2];
+                return [2, plans];
         }
     });
 }); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.PLANS)];
-}); }); };
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var plans, range, range_1, range_1_1, i, p, e_1_1;
+    var e_1, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                plans = [];
+                range = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 6, 7, 8]);
+                range_1 = __values(range), range_1_1 = range_1.next();
+                _b.label = 2;
+            case 2:
+                if (!!range_1_1.done) return [3, 5];
+                i = range_1_1.value;
+                return [4, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.PLANS[i])];
+            case 3:
+                p = _b.sent();
+                plans = plans.concat(p);
+                if (p.length < 8)
+                    return [3, 5];
+                _b.label = 4;
+            case 4:
+                range_1_1 = range_1.next();
+                return [3, 2];
+            case 5: return [3, 8];
+            case 6:
+                e_1_1 = _b.sent();
+                e_1 = { error: e_1_1 };
+                return [3, 8];
+            case 7:
+                try {
+                    if (range_1_1 && !range_1_1.done && (_a = range_1["return"])) _a.call(range_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+                return [7];
+            case 8: return [2, plans];
+        }
+    });
+}); };
 exports.FetchBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {

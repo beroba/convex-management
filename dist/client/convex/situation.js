@@ -63,12 +63,11 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var current = __importStar(require("../../io/current"));
-var status = __importStar(require("../../io/status"));
-exports.Report = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Report = function (members) { return __awaiter(void 0, void 0, void 0, function () {
     var text, situation, msg, history;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, createMessage()];
+            case 0: return [4, createMessage(members)];
             case 1:
                 text = _a.sent();
                 situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
@@ -83,8 +82,8 @@ exports.Report = function () { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); };
-var createMessage = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var time, date, state, members, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+var createMessage = function (members) { return __awaiter(void 0, void 0, void 0, function () {
+    var time, date, state, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -95,9 +94,6 @@ var createMessage = function () { return __awaiter(void 0, void 0, void 0, funct
                 return [4, current.Fetch()];
             case 2:
                 state = _a.sent();
-                return [4, status.Fetch()];
-            case 3:
-                members = _a.sent();
                 remaining = remainingConvexNumber(members);
                 未凸 = userSorting(members, 0, 0);
                 持越1 = userSorting(members, 1, 1);

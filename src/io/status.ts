@@ -1,5 +1,5 @@
-import Settings from 'const-settings'
 import Option from 'type-of-option'
+import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
 import * as util from '../util'
@@ -9,18 +9,33 @@ import * as dateTable from './dateTable'
 import {User, Status, Member} from './type'
 
 /**
+ * キャルステータスのメンバーの状態を更新する
+ * @param members メンバー一覧
+ */
+export const Update = async (members: Member[]) => {
+  // 15個ずつに分割
+  PiecesEach(members, 15).forEach(async (m, i) => {
+    // キャルステータスを更新
+    await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[i], m)
+  })
+}
+
+/**
  * メンバー個々の状態を設定する
  * @param メンバー情報
+ * @return メンバー一覧
  */
-export const UpdateMember = async (member: Member) => {
+export const UpdateMember = async (member: Member): Promise<Member[]> => {
   // メンバー全体の状態を取得
   let members = await Fetch()
 
   // メンバーの状態を更新
   members = members.map(s => (s.id === member.id ? member : s))
 
-  // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  // キャルステータスを更新
+  await Update(members)
+
+  return members
 }
 
 /**
@@ -37,8 +52,10 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     history: '',
   }))
 
-  // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  if (!members) return
+
+  // キャルステータスを更新
+  await Update(members)
 }
 
 /**
@@ -58,15 +75,21 @@ export const ResetConvex = async () => {
     history: '',
   }))
 
-  // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  // キャルステータスを更新
+  await Update(members)
 }
 
 /**
  * キャルステータスからメンバーの状態を取得
  * @return メンバーの状態
  */
-export const Fetch = async (): Promise<Member[]> => io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS)
+export const Fetch = async (): Promise<Member[]> => {
+  // メンバーの状態を全て取得
+  const m1 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[0])
+  const m2 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[1])
+  // 結合して返す
+  return m1.concat(m2)
+}
 
 /**
  * キャルステータスからメンバーの状態を取得
@@ -129,7 +152,7 @@ export const ReflectOnCal = async () => {
   }))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  await Update(members)
 }
 
 /**

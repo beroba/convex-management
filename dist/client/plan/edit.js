@@ -64,7 +64,7 @@ var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("./list"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var text;
+    var text, plans;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -76,11 +76,13 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 text = util.Format(msg.content).slice(1).trim();
                 return [4, schedule.Edit(text, msg.id)];
             case 1:
-                _b.sent();
+                plans = _b.sent();
                 return [4, util.Sleep(50)];
             case 2:
                 _b.sent();
-                list.SituationEdit();
+                return [4, list.SituationEdit(plans)];
+            case 3:
+                _b.sent();
                 return [2, 'Edit appointment message'];
         }
     });
