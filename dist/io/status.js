@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.FetchUserFromSheet = exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = void 0;
+exports.FetchUserFromSheet = exports.ResetConvexOnSheet = exports.ReflectOnCal = exports.ReflectOnSheet = exports.FetchMember = exports.Fetch = exports.ResetConvex = exports.UpdateUsers = exports.UpdateMember = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var alphabet_to_number_1 = require("alphabet-to-number");
@@ -66,6 +66,25 @@ var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var dateTable = __importStar(require("./dateTable"));
+exports.Update = function (members) { return __awaiter(void 0, void 0, void 0, function () {
+    var m1, m2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                m1 = members.slice(0, 15);
+                m2 = members.slice(15);
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[0], m1)];
+            case 1:
+                _a.sent();
+                if (!m2.length)
+                    return [2];
+                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[1], m2)];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
 exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
@@ -74,7 +93,7 @@ exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void
             case 1:
                 members = _a.sent();
                 members = members.map(function (s) { return (s.id === member.id ? member : s); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
+                return [4, exports.Update(members)];
             case 2:
                 _a.sent();
                 return [2];
@@ -94,7 +113,9 @@ exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0
                     end: '',
                     history: ''
                 }); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
+                if (!members)
+                    return [2];
+                return [4, exports.Update(members)];
             case 1:
                 _a.sent();
                 return [2];
@@ -116,16 +137,27 @@ exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, fun
                     end: '',
                     history: ''
                 }); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
+                return [4, exports.Update(members)];
             case 2:
                 _a.sent();
                 return [2];
         }
     });
 }); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.MEMBERS)];
-}); }); };
+exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var m1, m2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[0])];
+            case 1:
+                m1 = _a.sent();
+                return [4, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[1])];
+            case 2:
+                m2 = _a.sent();
+                return [2, m1.concat(m2)];
+        }
+    });
+}); };
 exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var members, member;
     return __generator(this, function (_a) {
@@ -193,7 +225,7 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                     end: s.end,
                     history: s.history
                 }); });
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS, members)];
+                return [4, exports.Update(members)];
             case 4:
                 _a.sent();
                 return [2];

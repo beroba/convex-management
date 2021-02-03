@@ -63,18 +63,12 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, m;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-                return [4, channel.send('きゃるきゃるーん')];
-            case 1:
-                m = _c.sent();
-                (_a = m.member) === null || _a === void 0 ? void 0 : _a.setNickname('キャル');
-                console.log("Logged in as " + ((_b = index_1.Client.user) === null || _b === void 0 ? void 0 : _b.username) + "!");
-                return [2];
-        }
+    var channel;
+    var _a;
+    return __generator(this, function (_b) {
+        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+        channel.send('きゃるきゃるーん');
+        console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+        return [2];
     });
 }); };

@@ -9,6 +9,24 @@ import * as dateTable from './dateTable'
 import {User, Status, Member} from './type'
 
 /**
+ * キャルステータスのメンバーの状態を更新する
+ * @param members メンバー一覧
+ */
+export const Update = async (members: Member[]) => {
+  // 15個づつに分割する
+  const m1 = members.slice(0, 15)
+  const m2 = members.slice(15)
+
+  // 前半を更新
+  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[0], m1)
+
+  // 後半がない場合は終了
+  if (!m2.length) return
+  // 後半を更新
+  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[1], m2)
+}
+
+/**
  * メンバー個々の状態を設定する
  * @param メンバー情報
  */
@@ -20,7 +38,7 @@ export const UpdateMember = async (member: Member) => {
   members = members.map(s => (s.id === member.id ? member : s))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  await Update(members)
 }
 
 /**
@@ -37,8 +55,10 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     history: '',
   }))
 
+  if (!members) return
+
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  await Update(members)
 }
 
 /**
@@ -59,14 +79,20 @@ export const ResetConvex = async () => {
   }))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  await Update(members)
 }
 
 /**
  * キャルステータスからメンバーの状態を取得
  * @return メンバーの状態
  */
-export const Fetch = async (): Promise<Member[]> => io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS)
+export const Fetch = async (): Promise<Member[]> => {
+  // メンバーの状態を全て取得
+  const m1 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[0])
+  const m2 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[1])
+  // 結合して返す
+  return m1.concat(m2)
+}
 
 /**
  * キャルステータスからメンバーの状態を取得
@@ -129,7 +155,7 @@ export const ReflectOnCal = async () => {
   }))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS, members)
+  await Update(members)
 }
 
 /**
