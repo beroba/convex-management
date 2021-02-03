@@ -80,13 +80,14 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
+var schedule = __importStar(require("../../io/schedule"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var cancel = __importStar(require("../plan/delete"));
 var list = __importStar(require("../plan/list"));
 exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, arg, arg, arg, arg;
+    var _a, arg, arg, arg, arg, arg, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -104,10 +105,10 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb over/.test(command): return [3, 14];
                     case /cb task/.test(command): return [3, 15];
                     case /cb update report/.test(command): return [3, 16];
-                    case /cb reflect/.test(command): return [3, 19];
-                    case /cb help/.test(command): return [3, 24];
+                    case /cb reflect/.test(command): return [3, 20];
+                    case /cb help/.test(command): return [3, 25];
                 }
-                return [3, 25];
+                return [3, 26];
             case 1:
                 arg = command.replace('/cb convex ', '');
                 return [4, manage.Update(arg, msg)];
@@ -170,33 +171,36 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
             case 16: return [4, situation.Report()];
             case 17:
                 _b.sent();
-                return [4, list.SituationEdit()];
+                return [4, schedule.Fetch()];
             case 18:
+                plans = _b.sent();
+                return [4, list.SituationEdit(plans)];
+            case 19:
                 _b.sent();
                 msg.reply('凸状況を更新したわよ！');
                 return [2, 'Convex situation updated'];
-            case 19: return [4, current.ReflectOnCal()];
-            case 20:
-                _b.sent();
-                return [4, util.Sleep(50)];
+            case 20: return [4, current.ReflectOnCal()];
             case 21:
                 _b.sent();
-                return [4, status.ReflectOnCal()];
+                return [4, util.Sleep(50)];
             case 22:
                 _b.sent();
-                return [4, util.Sleep(50)];
+                return [4, status.ReflectOnCal()];
             case 23:
+                _b.sent();
+                return [4, util.Sleep(50)];
+            case 24:
                 _b.sent();
                 situation.Report();
                 msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
                 return [2, 'Reflect spreadsheet values ​​in Cal'];
-            case 24:
+            case 25:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 25;
-            case 25: return [2];
+                _b.label = 26;
+            case 26: return [2];
         }
     });
 }); };

@@ -3,6 +3,7 @@ import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
+import {Plan} from '../../io/type'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力
@@ -12,8 +13,11 @@ export const Output = async (alpha: string) => {
   // 現在の状況を取得
   const state = await current.Fetch()
 
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+
   // 凸予定一覧のテキストを作成
-  const text = await createPlanText(alpha, state.stage)
+  const text = await createPlanText(alpha, state.stage, plans)
 
   // 凸予定一覧を出力
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
@@ -24,8 +28,11 @@ export const Output = async (alpha: string) => {
  * 全凸予定一覧を出力
  */
 export const AllOutput = async () => {
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+
   // 凸予定一覧のテキストを作成
-  const text = await createAllPlanText()
+  const text = await createAllPlanText(plans)
 
   // 凸予定一覧を出力
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
@@ -34,10 +41,11 @@ export const AllOutput = async () => {
 
 /**
  * #凸状況の凸予定を編集
+ * @param plans 凸予定一覧
  */
-export const SituationEdit = async () => {
+export const SituationEdit = async (plans: Plan[]) => {
   // 凸予定一覧のテキストを作成
-  const text = await createAllPlanText()
+  const text = await createAllPlanText(plans)
 
   // 凸状況を更新
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
@@ -51,14 +59,15 @@ export const SituationEdit = async () => {
  * 凸予定一覧のテキストを作成
  * @param alpha ボス番号
  * @param stage 段階名
+ * @param plans 凸予定一覧
  * @return 作成したテキスト
  */
-const createPlanText = async (alpha: string, stage: string): Promise<string> => {
-  // 指定したボスの凸予定一覧を取得
-  const plans = await schedule.FetchBoss(alpha)
-
+const createPlanText = async (alpha: string, stage: string, plans: Plan[]): Promise<string> => {
   // 凸予定一覧から名前とメッセージだけにしたテキストを作成
-  const text = plans.map(p => `${p.name} ${p.msg}`).join('\n')
+  const text = plans
+    .filter(p => p.alpha === alpha)
+    .map(p => `${p.name} ${p.msg}`)
+    .join('\n')
 
   // ボス名とHPを取得
   const name = await bossTable.TakeName(alpha)
@@ -70,19 +79,20 @@ const createPlanText = async (alpha: string, stage: string): Promise<string> => 
 
 /**
  * 全ボスの凸予定一覧のテキストを作成
+ * @param plans 凸予定一覧
  * @return 作成したテキスト
  */
-const createAllPlanText = async (): Promise<string> => {
+const createAllPlanText = async (plans: Plan[]): Promise<string> => {
   // 現在の状況を取得
   const state = await current.Fetch()
   const stage = state.stage
 
   // 全ボスの凸予定一覧のテキストを作成
-  const a = await createPlanText('a', stage)
-  const b = await createPlanText('b', stage)
-  const c = await createPlanText('c', stage)
-  const d = await createPlanText('d', stage)
-  const e = await createPlanText('e', stage)
+  const a = await createPlanText('a', stage, plans)
+  const b = await createPlanText('b', stage, plans)
+  const c = await createPlanText('c', stage, plans)
+  const d = await createPlanText('d', stage, plans)
+  const e = await createPlanText('e', stage, plans)
 
   // 1つにまとめて返す
   return [a, b, c, d, e].join('\n')

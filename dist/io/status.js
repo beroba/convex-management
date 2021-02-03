@@ -67,22 +67,18 @@ var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var dateTable = __importStar(require("./dateTable"));
 exports.Update = function (members) { return __awaiter(void 0, void 0, void 0, function () {
-    var m1, m2;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                m1 = members.slice(0, 15);
-                m2 = members.slice(15);
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[0], m1)];
-            case 1:
-                _a.sent();
-                if (!m2.length)
-                    return [2];
-                return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[1], m2)];
-            case 2:
-                _a.sent();
-                return [2];
-        }
+        pieces_each_1["default"](members, 15).forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.MEMBERS[i], m)];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        }); });
+        return [2];
     });
 }); };
 exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {

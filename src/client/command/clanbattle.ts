@@ -5,6 +5,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
+import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -86,7 +87,10 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
     case /cb update report/.test(command): {
       // #凸状況を更新
       await situation.Report()
-      await list.SituationEdit()
+
+      // 凸予定一覧を取得
+      const plans = await schedule.Fetch()
+      await list.SituationEdit(plans)
 
       msg.reply('凸状況を更新したわよ！')
       return 'Convex situation updated'

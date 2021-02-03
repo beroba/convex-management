@@ -65,14 +65,17 @@ var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, text, channel;
+    var state, plans, text, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, current.Fetch()];
             case 1:
                 state = _a.sent();
-                return [4, createPlanText(alpha, state.stage)];
+                return [4, schedule.Fetch()];
             case 2:
+                plans = _a.sent();
+                return [4, createPlanText(alpha, state.stage, plans)];
+            case 3:
                 text = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send(text);
@@ -81,11 +84,14 @@ exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, fun
     });
 }); };
 exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var text, channel;
+    var plans, text, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, createAllPlanText()];
+            case 0: return [4, schedule.Fetch()];
             case 1:
+                plans = _a.sent();
+                return [4, createAllPlanText(plans)];
+            case 2:
                 text = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send(text);
@@ -93,11 +99,11 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
     var text, channel, msg;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, createAllPlanText()];
+            case 0: return [4, createAllPlanText(plans)];
             case 1:
                 text = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
@@ -110,23 +116,24 @@ exports.SituationEdit = function () { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-var createPlanText = function (alpha, stage) { return __awaiter(void 0, void 0, void 0, function () {
-    var plans, text, name, hp;
+var createPlanText = function (alpha, stage, plans) { return __awaiter(void 0, void 0, void 0, function () {
+    var text, name, hp;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, schedule.FetchBoss(alpha)];
-            case 1:
-                plans = _a.sent();
-                text = plans.map(function (p) { return p.name + " " + p.msg; }).join('\n');
+            case 0:
+                text = plans
+                    .filter(function (p) { return p.alpha === alpha; })
+                    .map(function (p) { return p.name + " " + p.msg; })
+                    .join('\n');
                 return [4, bossTable.TakeName(alpha)];
-            case 2:
+            case 1:
                 name = _a.sent();
                 hp = const_settings_1["default"].STAGE_HP[stage][alpha];
                 return [2, name + " `" + hp + "`\n```\n" + (text ? text : ' ') + "\n```"];
         }
     });
 }); };
-var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, function () {
+var createAllPlanText = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
     var state, stage, a, b, c, d, e;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -134,19 +141,19 @@ var createAllPlanText = function () { return __awaiter(void 0, void 0, void 0, f
             case 1:
                 state = _a.sent();
                 stage = state.stage;
-                return [4, createPlanText('a', stage)];
+                return [4, createPlanText('a', stage, plans)];
             case 2:
                 a = _a.sent();
-                return [4, createPlanText('b', stage)];
+                return [4, createPlanText('b', stage, plans)];
             case 3:
                 b = _a.sent();
-                return [4, createPlanText('c', stage)];
+                return [4, createPlanText('c', stage, plans)];
             case 4:
                 c = _a.sent();
-                return [4, createPlanText('d', stage)];
+                return [4, createPlanText('d', stage, plans)];
             case 5:
                 d = _a.sent();
-                return [4, createPlanText('e', stage)];
+                return [4, createPlanText('e', stage, plans)];
             case 6:
                 e = _a.sent();
                 return [2, [a, b, c, d, e].join('\n')];

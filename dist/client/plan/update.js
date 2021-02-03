@@ -65,7 +65,7 @@ var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var schedule = __importStar(require("../../io/schedule"));
 exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var plan, _a, roleID;
+    var plan, _a, plans, roleID;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -78,14 +78,18 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
                 _a.calID = (_c.sent()).id;
                 return [4, schedule.Add(plan)];
             case 3:
-                _c.sent();
+                plans = _c.sent();
                 return [4, util.Sleep(50)];
             case 4:
                 _c.sent();
-                msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
+                return [4, msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU)];
+            case 5:
+                _c.sent();
                 roleID = const_settings_1["default"].BOSS_ROLE_ID[plan.alpha];
-                (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(roleID);
-                return [2];
+                return [4, ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add(roleID))];
+            case 6:
+                _c.sent();
+                return [2, plans];
         }
     });
 }); };

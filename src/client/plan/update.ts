@@ -9,6 +9,7 @@ import {Plan} from '../../io/type'
 /**
  * 凸予定を更新する
  * @param msg DiscordからのMessage
+ * @return 更新後の予定
  */
 export const Plans = async (msg: Discord.Message) => {
   // 凸予定のオブジェクトを作成
@@ -18,15 +19,17 @@ export const Plans = async (msg: Discord.Message) => {
   plan.calID = (await msg.reply(`${plan.boss}を予定したわよ！`)).id
 
   // 凸予定シートの値を更新
-  await schedule.Add(plan)
+  const plans = await schedule.Add(plan)
   await util.Sleep(50)
 
   // 完了の絵文字をつける
-  msg.react(Settings.EMOJI_ID.KANRYOU)
+  await msg.react(Settings.EMOJI_ID.KANRYOU)
 
   // ボス番号のロールを付与
   const roleID = Settings.BOSS_ROLE_ID[plan.alpha]
-  msg.member?.roles.add(roleID)
+  await msg.member?.roles.add(roleID)
+
+  return plans
 }
 
 /**

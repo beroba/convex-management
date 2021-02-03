@@ -19,9 +19,9 @@ export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.Us
 
   // #id送信チャンネルへの誘導をする
   const msg = await react.message.reply(
-    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！\n※10秒にこのメッセージは消えます`
+    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！\n※10秒後にこのメッセージは消えます`
   )
-  // 10秒したらメッセージを削除する
+  // 10秒後にメッセージを削除する
   setTimeout(() => msg.delete(), 10000)
 
   return 'Grant player id send role'

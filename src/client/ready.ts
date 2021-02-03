@@ -13,7 +13,7 @@ export const Ready = async () => {
   // m.member?.setNickname('キャル')
 
   //   const c = util.GetTextChannel('791537113459589192')
-  //   const m = await c.send('メンバーの状態 `members`')
+  //   const m = await c.messages.fetch('806336380967190588')
   //   m.edit(`\`\`\`json
   // [
   // ]

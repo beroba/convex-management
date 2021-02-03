@@ -1,5 +1,5 @@
-import Settings from 'const-settings'
 import Option from 'type-of-option'
+import Settings from 'const-settings'
 import PiecesEach from 'pieces-each'
 import {AtoA} from 'alphabet-to-number'
 import * as util from '../util'
@@ -13,17 +13,11 @@ import {User, Status, Member} from './type'
  * @param members メンバー一覧
  */
 export const Update = async (members: Member[]) => {
-  // 15個づつに分割する
-  const m1 = members.slice(0, 15)
-  const m2 = members.slice(15)
-
-  // 前半を更新
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[0], m1)
-
-  // 後半がない場合は終了
-  if (!m2.length) return
-  // 後半を更新
-  await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[1], m2)
+  // 15個ずつに分割
+  PiecesEach(members, 15).forEach(async (m, i) => {
+    // キャルステータスを更新
+    await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[i], m)
+  })
 }
 
 /**
@@ -37,7 +31,7 @@ export const UpdateMember = async (member: Member) => {
   // メンバーの状態を更新
   members = members.map(s => (s.id === member.id ? member : s))
 
-  // キャルステータスを更新する
+  // キャルステータスを更新
   await Update(members)
 }
 
@@ -57,7 +51,7 @@ export const UpdateUsers = async (users: Option<User[]>) => {
 
   if (!members) return
 
-  // キャルステータスを更新する
+  // キャルステータスを更新
   await Update(members)
 }
 
@@ -78,7 +72,7 @@ export const ResetConvex = async () => {
     history: '',
   }))
 
-  // キャルステータスを更新する
+  // キャルステータスを更新
   await Update(members)
 }
 
