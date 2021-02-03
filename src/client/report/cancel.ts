@@ -36,12 +36,12 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   if (!member) return
 
   // 凸状況を元に戻す
-  const result = await statusRestore(react.message)
+  const members = await statusRestore(react.message)
   // 失敗したら終了
-  if (!result) return
+  if (!members) return
 
   // 凸状況に報告
-  situation.Report()
+  situation.Report(members)
 
   return 'Convex cancellation'
 }
@@ -64,12 +64,12 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!member) return
 
   // 凸状況を元に戻す
-  const result = await statusRestore(msg)
+  const members = await statusRestore(msg)
   // 失敗したら終了
-  if (!result) return
+  if (!members) return
 
   // 凸状況に報告
-  situation.Report()
+  situation.Report(members)
 
   return 'Convex cancellation'
 }
@@ -78,17 +78,17 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
  * 凸状況を元に戻す
  * @param msg DiscordからのMessage
  * @param user リアクションしたユーザー
- * @return 成功したかの真偽値
+ * @return メンバー一覧
  */
-const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
+const statusRestore = async (msg: Discord.Message): Promise<Option<Member[]>> => {
   // メンバーの状態を取得
   let member = await status.FetchMember(msg.author.id)
-  if (!member) return false
+  if (!member) return
 
   // 2回キャンセルしてないか確認
   const result = confirmCancelTwice(member)
   // キャンセルしていた場合は終了
-  if (result) return false
+  if (result) return
 
   // 凸状況を1つ前に戻す
   member = rollback(member)
@@ -106,13 +106,13 @@ const statusRestore = async (msg: Discord.Message): Promise<boolean> => {
   killConfirm(msg)
 
   // ステータスを更新
-  await status.UpdateMember(member)
+  const members = await status.UpdateMember(member)
   await util.Sleep(50)
 
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)
 
-  return true
+  return members
 }
 
 /**

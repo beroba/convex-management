@@ -42,14 +42,14 @@ export const Update = async (arg: string, msg: Discord.Message) => {
   }
 
   // ステータスを更新
-  await status.UpdateMember(member)
+  const members = await status.UpdateMember(member)
   await util.Sleep(50)
 
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)
 
   // 凸状況に報告
-  situation.Report()
+  situation.Report(members)
 }
 
 /**

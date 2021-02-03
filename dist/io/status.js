@@ -92,7 +92,7 @@ exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void
                 return [4, exports.Update(members)];
             case 2:
                 _a.sent();
-                return [2];
+                return [2, members];
         }
     });
 }); };

@@ -87,7 +87,7 @@ var situation = __importStar(require("../convex/situation"));
 var cancel = __importStar(require("../plan/delete"));
 var list = __importStar(require("../plan/list"));
 exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, arg, arg, arg, arg, plans;
+    var _a, arg, members, members, arg, arg, arg, arg, members, plans, members;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -106,9 +106,9 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb task/.test(command): return [3, 15];
                     case /cb update report/.test(command): return [3, 16];
                     case /cb reflect/.test(command): return [3, 20];
-                    case /cb help/.test(command): return [3, 25];
+                    case /cb help/.test(command): return [3, 26];
                 }
-                return [3, 26];
+                return [3, 27];
             case 1:
                 arg = command.replace('/cb convex ', '');
                 return [4, manage.Update(arg, msg)];
@@ -124,16 +124,18 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
             case 4: return [4, lapAndBoss.Next()];
             case 5:
                 _b.sent();
-                return [4, situation.Report()];
+                return [4, status.Fetch()];
             case 6:
-                _b.sent();
+                members = _b.sent();
+                situation.Report(members);
                 return [2, 'Advance to next lap and boss'];
             case 7: return [4, lapAndBoss.Previous()];
             case 8:
                 _b.sent();
-                return [4, situation.Report()];
+                return [4, status.Fetch()];
             case 9:
-                _b.sent();
+                members = _b.sent();
+                situation.Report(members);
                 return [2, 'Advance to previous lap and boss'];
             case 10:
                 arg = command.replace('/cb boss ', '');
@@ -168,9 +170,10 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     return [2, 'Add task kill roll'];
                 }
                 _b.label = 16;
-            case 16: return [4, situation.Report()];
+            case 16: return [4, status.Fetch()];
             case 17:
-                _b.sent();
+                members = _b.sent();
+                situation.Report(members);
                 return [4, schedule.Fetch()];
             case 18:
                 plans = _b.sent();
@@ -191,21 +194,24 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                 return [4, util.Sleep(50)];
             case 24:
                 _b.sent();
-                situation.Report();
+                return [4, status.Fetch()];
+            case 25:
+                members = _b.sent();
+                situation.Report(members);
                 msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
                 return [2, 'Reflect spreadsheet values ​​in Cal'];
-            case 25:
+            case 26:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 26;
-            case 26: return [2];
+                _b.label = 27;
+            case 27: return [2];
         }
     });
 }); };
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var result;
+    var result, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, lapAndBoss.Update(arg)];
@@ -213,7 +219,10 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
                 result = _a.sent();
                 if (!result)
                     return [2, msg.reply('形式が違うわ、やりなおし！')];
-                situation.Report();
+                return [4, status.Fetch()];
+            case 2:
+                members = _a.sent();
+                situation.Report(members);
                 return [2];
         }
     });

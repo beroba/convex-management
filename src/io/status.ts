@@ -23,8 +23,9 @@ export const Update = async (members: Member[]) => {
 /**
  * メンバー個々の状態を設定する
  * @param メンバー情報
+ * @return メンバー一覧
  */
-export const UpdateMember = async (member: Member) => {
+export const UpdateMember = async (member: Member): Promise<Member[]> => {
   // メンバー全体の状態を取得
   let members = await Fetch()
 
@@ -33,6 +34,8 @@ export const UpdateMember = async (member: Member) => {
 
   // キャルステータスを更新
   await Update(members)
+
+  return members
 }
 
 /**

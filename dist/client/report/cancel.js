@@ -65,7 +65,7 @@ var status = __importStar(require("../../io/status"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var situation = __importStar(require("../convex/situation"));
 exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, member, result;
+    var channel, member, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -88,16 +88,16 @@ exports.Cancel = function (react, user) { return __awaiter(void 0, void 0, void 
                     return [2];
                 return [4, statusRestore(react.message)];
             case 3:
-                result = _a.sent();
-                if (!result)
+                members = _a.sent();
+                if (!members)
                     return [2];
-                situation.Report();
+                situation.Report(members);
                 return [2, 'Convex cancellation'];
         }
     });
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, result;
+    var member, members;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -113,26 +113,26 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2];
                 return [4, statusRestore(msg)];
             case 2:
-                result = _b.sent();
-                if (!result)
+                members = _b.sent();
+                if (!members)
                     return [2];
-                situation.Report();
+                situation.Report(members);
                 return [2, 'Convex cancellation'];
         }
     });
 }); };
 var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, result, convex;
+    var member, result, convex, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, status.FetchMember(msg.author.id)];
             case 1:
                 member = _a.sent();
                 if (!member)
-                    return [2, false];
+                    return [2];
                 result = confirmCancelTwice(member);
                 if (result)
-                    return [2, false];
+                    return [2];
                 member = rollback(member);
                 if (member.end) {
                     member = endConfirm(member, msg);
@@ -142,12 +142,12 @@ var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 killConfirm(msg);
                 return [4, status.UpdateMember(member)];
             case 2:
-                _a.sent();
+                members = _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
                 status.ReflectOnSheet(member);
-                return [2, true];
+                return [2, members];
         }
     });
 }); };
