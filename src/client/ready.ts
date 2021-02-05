@@ -12,12 +12,10 @@ export const Ready = async () => {
   // const m = await channel.send('きゃるきゃるーん')
   // m.member?.setNickname('キャル')
 
-  //   const c = util.GetTextChannel('791537113459589192')
-  //   const m = await c.messages.fetch('806336380967190588')
-  //   m.edit(`\`\`\`json
-  // [
-  // ]
-  // \`\`\``)
+  // const c = util.GetTextChannel('795629249754431488')
+  // const m = await c.send('a')
+  // m.react(Settings.EMOJI_ID.SHUSEKI)
+  // m.react(Settings.EMOJI_ID.RISEKI)
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

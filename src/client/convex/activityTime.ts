@@ -15,7 +15,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   // botのリアクションは実行しない
   if (user.bot) return
 
-  // #持ち越し凸先でなければ終了
+  // #活動時間でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
 
   // メンバーの状態を取得
@@ -36,7 +36,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
 
   // リアクションした区分がどこだか確認
   const section = confirmSection(react.emoji.id)
-  // 関係のリアクションの場合は、リアクションを外して終了
+  // 関係ないリアクションの場合は、リアクションを外して終了
   if (!section) {
     react.users.remove(user)
     return
@@ -79,7 +79,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
 
   // リアクションした区分がどこだか確認
   const section = confirmSection(react.emoji.id)
-  // 関係のリアクションの場合は、リアクションを外して終了
+  // 関係ないリアクションの場合は、リアクションを外して終了
   if (!section) {
     react.users.remove(user)
     return
