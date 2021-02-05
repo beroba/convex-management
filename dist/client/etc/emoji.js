@@ -160,9 +160,12 @@ exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         content = msg.content;
         if (content === 'りんごろう')
             return [2, ringorouEmoji(msg)];
-        content = content = msg.content.replace(/んも…|ンモ/, 'んも');
+        content = msg.content.replace(/んも…|ンモ/, 'んも');
         if (content === 'んも')
             return [2, nmoEmoji(msg)];
+        content = msg.content;
+        if (content === '白鳥')
+            return [2, shiratoriEmoji(msg)];
         return [2];
     });
 }); };
@@ -251,6 +254,17 @@ var nmoEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, functio
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, 'Send nmo Emoji'];
+        }
+    });
+}); };
+var shiratoriEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, msg.channel.send(const_settings_1["default"].EMOJI_FULL_ID.SHIRATORI)];
+            case 1:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, 'Send shiratori Emoji'];
         }
     });
 }); };

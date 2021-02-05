@@ -84,6 +84,8 @@ EMOJI_FULL_ID:
   RINGOROU: '<:ringorou:796112633900171285>'
   # んも…のカスタム絵文字のフル
   NMO: '<:nmo:803688363885461504>'
+  # 白鳥のカスタム絵文字のフル
+  SHIRATORI: '<:shiratori:807151876968808459>'
 
 # ロールのID
 ROLE_ID:

@@ -213,8 +213,12 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   if (content === 'りんごろう') return ringorouEmoji(msg)
 
   // んも…の絵文字を送信する
-  content = content = msg.content.replace(/んも…|ンモ/, 'んも')
+  content = msg.content.replace(/んも…|ンモ/, 'んも')
   if (content === 'んも') return nmoEmoji(msg)
+
+  // んも…の絵文字を送信する
+  content = msg.content
+  if (content === '白鳥') return shiratoriEmoji(msg)
 }
 
 /**
@@ -327,4 +331,18 @@ const nmoEmoji = async (msg: Discord.Message) => {
   setTimeout(() => msg.delete(), 100)
 
   return 'Send nmo Emoji'
+}
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、白鳥の絵文字を送信する
+ * @param msg DiscordからのMessage
+ */
+const shiratoriEmoji = async (msg: Discord.Message) => {
+  // サルモネラ菌の絵文字を送信
+  await msg.channel.send(Settings.EMOJI_FULL_ID.SHIRATORI)
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return 'Send shiratori Emoji'
 }
