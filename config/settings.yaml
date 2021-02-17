@@ -30,6 +30,8 @@ CHANNEL_ID:
   ACTIVITY_TIME: '795629249754431488'
   # 持ち越し凸先チャンネル
   CARRYOVER_DESTINATION: '761073612261818378'
+  # 肉のチャンネル
+  NIKU: '714033825100988438'
   # idスクショ送信のロールを付与するチャンネル
   PLAYER_ID_ROLE_GRANT: '746783106555445349'
   # プレイヤーIDのスクショを送信するチャンネル
@@ -242,6 +244,8 @@ CATEGORY:
 URL:
   YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
   SHINYTMO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/ShinyTmo.png
+  BBQ: https://cdn.discordapp.com/attachments/716480487966900235/808237135618375680/BBQ.png
+  MUSTARD: https://cdn.discordapp.com/attachments/716480487966900235/808237115963736075/MUSTARD.png
   SPREADSHEET: https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso
 
 # 活動時間のシート情報

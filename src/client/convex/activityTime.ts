@@ -140,6 +140,7 @@ const changeValueOfSheet = async (value: string, day: number, section: number, u
   // スプレッドシートからユーザー一覧を取得
   const users = await status.FetchUserFromSheet(sheet)
   const row = users.map(u => u.id).indexOf(user.id) + 3
+  if (row === 2) return
 
   await Promise.all(
     // カウントの数だけ値をつける

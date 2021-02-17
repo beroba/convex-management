@@ -102,7 +102,7 @@ var usamaruReact = function (msg) {
     console.log('React Usamaru react');
 };
 var macchaDesuyoReact = function (msg) {
-    var match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/);
+    var match = msg.content.replace(/抹茶|^まっちゃ|ですよ/g, '利休').match(/利休/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MACCHA_DESUYO);
