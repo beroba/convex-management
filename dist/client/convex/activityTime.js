@@ -158,6 +158,8 @@ var changeValueOfSheet = function (value, day, section, user) { return __awaiter
             case 2:
                 users = _a.sent();
                 row = users.map(function (u) { return u.id; }).indexOf(user.id) + 3;
+                if (row === 2)
+                    return [2];
                 return [4, Promise.all(Array(count)
                         .fill('')
                         .map(function (_, i) { return __awaiter(void 0, void 0, void 0, function () {
