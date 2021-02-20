@@ -122,6 +122,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.NikuPicture(msg);
                 if (comment)
                     return [2, console.log(comment)];
+                comment = send.AddSeihekiRole(msg);
                 comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
