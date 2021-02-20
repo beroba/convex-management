@@ -68,6 +68,9 @@ export const Message = async (msg: Discord.Message) => {
     comment = send.NikuPicture(msg)
     if (comment) return console.log(comment)
 
+    // #性癖調査18禁 #性癖調査よろず18禁に投稿した人に性癖調査をしろロールを付与
+    comment = send.AddSeihekiRole(msg)
+
     // ヤバイの文字がある場合に画像を送信
     comment = send.YabaiImage(msg)
     if (comment) return console.log(comment)

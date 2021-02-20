@@ -204,5 +204,23 @@ export const NikuPicture = (msg: Discord.Message): Option<string> => {
   // 肉の絵文字をつける
   msg.react(Settings.EMOJI_ID.NIKU)
 
+  // 飯テロリストのロールを付与する
+  msg.member?.roles.add(Settings.ROLE_ID.MESHI_TERO)
+
   return 'React Niku Channel'
+}
+
+/**
+ * #性癖調査18禁 #性癖調査よろず18禁に投稿した人に性癖調査をしろロールを付与
+ * @param msg DiscordからのMessage
+ * @return ロールを付与したかの結果
+ */
+export const AddSeihekiRole = (msg: Discord.Message): Option<string> => {
+  // #性癖調査18禁 #性癖調査よろず18禁でなければ終了
+  if (msg.channel.id !== Settings.CHANNEL_ID.SEIHEKI && msg.channel.id !== Settings.CHANNEL_ID.SEIHEKI_YOROZU) return
+
+  // 飯テロリストのロールを付与する
+  msg.member?.roles.add(Settings.ROLE_ID.SEIHEKI)
+
+  return 'Add Seiheki Role'
 }
