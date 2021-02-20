@@ -15,40 +15,40 @@ import * as emoji from './etc/emoji'
  * @param msg DiscordからのMessage
  */
 export const Message = async (msg: Discord.Message) => {
-  // クランのサーバーでなければ終了
-  if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
-
-  // `/`から始まるコマンドの処理
-  if (msg.content.charAt(0) === '/') return await Command(msg)
-
   let comment: Option<string>
 
-  // 特定のメッセージに絵文字を付ける
-  emoji.React(msg)
+  // クランのサーバーなら実行
+  if (msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')) {
+    // `/`から始まるコマンドの処理
+    if (msg.content.charAt(0) === '/') return await Command(msg)
 
-  // 凸報告の処理を行う
-  comment = await report.Convex(msg)
-  if (comment) return console.log(comment)
+    // 特定のメッセージに絵文字を付ける
+    emoji.React(msg)
 
-  // 凸予定の処理を行う
-  comment = await plan.Convex(msg)
-  if (comment) return console.log(comment)
+    // 凸報告の処理を行う
+    comment = await report.Convex(msg)
+    if (comment) return console.log(comment)
 
-  // 持ち越し状況に絵文字をつける
-  comment = over.React(msg)
-  if (comment) return console.log(comment)
+    // 凸予定の処理を行う
+    comment = await plan.Convex(msg)
+    if (comment) return console.log(comment)
 
-  // 持ち越し凸先に絵文字をつける
-  comment = sister.React(msg)
-  if (comment) return console.log(comment)
+    // 持ち越し状況に絵文字をつける
+    comment = over.React(msg)
+    if (comment) return console.log(comment)
 
-  // プレイヤーIDの保存処理を行う
-  comment = await playerID.Save(msg)
-  if (comment) return console.log(comment)
+    // 持ち越し凸先に絵文字をつける
+    comment = sister.React(msg)
+    if (comment) return console.log(comment)
 
-  // メッセージにカンカンカンが含まれている場合の処理
-  comment = send.GoodMorning(msg)
-  if (comment) return console.log(comment)
+    // プレイヤーIDの保存処理を行う
+    comment = await playerID.Save(msg)
+    if (comment) return console.log(comment)
+
+    // メッセージにカンカンカンが含まれている場合の処理
+    comment = send.GoodMorning(msg)
+    if (comment) return console.log(comment)
+  }
 
   // メッセージの先頭がおはなしの場合の処理
   comment = await send.Speak(msg)
@@ -58,15 +58,18 @@ export const Message = async (msg: Discord.Message) => {
   comment = send.AorB(msg)
   if (comment) return console.log(comment)
 
-  // ヤバイの文字がある場合に画像を送信
-  comment = send.YabaiImage(msg)
-  if (comment) return console.log(comment)
+  // クランのサーバーなら実行
+  if (msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')) {
+    // ヤバイの文字がある場合に画像を送信
+    comment = send.YabaiImage(msg)
+    if (comment) return console.log(comment)
 
-  // シャイニートモの場合に画像を送信
-  comment = send.ShinyTmoImage(msg)
-  if (comment) return console.log(comment)
+    // シャイニートモの場合に画像を送信
+    comment = send.ShinyTmoImage(msg)
+    if (comment) return console.log(comment)
 
-  // 特定の文字が完全1位していた場合に対応した絵文字を送信
-  comment = await emoji.Send(msg)
-  if (comment) return console.log(comment)
+    // 特定の文字が完全一致していた場合に対応した絵文字を送信
+    comment = await emoji.Send(msg)
+    if (comment) return console.log(comment)
+  }
 }
