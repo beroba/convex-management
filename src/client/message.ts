@@ -64,6 +64,10 @@ export const Message = async (msg: Discord.Message) => {
     comment = await emoji.Send(msg)
     if (comment) return console.log(comment)
 
+    // #肉に画像が送信された際に肉絵文字を付ける
+    comment = send.NikuPicture(msg)
+    if (comment) return console.log(comment)
+
     // ヤバイの文字がある場合に画像を送信
     comment = send.YabaiImage(msg)
     if (comment) return console.log(comment)

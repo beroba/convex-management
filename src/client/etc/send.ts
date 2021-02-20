@@ -187,3 +187,22 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
 
   return 'Send Yabai Image'
 }
+
+/**
+ #肉に画像が送信された際に肉の絵文字を付ける
+ * @param msg DiscordからのMessage
+ * @return リアクションしたかの結果
+ */
+export const NikuPicture = (msg: Discord.Message): Option<string> => {
+  // #肉でなければ終了
+  if (msg.channel.id !== Settings.CHANNEL_ID.NIKU) return
+
+  // メッセージに画像があるか確認する
+  const url = msg.attachments.map(a => a.url)[0]
+  if (!url) return
+
+  // 肉の絵文字をつける
+  msg.react(Settings.EMOJI_ID.NIKU)
+
+  return 'React Niku Channel'
+}

@@ -63,20 +63,12 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, c, m;
+    var channel;
     var _a;
     return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-                channel.send('きゃるきゃるーん');
-                c = util.GetTextChannel('714020537231343656');
-                return [4, c.messages.fetch('810350429451190314')];
-            case 1:
-                m = _b.sent();
-                m.react(const_settings_1["default"].EMOJI_ID.MACCHA_DESUYO);
-                https: console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
-                return [2];
-        }
+        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+        channel.send('きゃるきゃるーん');
+        console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+        return [2];
     });
 }); };

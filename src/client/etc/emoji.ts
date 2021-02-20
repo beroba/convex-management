@@ -50,7 +50,7 @@ const yuiKusanoReact = (msg: Discord.Message) => {
   // 草野優衣の絵文字をつける
   msg.react(Settings.EMOJI_ID.YUI_KUSANO)
 
-  console.log('React Yui Kusano react')
+  console.log('React Yui Kusano')
 }
 
 /**
@@ -69,7 +69,7 @@ const mazarashiReact = (msg: Discord.Message) => {
   // まざらしの絵文字をつける
   msg.react(Settings.EMOJI_ID.MAZARASHI)
 
-  console.log('React Mazarashi react')
+  console.log('React Mazarashi')
 }
 
 /**
@@ -88,7 +88,7 @@ const usamaruReact = (msg: Discord.Message) => {
   // うさまるの絵文字をつける
   msg.react(Settings.EMOJI_ID.USAMARU)
 
-  console.log('React Usamaru react')
+  console.log('React Usamaru')
 }
 
 /**
@@ -105,7 +105,7 @@ const macchaDesuyoReact = (msg: Discord.Message) => {
   // 抹茶ですよの絵文字をつける
   msg.react(Settings.EMOJI_ID.MACCHA_DESUYO)
 
-  console.log('React Maccha Desuyo react')
+  console.log('React Maccha Desuyo')
 }
 
 /**
@@ -122,7 +122,7 @@ const nikuReact = (msg: Discord.Message) => {
   // 肉の絵文字をつける
   msg.react(Settings.EMOJI_ID.NIKU)
 
-  console.log('React Niku react')
+  console.log('React Niku')
 }
 
 /**
@@ -139,7 +139,7 @@ const pantiesReact = (msg: Discord.Message) => {
   // 肉の絵文字をつける
   msg.react(Settings.EMOJI_ID.PANTIES)
 
-  console.log('React Panties react')
+  console.log('React Panties')
 }
 
 /**
@@ -156,7 +156,7 @@ const ringorouReact = (msg: Discord.Message) => {
   // りんごろうの絵文字をつける
   msg.react(Settings.EMOJI_ID.RINGOROU)
 
-  console.log('React Ringorou react')
+  console.log('React Ringorou')
 }
 
 /**
@@ -173,7 +173,7 @@ const smicleReact = (msg: Discord.Message) => {
   // すまいるの絵文字をつける
   msg.react(Settings.EMOJI_ID.SMICLE)
 
-  console.log('React smicle react')
+  console.log('React smicle')
 }
 
 /**
