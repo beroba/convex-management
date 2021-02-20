@@ -60,16 +60,16 @@ export const Message = async (msg: Discord.Message) => {
 
   // クランのサーバーなら実行
   if (msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')) {
+    // 特定の文字が完全一致していた場合に対応した絵文字を送信
+    comment = await emoji.Send(msg)
+    if (comment) return console.log(comment)
+
     // ヤバイの文字がある場合に画像を送信
     comment = send.YabaiImage(msg)
     if (comment) return console.log(comment)
 
     // シャイニートモの場合に画像を送信
     comment = send.ShinyTmoImage(msg)
-    if (comment) return console.log(comment)
-
-    // 特定の文字が完全一致していた場合に対応した絵文字を送信
-    comment = await emoji.Send(msg)
     if (comment) return console.log(comment)
   }
 }
