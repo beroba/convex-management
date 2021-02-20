@@ -97,7 +97,7 @@ const usamaruReact = (msg: Discord.Message) => {
  */
 const macchaDesuyoReact = (msg: Discord.Message) => {
   // 抹茶ですよっぽい文字が含まれているか確認
-  const match = msg.content.replace(/抹茶|^まっちゃ|ですよ/g, '利休').match(/利休/)
+  const match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/)
 
   // 含まれていない場合は終了
   if (!match) return
