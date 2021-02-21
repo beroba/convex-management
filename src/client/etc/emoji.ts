@@ -50,7 +50,7 @@ const yuiKusanoReact = (msg: Discord.Message) => {
   // 草野優衣の絵文字をつける
   msg.react(Settings.EMOJI_ID.YUI_KUSANO)
 
-  console.log('React Yui Kusano react')
+  console.log('React Yui Kusano')
 }
 
 /**
@@ -60,8 +60,8 @@ const yuiKusanoReact = (msg: Discord.Message) => {
 const mazarashiReact = (msg: Discord.Message) => {
   // まざらしっぽい文字が含まれているか確認
   const match = msg.content
-    .replace(/ま.+らし|厚着|下着|冷凍|解凍|むちむち|オクトー|だめらし|722547140487938181/g, 'まらざし')
-    .match(/まらざし/)
+    .replace(/ま.{1,3}らし|厚着|冷凍|解凍|玉子|オクトー|722547140487938181/g, 'だめらし')
+    .match(/だめらし/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -69,7 +69,7 @@ const mazarashiReact = (msg: Discord.Message) => {
   // まざらしの絵文字をつける
   msg.react(Settings.EMOJI_ID.MAZARASHI)
 
-  console.log('React Mazarashi react')
+  console.log('React Mazarashi')
 }
 
 /**
@@ -79,7 +79,7 @@ const mazarashiReact = (msg: Discord.Message) => {
 const usamaruReact = (msg: Discord.Message) => {
   // うさまるっぽい文字が含まれているか確認
   const match = msg.content
-    .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ...|..ギガス$|ｷﾞｶﾞ|652747597739589632/g, 'うさまる')
+    .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ..|..ギガス$|ｷﾞｶﾞ|793515921128816670/g, 'うさまる')
     .match(/うさまる/)
 
   // 含まれていない場合は終了
@@ -88,7 +88,7 @@ const usamaruReact = (msg: Discord.Message) => {
   // うさまるの絵文字をつける
   msg.react(Settings.EMOJI_ID.USAMARU)
 
-  console.log('React Usamaru react')
+  console.log('React Usamaru')
 }
 
 /**
@@ -97,7 +97,7 @@ const usamaruReact = (msg: Discord.Message) => {
  */
 const macchaDesuyoReact = (msg: Discord.Message) => {
   // 抹茶ですよっぽい文字が含まれているか確認
-  const match = msg.content.replace(/抹茶|^まっちゃ|ですよ/g, '利休').match(/利休/)
+  const match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -105,7 +105,7 @@ const macchaDesuyoReact = (msg: Discord.Message) => {
   // 抹茶ですよの絵文字をつける
   msg.react(Settings.EMOJI_ID.MACCHA_DESUYO)
 
-  console.log('React Maccha Desuyo react')
+  console.log('React Maccha Desuyo')
 }
 
 /**
@@ -122,7 +122,7 @@ const nikuReact = (msg: Discord.Message) => {
   // 肉の絵文字をつける
   msg.react(Settings.EMOJI_ID.NIKU)
 
-  console.log('React Niku react')
+  console.log('React Niku')
 }
 
 /**
@@ -139,7 +139,7 @@ const pantiesReact = (msg: Discord.Message) => {
   // 肉の絵文字をつける
   msg.react(Settings.EMOJI_ID.PANTIES)
 
-  console.log('React Panties react')
+  console.log('React Panties')
 }
 
 /**
@@ -148,7 +148,7 @@ const pantiesReact = (msg: Discord.Message) => {
  */
 const ringorouReact = (msg: Discord.Message) => {
   // りんごろうっぽい文字が含まれているか確認
-  const match = msg.content.replace(/んご|ンゴ|辻野|あかり|ﾝｺﾞ|あっぷる|アップル|apple/gi, 'んご').match(/んご/)
+  const match = msg.content.replace(/んご|ンゴ|辻野|あかり|ﾝｺﾞ|林檎|あっぷる|アップル|apple/gi, 'んご').match(/んご/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -156,7 +156,7 @@ const ringorouReact = (msg: Discord.Message) => {
   // りんごろうの絵文字をつける
   msg.react(Settings.EMOJI_ID.RINGOROU)
 
-  console.log('React Ringorou react')
+  console.log('React Ringorou')
 }
 
 /**
@@ -173,7 +173,7 @@ const smicleReact = (msg: Discord.Message) => {
   // すまいるの絵文字をつける
   msg.react(Settings.EMOJI_ID.SMICLE)
 
-  console.log('React smicle react')
+  console.log('React smicle')
 }
 
 /**
@@ -197,8 +197,8 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   if (content === '熱盛') return atsumoriEmoji(msg)
 
   // 喧嘩か？の絵文字を送信する
-  content = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か/, '喧嘩か？')
-  if (content === '喧嘩か？') return kenkakaEmoji(msg)
+  content = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か？/, '喧嘩か')
+  if (content === '喧嘩か') return kenkakaEmoji(msg)
 
   // 草の絵文字を送信する
   content = msg.content
@@ -216,9 +216,13 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   content = msg.content.replace(/んも…|ンモ/, 'んも')
   if (content === 'んも') return nmoEmoji(msg)
 
-  // んも…の絵文字を送信する
+  // 白鳥の絵文字を送信する
   content = msg.content
   if (content === '白鳥') return shiratoriEmoji(msg)
+
+  // アの絵文字を送信する
+  content = msg.content
+  if (content === 'ア') return aEmoji(msg)
 }
 
 /**
@@ -232,7 +236,7 @@ const ruruEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send ruru Emoji'
+  return `${util.GetUserName(msg.member)} Send ruru Emoji`
 }
 
 /**
@@ -246,7 +250,7 @@ const kmrEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send kmr Emoji'
+  return `${util.GetUserName(msg.member)} Send kmr Emoji`
 }
 
 /**
@@ -260,7 +264,7 @@ const atsumoriEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send atsumori Emoji'
+  return `${util.GetUserName(msg.member)} Send atsumori Emoji`
 }
 
 /**
@@ -274,7 +278,7 @@ const kenkakaEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send kenkaka Emoji'
+  return `${util.GetUserName(msg.member)} Send kenkaka Emoji`
 }
 
 /**
@@ -288,7 +292,7 @@ const kusaEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send kusa Emoji'
+  return `${util.GetUserName(msg.member)} Send kusa Emoji`
 }
 
 /**
@@ -302,7 +306,7 @@ const pantiesEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send kusa Emoji'
+  return `${util.GetUserName(msg.member)} Send kusa Emoji`
 }
 
 /**
@@ -316,7 +320,7 @@ const ringorouEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send ringorou Emoji'
+  return `${util.GetUserName(msg.member)} Send ringorou Emoji`
 }
 
 /**
@@ -330,7 +334,7 @@ const nmoEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send nmo Emoji'
+  return `${util.GetUserName(msg.member)} Send nmo Emoji`
 }
 
 /**
@@ -344,5 +348,19 @@ const shiratoriEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send shiratori Emoji'
+  return `${util.GetUserName(msg.member)} Send shiratori Emoji`
+}
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、アの絵文字を送信する
+ * @param msg DiscordからのMessage
+ */
+const aEmoji = async (msg: Discord.Message) => {
+  // スタンプ保管庫の絵文字を送信
+  await msg.channel.send(Settings.EMOJI_FULL_ID.A)
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return `${util.GetUserName(msg.member)} Send A Emoji`
 }

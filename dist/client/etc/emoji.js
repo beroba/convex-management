@@ -81,60 +81,60 @@ var yuiKusanoReact = function (msg) {
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.YUI_KUSANO);
-    console.log('React Yui Kusano react');
+    console.log('React Yui Kusano');
 };
 var mazarashiReact = function (msg) {
     var match = msg.content
-        .replace(/ま.+らし|厚着|下着|冷凍|解凍|むちむち|オクトー|だめらし|722547140487938181/g, 'まらざし')
-        .match(/まらざし/);
+        .replace(/ま.{1,3}らし|厚着|冷凍|解凍|玉子|オクトー|722547140487938181/g, 'だめらし')
+        .match(/だめらし/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
-    console.log('React Mazarashi react');
+    console.log('React Mazarashi');
 };
 var usamaruReact = function (msg) {
     var match = msg.content
-        .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ...|..ギガス$|ｷﾞｶﾞ|652747597739589632/g, 'うさまる')
+        .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ..|..ギガス$|ｷﾞｶﾞ|793515921128816670/g, 'うさまる')
         .match(/うさまる/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.USAMARU);
-    console.log('React Usamaru react');
+    console.log('React Usamaru');
 };
 var macchaDesuyoReact = function (msg) {
-    var match = msg.content.replace(/抹茶|^まっちゃ|ですよ/g, '利休').match(/利休/);
+    var match = msg.content.replace(/抹茶|^まっちゃ/g, '利休').match(/利休/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MACCHA_DESUYO);
-    console.log('React Maccha Desuyo react');
+    console.log('React Maccha Desuyo');
 };
 var nikuReact = function (msg) {
     var match = msg.content.match(/肉/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.NIKU);
-    console.log('React Niku react');
+    console.log('React Niku');
 };
 var pantiesReact = function (msg) {
     var match = msg.content.replace(/ぱんつ|パンツ|パンティ|下着/g, 'しろは').match(/しろは/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.PANTIES);
-    console.log('React Panties react');
+    console.log('React Panties');
 };
 var ringorouReact = function (msg) {
-    var match = msg.content.replace(/んご|ンゴ|辻野|あかり|ﾝｺﾞ|あっぷる|アップル|apple/gi, 'んご').match(/んご/);
+    var match = msg.content.replace(/んご|ンゴ|辻野|あかり|ﾝｺﾞ|林檎|あっぷる|アップル|apple/gi, 'んご').match(/んご/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.RINGOROU);
-    console.log('React Ringorou react');
+    console.log('React Ringorou');
 };
 var smicleReact = function (msg) {
     var match = msg.content.replace(/スマイル|smicle/gi, 'すまいる').match(/すまいる/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.SMICLE);
-    console.log('React smicle react');
+    console.log('React smicle');
 };
 exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
@@ -148,8 +148,8 @@ exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         content = msg.content.replace(/あつもり/, '熱盛');
         if (content === '熱盛')
             return [2, atsumoriEmoji(msg)];
-        content = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か/, '喧嘩か？');
-        if (content === '喧嘩か？')
+        content = msg.content.replace(/かちこみ|けんかか？|けんかか|ケンカか？|ケンカか|喧嘩か？/, '喧嘩か');
+        if (content === '喧嘩か')
             return [2, kenkakaEmoji(msg)];
         content = msg.content;
         if (content === 'kusa')
@@ -166,6 +166,9 @@ exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         content = msg.content;
         if (content === '白鳥')
             return [2, shiratoriEmoji(msg)];
+        content = msg.content;
+        if (content === 'ア')
+            return [2, aEmoji(msg)];
         return [2];
     });
 }); };
@@ -176,7 +179,7 @@ var ruruEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send ruru Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send ruru Emoji"];
         }
     });
 }); };
@@ -187,7 +190,7 @@ var kmrEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, functio
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kmr Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send kmr Emoji"];
         }
     });
 }); };
@@ -198,7 +201,7 @@ var atsumoriEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send atsumori Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send atsumori Emoji"];
         }
     });
 }); };
@@ -209,7 +212,7 @@ var kenkakaEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kenkaka Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send kenkaka Emoji"];
         }
     });
 }); };
@@ -220,7 +223,7 @@ var kusaEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kusa Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send kusa Emoji"];
         }
     });
 }); };
@@ -231,7 +234,7 @@ var pantiesEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send kusa Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send kusa Emoji"];
         }
     });
 }); };
@@ -242,7 +245,7 @@ var ringorouEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send ringorou Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send ringorou Emoji"];
         }
     });
 }); };
@@ -253,7 +256,7 @@ var nmoEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, functio
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send nmo Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send nmo Emoji"];
         }
     });
 }); };
@@ -264,7 +267,18 @@ var shiratoriEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, f
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, 'Send shiratori Emoji'];
+                return [2, util.GetUserName(msg.member) + " Send shiratori Emoji"];
+        }
+    });
+}); };
+var aEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, msg.channel.send(const_settings_1["default"].EMOJI_FULL_ID.A)];
+            case 1:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, util.GetUserName(msg.member) + " Send A Emoji"];
         }
     });
 }); };

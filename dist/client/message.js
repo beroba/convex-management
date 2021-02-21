@@ -70,25 +70,24 @@ var send = __importStar(require("./etc/send"));
 var emoji = __importStar(require("./etc/emoji"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
-                    return [2];
+                if (!(((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 6];
                 if (!(msg.content.charAt(0) === '/')) return [3, 2];
                 return [4, command_1.Command(msg)];
-            case 1: return [2, _b.sent()];
+            case 1: return [2, _c.sent()];
             case 2:
                 emoji.React(msg);
                 return [4, report.Convex(msg)];
             case 3:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, plan.Convex(msg)];
             case 4:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = over.React(msg);
@@ -99,32 +98,39 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
             case 5:
-                comment = _b.sent();
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.GoodMorning(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, send.Speak(msg)];
-            case 6:
-                comment = _b.sent();
+                _c.label = 6;
+            case 6: return [4, send.Speak(msg)];
+            case 7:
+                comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.AorB(msg);
                 if (comment)
                     return [2, console.log(comment)];
+                if (!(((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 9];
+                return [4, emoji.Send(msg)];
+            case 8:
+                comment = _c.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                comment = send.NikuPicture(msg);
+                if (comment)
+                    return [2, console.log(comment)];
+                comment = send.AddSeihekiRole(msg);
                 comment = send.YabaiImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.ShinyTmoImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, emoji.Send(msg)];
-            case 7:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
+                _c.label = 9;
+            case 9: return [2];
         }
     });
 }); };

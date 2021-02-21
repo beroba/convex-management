@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ShinyTmoImage = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
+exports.AddSeihekiRole = exports.NikuPicture = exports.ShinyTmoImage = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -149,4 +149,22 @@ exports.ShinyTmoImage = function (msg) {
     msg.channel.send('', { files: [const_settings_1["default"].URL.SHINYTMO] });
     setTimeout(function () { return msg["delete"](); }, 100);
     return 'Send Yabai Image';
+};
+exports.NikuPicture = function (msg) {
+    var _a;
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.NIKU)
+        return;
+    var url = msg.attachments.map(function (a) { return a.url; })[0];
+    if (!url)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.NIKU);
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.add(const_settings_1["default"].ROLE_ID.MESHI_TERO);
+    return 'React Niku Channel';
+};
+exports.AddSeihekiRole = function (msg) {
+    var _a;
+    if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.SEIHEKI && msg.channel.id !== const_settings_1["default"].CHANNEL_ID.SEIHEKI_YOROZU)
+        return;
+    (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.add(const_settings_1["default"].ROLE_ID.SEIHEKI);
+    return 'Add Seiheki Role';
 };
