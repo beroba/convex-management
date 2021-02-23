@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
 import * as status from '../../io/status'
+import * as util from '../../util'
 import * as spreadsheet from '../../util/spreadsheet'
 
 /**
@@ -142,13 +143,46 @@ const changeValueOfSheet = async (value: string, day: number, section: number, u
   const row = users.map(u => u.id).indexOf(user.id) + 3
   if (row === 2) return
 
-  await Promise.all(
-    // カウントの数だけ値をつける
-    Array(count)
-      .fill('')
-      .map(async (_, i) => {
-        const cell = await sheet.getCell(`${col1}${AtoA(col2, i)}${row}`)
-        await cell.setValue(value)
-      })
-  )
+  // 値の更新
+  for (const i of Array(count)
+    .fill('')
+    .map((_, i) => i)) {
+    const cell = await sheet.getCell(`${col1}${AtoA(col2, i)}${row}`)
+    await cell.setValue(value)
+    // 順番通りに変更されるようにする
+    await util.Sleep(0)
+  }
+}
+
+/**
+ * スプシの活動時間から離席中ロールを切り替える
+ * @param day 確認する日付
+ * @param section 確認する区分
+ */
+export const Switch = async (day: number, section: number) => {
+  // 列と長さを決める
+  const col1 = day !== 1 ? AtoA('A', day - 2) : ''
+  const col2 = Settings.ACTIVITY_TIME_SHEET.SEPARATE[section - 1]
+
+  // 凸状況のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.ACTIVITY_TIME_SHEET.SHEET_NAME)
+
+  // スプレッドシートからユーザー一覧を取得
+  const users = await status.FetchUserFromSheet(sheet)
+
+  for (const u of users) {
+    // Memberを取得
+    const guildMember = await util.MemberFromId(u.id)
+
+    // セルを取得
+    const row = users.map(u => u.id).indexOf(u.id) + 3
+    const cell = await sheet.getCell(`${col1}${col2}${row}`)
+
+    // 値によってロールの切り替えをする
+    if (await cell.getValue()) {
+      guildMember.roles.add(Settings.ROLE_ID.AWAY_IN)
+    } else {
+      guildMember.roles.remove(Settings.ROLE_ID.AWAY_IN)
+    }
+  }
 }

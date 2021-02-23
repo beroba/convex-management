@@ -64,10 +64,17 @@ export const SituationEdit = async (plans: Plan[]) => {
  */
 const createPlanText = async (alpha: string, stage: string, plans: Plan[]): Promise<string> => {
   // 凸予定一覧から名前とメッセージだけにしたテキストを作成
-  const text = plans
-    .filter(p => p.alpha === alpha)
-    .map(p => `${p.name} ${p.msg}`)
-    .join('\n')
+  const p = await Promise.all(
+    plans
+      .filter(p => p.alpha === alpha)
+      .map(async p => {
+        const member = await util.MemberFromId(p.playerID)
+        const bool = util.IsRole(member, Settings.ROLE_ID.AWAY_IN)
+        // 離席中なら表示しない
+        return bool ? '' : `${p.name} ${p.msg}`
+      })
+  )
+  const text = p.join('\n')
 
   // ボス名とHPを取得
   const name = await bossTable.TakeName(alpha)
