@@ -34,6 +34,15 @@ export const React = async (msg: Discord.Message) => {
 
   // すまいるの絵文字を押す
   smicleReact(msg)
+
+  // おはようの絵文字を押す
+  ohayouReact(msg)
+
+  // おやすみの絵文字を押す
+  oyasumiReact(msg)
+
+  // おつかれの絵文字を押す
+  otukareReact(msg)
 }
 
 /**
@@ -174,6 +183,57 @@ const smicleReact = (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.SMICLE)
 
   console.log('React smicle')
+}
+
+/**
+ * 送信されたメッセージにおはようが含まれていた場合、おはようの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const ohayouReact = (msg: Discord.Message) => {
+  // おはようの文字が含まれているか確認
+  const match = msg.content.replace(/ohayou/gi, 'おはよう').match(/おはよう/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // おはようの絵文字をつける
+  msg.react(Settings.EMOJI_ID.OHAYOU)
+
+  console.log('React ohayou')
+}
+
+/**
+ * 送信されたメッセージにおやすみが含まれていた場合、おやすみの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const oyasumiReact = (msg: Discord.Message) => {
+  // おやすみの文字が含まれているか確認
+  const match = msg.content.replace(/oyasumi/gi, 'おやすみ').match(/おやすみ/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // おやすみの絵文字をつける
+  msg.react(Settings.EMOJI_ID.OYASUMI)
+
+  console.log('React oyasumi')
+}
+
+/**
+ * 送信されたメッセージにおつかれが含まれていた場合、おつかれの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const otukareReact = (msg: Discord.Message) => {
+  // おつかれの文字が含まれているか確認
+  const match = msg.content.replace(/otukare/gi, 'おつかれ').match(/おつかれ/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // おつかれの絵文字をつける
+  msg.react(Settings.EMOJI_ID.OTUKARE)
+
+  console.log('React otukare')
 }
 
 /**
