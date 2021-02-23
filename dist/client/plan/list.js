@@ -117,16 +117,28 @@ exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void
     });
 }); };
 var createPlanText = function (alpha, stage, plans) { return __awaiter(void 0, void 0, void 0, function () {
-    var text, name, hp;
+    var p, text, name, hp;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                text = plans
+            case 0: return [4, Promise.all(plans
                     .filter(function (p) { return p.alpha === alpha; })
-                    .map(function (p) { return p.name + " " + p.msg; })
-                    .join('\n');
-                return [4, bossTable.TakeName(alpha)];
+                    .map(function (p) { return __awaiter(void 0, void 0, void 0, function () {
+                    var member, bool;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, util.MemberFromId(p.playerID)];
+                            case 1:
+                                member = _a.sent();
+                                bool = util.IsRole(member, const_settings_1["default"].ROLE_ID.AWAY_IN);
+                                return [2, bool ? '' : p.name + " " + p.msg];
+                        }
+                    });
+                }); }))];
             case 1:
+                p = _a.sent();
+                text = p.join('\n');
+                return [4, bossTable.TakeName(alpha)];
+            case 2:
                 name = _a.sent();
                 hp = const_settings_1["default"].STAGE_HP[stage][alpha];
                 return [2, name + " `" + hp + "`\n```\n" + (text ? text : ' ') + "\n```"];

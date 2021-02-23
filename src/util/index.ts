@@ -61,6 +61,14 @@ export const IsRole = (member: Option<Discord.GuildMember>, role: string): Optio
   member?.roles.cache.some(r => r.id === role)
 
 /**
+ * idからMemberを取得する
+ * @param id 取得したいメンバーのid
+ * @return 取得したMember
+ */
+export const MemberFromId = async (id: string): Promise<Discord.GuildMember> =>
+  (await GetGuild()?.members.fetch())?.map(m => m).find(m => m.id === id) as Discord.GuildMember
+
+/**
  * Userの名前を取得する。
  * ニックネームがある場合はそちらを取る
  * @param m Userの情報
