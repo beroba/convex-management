@@ -85,11 +85,14 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.SHUSEKI)
                     return [2];
                 (_b = (_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m; }).find(function (m) { return m.id === user.id; })) === null || _b === void 0 ? void 0 : _b.roles.remove(const_settings_1["default"].ROLE_ID.AWAY_IN);
-                return [4, exports.Edit()];
+                return [4, util.Sleep(100)];
             case 2:
                 _c.sent();
-                return [4, schedule.Fetch()];
+                return [4, exports.Edit()];
             case 3:
+                _c.sent();
+                return [4, schedule.Fetch()];
+            case 4:
                 plans = _c.sent();
                 list.SituationEdit(plans);
                 return [2, 'Remove the role away in'];
@@ -117,11 +120,14 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.RISEKI)
                     return [2];
                 (_b = (_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m; }).find(function (m) { return m.id === user.id; })) === null || _b === void 0 ? void 0 : _b.roles.add(const_settings_1["default"].ROLE_ID.AWAY_IN);
-                return [4, exports.Edit()];
+                return [4, util.Sleep(100)];
             case 2:
                 _c.sent();
-                return [4, schedule.Fetch()];
+                return [4, exports.Edit()];
             case 3:
+                _c.sent();
+                return [4, schedule.Fetch()];
+            case 4:
                 plans = _c.sent();
                 list.SituationEdit(plans);
                 return [2, 'Remove the role away in'];

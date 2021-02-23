@@ -64,11 +64,14 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
 var dateTable = __importStar(require("../io/dateTable"));
 var status = __importStar(require("../io/status"));
+var activityTime = __importStar(require("../client/convex/activityTime"));
+var attendance = __importStar(require("../client/convex/attendance"));
 exports.CronOperation = function () {
     setRemainConvex('0 10 5 * * *');
     removeTaskillRoll('0 0 5 * * *');
     resetConvex('0 0 5 * * *');
     notifyDailyMission('0 30 4 * * *');
+    switchAwayInRole();
 };
 var setRemainConvex = function (expression) {
     cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -127,4 +130,35 @@ var notifyDailyMission = function (expression) {
         channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！');
         console.log('Notify daily mission digestion');
     });
+};
+var switchAwayInRole = function () {
+    switchRole('0 0 5 * * *', 1);
+    switchRole('0 0 8 * * *', 2);
+    switchRole('0 0 12 * * *', 3);
+    switchRole('0 0 14 * * *', 4);
+    switchRole('0 0 18 * * *', 5);
+    switchRole('0 0 22 * * *', 6);
+    switchRole('0 0 2 * * *', 7);
+};
+var switchRole = function (expression, section) {
+    cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
+        var date;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, dateTable.TakeDate()];
+                case 1:
+                    date = _a.sent();
+                    if (date.num === '練習日')
+                        return [2];
+                    return [4, activityTime.Switch(Number(date.num[0]), section)];
+                case 2:
+                    _a.sent();
+                    return [4, attendance.Edit()];
+                case 3:
+                    _a.sent();
+                    console.log("Switch Away In Role: " + date.num + " " + date.day);
+                    return [2];
+            }
+        });
+    }); });
 };

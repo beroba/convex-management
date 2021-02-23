@@ -39,6 +39,8 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
     .find(m => m.id === user.id)
     ?.roles.remove(Settings.ROLE_ID.AWAY_IN)
 
+  await util.Sleep(100)
+
   // 出欠のメッセージを更新する
   await Edit()
 
@@ -81,6 +83,8 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
     .map(m => m)
     .find(m => m.id === user.id)
     ?.roles.add(Settings.ROLE_ID.AWAY_IN)
+
+  await util.Sleep(100)
 
   // 出欠のメッセージを更新する
   await Edit()
