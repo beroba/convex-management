@@ -43,6 +43,9 @@ export const React = async (msg: Discord.Message) => {
 
   // おつかれの絵文字を押す
   otukareReact(msg)
+
+  // 中華の絵文字を押す
+  chuukaReact(msg)
 }
 
 /**
@@ -234,6 +237,23 @@ const otukareReact = (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.OTUKARE)
 
   console.log('React otukare')
+}
+
+/**
+ * 送信されたメッセージに中華が含まれていた場合、中華の絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const chuukaReact = (msg: Discord.Message) => {
+  // 中華の文字が含まれているか確認
+  const match = msg.content.match(/中華/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // 中華の絵文字をつける
+  msg.react(Settings.EMOJI_ID.CHUUKA)
+
+  console.log('React chuuka')
 }
 
 /**

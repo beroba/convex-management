@@ -76,6 +76,7 @@ exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, functi
         ohayouReact(msg);
         oyasumiReact(msg);
         otukareReact(msg);
+        chuukaReact(msg);
         return [2];
     });
 }); };
@@ -159,6 +160,13 @@ var otukareReact = function (msg) {
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.OTUKARE);
     console.log('React otukare');
+};
+var chuukaReact = function (msg) {
+    var match = msg.content.match(/中華/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.CHUUKA);
+    console.log('React chuuka');
 };
 exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
