@@ -54,14 +54,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Remove = exports.Add = void 0;
+exports.Switch = exports.Remove = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var status = __importStar(require("../../io/status"));
+var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, day, section;
@@ -144,41 +156,114 @@ var confirmSection = function (id) {
                                 null;
 };
 var changeValueOfSheet = function (value, day, section, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var col1, col2, count, sheet, users, row;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var col1, col2, count, sheet, users, row, _a, _b, i, cell, e_1_1;
+    var e_1, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 col1 = day !== 1 ? alphabet_to_number_1.AtoA('A', day - 2) : '';
                 col2 = const_settings_1["default"].ACTIVITY_TIME_SHEET.SEPARATE[section - 1];
                 count = const_settings_1["default"].ACTIVITY_TIME_SHEET.NUMBER[section - 1];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].ACTIVITY_TIME_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _a.sent();
+                sheet = _d.sent();
                 return [4, status.FetchUserFromSheet(sheet)];
             case 2:
-                users = _a.sent();
+                users = _d.sent();
                 row = users.map(function (u) { return u.id; }).indexOf(user.id) + 3;
                 if (row === 2)
                     return [2];
-                return [4, Promise.all(Array(count)
-                        .fill('')
-                        .map(function (_, i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var cell;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, sheet.getCell("" + col1 + alphabet_to_number_1.AtoA(col2, i) + row)];
-                                case 1:
-                                    cell = _a.sent();
-                                    return [4, cell.setValue(value)];
-                                case 2:
-                                    _a.sent();
-                                    return [2];
-                            }
-                        });
-                    }); }))];
+                _d.label = 3;
             case 3:
-                _a.sent();
-                return [2];
+                _d.trys.push([3, 10, 11, 12]);
+                _a = __values(Array(count)
+                    .fill('')
+                    .map(function (_, i) { return i; })), _b = _a.next();
+                _d.label = 4;
+            case 4:
+                if (!!_b.done) return [3, 9];
+                i = _b.value;
+                return [4, sheet.getCell("" + col1 + alphabet_to_number_1.AtoA(col2, i) + row)];
+            case 5:
+                cell = _d.sent();
+                return [4, cell.setValue(value)];
+            case 6:
+                _d.sent();
+                return [4, util.Sleep(0)];
+            case 7:
+                _d.sent();
+                _d.label = 8;
+            case 8:
+                _b = _a.next();
+                return [3, 4];
+            case 9: return [3, 12];
+            case 10:
+                e_1_1 = _d.sent();
+                e_1 = { error: e_1_1 };
+                return [3, 12];
+            case 11:
+                try {
+                    if (_b && !_b.done && (_c = _a["return"])) _c.call(_a);
+                }
+                finally { if (e_1) throw e_1.error; }
+                return [7];
+            case 12: return [2];
+        }
+    });
+}); };
+exports.Switch = function (day, section) { return __awaiter(void 0, void 0, void 0, function () {
+    var col1, col2, sheet, users, users_1, users_1_1, u, guildMember, row, cell, e_2_1;
+    var e_2, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                col1 = day !== 1 ? alphabet_to_number_1.AtoA('A', day - 2) : '';
+                col2 = const_settings_1["default"].ACTIVITY_TIME_SHEET.SEPARATE[section - 1];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].ACTIVITY_TIME_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _b.sent();
+                return [4, status.FetchUserFromSheet(sheet)];
+            case 2:
+                users = _b.sent();
+                _b.label = 3;
+            case 3:
+                _b.trys.push([3, 10, 11, 12]);
+                users_1 = __values(users), users_1_1 = users_1.next();
+                _b.label = 4;
+            case 4:
+                if (!!users_1_1.done) return [3, 9];
+                u = users_1_1.value;
+                return [4, util.MemberFromId(u.id)];
+            case 5:
+                guildMember = _b.sent();
+                row = users.map(function (u) { return u.id; }).indexOf(u.id) + 3;
+                return [4, sheet.getCell("" + col1 + col2 + row)];
+            case 6:
+                cell = _b.sent();
+                return [4, cell.getValue()];
+            case 7:
+                if (_b.sent()) {
+                    guildMember.roles.add(const_settings_1["default"].ROLE_ID.AWAY_IN);
+                }
+                else {
+                    guildMember.roles.remove(const_settings_1["default"].ROLE_ID.AWAY_IN);
+                }
+                _b.label = 8;
+            case 8:
+                users_1_1 = users_1.next();
+                return [3, 4];
+            case 9: return [3, 12];
+            case 10:
+                e_2_1 = _b.sent();
+                e_2 = { error: e_2_1 };
+                return [3, 12];
+            case 11:
+                try {
+                    if (users_1_1 && !users_1_1.done && (_a = users_1["return"])) _a.call(users_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+                return [7];
+            case 12: return [2];
         }
     });
 }); };

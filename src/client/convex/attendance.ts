@@ -3,6 +3,8 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
+import * as schedule from '../../io/schedule'
+import * as list from '../plan/list'
 
 /**
  * 出欠のメッセージに出席のリアクションを付けたら離席中ロールを外す
@@ -37,8 +39,14 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
     .find(m => m.id === user.id)
     ?.roles.remove(Settings.ROLE_ID.AWAY_IN)
 
+  await util.Sleep(100)
+
   // 出欠のメッセージを更新する
-  Edit()
+  await Edit()
+
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  list.SituationEdit(plans)
 
   return 'Remove the role away in'
 }
@@ -76,8 +84,14 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
     .find(m => m.id === user.id)
     ?.roles.add(Settings.ROLE_ID.AWAY_IN)
 
+  await util.Sleep(100)
+
   // 出欠のメッセージを更新する
-  Edit()
+  await Edit()
+
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  list.SituationEdit(plans)
 
   return 'Remove the role away in'
 }
@@ -88,7 +102,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
 export const Edit = async () => {
   // 更新するメッセージ
   const text =
-    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージが黄色くなります。\n` +
+    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージがオレンジ色になります。\n` +
     `メッセージに付けたリアクションはすぐに消えます。\n\n` +
     `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。\n` +
     `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`

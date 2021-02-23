@@ -66,7 +66,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   member.end = '1'
 
   // 凸残ロールを削除
-  const guildMember = await memberFromUser(user, msg)
+  const guildMember = await util.MemberFromId(user.id)
   guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
@@ -97,7 +97,7 @@ const updateProcess = async (
   member.end = ''
 
   // 凸残ロールを付与
-  const guildMember = await memberFromUser(user, msg)
+  const guildMember = await util.MemberFromId(user.id)
   guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 凸状況を報告する
@@ -105,12 +105,3 @@ const updateProcess = async (
 
   return member
 }
-
-/**
- * UserからMemberを取得する
- * @param user 更新したいユーザー
- * @param msg DiscordからのMessage
- * @return 取得したMember
- */
-const memberFromUser = async (user: Discord.User, msg: Discord.Message): Promise<Discord.GuildMember> =>
-  (await msg.guild?.members.fetch())?.map(m => m).find(m => m.id === user.id) as Discord.GuildMember

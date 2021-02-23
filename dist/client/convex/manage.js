@@ -114,7 +114,7 @@ var convexEndProcess = function (member, user, msg) { return __awaiter(void 0, v
                 member.convex = '3';
                 member.over = '';
                 member.end = '1';
-                return [4, memberFromUser(user, msg)];
+                return [4, util.MemberFromId(user.id)];
             case 1:
                 guildMember = _a.sent();
                 guildMember.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
@@ -135,7 +135,7 @@ var updateProcess = function (member, state, user, msg) { return __awaiter(void 
                 member.convex = state[0] === '0' ? '' : state[0];
                 member.over = state.includes('+') ? '1' : '';
                 member.end = '';
-                return [4, memberFromUser(user, msg)];
+                return [4, util.MemberFromId(user.id)];
             case 1:
                 guildMember = _a.sent();
                 guildMember.roles.add(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
@@ -144,9 +144,3 @@ var updateProcess = function (member, state, user, msg) { return __awaiter(void 
         }
     });
 }); };
-var memberFromUser = function (user, msg) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
-    switch (_c.label) {
-        case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.fetch())];
-        case 1: return [2, (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.map(function (m) { return m; }).find(function (m) { return m.id === user.id; })];
-    }
-}); }); };
