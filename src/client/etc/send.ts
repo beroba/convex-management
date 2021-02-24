@@ -66,7 +66,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   const line = content
     .replace(/<.*?>/g, '１') // 絵文字を全て１に変換
     .split('\n')
-    .find(s => /^.+(?<![dis][cord])or.+$/i.test(s))
+    .find(s => /^.+(?<![dis][cord])or.+$/.test(s))
 
   // discord以外のorがなければ終了
   if (!line) return
@@ -74,7 +74,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 絵文字を元に戻したリストを作成
   const list = replaceEmoji(
     // discord以外のorで区切ったリストを作る
-    line.split(/(?<![dis][cord])or/i).map(s => s.trim()),
+    line.split(/(?<![dis][cord])or/).map(s => s.trim()),
     emoji
   )
 
