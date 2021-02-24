@@ -87,9 +87,9 @@ exports.AorB = function (msg) {
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
-    if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/))
+    if (/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content))
         return;
-    if (msg.content === 'jinnaitomonori')
+    if (/[a-z|A-Z]or[a-z|A-Z]/.test(msg.content))
         return;
     if (/\`\`\`/.test(msg.content))
         return;
@@ -98,10 +98,16 @@ exports.AorB = function (msg) {
     var line = content
         .replace(/<.*?>/g, '１')
         .split('\n')
-        .find(function (s) { return /^.+(?<![dis][cord])or.+$/.test(s); });
+        .find(function (s) { return /^.+or.+$/.test(s); });
     if (!line)
         return;
-    var list = replaceEmoji(line.split(/(?<![dis][cord])or/).map(function (s) { return s.trim(); }), emoji);
+    var raw = line.split(/or/);
+    var bool = raw
+        .filter(function (c) { return !/^\s.+$/.test(c) && !/^.+\s$/.test(c); })
+        .find(function (c) { return c.length > 10; });
+    if (bool)
+        return;
+    var list = replaceEmoji(raw.map(function (l) { return l.trim(); }), emoji);
     var rand = createRandNumber(list.length);
     msg.reply(list[rand]);
     console.log(util.GetUserName(msg.member) + ", " + content);

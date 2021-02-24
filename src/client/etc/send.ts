@@ -51,10 +51,10 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // urlの場合は終了
-  if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/)) return
+  if (/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content)) return
 
-  // 陣内の場合は終了
-  if (msg.content === 'jinnaitomonori') return
+  // 英単語の中身にorがある場合は終了
+  if (/[a-z|A-Z]or[a-z|A-Z]/.test(msg.content)) return
 
   // コードブロックの場合は終了
   if (/\`\`\`/.test(msg.content)) return
@@ -65,19 +65,27 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 絵文字だけ抜き出したリストを作る
   const emoji = content.match(/<.*?>/g)?.map(e => e)
 
-  // discord以外のorが含まれている最初の行を取得
+  // orが含まれている最初の行を取得
   const line = content
     .replace(/<.*?>/g, '１') // 絵文字を全て１に変換
     .split('\n')
-    .find(s => /^.+(?<![dis][cord])or.+$/.test(s))
+    .find(s => /^.+or.+$/.test(s))
 
-  // discord以外のorがなければ終了
+  // orがなければ終了
   if (!line) return
+
+  // orで文字列を区切る
+  const raw = line.split(/or/)
+
+  // 12文字を超える文字列がある場合は終了
+  const bool = raw
+    .filter(c => !/^\s.+$/.test(c) && !/^.+\s$/.test(c)) // 両端にスペースが入ってない文字列だけにする
+    .find(c => c.length > 10) // 12文字を超える文字列を取得
+  if (bool) return
 
   // 絵文字を元に戻したリストを作成
   const list = replaceEmoji(
-    // discord以外のorで区切ったリストを作る
-    line.split(/(?<![dis][cord])or/).map(s => s.trim()),
+    raw.map(l => l.trim()),
     emoji
   )
 
