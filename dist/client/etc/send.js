@@ -89,6 +89,8 @@ exports.AorB = function (msg) {
         return;
     if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/))
         return;
+    if (msg.content === 'jinnaitomonori')
+        return;
     if (/\`\`\`/.test(msg.content))
         return;
     var content = util.Format(msg.content);
@@ -96,10 +98,10 @@ exports.AorB = function (msg) {
     var line = content
         .replace(/<.*?>/g, '１')
         .split('\n')
-        .find(function (s) { return /^.+(?<![dis][cord])or.+$/i.test(s); });
+        .find(function (s) { return /^.+(?<![dis][cord])or.+$/.test(s); });
     if (!line)
         return;
-    var list = replaceEmoji(line.split(/(?<![dis][cord])or/i).map(function (s) { return s.trim(); }), emoji);
+    var list = replaceEmoji(line.split(/(?<![dis][cord])or/).map(function (s) { return s.trim(); }), emoji);
     var rand = createRandNumber(list.length);
     msg.reply(list[rand]);
     console.log(util.GetUserName(msg.member) + ", " + content);

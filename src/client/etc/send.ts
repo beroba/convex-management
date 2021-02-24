@@ -50,13 +50,16 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // urlの場合は終了する
+  // urlの場合は終了
   if (msg.content.match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/)) return
+
+  // 陣内の場合は終了
+  if (msg.content === 'jinnaitomonori') return
 
   // コードブロックの場合は終了
   if (/\`\`\`/.test(msg.content)) return
 
-  // 全角を半角に変換する
+  // 全角を半角に変換
   const content = util.Format(msg.content)
 
   // 絵文字だけ抜き出したリストを作る
