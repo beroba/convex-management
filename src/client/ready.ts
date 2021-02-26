@@ -9,7 +9,10 @@ import * as util from '../util'
 export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('きゃるきゃるーん')
-  // const m = await channel.send('きゃるきゃるーん')
+
+  // const c = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLAR)
+  // await c.send('凸予定')
+  // await c.send('凸宣言')
   // m.member?.setNickname('キャル')
 
   console.log(`Logged in as ${Client.user?.username}!`)

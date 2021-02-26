@@ -1,4 +1,5 @@
 import Settings from 'const-settings'
+import Option from 'type-of-option'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as bossTable from './bossTable'
@@ -9,7 +10,7 @@ import {Current} from './type'
  * @param lap 周回数
  * @param alpha ボス番号
  */
-export const UpdateLapAndBoss = async (lap: string, alpha: string) => {
+export const UpdateLapAndBoss = async (lap: string, alpha: string): Promise<Option<Current>> => {
   // 現在の状況を取得
   const state: Current = await Fetch()
 
@@ -30,6 +31,8 @@ export const UpdateLapAndBoss = async (lap: string, alpha: string) => {
 
   // キャルステータスを更新する
   await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
+
+  return state
 }
 
 /**

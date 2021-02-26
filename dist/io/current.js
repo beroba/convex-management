@@ -105,7 +105,7 @@ exports.UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void
                 return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
             case 4:
                 _a.sent();
-                return [2];
+                return [2, state];
         }
     });
 }); };
