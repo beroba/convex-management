@@ -3,7 +3,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as category from '../command/category'
-import * as declar from '../declar'
+import * as declare from '../declare'
 
 /**
  * 現在の周回数とボスを変更する
@@ -22,7 +22,8 @@ export const Update = async (arg: string): Promise<boolean> => {
   const state = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
 
-  declar.Change(state)
+  // 凸宣言のボスを変更
+  declare.Change(state)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()

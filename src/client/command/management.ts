@@ -69,6 +69,16 @@ export const Management = async (command: string, msg: Discord.Message): Promise
       return 'Update convex management sisters'
     }
 
+    case /cb manage set react/.test(command): {
+      // #凸宣言-ボス状況の絵文字を設定
+      await setReactForDeclare()
+      // #活動時間のチャンネルを取得
+      await setReactForActivityTime()
+
+      msg.reply('凸管理用の絵文字を設定したわよ！')
+      return 'Set react for convex'
+    }
+
     case /cb manage sheet/.test(command): {
       msg.reply(Settings.URL.SPREADSHEET)
       return 'Show spreadsheet link'
@@ -161,6 +171,49 @@ const fetchNameAndID = async (users: Option<User[]>, name: string) => {
       // idを更新
       const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
       id_cell.setValue(m.id)
+    })
+  )
+}
+
+/**
+ * #凸宣言-ボス状況の絵文字を設定する
+ */
+const setReactForDeclare = async () => {
+  // チャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+
+  // 凸宣言のメッセージを取得
+  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+
+  // 本戦、保険の絵文字を付ける
+  await declare.react(Settings.EMOJI_ID.HONSEN)
+  await declare.react(Settings.EMOJI_ID.HOKEN)
+}
+
+/**
+ * #活動時間のチャンネルを取得する
+ */
+const setReactForActivityTime = async () => {
+  // チャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
+
+  // 離席中のメッセージを取得
+  const awayIn = await channel.messages.fetch(Settings.ACTIVITY_TIME.AWAY_IN)
+
+  // 出席、離席の絵文字を付ける
+  await awayIn.react(Settings.EMOJI_ID.SHUSEKI)
+  await awayIn.react(Settings.EMOJI_ID.RISEKI)
+
+  // 1-5日目の処理をする
+  const days: string[] = Object.values(Settings.ACTIVITY_TIME.DAYS)
+  Promise.all(
+    days.map(async id => {
+      // 日付のメッセージを取得
+      const day = await channel.messages.fetch(id)
+
+      // 1-7までの絵文字を付ける
+      const emoji: string[] = Object.values(Settings.ACTIVITY_TIME.EMOJI)
+      Promise.all(emoji.map(async id => day.react(id)))
     })
   )
 }

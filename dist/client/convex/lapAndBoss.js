@@ -80,7 +80,7 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var category = __importStar(require("../command/category"));
-var declar = __importStar(require("../declar"));
+var declare = __importStar(require("../declare"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, alpha, state;
     return __generator(this, function (_b) {
@@ -97,7 +97,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, util.Sleep(50)];
             case 2:
                 _b.sent();
-                declar.Change(state);
+                declare.Change(state);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
                 stageConfirm();

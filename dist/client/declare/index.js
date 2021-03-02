@@ -58,21 +58,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Ready = void 0;
+exports.Change = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var index_1 = require("../index");
-var util = __importStar(require("../util"));
-exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+var util = __importStar(require("../../util"));
+var schedule = __importStar(require("../../io/schedule"));
+var list = __importStar(require("../plan/list"));
+exports.Change = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, plan, declare, plans, text;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-                return [4, channel.send('きゃるきゃるーん')];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.PLAN)];
             case 1:
-                _b.sent();
-                console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+                plan = _a.sent();
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+            case 2:
+                declare = _a.sent();
+                return [4, schedule.Fetch()];
+            case 3:
+                plans = _a.sent();
+                return [4, list.CreatePlanText((state === null || state === void 0 ? void 0 : state.alpha) || '', (state === null || state === void 0 ? void 0 : state.stage) || '', plans)];
+            case 4:
+                text = _a.sent();
+                plan.edit(text);
+                declare.edit('凸宣言\n```\n \n```');
                 return [2];
         }
     });

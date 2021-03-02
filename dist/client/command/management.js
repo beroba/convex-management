@@ -87,9 +87,10 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb manage remove role/.test(command): return [3, 7];
                     case /cb manage update members/.test(command): return [3, 8];
                     case /cb manage update sisters/.test(command): return [3, 9];
-                    case /cb manage sheet/.test(command): return [3, 10];
+                    case /cb manage set react/.test(command): return [3, 10];
+                    case /cb manage sheet/.test(command): return [3, 13];
                 }
-                return [3, 11];
+                return [3, 14];
             case 1:
                 {
                     arg = command.replace('/cb manage create category', '');
@@ -134,13 +135,21 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                     return [2, 'Update convex management sisters'];
                 }
                 _c.label = 10;
-            case 10:
+            case 10: return [4, setReactForDeclare()];
+            case 11:
+                _c.sent();
+                return [4, setReactForActivityTime()];
+            case 12:
+                _c.sent();
+                msg.reply('凸管理用の絵文字を設定したわよ！');
+                return [2, 'Set react for convex'];
+            case 13:
                 {
                     msg.reply(const_settings_1["default"].URL.SPREADSHEET);
                     return [2, 'Show spreadsheet link'];
                 }
-                _c.label = 11;
-            case 11: return [2];
+                _c.label = 14;
+            case 14: return [2];
         }
     });
 }); };
@@ -223,6 +232,60 @@ var fetchNameAndID = function (users, name) { return __awaiter(void 0, void 0, v
                     }); }))];
             case 2:
                 _a.sent();
+                return [2];
+        }
+    });
+}); };
+var setReactForDeclare = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, declare;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+            case 1:
+                declare = _a.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+            case 2:
+                _a.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
+            case 3:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var setReactForActivityTime = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, awayIn, days;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
+                return [4, channel.messages.fetch(const_settings_1["default"].ACTIVITY_TIME.AWAY_IN)];
+            case 1:
+                awayIn = _a.sent();
+                return [4, awayIn.react(const_settings_1["default"].EMOJI_ID.SHUSEKI)];
+            case 2:
+                _a.sent();
+                return [4, awayIn.react(const_settings_1["default"].EMOJI_ID.RISEKI)];
+            case 3:
+                _a.sent();
+                days = Object.values(const_settings_1["default"].ACTIVITY_TIME.DAYS);
+                Promise.all(days.map(function (id) { return __awaiter(void 0, void 0, void 0, function () {
+                    var day, emoji;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, channel.messages.fetch(id)];
+                            case 1:
+                                day = _a.sent();
+                                emoji = Object.values(const_settings_1["default"].ACTIVITY_TIME.EMOJI);
+                                Promise.all(emoji.map(function (id) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    return [2, day.react(id)];
+                                }); }); }));
+                                return [2];
+                        }
+                    });
+                }); }));
                 return [2];
         }
     });
