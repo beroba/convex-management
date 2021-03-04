@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.MessageReactionRemove = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
+var declare = __importStar(require("./declare/react"));
 var activityTime = __importStar(require("./convex/activityTime"));
 exports.MessageReactionRemove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
@@ -69,8 +70,13 @@ exports.MessageReactionRemove = function (react, user) { return __awaiter(void 0
             case 0:
                 if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                return [4, activityTime.Remove(react, user)];
+                return [4, declare.ConvexRemove(react, user)];
             case 1:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, activityTime.Remove(react, user)];
+            case 2:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

@@ -55,7 +55,7 @@ export const AllDelete = async (member: Option<Discord.GuildMember>) => {
   // 持ち越し状況を全て削除
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   ;(await channel.messages.fetch())
-    .map(v => v)
+    .map(m => m)
     .filter(m => m.author.id === member?.id)
     .forEach(m => m.delete())
 

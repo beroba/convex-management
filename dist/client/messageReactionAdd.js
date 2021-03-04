@@ -66,6 +66,7 @@ var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
 var plan = __importStar(require("./plan/delete"));
 var report = __importStar(require("./report/cancel"));
+var declare = __importStar(require("./declare/react"));
 var playerID = __importStar(require("./etc/playerID"));
 exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
@@ -75,43 +76,48 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
             case 0:
                 if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                return [4, report.Cancel(react, user)];
+                return [4, declare.ConvexAdd(react, user)];
             case 1:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, plan.Already(react, user)];
+                return [4, report.Cancel(react, user)];
             case 2:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, over.Delete(react, user)];
+                return [4, plan.Already(react, user)];
             case 3:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, sister.Delete(react, user)];
+                return [4, over.Delete(react, user)];
             case 4:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, activityTime.Add(react, user)];
+                return [4, sister.Delete(react, user)];
             case 5:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, attendance.Remove(react, user)];
+                return [4, activityTime.Add(react, user)];
             case 6:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, attendance.Add(react, user)];
+                return [4, attendance.Remove(react, user)];
             case 7:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, playerID.RoleGrant(react, user)];
+                return [4, attendance.Add(react, user)];
             case 8:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, playerID.RoleGrant(react, user)];
+            case 9:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

@@ -47,6 +47,7 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Advance to next lap and boss'
     }
 
+    case /cb boss back/.test(command):
     case /cb boss previous/.test(command): {
       // 前のボスに戻す
       await lapAndBoss.Previous()

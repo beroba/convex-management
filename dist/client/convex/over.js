@@ -98,7 +98,7 @@ exports.AllDelete = function (member) { return __awaiter(void 0, void 0, void 0,
                 return [4, channel.messages.fetch()];
             case 1:
                 (_a.sent())
-                    .map(function (v) { return v; })
+                    .map(function (m) { return m; })
                     .filter(function (m) { return m.author.id === (member === null || member === void 0 ? void 0 : member.id); })
                     .forEach(function (m) { return m["delete"](); });
                 console.log('Delete carryover message');

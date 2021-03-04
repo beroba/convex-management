@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
+import * as declare from './declare/react'
 import * as activityTime from './convex/activityTime'
 
 /**
@@ -16,6 +17,10 @@ export const MessageReactionRemove = async (
   if (react.message.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
   let comment: Option<string>
+
+  // 凸宣言を行う
+  comment = await declare.ConvexRemove(react, user as Discord.User)
+  if (comment) return console.log(comment)
 
   // 活動時間の削除を行う
   comment = await activityTime.Remove(react, user as Discord.User)

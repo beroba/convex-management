@@ -58,54 +58,78 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SetPlanList = exports.ChangeBoss = void 0;
+exports.ResetReact = exports.SetUser = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
-var list = __importStar(require("../plan/list"));
-var declaration = __importStar(require("./declaration"));
-exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
+var status = __importStar(require("../../io/status"));
+exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, declare, emoji, separatMember, plans, honsen, hoken, convex;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log(state);
-                return [4, exports.SetPlanList(state)];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
             case 1:
-                _a.sent();
-                return [4, declaration.ResetReact()];
+                declare = _a.sent();
+                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
             case 2:
                 _a.sent();
-                return [4, declaration.SetUser(state)];
+                emoji = declare.reactions.cache.map(function (r) { return ({ name: r.emoji.name, users: r.users.cache.map(function (u) { return u; }) }); });
+                separatMember = function (name) { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
+                                    .users
+                                    .map(function (u) { return status.FetchMember(u.id); }))];
+                            case 1: return [2, (_a.sent()).filter(function (m) { return m; })];
+                        }
+                    });
+                }); };
+                return [4, schedule.FetchBoss((state === null || state === void 0 ? void 0 : state.alpha) || '')];
             case 3:
-                _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch()];
+                plans = _a.sent();
+                return [4, separatMember('honsen')];
             case 4:
-                (_a.sent())
-                    .map(function (m) { return m; })
-                    .filter(function (m) { return !m.author.bot; })
-                    .forEach(function (m) { return m["delete"](); });
+                honsen = (_a.sent()).map(function (m) {
+                    var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
+                    return (m === null || m === void 0 ? void 0 : m.name) + "@" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + (p ? " " + p.msg : '');
+                });
+                return [4, separatMember('hoken')];
+            case 5:
+                hoken = (_a.sent()).map(function (m) {
+                    var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
+                    return (m === null || m === void 0 ? void 0 : m.name) + "@" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + "(\u4FDD\u967A) " + (p ? " " + p.msg : '');
+                });
+                convex = honsen.concat(hoken);
+                declare.edit("\u51F8\u5BA3\u8A00\n```\n" + (convex.length ? convex.join('\n') : ' ') + "\n```");
                 return [2];
         }
     });
 }); };
-exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, plan, plans, text;
+exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, declare;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.PLAN)];
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
             case 1:
-                plan = _a.sent();
-                return [4, schedule.Fetch()];
+                declare = _a.sent();
+                return [4, declare.reactions.removeAll()];
             case 2:
-                plans = _a.sent();
-                return [4, list.CreatePlanText((state === null || state === void 0 ? void 0 : state.alpha) || '', (state === null || state === void 0 ? void 0 : state.stage) || '', plans)];
+                _a.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
             case 3:
-                text = _a.sent();
-                plan.edit(text);
+                _a.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
+            case 4:
+                _a.sent();
                 return [2];
         }
     });

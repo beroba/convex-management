@@ -171,6 +171,8 @@ var chuukaReact = function (msg) {
 exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
+        if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
+            return [2];
         content = msg.content.replace(/るる/, 'ルル');
         if (content === 'ルル')
             return [2, ruruEmoji(msg)];
@@ -266,7 +268,7 @@ var pantiesEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, fun
             case 1:
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
-                return [2, util.GetUserName(msg.member) + " Send kusa Emoji"];
+                return [2, util.GetUserName(msg.member) + " Send panties Emoji"];
         }
     });
 }); };

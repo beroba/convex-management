@@ -58,55 +58,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SetPlanList = exports.ChangeBoss = void 0;
+exports.ConvexRemove = exports.ConvexAdd = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
-var schedule = __importStar(require("../../io/schedule"));
-var list = __importStar(require("../plan/list"));
+var current = __importStar(require("../../io/current"));
+var status = __importStar(require("../../io/status"));
 var declaration = __importStar(require("./declaration"));
-exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
+exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log(state);
-                return [4, exports.SetPlanList(state)];
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                return [4, status.FetchMember(user.id)];
             case 1:
-                _a.sent();
-                return [4, declaration.ResetReact()];
+                member = _a.sent();
+                if (!member) {
+                    react.users.remove(user);
+                    return [2];
+                }
+                return [4, current.Fetch()];
             case 2:
-                _a.sent();
+                state = _a.sent();
                 return [4, declaration.SetUser(state)];
             case 3:
                 _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch()];
-            case 4:
-                (_a.sent())
-                    .map(function (m) { return m; })
-                    .filter(function (m) { return !m.author.bot; })
-                    .forEach(function (m) { return m["delete"](); });
-                return [2];
+                return [2, 'Addition of convex declaration'];
         }
     });
 }); };
-exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, plan, plans, text;
+exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.PLAN)];
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                return [4, current.Fetch()];
             case 1:
-                plan = _a.sent();
-                return [4, schedule.Fetch()];
+                state = _a.sent();
+                return [4, declaration.SetUser(state)];
             case 2:
-                plans = _a.sent();
-                return [4, list.CreatePlanText((state === null || state === void 0 ? void 0 : state.alpha) || '', (state === null || state === void 0 ? void 0 : state.stage) || '', plans)];
-            case 3:
-                text = _a.sent();
-                plan.edit(text);
-                return [2];
+                _a.sent();
+                return [2, 'Addition of convex declaration'];
         }
     });
 }); };

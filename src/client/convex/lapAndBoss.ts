@@ -23,7 +23,7 @@ export const Update = async (arg: string): Promise<boolean> => {
   await util.Sleep(50)
 
   // 凸宣言のボスを変更
-  declare.Change(state)
+  declare.ChangeBoss(state)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
@@ -49,8 +49,11 @@ export const Next = async () => {
   const alpha = NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1)
 
   // 現在の状況を更新
-  await current.UpdateLapAndBoss(lap, alpha)
+  const newState = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
+
+  // 凸宣言のボスを変更
+  declare.ChangeBoss(newState)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
@@ -74,8 +77,11 @@ export const Previous = async () => {
   const alpha = NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1)
 
   // 現在の状況を更新
-  await current.UpdateLapAndBoss(lap, alpha)
+  const newState = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
+
+  // 凸宣言のボスを変更
+  declare.ChangeBoss(newState)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
