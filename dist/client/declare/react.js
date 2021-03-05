@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
+exports.ReleaseNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
@@ -72,6 +72,8 @@ exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, vo
                 if (user.bot)
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; }))
                     return [2];
                 return [4, status.FetchMember(user.id)];
             case 1:
@@ -99,13 +101,15 @@ exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0,
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
+                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; }))
+                    return [2];
                 return [4, current.Fetch()];
             case 1:
                 state = _a.sent();
                 return [4, declaration.SetUser(state)];
             case 2:
                 _a.sent();
-                return [2, 'Addition of convex declaration'];
+                return [2, 'Deletion of convex declaration'];
         }
     });
 }); };
@@ -140,7 +144,17 @@ exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, 
                 return [4, declaration.SetUser(state)];
             case 5:
                 _a.sent();
+                console.log('Completion of convex declaration');
                 return [2];
         }
     });
 }); };
+exports.ReleaseNotice = function (users) {
+    var mentions = users
+        .filter(function (n, i, e) { return e.indexOf(n) == i; })
+        .map(function (u) { return "<@!" + u.id + ">"; })
+        .join(' ');
+    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+    channel.send(mentions + " \u30DC\u30B9\u304C\u8A0E\u4F10\u3055\u308C\u305F\u304B\u3089\u901A\u3057\u3066\u5927\u4E08\u592B\u3088\uFF01");
+    console.log('Release notice');
+};

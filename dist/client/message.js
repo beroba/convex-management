@@ -65,6 +65,7 @@ var report = __importStar(require("./report"));
 var plan = __importStar(require("./plan"));
 var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
+var calc = __importStar(require("./declare/calc"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
 var emoji = __importStar(require("./etc/emoji"));
@@ -74,19 +75,24 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                if (!(((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 6];
+                if (!(((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 7];
                 if (!(msg.content.charAt(0) === '/')) return [3, 2];
                 return [4, command_1.Command(msg)];
             case 1: return [2, _c.sent()];
             case 2:
                 emoji.React(msg);
-                return [4, report.Convex(msg)];
+                return [4, calc.React(msg)];
             case 3:
                 comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, plan.Convex(msg)];
+                return [4, report.Convex(msg)];
             case 4:
+                comment = _c.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, plan.Convex(msg)];
+            case 5:
                 comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
@@ -97,25 +103,25 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 if (comment)
                     return [2, console.log(comment)];
                 return [4, playerID.Save(msg)];
-            case 5:
+            case 6:
                 comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.GoodMorning(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                _c.label = 6;
-            case 6: return [4, send.Speak(msg)];
-            case 7:
+                _c.label = 7;
+            case 7: return [4, send.Speak(msg)];
+            case 8:
                 comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
                 comment = send.AorB(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                if (!(((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 9];
+                if (!(((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 10];
                 return [4, emoji.Send(msg)];
-            case 8:
+            case 9:
                 comment = _c.sent();
                 if (comment)
                     return [2, console.log(comment)];
@@ -129,8 +135,8 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.ShinyTmoImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                _c.label = 9;
-            case 9: return [2];
+                _c.label = 10;
+            case 10: return [2];
         }
     });
 }); };

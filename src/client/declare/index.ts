@@ -5,6 +5,7 @@ import * as schedule from '../../io/schedule'
 import {Current} from '../../io/type'
 import * as list from '../plan/list'
 import * as declaration from './declaration'
+import * as react from './react'
 
 /**
  * 凸宣言のボスを変更する
@@ -20,14 +21,7 @@ export const ChangeBoss = async (state: Option<Current>) => {
   // 凸宣言をリセットする
   await declaration.SetUser(state)
 
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
-
-  // キャル以外のメッセージを全てを削除
-  ;(await channel.messages.fetch())
-    .map(m => m)
-    .filter(m => !m.author.bot)
-    .forEach(m => m.delete())
+  await messageDelete()
 }
 
 /**
@@ -47,4 +41,30 @@ export const SetPlanList = async (state: Option<Current>) => {
 
   // 凸予定一覧を更新
   plan.edit('凸予定 ' + text)
+}
+
+/**
+ * 凸宣言-ボス状況のメッセージを削除する
+ */
+const messageDelete = async () => {
+  // #凸宣言-ボス状況のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+
+  // キャル以外のメッセージを全てを削除
+  const users = await Promise.all(
+    (await channel.messages.fetch())
+      .map(m => m)
+      .filter(m => !m.author.bot)
+      .map(async m => {
+        const msg = await m.delete()
+        // 削除したメッセージを投稿した人をリストに入れる
+        return msg.author
+      })
+  )
+
+  // 削除したメッセージがない場合は終了
+  if (!users.length) return
+
+  // 開放通知を行う
+  react.ReleaseNotice(users)
 }

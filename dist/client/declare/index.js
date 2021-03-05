@@ -64,8 +64,8 @@ var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("../plan/list"));
 var declaration = __importStar(require("./declaration"));
+var react = __importStar(require("./react"));
 exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.SetPlanList(state)];
@@ -77,13 +77,9 @@ exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0,
                 return [4, declaration.SetUser(state)];
             case 3:
                 _a.sent();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch()];
+                return [4, messageDelete()];
             case 4:
-                (_a.sent())
-                    .map(function (m) { return m; })
-                    .filter(function (m) { return !m.author.bot; })
-                    .forEach(function (m) { return m["delete"](); });
+                _a.sent();
                 return [2];
         }
     });
@@ -104,6 +100,37 @@ exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0
             case 3:
                 text = _a.sent();
                 plan.edit('凸予定 ' + text);
+                return [2];
+        }
+    });
+}); };
+var messageDelete = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, users, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                _b = (_a = Promise).all;
+                return [4, channel.messages.fetch()];
+            case 1: return [4, _b.apply(_a, [(_c.sent())
+                        .map(function (m) { return m; })
+                        .filter(function (m) { return !m.author.bot; })
+                        .map(function (m) { return __awaiter(void 0, void 0, void 0, function () {
+                        var msg;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, m["delete"]()];
+                                case 1:
+                                    msg = _a.sent();
+                                    return [2, msg.author];
+                            }
+                        });
+                    }); })])];
+            case 2:
+                users = _c.sent();
+                if (!users.length)
+                    return [2];
+                react.ReleaseNotice(users);
                 return [2];
         }
     });

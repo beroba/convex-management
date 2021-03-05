@@ -19,6 +19,9 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   // #凸宣言-ボス状況でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
+  // 本戦と保険以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) return
+
   // メンバーの状態を取得
   const member = await status.FetchMember(user.id)
   // クランメンバーでなければ終了
@@ -50,13 +53,16 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   // #凸宣言-ボス状況でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
+  // 本戦と保険以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) return
+
   // 現在の状況を取得
   const state = await current.Fetch()
 
   // 凸宣言を設定する
   await declaration.SetUser(state)
 
-  return 'Addition of convex declaration'
+  return 'Deletion of convex declaration'
 }
 
 /**
@@ -81,4 +87,26 @@ export const ConvexDone = async (user: Discord.User) => {
 
   // 凸宣言を設定する
   await declaration.SetUser(state)
+
+  console.log('Completion of convex declaration')
+}
+
+/**
+ * #進行-連携に開放通知を行う
+ * @param users メンションを行うユーザー一覧
+ */
+export const ReleaseNotice = (users: Discord.User[]) => {
+  // 重複を省いたメンション一覧を作成する
+  const mentions = users
+    .filter((n, i, e) => e.indexOf(n) == i)
+    .map(u => `<@!${u.id}>`)
+    .join(' ')
+
+  // #凸宣言-ボス状況のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+  // メンションを行う
+  channel.send(`${mentions} ボスが討伐されたから通して大丈夫よ！`)
+
+  console.log('Release notice')
 }
