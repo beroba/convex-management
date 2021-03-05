@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as declaration from './declaration'
@@ -56,4 +57,28 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   await declaration.SetUser(state)
 
   return 'Addition of convex declaration'
+}
+
+/**
+ * 渡されたユーザーの凸宣言を完了する
+ * @param user リアクションを外すユーザー
+ */
+export const ConvexDone = async (user: Discord.User) => {
+  // #凸宣言-ボス状況のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+
+  // 凸宣言のメッセージを取得
+  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+
+  // 凸宣言に付いているリアクションをキャッシュする
+  await Promise.all(declare.reactions.cache.map(async r => await r.users.fetch()))
+
+  // ユーザーのリアクションを全て外す
+  await Promise.all(declare.reactions.cache.map(async r => await r.users.remove(user)))
+
+  // 現在の状況を取得
+  const state = await current.Fetch()
+
+  // 凸宣言を設定する
+  await declaration.SetUser(state)
 }

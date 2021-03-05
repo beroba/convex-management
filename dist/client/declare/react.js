@@ -58,8 +58,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ConvexRemove = exports.ConvexAdd = void 0;
+exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var declaration = __importStar(require("./declaration"));
@@ -105,6 +106,41 @@ exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0,
             case 2:
                 _a.sent();
                 return [2, 'Addition of convex declaration'];
+        }
+    });
+}); };
+exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, declare, state;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+            case 1:
+                declare = _a.sent();
+                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 2:
+                _a.sent();
+                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.remove(user)];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 3:
+                _a.sent();
+                return [4, current.Fetch()];
+            case 4:
+                state = _a.sent();
+                return [4, declaration.SetUser(state)];
+            case 5:
+                _a.sent();
+                return [2];
         }
     });
 }); };

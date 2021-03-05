@@ -9,6 +9,7 @@ import * as lapAndBoss from '../convex/lapAndBoss'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
 import * as cancel from '../plan/delete'
+import * as declare from '../declare/react'
 
 /**
  * 凸報告の管理を行う
@@ -45,8 +46,14 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 全角を半角に変換
   const content = util.Format(msg.content)
 
-  // ボスが討伐されていたら次のボスへ進める
-  killConfirm(content)
+  // ボスを倒したか確認
+  if (/^k|kill/i.test(content)) {
+    // 次のボスへ進める
+    lapAndBoss.Next()
+  } else {
+    // 凸宣言を完了
+    declare.ConvexDone(msg.author)
+  }
 
   // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
   overDelete(msg)
@@ -73,18 +80,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   situation.Report(members)
 
   return 'Update status'
-}
-
-/**
- * ボスが討伐されていたら次のボスへ進める
- * @param content 整形後のメッセージ内容
- */
-const killConfirm = (content: string) => {
-  // killが入って居なければ終了
-  if (!/^k|kill/i.test(content)) return
-
-  // 次のボスへ進める
-  lapAndBoss.Next()
 }
 
 /**

@@ -84,6 +84,7 @@ var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
 var cancel = __importStar(require("../plan/delete"));
+var declare = __importStar(require("../declare/react"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member_1, state, content, _a, members, member;
     var _b;
@@ -109,7 +110,12 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 2:
                 state = _c.sent();
                 content = util.Format(msg.content);
-                killConfirm(content);
+                if (/^k|kill/i.test(content)) {
+                    lapAndBoss.Next();
+                }
+                else {
+                    declare.ConvexDone(msg.author);
+                }
                 overDelete(msg);
                 return [4, update.Status(msg)];
             case 3:
@@ -133,11 +139,6 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-var killConfirm = function (content) {
-    if (!/^k|kill/i.test(content))
-        return;
-    lapAndBoss.Next();
-};
 var overDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member;
     return __generator(this, function (_a) {
