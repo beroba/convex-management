@@ -1,9 +1,18 @@
+import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {Current} from '../../io/type'
+import {Current, Plan} from '../../io/type'
+
+/**
+ * 絵文字の名前とユーザー一覧
+ */
+type Emoji = {
+  name: string
+  users: Discord.User[]
+}
 
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
@@ -20,38 +29,45 @@ export const SetUser = async (state: Option<Current>) => {
   await Promise.all(declare.reactions.cache.map(async r => await r.users.fetch()))
 
   // 本戦、保険に分けてリアクションしている人一覧を取得する
-  const emoji = declare.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
-
-  // prettier-ignore
-  /**
-   * emojiから本戦と保険で分離する
-   * @param name honsenかhoken
-   */
-  const separatMember = async (name: string) =>
-    (await Promise.all(
-      emoji.filter(e => e.name === name)[0]
-        .users
-        .map(u => status.FetchMember(u.id)))
-    ).filter(m => m)
+  const emoji: Emoji[] = declare.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
 
   // 削除したボスの凸予定一覧を取得
   const plans = await schedule.FetchBoss(state?.alpha || '')
 
   // 本戦の凸宣言者一覧を作成
-  const honsen = (await separatMember('honsen')).map(m => {
-    const p = plans.find(p => p.playerID === m?.id)
-    return `${m?.name}@${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}${p ? ` ${p.msg}` : ''}`
-  })
-  const hoken = (await separatMember('hoken')).map(m => {
-    const p = plans.find(p => p.playerID === m?.id)
-    return `${m?.name}@${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}(保険) ${p ? ` ${p.msg}` : ''}`
-  })
+  const honsen = await createDeclareList(plans, emoji, 'honsen')
+  const hoken = await createDeclareList(plans, emoji, 'hoken')
 
-  // 2つの凸宣言を結合
-  const convex = honsen.concat(hoken)
-
+  // prettier-ignore
   // 凸宣言のメッセージを編集
-  declare.edit(`凸宣言\n\`\`\`\n${convex.length ? convex.join('\n') : ' '}\n\`\`\``)
+  declare.edit(
+    '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
+    '```' +
+    `\n――――本戦――――\n${honsen.join('\n')}\n\n――――保険――――\n${hoken.join('\n')}\n` +
+    '```'
+  )
+}
+
+/**
+ * 凸宣言一覧のリストを作成する
+ * @param plans 凸予定一覧
+ * @param emoji 絵文字のリスト
+ * @param name honsenかhoken
+ * @return 作成したリスト
+ */
+const createDeclareList = async (plans: Plan[], emoji: Emoji[], name: string): Promise<string[]> => {
+  // prettier-ignore
+  const convex = (await Promise.all(
+    emoji.filter(e => e.name === name)[0]
+      .users
+      .map(u => status.FetchMember(u.id)))
+    ).filter(m => m)
+
+  // テキストを作成
+  return convex.map(m => {
+    const p = plans.find(p => p.playerID === m?.id)
+    return `${m?.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}]${p ? ` ${p.msg}` : ''}`
+  })
 }
 
 /**

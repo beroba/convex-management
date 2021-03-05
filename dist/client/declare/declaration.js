@@ -64,7 +64,7 @@ var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var status = __importStar(require("../../io/status"));
 exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, declare, emoji, separatMember, plans, honsen, hoken, convex;
+    var channel, declare, emoji, plans, honsen, hoken;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -81,34 +81,36 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
             case 2:
                 _a.sent();
                 emoji = declare.reactions.cache.map(function (r) { return ({ name: r.emoji.name, users: r.users.cache.map(function (u) { return u; }) }); });
-                separatMember = function (name) { return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
-                                    .users
-                                    .map(function (u) { return status.FetchMember(u.id); }))];
-                            case 1: return [2, (_a.sent()).filter(function (m) { return m; })];
-                        }
-                    });
-                }); };
                 return [4, schedule.FetchBoss((state === null || state === void 0 ? void 0 : state.alpha) || '')];
             case 3:
                 plans = _a.sent();
-                return [4, separatMember('honsen')];
+                return [4, createDeclareList(plans, emoji, 'honsen')];
             case 4:
-                honsen = (_a.sent()).map(function (m) {
-                    var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
-                    return (m === null || m === void 0 ? void 0 : m.name) + "@" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + (p ? " " + p.msg : '');
-                });
-                return [4, separatMember('hoken')];
+                honsen = _a.sent();
+                return [4, createDeclareList(plans, emoji, 'hoken')];
             case 5:
-                hoken = (_a.sent()).map(function (m) {
-                    var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
-                    return (m === null || m === void 0 ? void 0 : m.name) + "@" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + "(\u4FDD\u967A) " + (p ? " " + p.msg : '');
-                });
-                convex = honsen.concat(hoken);
-                declare.edit("\u51F8\u5BA3\u8A00\n```\n" + (convex.length ? convex.join('\n') : ' ') + "\n```");
+                hoken = _a.sent();
+                declare.edit('凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
+                    '```' +
+                    ("\n\u2015\u2015\u2015\u2015\u672C\u6226\u2015\u2015\u2015\u2015\n" + honsen.join('\n') + "\n\n\u2015\u2015\u2015\u2015\u4FDD\u967A\u2015\u2015\u2015\u2015\n" + hoken.join('\n') + "\n") +
+                    '```');
                 return [2];
+        }
+    });
+}); };
+var createDeclareList = function (plans, emoji, name) { return __awaiter(void 0, void 0, void 0, function () {
+    var convex;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
+                    .users
+                    .map(function (u) { return status.FetchMember(u.id); }))];
+            case 1:
+                convex = (_a.sent()).filter(function (m) { return m; });
+                return [2, convex.map(function (m) {
+                        var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
+                        return (m === null || m === void 0 ? void 0 : m.name) + "[" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + "]" + (p ? " " + p.msg : '');
+                    })];
         }
     });
 }); };

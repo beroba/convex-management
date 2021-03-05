@@ -11,7 +11,6 @@ import * as declaration from './declaration'
  * @param state 現在の状態
  */
 export const ChangeBoss = async (state: Option<Current>) => {
-  console.log(state)
   // 凸予定一覧を更新する
   await SetPlanList(state)
 
@@ -47,5 +46,5 @@ export const SetPlanList = async (state: Option<Current>) => {
   const text = await list.CreatePlanText(state?.alpha || '', state?.stage || '', plans)
 
   // 凸予定一覧を更新
-  plan.edit(text)
+  plan.edit('凸予定 ' + text)
 }

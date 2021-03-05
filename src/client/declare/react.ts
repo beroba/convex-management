@@ -5,6 +5,12 @@ import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as declaration from './declaration'
 
+/**
+ * リアクションを追加した際に凸宣言を更新する
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 取り消し処理の実行結果
+ */
 export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
   // botのリアクションは実行しない
   if (user.bot) return
@@ -30,6 +36,12 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   return 'Addition of convex declaration'
 }
 
+/**
+ * リアクションを削除した際に凸宣言を更新する
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 取り消し処理の実行結果
+ */
 export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
   // botのリアクションは実行しない
   if (user.bot) return

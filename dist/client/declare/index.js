@@ -68,9 +68,7 @@ exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0,
     var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                console.log(state);
-                return [4, exports.SetPlanList(state)];
+            case 0: return [4, exports.SetPlanList(state)];
             case 1:
                 _a.sent();
                 return [4, declaration.ResetReact()];
@@ -105,7 +103,7 @@ exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0
                 return [4, list.CreatePlanText((state === null || state === void 0 ? void 0 : state.alpha) || '', (state === null || state === void 0 ? void 0 : state.stage) || '', plans)];
             case 3:
                 text = _a.sent();
-                plan.edit(text);
+                plan.edit('凸予定 ' + text);
                 return [2];
         }
     });
