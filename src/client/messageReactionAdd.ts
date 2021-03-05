@@ -25,6 +25,14 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   comment = await declare.ConvexAdd(react, user as Discord.User)
   if (comment) return console.log(comment)
 
+  // 確定通知を行う
+  comment = await declare.ConfirmNotice(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 持越通知を行う
+  comment = await declare.OverNotice(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
   // 凸報告を取り消しを行う
   comment = await report.Cancel(react, user as Discord.User)
   if (comment) return console.log(comment)

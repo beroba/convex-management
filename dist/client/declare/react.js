@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReleaseNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
+exports.ReleaseNotice = exports.OverNotice = exports.ConfirmNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
@@ -149,6 +149,48 @@ exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
+exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var msg, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KAKUNIN)
+                    return [2];
+                return [4, fetchMessage(react)];
+            case 1:
+                msg = _a.sent();
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send("<@!" + user.id + "> " + msg.content + "\u306E\u78BA\u5B9A\u3092\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
+                msg["delete"]();
+                return [2, 'Confirm notice'];
+        }
+    });
+}); };
+exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var msg, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)
+                    return [2];
+                return [4, fetchMessage(react)];
+            case 1:
+                msg = _a.sent();
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send("<@!" + user.id + "> " + msg.content + "\u3067\u6301\u3061\u8D8A\u3057\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
+                msg["delete"]();
+                return [2, 'Carry over notice'];
+        }
+    });
+}); };
 exports.ReleaseNotice = function (users) {
     var mentions = users
         .filter(function (n, i, e) { return e.indexOf(n) == i; })
@@ -158,3 +200,17 @@ exports.ReleaseNotice = function (users) {
     channel.send(mentions + " \u30DC\u30B9\u304C\u8A0E\u4F10\u3055\u308C\u305F\u304B\u3089\u901A\u3057\u3066\u5927\u4E08\u592B\u3088\uFF01");
     console.log('Release notice');
 };
+var fetchMessage = function (react) { return __awaiter(void 0, void 0, void 0, function () {
+    var msg, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                msg = react.message;
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(msg.id)];
+            case 1:
+                _a.sent();
+                return [2, msg];
+        }
+    });
+}); };

@@ -81,43 +81,53 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, report.Cancel(react, user)];
+                return [4, declare.ConfirmNotice(react, user)];
             case 2:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, plan.Already(react, user)];
+                return [4, declare.OverNotice(react, user)];
             case 3:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, over.Delete(react, user)];
+                return [4, report.Cancel(react, user)];
             case 4:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, sister.Delete(react, user)];
+                return [4, plan.Already(react, user)];
             case 5:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, activityTime.Add(react, user)];
+                return [4, over.Delete(react, user)];
             case 6:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, attendance.Remove(react, user)];
+                return [4, sister.Delete(react, user)];
             case 7:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, attendance.Add(react, user)];
+                return [4, activityTime.Add(react, user)];
             case 8:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, playerID.RoleGrant(react, user)];
+                return [4, attendance.Remove(react, user)];
             case 9:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, attendance.Add(react, user)];
+            case 10:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, playerID.RoleGrant(react, user)];
+            case 11:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

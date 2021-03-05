@@ -92,6 +92,84 @@ export const ConvexDone = async (user: Discord.User) => {
 }
 
 /**
+ * リアクションを押すことで確認通知を行う
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 取り消し処理の実行結果
+ */
+export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+  // botのリアクションは実行しない
+  if (user.bot) return
+
+  // #凸宣言-ボス状況でなければ終了
+  if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
+
+  // 確認以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.KAKUNIN) return
+
+  // 進行役が付いていない場合は終了
+  // const member = await util.MemberFromId(user.id)
+  // if (!util.IsRole(member, Settings.ROLE_ID.PROGRESS)) {
+  //   // リアクションを外す
+  //   react.users.remove(user)
+  //   return
+  // }
+
+  // リアクションからメッセージを取得する
+  const msg = await fetchMessage(react)
+
+  // #進行-連携のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+  // メンションを行う
+  channel.send(`<@!${user.id}> ${msg.content}の確定をお願いするわ！`)
+
+  // 元のメッセージは削除する
+  msg.delete()
+
+  return 'Confirm notice'
+}
+
+/**
+ * リアクションを押すことで持越通知を行う
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 取り消し処理の実行結果
+ */
+export const OverNotice = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+  // botのリアクションは実行しない
+  if (user.bot) return
+
+  // #凸宣言-ボス状況でなければ終了
+  if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
+
+  // 持越以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) return
+
+  // 進行役が付いていない場合は終了
+  // const member = await util.MemberFromId(user.id)
+  // if (!util.IsRole(member, Settings.ROLE_ID.PROGRESS)) {
+  //   // リアクションを外す
+  //   react.users.remove(user)
+  //   return
+  // }
+
+  // リアクションからメッセージを取得する
+  const msg = await fetchMessage(react)
+
+  // #進行-連携のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+  // メンションを行う
+  channel.send(`<@!${user.id}> ${msg.content}で持ち越しお願いするわ！`)
+
+  // 元のメッセージは削除する
+  msg.delete()
+
+  return 'Carry over notice'
+}
+
+/**
  * #進行-連携に開放通知を行う
  * @param users メンションを行うユーザー一覧
  */
@@ -102,11 +180,28 @@ export const ReleaseNotice = (users: Discord.User[]) => {
     .map(u => `<@!${u.id}>`)
     .join(' ')
 
-  // #凸宣言-ボス状況のチャンネルを取得
+  // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
   channel.send(`${mentions} ボスが討伐されたから通して大丈夫よ！`)
 
   console.log('Release notice')
+}
+
+/**
+ * リアクションからメッセージを取得する
+ * @param react 取得元のリアクション
+ * @return 取得したメッセージ
+ */
+const fetchMessage = async (react: Discord.MessageReaction): Promise<Discord.Message> => {
+  const msg = react.message
+
+  // #凸宣言-ボス状況のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+
+  // キャッシュとして読み込む
+  await channel.messages.fetch(msg.id)
+
+  return msg
 }

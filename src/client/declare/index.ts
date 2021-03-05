@@ -21,6 +21,7 @@ export const ChangeBoss = async (state: Option<Current>) => {
   // 凸宣言をリセットする
   await declaration.SetUser(state)
 
+  // メッセージを削除
   await messageDelete()
 }
 
