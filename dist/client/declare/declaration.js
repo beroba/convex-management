@@ -92,7 +92,7 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
                 hoken = _a.sent();
                 declare.edit('凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
                     '```' +
-                    ("\n\u2015\u2015\u2015\u2015\u672C\u6226\u2015\u2015\u2015\u2015\n" + honsen.join('\n') + "\n\n\u2015\u2015\u2015\u2015\u4FDD\u967A\u2015\u2015\u2015\u2015\n" + hoken.join('\n') + "\n") +
+                    ("\n\u2015\u2015\u2015\u2015\u672C\u6226\u2015\u2015\u2015\u2015\n" + honsen.join('\n') + (honsen.length ? '\n' : '') + "\n\u2015\u2015\u2015\u2015\u4FDD\u967A\u2015\u2015\u2015\u2015\n" + hoken.join('\n')) +
                     '```');
                 return [2];
         }

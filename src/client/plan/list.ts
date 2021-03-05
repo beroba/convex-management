@@ -4,6 +4,7 @@ import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
+import * as declare from '../declare'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力
@@ -51,6 +52,12 @@ export const SituationEdit = async (plans: Plan[]) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
   const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
   msg.edit(text)
+
+  // 現在の状況を取得
+  const state = await current.Fetch()
+
+  // 凸宣言を設定する
+  await declare.SetPlanList(state)
 
   console.log('Edit the convex schedule of the convex situation')
 }

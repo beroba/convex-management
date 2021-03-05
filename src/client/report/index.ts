@@ -76,7 +76,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     }
   }
 
-  // 凸状況に報告
+  // #凸状況に報告
   situation.Report(members)
 
   return 'Update status'

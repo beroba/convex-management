@@ -43,7 +43,7 @@ export const SetUser = async (state: Option<Current>) => {
   declare.edit(
     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
     '```' +
-    `\n――――本戦――――\n${honsen.join('\n')}\n\n――――保険――――\n${hoken.join('\n')}\n` +
+    `\n――――本戦――――\n${honsen.join('\n')}${honsen.length ? '\n' : ''}\n――――保険――――\n${hoken.join('\n')}` +
     '```'
   )
 }

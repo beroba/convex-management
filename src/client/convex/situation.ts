@@ -9,10 +9,10 @@ import {Member} from '../../io/type'
  * @param members メンバー一覧
  */
 export const Report = async (members: Member[]) => {
-  // 凸状況のテキストを作成
+  // #凸状況のテキストを作成
   const text = await createMessage(members)
 
-  // 凸状況を更新
+  // #凸状況を更新
   const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
   const msg = await situation.messages.fetch(Settings.CONVEX_MESSAGE_ID.SITUATION)
   msg.edit(text)

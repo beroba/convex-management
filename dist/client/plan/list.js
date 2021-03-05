@@ -64,6 +64,7 @@ var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
+var declare = __importStar(require("../declare"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var state, plans, text, channel;
     return __generator(this, function (_a) {
@@ -100,7 +101,7 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
-    var text, channel, msg;
+    var text, channel, msg, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, createAllPlanText(plans)];
@@ -111,6 +112,12 @@ exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void
             case 2:
                 msg = _a.sent();
                 msg.edit(text);
+                return [4, current.Fetch()];
+            case 3:
+                state = _a.sent();
+                return [4, declare.SetPlanList(state)];
+            case 4:
+                _a.sent();
                 console.log('Edit the convex schedule of the convex situation');
                 return [2];
         }

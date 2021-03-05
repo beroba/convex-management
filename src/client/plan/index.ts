@@ -5,7 +5,6 @@ import * as util from '../../util'
 import * as status from '../../io/status'
 import * as list from './list'
 import * as update from './update'
-
 /**
  * 凸予定を行う
  * @param msg DiscordからのMessage
