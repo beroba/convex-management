@@ -1,3 +1,4 @@
+import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
@@ -5,7 +6,6 @@ import * as schedule from '../../io/schedule'
 import {Current} from '../../io/type'
 import * as list from '../plan/list'
 import * as declaration from './declaration'
-import * as react from './react'
 import * as status from './status'
 
 /**
@@ -16,19 +16,19 @@ export const ChangeBoss = async (state: Option<Current>) => {
   if (!state) return
 
   // ボスの状態を更新
-  await status.Update(state)
+  status.Update(state)
 
   // 凸予定一覧を更新
-  await SetPlanList(state)
+  SetPlanList(state)
 
   // 凸宣言のリアクションを全て外す
   await declaration.ResetReact()
 
   // 凸宣言をリセット
-  await declaration.SetUser(state)
+  declaration.SetUser(state)
 
   // メッセージを削除
-  await messageDelete()
+  messageDelete()
 }
 
 /**
@@ -59,20 +59,47 @@ const messageDelete = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
   // キャル以外のメッセージを全てを削除
-  const users = await Promise.all(
+  const list = await Promise.all(
     (await channel.messages.fetch())
       .map(m => m)
       .filter(m => !m.author.bot)
       .map(async m => {
-        const msg = await m.delete()
-        // 削除したメッセージを投稿した人をリストに入れる
-        return msg.author
+        // 凸宣言に付いているリアクションをキャッシュする
+        await Promise.all(m.reactions.cache.map(async r => await r.users.fetch()))
+
+        // メッセージを削除
+        return m.delete()
       })
   )
+
+  // 済が付いていないメッセージのユーザー一覧のリストを作成
+  const users = list
+    .filter(m => !m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
+    .map(m => m.author)
 
   // 削除したメッセージがない場合は終了
   if (!users.length) return
 
   // 開放通知を行う
-  react.ReleaseNotice(users)
+  releaseNotice(users)
+}
+
+/**
+ * #進行-連携に開放通知を行う
+ * @param users メンションを行うユーザー一覧
+ */
+const releaseNotice = (users: Discord.User[]) => {
+  // 重複を省いたメンション一覧を作成する
+  const mentions = users
+    .filter((n, i, e) => e.indexOf(n) == i)
+    .map(u => `<@!${u.id}>`)
+    .join(' ')
+
+  // #進行-連携のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+  // メンションを行う
+  channel.send(`${mentions} ボスが討伐されたから通して大丈夫よ！`)
+
+  console.log('Release notice')
 }

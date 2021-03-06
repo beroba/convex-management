@@ -64,7 +64,6 @@ var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("../plan/list"));
 var declaration = __importStar(require("./declaration"));
-var react = __importStar(require("./react"));
 var status = __importStar(require("./status"));
 exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -72,21 +71,13 @@ exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0,
             case 0:
                 if (!state)
                     return [2];
-                return [4, status.Update(state)];
+                status.Update(state);
+                exports.SetPlanList(state);
+                return [4, declaration.ResetReact()];
             case 1:
                 _a.sent();
-                return [4, exports.SetPlanList(state)];
-            case 2:
-                _a.sent();
-                return [4, declaration.ResetReact()];
-            case 3:
-                _a.sent();
-                return [4, declaration.SetUser(state)];
-            case 4:
-                _a.sent();
-                return [4, messageDelete()];
-            case 5:
-                _a.sent();
+                declaration.SetUser(state);
+                messageDelete();
                 return [2];
         }
     });
@@ -112,7 +103,7 @@ exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0
     });
 }); };
 var messageDelete = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, users, _a, _b;
+    var channel, list, _a, _b, users;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -123,22 +114,38 @@ var messageDelete = function () { return __awaiter(void 0, void 0, void 0, funct
                         .map(function (m) { return m; })
                         .filter(function (m) { return !m.author.bot; })
                         .map(function (m) { return __awaiter(void 0, void 0, void 0, function () {
-                        var msg;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4, m["delete"]()];
+                                case 0: return [4, Promise.all(m.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4, r.users.fetch()];
+                                            case 1: return [2, _a.sent()];
+                                        }
+                                    }); }); }))];
                                 case 1:
-                                    msg = _a.sent();
-                                    return [2, msg.author];
+                                    _a.sent();
+                                    return [2, m["delete"]()];
                             }
                         });
                     }); })])];
             case 2:
-                users = _c.sent();
+                list = _c.sent();
+                users = list
+                    .filter(function (m) { return !m.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; }); })
+                    .map(function (m) { return m.author; });
                 if (!users.length)
                     return [2];
-                react.ReleaseNotice(users);
+                releaseNotice(users);
                 return [2];
         }
     });
 }); };
+var releaseNotice = function (users) {
+    var mentions = users
+        .filter(function (n, i, e) { return e.indexOf(n) == i; })
+        .map(function (u) { return "<@!" + u.id + ">"; })
+        .join(' ');
+    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+    channel.send(mentions + " \u30DC\u30B9\u304C\u8A0E\u4F10\u3055\u308C\u305F\u304B\u3089\u901A\u3057\u3066\u5927\u4E08\u592B\u3088\uFF01");
+    console.log('Release notice');
+};

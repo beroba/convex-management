@@ -103,7 +103,7 @@ var createMessage = function (members) { return __awaiter(void 0, void 0, void 0
                 持越3 = userSorting(members, 3, 1);
                 凸3 = userSorting(members, 3, 0);
                 return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
-                        ("`" + state.lap + "`\u5468\u76EE\u306E`" + state.boss + "` `" + remaining + "`\n") +
+                        ("`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + remaining + "`\n") +
                         '```\n' +
                         ("\u672A\u51F8: " + 未凸 + "\n") +
                         '\n' +

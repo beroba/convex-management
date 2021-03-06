@@ -49,6 +49,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // ボスを倒したか確認
   if (/^k|kill/i.test(content)) {
+    // 凸報告者の凸宣言に書いてあるメッセージを全て削除
+    await declare.UserMessageAllDelete(msg.author)
+
     // 次のボスへ進める
     lapAndBoss.Next()
   } else {
@@ -57,7 +60,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
     // @が入っている場合はHPの変更をする
     if (/@\d/.test(content)) {
-      await declare.RemainingHPChange(content)
+      declare.RemainingHPChange(content)
     }
   }
 
@@ -72,7 +75,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)
 
-  // `/`が入っている場合は凸予定を取り消さない
+  // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(content)) {
     // 3凸終了していたら全ての凸予定を削除、そうでない場合は現在のボスの凸予定を削除
     if (member?.end === '1') {

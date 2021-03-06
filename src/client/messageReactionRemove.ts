@@ -22,6 +22,10 @@ export const MessageReactionRemove = async (
   comment = await declare.ConvexRemove(react, user as Discord.User)
   if (comment) return console.log(comment)
 
+  // 通知キャンセルを行う
+  comment = await declare.NoticeCancel(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
   // 活動時間の削除を行う
   comment = await activityTime.Remove(react, user as Discord.User)
   if (comment) return console.log(comment)

@@ -54,7 +54,7 @@ const createMessage = async (members: Member[]): Promise<string> => {
 
   return (
     `\`${time}\` ${date.num} 凸状況一覧\n` +
-    `\`${state.lap}\`周目の\`${state.boss}\` \`${remaining}\`\n` +
+    `\`${state.lap}\`周目 \`${state.boss}\` \`${remaining}\`\n` +
     '```\n' +
     `未凸: ${未凸}\n` +
     '\n' +

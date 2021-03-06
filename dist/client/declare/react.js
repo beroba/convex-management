@@ -58,12 +58,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ReleaseNotice = exports.OverNotice = exports.ConfirmNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
+exports.NoticeCancel = exports.OverNotice = exports.ConfirmNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var declaration = __importStar(require("./declaration"));
+var declare = __importStar(require("./status"));
 exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, state;
     return __generator(this, function (_a) {
@@ -73,12 +74,16 @@ exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, vo
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
-                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; }))
+                if (react.message.id !== const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)
                     return [2];
+                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; })) {
+                    react.users.remove(user);
+                    return [2];
+                }
                 return [4, status.FetchMember(user.id)];
             case 1:
                 member = _a.sent();
-                if (!member) {
+                if (!member || member.end === '1') {
                     react.users.remove(user);
                     return [2];
                 }
@@ -101,8 +106,12 @@ exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0,
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
-                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; }))
+                if (react.message.id !== const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)
                     return [2];
+                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; })) {
+                    react.users.remove(user);
+                    return [2];
+                }
                 return [4, current.Fetch()];
             case 1:
                 state = _a.sent();
@@ -114,36 +123,45 @@ exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, declare, state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var channel, msg, state, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
                 return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
             case 1:
-                declare = _a.sent();
-                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                msg = _c.sent();
+                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4, r.users.fetch()];
                             case 1: return [2, _a.sent()];
                         }
                     }); }); }))];
             case 2:
-                _a.sent();
-                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                _c.sent();
+                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4, r.users.remove(user)];
                             case 1: return [2, _a.sent()];
                         }
                     }); }); }))];
             case 3:
-                _a.sent();
+                _c.sent();
                 return [4, current.Fetch()];
             case 4:
-                state = _a.sent();
+                state = _c.sent();
                 return [4, declaration.SetUser(state)];
             case 5:
-                _a.sent();
+                _c.sent();
+                _b = (_a = Promise).all;
+                return [4, channel.messages.fetch()];
+            case 6: return [4, _b.apply(_a, [(_c.sent())
+                        .map(function (m) { return m; })
+                        .filter(function (m) { return m.author.id === user.id; })
+                        .map(function (m) { return m["delete"](); })])];
+            case 7:
+                _c.sent();
+                declare.Update(state);
                 console.log('Completion of convex declaration');
                 return [2];
         }
@@ -158,14 +176,18 @@ exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
-                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KAKUNIN)
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KAKUNIN) {
+                    if (react.emoji.id === const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)
+                        return [2];
+                    react.users.remove(user);
                     return [2];
+                }
                 return [4, fetchMessage(react)];
             case 1:
                 msg = _a.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send("<@!" + user.id + "> " + msg.content + "\u306E\u78BA\u5B9A\u3092\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
-                msg["delete"]();
                 return [2, 'Confirm notice'];
         }
     });
@@ -179,27 +201,48 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
-                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.MOCHIKOSHI) {
+                    react.users.remove(user);
                     return [2];
+                }
                 return [4, fetchMessage(react)];
             case 1:
                 msg = _a.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send("<@!" + user.id + "> " + msg.content + "\u3067\u6301\u3061\u8D8A\u3057\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
-                msg["delete"]();
                 return [2, 'Carry over notice'];
         }
     });
 }); };
-exports.ReleaseNotice = function (users) {
-    var mentions = users
-        .filter(function (n, i, e) { return e.indexOf(n) == i; })
-        .map(function (u) { return "<@!" + u.id + ">"; })
-        .join(' ');
-    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-    channel.send(mentions + " \u30DC\u30B9\u304C\u8A0E\u4F10\u3055\u308C\u305F\u304B\u3089\u901A\u3057\u3066\u5927\u4E08\u592B\u3088\uFF01");
-    console.log('Release notice');
-};
+exports.NoticeCancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var msg, sumi;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                if (![const_settings_1["default"].EMOJI_ID.KAKUNIN, const_settings_1["default"].EMOJI_ID.MOCHIKOSHI].some(function (id) { return id === react.emoji.id; }))
+                    return [2];
+                return [4, fetchMessage(react)];
+            case 1:
+                msg = _a.sent();
+                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 2:
+                _a.sent();
+                sumi = msg.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; });
+                sumi === null || sumi === void 0 ? void 0 : sumi.remove();
+                return [2];
+        }
+    });
+}); };
 var fetchMessage = function (react) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, channel;
     return __generator(this, function (_a) {

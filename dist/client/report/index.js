@@ -111,15 +111,17 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 2:
                 state = _c.sent();
                 content = util.Format(msg.content);
-                if (!/^k|kill/i.test(content)) return [3, 3];
+                if (!/^k|kill/i.test(content)) return [3, 4];
+                return [4, declare.UserMessageAllDelete(msg.author)];
+            case 3:
+                _c.sent();
                 lapAndBoss.Next();
                 return [3, 5];
-            case 3:
-                react.ConvexDone(msg.author);
-                if (!/@\d/.test(content)) return [3, 5];
-                return [4, declare.RemainingHPChange(content)];
             case 4:
-                _c.sent();
+                react.ConvexDone(msg.author);
+                if (/@\d/.test(content)) {
+                    declare.RemainingHPChange(content);
+                }
                 _c.label = 5;
             case 5:
                 overDelete(msg);

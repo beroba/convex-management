@@ -5,6 +5,7 @@ import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as declaration from './declaration'
+import * as declare from './status'
 
 /**
  * リアクションを追加した際に凸宣言を更新する
@@ -19,13 +20,20 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   // #凸宣言-ボス状況でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
+  // 凸宣言のメッセージでなければ終了
+  if (react.message.id !== Settings.CONVEX_DECLARE_ID.DECLARE) return
+
   // 本戦と保険以外の絵文字の場合は終了
-  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) return
+  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) {
+    // 関係のないリアクションを外す
+    react.users.remove(user)
+    return
+  }
 
   // メンバーの状態を取得
   const member = await status.FetchMember(user.id)
-  // クランメンバーでなければ終了
-  if (!member) {
+  // クランメンバーでない、もしくは3凸していた場合は終了
+  if (!member || member.end === '1') {
     // リアクションを外す
     react.users.remove(user)
     return
@@ -53,8 +61,15 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   // #凸宣言-ボス状況でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
+  // 凸宣言のメッセージでなければ終了
+  if (react.message.id !== Settings.CONVEX_DECLARE_ID.DECLARE) return
+
   // 本戦と保険以外の絵文字の場合は終了
-  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) return
+  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) {
+    // 関係のないリアクションを外す
+    react.users.remove(user)
+    return
+  }
 
   // 現在の状況を取得
   const state = await current.Fetch()
@@ -74,19 +89,30 @@ export const ConvexDone = async (user: Discord.User) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
   // 凸宣言のメッセージを取得
-  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
   // 凸宣言に付いているリアクションをキャッシュする
-  await Promise.all(declare.reactions.cache.map(async r => await r.users.fetch()))
+  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
 
   // ユーザーのリアクションを全て外す
-  await Promise.all(declare.reactions.cache.map(async r => await r.users.remove(user)))
+  await Promise.all(msg.reactions.cache.map(async r => await r.users.remove(user)))
 
   // 現在の状況を取得
   const state = await current.Fetch()
 
   // 凸宣言を設定する
   await declaration.SetUser(state)
+
+  // 凸宣言完了者のメッセージを全て削除
+  await Promise.all(
+    (await channel.messages.fetch())
+      .map(m => m)
+      .filter(m => m.author.id === user.id)
+      .map(m => m.delete())
+  )
+
+  // 現在の状態を更新
+  declare.Update(state)
 
   console.log('Completion of convex declaration')
 }
@@ -105,7 +131,14 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
   // 確認以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.KAKUNIN) return
+  if (react.emoji.id !== Settings.EMOJI_ID.KAKUNIN) {
+    // 持越の場合は終了
+    if (react.emoji.id === Settings.EMOJI_ID.MOCHIKOSHI) return
+
+    // 関係のないリアクションを外す
+    react.users.remove(user)
+    return
+  }
 
   // 進行役が付いていない場合は終了
   // const member = await util.MemberFromId(user.id)
@@ -118,14 +151,14 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
 
+  // 済のリアクションを付ける
+  msg.react(Settings.EMOJI_ID.SUMI)
+
   // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
   channel.send(`<@!${user.id}> ${msg.content}の確定をお願いするわ！`)
-
-  // 元のメッセージは削除する
-  msg.delete()
 
   return 'Confirm notice'
 }
@@ -144,7 +177,11 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
   // 持越以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) return
+  if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) {
+    // 関係のないリアクションを外す
+    react.users.remove(user)
+    return
+  }
 
   // 進行役が付いていない場合は終了
   // const member = await util.MemberFromId(user.id)
@@ -157,36 +194,45 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
 
+  // 済のリアクションを付ける
+  msg.react(Settings.EMOJI_ID.SUMI)
+
   // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
   channel.send(`<@!${user.id}> ${msg.content}で持ち越しお願いするわ！`)
 
-  // 元のメッセージは削除する
-  msg.delete()
-
   return 'Carry over notice'
 }
 
 /**
- * #進行-連携に開放通知を行う
- * @param users メンションを行うユーザー一覧
+ * 確認か持越のリアクションを外した際に済も外す
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 取り消し処理の実行結果
  */
-export const ReleaseNotice = (users: Discord.User[]) => {
-  // 重複を省いたメンション一覧を作成する
-  const mentions = users
-    .filter((n, i, e) => e.indexOf(n) == i)
-    .map(u => `<@!${u.id}>`)
-    .join(' ')
+export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+  // botのリアクションは実行しない
+  if (user.bot) return
 
-  // #進行-連携のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+  // #凸宣言-ボス状況でなければ終了
+  if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
-  // メンションを行う
-  channel.send(`${mentions} ボスが討伐されたから通して大丈夫よ！`)
+  // 確認と持越以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.KAKUNIN, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) return
 
-  console.log('Release notice')
+  // リアクションからメッセージを取得する
+  const msg = await fetchMessage(react)
+
+  // メッセージに付いているリアクションをキャッシュする
+  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
+
+  // 済の絵文字を取得
+  const sumi = msg.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI)
+
+  // 済を削除
+  sumi?.remove()
 }
 
 /**

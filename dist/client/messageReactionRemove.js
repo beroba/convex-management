@@ -75,8 +75,13 @@ exports.MessageReactionRemove = function (react, user) { return __awaiter(void 0
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, activityTime.Remove(react, user)];
+                return [4, declare.NoticeCancel(react, user)];
             case 2:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, activityTime.Remove(react, user)];
+            case 3:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

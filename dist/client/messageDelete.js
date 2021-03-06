@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.MessageDelete = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
+var declare = __importStar(require("./declare/status"));
 var report = __importStar(require("./report/cancel"));
 var plan = __importStar(require("./plan/delete"));
 exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -70,13 +71,18 @@ exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0
             case 0:
                 if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
                     return [2];
-                return [4, report.Delete(msg)];
+                return [4, declare.MessageDelete(msg)];
             case 1:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, plan.Delete(msg)];
+                return [4, report.Delete(msg)];
             case 2:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, plan.Delete(msg)];
+            case 3:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

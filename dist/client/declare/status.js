@@ -58,12 +58,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.RemainingHPChange = exports.Update = exports.React = void 0;
+exports.UserMessageAllDelete = exports.MessageDelete = exports.RemainingHPChange = exports.React = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
+exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var maxHP, channel, status, _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                maxHP = const_settings_1["default"].STAGE_HP[state.stage][state.alpha];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.STATUS)];
+            case 1:
+                status = _e.sent();
+                _b = (_a = status).edit;
+                _c = state.boss + " `" + state.hp + "/" + maxHP + "`\n";
+                _d = "\u4E88\u60F3\u6B8B\u308AHP `";
+                return [4, expectRemainingHP(state)];
+            case 2: return [4, _b.apply(_a, [_c + (_d + (_e.sent()) + "`")])];
+            case 3:
+                _e.sent();
+                return [2];
+        }
+    });
+}); };
 exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content;
+    var content, state;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -86,24 +107,11 @@ exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, functi
             case 4:
                 _b.sent();
                 console.log('Set declare reactions');
+                return [4, current.Fetch()];
+            case 5:
+                state = _b.sent();
+                exports.Update(state);
                 return [2, 'Calculate the HP'];
-        }
-    });
-}); };
-exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var hp, channel, status;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                hp = const_settings_1["default"].STAGE_HP[state.stage][state.alpha];
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.STATUS)];
-            case 1:
-                status = _a.sent();
-                return [4, status.edit("\u73FE\u5728\u306EHP `" + state.hp + "/" + hp + "`\n\u4E88\u60F3\u6B8B\u308AHP ` `")];
-            case 2:
-                _a.sent();
-                return [2];
         }
     });
 }); };
@@ -112,13 +120,74 @@ exports.RemainingHPChange = function (content) { return __awaiter(void 0, void 0
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                at = content.replace(/^.*@/g, '').replace(/\s.*$/g, '');
+                at = content.replace(/^.*@/g, '').trim().replace(/\s.*$/g, '');
                 return [4, current.UpdateBossHp(at)];
             case 1:
                 state = _a.sent();
                 return [4, exports.Update(state)];
             case 2:
                 _a.sent();
+                return [2];
+        }
+    });
+}); };
+var expectRemainingHP = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, list, damage, hp;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch()];
+            case 1:
+                list = (_a.sent())
+                    .map(function (m) { return m; })
+                    .filter(function (m) { return !m.author.bot; })
+                    .map(function (m) {
+                    return util
+                        .Format(m.content)
+                        .replace(/\d*s/g, '')
+                        .trim()
+                        .replace(/(?![\d]+).*/g, '');
+                })
+                    .map(Number);
+                damage = list.length ? list.reduce(function (a, b) { return a + b; }) : 0;
+                hp = Number(state.hp) - damage;
+                return [2, hp >= 0 ? hp : 0];
+        }
+    });
+}); };
+exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var state;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                    return [2];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                return [4, current.Fetch()];
+            case 1:
+                state = _b.sent();
+                exports.Update(state);
+                return [2, 'Calculate the HP'];
+        }
+    });
+}); };
+exports.UserMessageAllDelete = function (user) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                _b = (_a = Promise).all;
+                return [4, channel.messages.fetch()];
+            case 1: return [4, _b.apply(_a, [(_c.sent())
+                        .map(function (m) { return m; })
+                        .filter(function (m) { return m.author.id === user.id; })
+                        .map(function (m) { return m["delete"](); })])];
+            case 2:
+                _c.sent();
                 return [2];
         }
     });
