@@ -4,6 +4,7 @@ import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
+import * as declare from '../declare'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力
@@ -17,7 +18,7 @@ export const Output = async (alpha: string) => {
   const plans = await schedule.Fetch()
 
   // 凸予定一覧のテキストを作成
-  const text = await createPlanText(alpha, state.stage, plans)
+  const text = await CreatePlanText(alpha, state.stage, plans)
 
   // 凸予定一覧を出力
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
@@ -52,6 +53,12 @@ export const SituationEdit = async (plans: Plan[]) => {
   const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
   msg.edit(text)
 
+  // 現在の状況を取得
+  const state = await current.Fetch()
+
+  // 凸宣言を設定する
+  await declare.SetPlanList(state)
+
   console.log('Edit the convex schedule of the convex situation')
 }
 
@@ -62,7 +69,7 @@ export const SituationEdit = async (plans: Plan[]) => {
  * @param plans 凸予定一覧
  * @return 作成したテキスト
  */
-const createPlanText = async (alpha: string, stage: string, plans: Plan[]): Promise<string> => {
+export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]): Promise<string> => {
   // 凸予定一覧から名前とメッセージだけにしたテキストを作成
   const p = await Promise.all(
     plans
@@ -95,11 +102,11 @@ const createAllPlanText = async (plans: Plan[]): Promise<string> => {
   const stage = state.stage
 
   // 全ボスの凸予定一覧のテキストを作成
-  const a = await createPlanText('a', stage, plans)
-  const b = await createPlanText('b', stage, plans)
-  const c = await createPlanText('c', stage, plans)
-  const d = await createPlanText('d', stage, plans)
-  const e = await createPlanText('e', stage, plans)
+  const a = await CreatePlanText('a', stage, plans)
+  const b = await CreatePlanText('b', stage, plans)
+  const c = await CreatePlanText('c', stage, plans)
+  const d = await CreatePlanText('d', stage, plans)
+  const e = await CreatePlanText('e', stage, plans)
 
   // 1つにまとめて返す
   return [a, b, c, d, e].join('\n')

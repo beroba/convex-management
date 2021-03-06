@@ -58,12 +58,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
+exports.CreatePlanText = exports.SituationEdit = exports.AllOutput = exports.Output = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
+var declare = __importStar(require("../declare"));
 exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var state, plans, text, channel;
     return __generator(this, function (_a) {
@@ -74,7 +75,7 @@ exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, fun
                 return [4, schedule.Fetch()];
             case 2:
                 plans = _a.sent();
-                return [4, createPlanText(alpha, state.stage, plans)];
+                return [4, exports.CreatePlanText(alpha, state.stage, plans)];
             case 3:
                 text = _a.sent();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
@@ -100,7 +101,7 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
-    var text, channel, msg;
+    var text, channel, msg, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, createAllPlanText(plans)];
@@ -111,12 +112,18 @@ exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void
             case 2:
                 msg = _a.sent();
                 msg.edit(text);
+                return [4, current.Fetch()];
+            case 3:
+                state = _a.sent();
+                return [4, declare.SetPlanList(state)];
+            case 4:
+                _a.sent();
                 console.log('Edit the convex schedule of the convex situation');
                 return [2];
         }
     });
 }); };
-var createPlanText = function (alpha, stage, plans) { return __awaiter(void 0, void 0, void 0, function () {
+exports.CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 0, void 0, void 0, function () {
     var p, text, name, hp;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -153,19 +160,19 @@ var createAllPlanText = function (plans) { return __awaiter(void 0, void 0, void
             case 1:
                 state = _a.sent();
                 stage = state.stage;
-                return [4, createPlanText('a', stage, plans)];
+                return [4, exports.CreatePlanText('a', stage, plans)];
             case 2:
                 a = _a.sent();
-                return [4, createPlanText('b', stage, plans)];
+                return [4, exports.CreatePlanText('b', stage, plans)];
             case 3:
                 b = _a.sent();
-                return [4, createPlanText('c', stage, plans)];
+                return [4, exports.CreatePlanText('c', stage, plans)];
             case 4:
                 c = _a.sent();
-                return [4, createPlanText('d', stage, plans)];
+                return [4, exports.CreatePlanText('d', stage, plans)];
             case 5:
                 d = _a.sent();
-                return [4, createPlanText('e', stage, plans)];
+                return [4, exports.CreatePlanText('e', stage, plans)];
             case 6:
                 e = _a.sent();
                 return [2, [a, b, c, d, e].join('\n')];

@@ -58,82 +58,81 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Report = void 0;
+exports.ResetReact = exports.SetUser = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-var dateTable = __importStar(require("../../io/dateTable"));
-var current = __importStar(require("../../io/current"));
-exports.Report = function (members) { return __awaiter(void 0, void 0, void 0, function () {
-    var text, situation, msg, history;
+var schedule = __importStar(require("../../io/schedule"));
+var status = __importStar(require("../../io/status"));
+exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, declare, emoji, plans, honsen, hoken;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, createMessage(members)];
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
             case 1:
-                text = _a.sent();
-                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
-                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
+                declare = _a.sent();
+                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
             case 2:
-                msg = _a.sent();
-                msg.edit(text);
-                history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
-                history.send(text);
-                console.log('Report convex situation');
+                _a.sent();
+                emoji = declare.reactions.cache.map(function (r) { return ({ name: r.emoji.name, users: r.users.cache.map(function (u) { return u; }) }); });
+                return [4, schedule.FetchBoss(state.alpha)];
+            case 3:
+                plans = _a.sent();
+                return [4, createDeclareList(plans, emoji, 'honsen')];
+            case 4:
+                honsen = _a.sent();
+                return [4, createDeclareList(plans, emoji, 'hoken')];
+            case 5:
+                hoken = _a.sent();
+                declare.edit('凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
+                    '```' +
+                    ("\n\u2015\u2015\u2015\u2015\u672C\u6226\u2015\u2015\u2015\u2015\n" + honsen.join('\n') + (honsen.length ? '\n' : '') + "\n\u2015\u2015\u2015\u2015\u4FDD\u967A\u2015\u2015\u2015\u2015\n" + hoken.join('\n')) +
+                    '```');
                 return [2];
         }
     });
 }); };
-var createMessage = function (members) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, date, state, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+var createDeclareList = function (plans, emoji, name) { return __awaiter(void 0, void 0, void 0, function () {
+    var convex;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                time = getCurrentDate();
-                return [4, dateTable.TakeDate()];
+            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
+                    .users
+                    .map(function (u) { return status.FetchMember(u.id); }))];
             case 1:
-                date = _a.sent();
-                return [4, current.Fetch()];
-            case 2:
-                state = _a.sent();
-                remaining = remainingConvexNumber(members);
-                未凸 = userSorting(members, 0, 0);
-                持越1 = userSorting(members, 1, 1);
-                凸1 = userSorting(members, 1, 0);
-                持越2 = userSorting(members, 2, 1);
-                凸2 = userSorting(members, 2, 0);
-                持越3 = userSorting(members, 3, 1);
-                凸3 = userSorting(members, 3, 0);
-                return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
-                        ("`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + remaining + "`\n") +
-                        '```\n' +
-                        ("\u672A\u51F8: " + 未凸 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越1 + "\n") +
-                        ("1\u51F8 : " + 凸1 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越2 + "\n") +
-                        ("2\u51F8 : " + 凸2 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越3 + "\n") +
-                        ("3\u51F8 : " + 凸3 + "\n") +
-                        '\n' +
-                        '```')];
+                convex = (_a.sent()).filter(function (m) { return m; });
+                return [2, convex.map(function (m) {
+                        var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
+                        return (m === null || m === void 0 ? void 0 : m.name) + "[" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + "]" + (p ? " " + p.msg : '');
+                    })];
         }
     });
 }); };
-var getCurrentDate = function () {
-    var p0 = function (n) { return (n + '').padStart(2, '0'); };
-    var d = new Date();
-    return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
-};
-var remainingConvexNumber = function (members) {
-    var remaining = members.map(function (s) { return 3 - Number(s.convex) + Number(s.over); }).reduce(function (a, b) { return a + b; });
-    var over = members.map(function (s) { return Number(s.over); }).reduce(function (a, b) { return a + b; });
-    return remaining + "/" + members.length * 3 + "(" + over + ")";
-};
-var userSorting = function (members, convex, over) {
-    return members
-        .filter(function (l) { return Number(l.convex) === convex; })
-        .filter(function (l) { return Number(l.over) === over; })
-        .map(function (l) { return l.name; })
-        .join(', ');
-};
+exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, declare;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+            case 1:
+                declare = _a.sent();
+                return [4, declare.reactions.removeAll()];
+            case 2:
+                _a.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+            case 3:
+                _a.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
+            case 4:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };

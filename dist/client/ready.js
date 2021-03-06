@@ -66,9 +66,14 @@ exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function 
     var channel;
     var _a;
     return __generator(this, function (_b) {
-        channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-        channel.send('きゃるきゃるーん');
-        console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
-        return [2];
+        switch (_b.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+                return [4, channel.send('きゃるきゃるーん')];
+            case 1:
+                _b.sent();
+                console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+                return [2];
+        }
     });
 }); };

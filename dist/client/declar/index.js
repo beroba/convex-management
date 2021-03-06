@@ -58,34 +58,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageDelete = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var declare = __importStar(require("./declare/status"));
-var report = __importStar(require("./report/cancel"));
-var plan = __importStar(require("./plan/delete"));
-exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+exports.Change = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+var schedule = __importStar(require("../../io/schedule"));
+var list = __importStar(require("../plan/list"));
+exports.Change = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, plan, declar, plans, text;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
-                    return [2];
-                return [4, declare.MessageDelete(msg)];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLAR);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLAR_ID.PLAN)];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, report.Delete(msg)];
+                plan = _a.sent();
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLAR_ID.DECLAR)];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, plan.Delete(msg)];
+                declar = _a.sent();
+                return [4, schedule.Fetch()];
             case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
+                plans = _a.sent();
+                return [4, list.CreatePlanText((state === null || state === void 0 ? void 0 : state.alpha) || '', (state === null || state === void 0 ? void 0 : state.stage) || '', plans)];
+            case 4:
+                text = _a.sent();
+                plan.edit(text);
+                declar.edit('凸宣言\n```\n \n```');
                 return [2];
         }
     });

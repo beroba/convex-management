@@ -98,6 +98,7 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb convex/.test(command): return [3, 1];
                     case /cb boss now/.test(command): return [3, 3];
                     case /cb boss next/.test(command): return [3, 4];
+                    case /cb boss back/.test(command): return [3, 7];
                     case /cb boss previous/.test(command): return [3, 7];
                     case /cb boss/.test(command): return [3, 10];
                     case /cb remove plan/.test(command): return [3, 12];

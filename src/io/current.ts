@@ -1,4 +1,5 @@
 import Settings from 'const-settings'
+import Option from 'type-of-option'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as bossTable from './bossTable'
@@ -9,7 +10,7 @@ import {Current} from './type'
  * @param lap 周回数
  * @param alpha ボス番号
  */
-export const UpdateLapAndBoss = async (lap: string, alpha: string) => {
+export const UpdateLapAndBoss = async (lap: string, alpha: string): Promise<Option<Current>> => {
   // 現在の状況を取得
   const state: Current = await Fetch()
 
@@ -30,6 +31,8 @@ export const UpdateLapAndBoss = async (lap: string, alpha: string) => {
 
   // キャルステータスを更新する
   await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
+
+  return state
 }
 
 /**
@@ -57,15 +60,17 @@ const getStageName = (lap: string): string => {
  * 現在の状況のボスhpを設定する
  * @param hp ボスhp
  */
-export const UpdateBossHp = async (hp: string) => {
+export const UpdateBossHp = async (hp: string): Promise<Current> => {
   // 現在の状況を取得
-  const json: Current = await Fetch()
+  const state: Current = await Fetch()
 
   // 値を更新
-  json.hp = hp
+  state.hp = hp
 
   // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, json)
+  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
+
+  return state
 }
 
 /**
@@ -79,7 +84,7 @@ export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CA
  */
 export const ReflectOnSheet = async () => {
   // 現在の状況を取得
-  const json: Current = await Fetch()
+  const state: Current = await Fetch()
 
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
@@ -89,15 +94,15 @@ export const ReflectOnSheet = async () => {
 
   // 周回数を更新
   const lap_cell = await sheet.getCell(lap)
-  lap_cell.setValue(json.lap)
+  lap_cell.setValue(state.lap)
 
   // ボス名を更新
   const boss_cell = await sheet.getCell(boss)
-  boss_cell.setValue(json.boss)
+  boss_cell.setValue(state.boss)
 
   // ボス番号を更新
   const alpha_cell = await sheet.getCell(alpha)
-  alpha_cell.setValue(json.alpha)
+  alpha_cell.setValue(state.alpha)
 }
 
 /**

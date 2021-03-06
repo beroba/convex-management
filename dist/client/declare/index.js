@@ -58,82 +58,94 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Report = void 0;
+exports.SetPlanList = exports.ChangeBoss = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-var dateTable = __importStar(require("../../io/dateTable"));
-var current = __importStar(require("../../io/current"));
-exports.Report = function (members) { return __awaiter(void 0, void 0, void 0, function () {
-    var text, situation, msg, history;
+var schedule = __importStar(require("../../io/schedule"));
+var list = __importStar(require("../plan/list"));
+var declaration = __importStar(require("./declaration"));
+var status = __importStar(require("./status"));
+exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, createMessage(members)];
+            case 0:
+                if (!state)
+                    return [2];
+                status.Update(state);
+                exports.SetPlanList(state);
+                return [4, declaration.ResetReact()];
             case 1:
-                text = _a.sent();
-                situation = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_SITUATION);
-                return [4, situation.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.SITUATION)];
-            case 2:
-                msg = _a.sent();
-                msg.edit(text);
-                history = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_HISTORY);
-                history.send(text);
-                console.log('Report convex situation');
+                _a.sent();
+                declaration.SetUser(state);
+                messageDelete();
                 return [2];
         }
     });
 }); };
-var createMessage = function (members) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, date, state, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, plan, plans, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                time = getCurrentDate();
-                return [4, dateTable.TakeDate()];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.PLAN)];
             case 1:
-                date = _a.sent();
-                return [4, current.Fetch()];
+                plan = _a.sent();
+                return [4, schedule.Fetch()];
             case 2:
-                state = _a.sent();
-                remaining = remainingConvexNumber(members);
-                未凸 = userSorting(members, 0, 0);
-                持越1 = userSorting(members, 1, 1);
-                凸1 = userSorting(members, 1, 0);
-                持越2 = userSorting(members, 2, 1);
-                凸2 = userSorting(members, 2, 0);
-                持越3 = userSorting(members, 3, 1);
-                凸3 = userSorting(members, 3, 0);
-                return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
-                        ("`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + remaining + "`\n") +
-                        '```\n' +
-                        ("\u672A\u51F8: " + 未凸 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越1 + "\n") +
-                        ("1\u51F8 : " + 凸1 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越2 + "\n") +
-                        ("2\u51F8 : " + 凸2 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越3 + "\n") +
-                        ("3\u51F8 : " + 凸3 + "\n") +
-                        '\n' +
-                        '```')];
+                plans = _a.sent();
+                return [4, list.CreatePlanText(state.alpha, state.stage, plans)];
+            case 3:
+                text = _a.sent();
+                plan.edit('凸予定\n' + text.split('\n').slice(1).join('\n'));
+                return [2];
         }
     });
 }); };
-var getCurrentDate = function () {
-    var p0 = function (n) { return (n + '').padStart(2, '0'); };
-    var d = new Date();
-    return p0(d.getMonth() + 1) + "/" + p0(d.getDate()) + " " + p0(d.getHours()) + ":" + p0(d.getMinutes());
-};
-var remainingConvexNumber = function (members) {
-    var remaining = members.map(function (s) { return 3 - Number(s.convex) + Number(s.over); }).reduce(function (a, b) { return a + b; });
-    var over = members.map(function (s) { return Number(s.over); }).reduce(function (a, b) { return a + b; });
-    return remaining + "/" + members.length * 3 + "(" + over + ")";
-};
-var userSorting = function (members, convex, over) {
-    return members
-        .filter(function (l) { return Number(l.convex) === convex; })
-        .filter(function (l) { return Number(l.over) === over; })
-        .map(function (l) { return l.name; })
-        .join(', ');
+var messageDelete = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, list, _a, _b, users;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                _b = (_a = Promise).all;
+                return [4, channel.messages.fetch()];
+            case 1: return [4, _b.apply(_a, [(_c.sent())
+                        .map(function (m) { return m; })
+                        .filter(function (m) { return !m.author.bot; })
+                        .map(function (m) { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, Promise.all(m.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4, r.users.fetch()];
+                                            case 1: return [2, _a.sent()];
+                                        }
+                                    }); }); }))];
+                                case 1:
+                                    _a.sent();
+                                    return [2, m["delete"]()];
+                            }
+                        });
+                    }); })])];
+            case 2:
+                list = _c.sent();
+                users = list
+                    .filter(function (m) { return !m.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; }); })
+                    .map(function (m) { return m.author; });
+                if (!users.length)
+                    return [2];
+                releaseNotice(users);
+                return [2];
+        }
+    });
+}); };
+var releaseNotice = function (users) {
+    var mentions = users
+        .filter(function (n, i, e) { return e.indexOf(n) == i; })
+        .map(function (u) { return "<@!" + u.id + ">"; })
+        .join(' ');
+    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+    channel.send(mentions + " \u30DC\u30B9\u304C\u8A0E\u4F10\u3055\u308C\u305F\u304B\u3089\u901A\u3057\u3066\u5927\u4E08\u592B\u3088\uFF01");
+    console.log('Release notice');
 };

@@ -49,7 +49,7 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
 /**
  * 凸報告を取り消す
  * @param msg DiscordからのMessage
- * @return 取り消し処理の実行結果
+ * @return 削除処理の実行結果
  */
 export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // botのメッセージは実行しない

@@ -7,6 +7,7 @@ import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as plan from './plan/delete'
 import * as report from './report/cancel'
+import * as declare from './declare/react'
 import * as playerID from './etc/playerID'
 
 /**
@@ -19,6 +20,18 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   if (react.message.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
   let comment: Option<string>
+
+  // 凸宣言を行う
+  comment = await declare.ConvexAdd(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 確定通知を行う
+  comment = await declare.ConfirmNotice(react, user as Discord.User)
+  if (comment) return console.log(comment)
+
+  // 持越通知を行う
+  comment = await declare.OverNotice(react, user as Discord.User)
+  if (comment) return console.log(comment)
 
   // 凸報告を取り消しを行う
   comment = await report.Cancel(react, user as Discord.User)

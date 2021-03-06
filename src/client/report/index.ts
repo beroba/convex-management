@@ -8,6 +8,8 @@ import * as update from './update'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
+import * as declare from '../declare/status'
+import * as react from '../declare/react'
 import * as cancel from '../plan/delete'
 
 /**
@@ -45,8 +47,22 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 全角を半角に変換
   const content = util.Format(msg.content)
 
-  // ボスが討伐されていたら次のボスへ進める
-  killConfirm(content)
+  // ボスを倒したか確認
+  if (/^k|kill/i.test(content)) {
+    // 凸報告者の凸宣言に書いてあるメッセージを全て削除
+    await declare.UserMessageAllDelete(msg.author)
+
+    // 次のボスへ進める
+    lapAndBoss.Next()
+  } else {
+    // 凸宣言を完了
+    react.ConvexDone(msg.author)
+
+    // @が入っている場合はHPの変更をする
+    if (/@\d/.test(content)) {
+      declare.RemainingHPChange(content)
+    }
+  }
 
   // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
   overDelete(msg)
@@ -59,7 +75,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)
 
-  // `/`が入っている場合は凸予定を取り消さない
+  // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(content)) {
     // 3凸終了していたら全ての凸予定を削除、そうでない場合は現在のボスの凸予定を削除
     if (member?.end === '1') {
@@ -69,22 +85,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     }
   }
 
-  // 凸状況に報告
+  // #凸状況に報告
   situation.Report(members)
 
   return 'Update status'
-}
-
-/**
- * ボスが討伐されていたら次のボスへ進める
- * @param content 整形後のメッセージ内容
- */
-const killConfirm = (content: string) => {
-  // killが入って居なければ終了
-  if (!/^k|kill/i.test(content)) return
-
-  // 次のボスへ進める
-  lapAndBoss.Next()
 }
 
 /**

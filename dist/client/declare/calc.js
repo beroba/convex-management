@@ -58,34 +58,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageDelete = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var declare = __importStar(require("./declare/status"));
-var report = __importStar(require("./report/cancel"));
-var plan = __importStar(require("./plan/delete"));
-exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
+exports.HPChange = exports.React = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
+exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var content;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
-                return [4, declare.MessageDelete(msg)];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                content = util.Format(msg.content);
+                if (/@\d/.test(content)) {
+                    return [2, 'Calculate the HP'];
+                }
+                return [4, msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN)];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, report.Delete(msg)];
+                _b.sent();
+                return [4, msg.react(const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, plan.Delete(msg)];
+                _b.sent();
+                return [2, 'Calculate the HP'];
+        }
+    });
+}); };
+exports.HPChange = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var state, hp, channel, status;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, current.UpdateBossHp(content.replace(/[^0-9]/g, ''))];
+            case 1:
+                state = _a.sent();
+                hp = const_settings_1["default"].STAGE_HP[state.stage][state.alpha];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.STATUS)];
+            case 2:
+                status = _a.sent();
+                return [4, status.edit("\u73FE\u5728\u306EHP `" + state.hp + "/" + hp + "`\n\u4E88\u60F3\u6B8B\u308AHP ` `")];
             case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
+                _a.sent();
+                msg["delete"]();
                 return [2];
         }
     });

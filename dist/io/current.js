@@ -105,7 +105,7 @@ exports.UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void
                 return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
             case 4:
                 _a.sent();
-                return [2];
+                return [2, state];
         }
     });
 }); };
@@ -125,17 +125,17 @@ var getStageName = function (lap) {
     }
 };
 exports.UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
-    var json;
+    var state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                json = _a.sent();
-                json.hp = hp;
-                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
+                state = _a.sent();
+                state.hp = hp;
+                return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, state)];
             case 2:
                 _a.sent();
-                return [2];
+                return [2, state];
         }
     });
 }); };
@@ -143,12 +143,12 @@ exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function 
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.CURRENT)];
 }); }); };
 exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var json, sheet, _a, lap, boss, alpha, lap_cell, boss_cell, alpha_cell;
+    var state, sheet, _a, lap, boss, alpha, lap_cell, boss_cell, alpha_cell;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, exports.Fetch()];
             case 1:
-                json = _b.sent();
+                state = _b.sent();
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 2:
                 sheet = _b.sent();
@@ -156,15 +156,15 @@ exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, 
                 return [4, sheet.getCell(lap)];
             case 3:
                 lap_cell = _b.sent();
-                lap_cell.setValue(json.lap);
+                lap_cell.setValue(state.lap);
                 return [4, sheet.getCell(boss)];
             case 4:
                 boss_cell = _b.sent();
-                boss_cell.setValue(json.boss);
+                boss_cell.setValue(state.boss);
                 return [4, sheet.getCell(alpha)];
             case 5:
                 alpha_cell = _b.sent();
-                alpha_cell.setValue(json.alpha);
+                alpha_cell.setValue(state.alpha);
                 return [2];
         }
     });

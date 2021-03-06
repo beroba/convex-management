@@ -80,8 +80,9 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var category = __importStar(require("../command/category"));
+var declare = __importStar(require("../declare"));
 exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap, alpha;
+    var _a, lap, alpha, state;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -92,10 +93,11 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                     return [2, false];
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 1:
-                _b.sent();
+                state = _b.sent();
                 return [4, util.Sleep(50)];
             case 2:
                 _b.sent();
+                declare.ChangeBoss(state);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
                 stageConfirm();
@@ -104,7 +106,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
     });
 }); };
 exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, lap, alpha;
+    var state, lap, alpha, newState;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, current.Fetch()];
@@ -114,10 +116,11 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 alpha = alphabet_to_number_1.NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1);
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 2:
-                _a.sent();
+                newState = _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
+                declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
                 stageConfirm();
@@ -126,7 +129,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
     });
 }); };
 exports.Previous = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state, lap, alpha;
+    var state, lap, alpha, newState;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, current.Fetch()];
@@ -136,10 +139,11 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 alpha = alphabet_to_number_1.NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1);
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 2:
-                _a.sent();
+                newState = _a.sent();
                 return [4, util.Sleep(50)];
             case 3:
                 _a.sent();
+                declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
                 stageConfirm();

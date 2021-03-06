@@ -3,6 +3,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as category from '../command/category'
+import * as declare from '../declare'
 
 /**
  * 現在の周回数とボスを変更する
@@ -18,8 +19,11 @@ export const Update = async (arg: string): Promise<boolean> => {
   if (!/[a-e]/i.test(alpha)) return false
 
   // 現在の状況を更新
-  await current.UpdateLapAndBoss(lap, alpha)
+  const state = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
+
+  // 凸宣言のボスを変更
+  declare.ChangeBoss(state)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
@@ -45,8 +49,11 @@ export const Next = async () => {
   const alpha = NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1)
 
   // 現在の状況を更新
-  await current.UpdateLapAndBoss(lap, alpha)
+  const newState = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
+
+  // 凸宣言のボスを変更
+  declare.ChangeBoss(newState)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
@@ -70,8 +77,11 @@ export const Previous = async () => {
   const alpha = NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1)
 
   // 現在の状況を更新
-  await current.UpdateLapAndBoss(lap, alpha)
+  const newState = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(50)
+
+  // 凸宣言のボスを変更
+  declare.ChangeBoss(newState)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()

@@ -262,6 +262,9 @@ const chuukaReact = (msg: Discord.Message) => {
  * @return 送信した絵文字の結果
  */
 export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
+  // 指定のチャンネルでは実行されない用にする
+  if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
+
   let content: string
 
   // ルルの絵文字を送信する
@@ -386,7 +389,7 @@ const pantiesEmoji = async (msg: Discord.Message) => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return `${util.GetUserName(msg.member)} Send kusa Emoji`
+  return `${util.GetUserName(msg.member)} Send panties Emoji`
 }
 
 /**
