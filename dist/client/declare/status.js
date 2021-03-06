@@ -58,79 +58,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ResetReact = exports.SetUser = void 0;
+exports.RemainingHPChange = exports.Update = exports.React = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-var schedule = __importStar(require("../../io/schedule"));
-var status = __importStar(require("../../io/status"));
-exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, declare, emoji, plans, honsen, hoken;
+var current = __importStar(require("../../io/current"));
+exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var content;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+                    return [2];
+                if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                content = util.Format(msg.content);
+                if (!/@\d/.test(content)) return [3, 2];
+                return [4, exports.RemainingHPChange(content)];
+            case 1:
+                _b.sent();
+                msg["delete"]();
+                return [2, 'Remaining HP change'];
+            case 2: return [4, msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN)];
+            case 3:
+                _b.sent();
+                return [4, msg.react(const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)];
+            case 4:
+                _b.sent();
+                console.log('Set declare reactions');
+                return [2, 'Calculate the HP'];
+        }
+    });
+}); };
+exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+    var hp, channel, status;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                hp = const_settings_1["default"].STAGE_HP[state.stage][state.alpha];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.STATUS)];
             case 1:
-                declare = _a.sent();
-                return [4, Promise.all(declare.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.fetch()];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
+                status = _a.sent();
+                return [4, status.edit("\u73FE\u5728\u306EHP `" + state.hp + "/" + hp + "`\n\u4E88\u60F3\u6B8B\u308AHP ` `")];
             case 2:
                 _a.sent();
-                emoji = declare.reactions.cache.map(function (r) { return ({ name: r.emoji.name, users: r.users.cache.map(function (u) { return u; }) }); });
-                return [4, schedule.FetchBoss(state.alpha)];
-            case 3:
-                plans = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'honsen')];
-            case 4:
-                honsen = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'hoken')];
-            case 5:
-                hoken = _a.sent();
-                declare.edit('凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
-                    '```' +
-                    ("\n\u2015\u2015\u2015\u2015\u672C\u6226\u2015\u2015\u2015\u2015\n" + honsen.join('\n') + (honsen.length ? '\n' : '') + "\n\u2015\u2015\u2015\u2015\u4FDD\u967A\u2015\u2015\u2015\u2015\n" + hoken.join('\n')) +
-                    '```');
                 return [2];
         }
     });
 }); };
-var createDeclareList = function (plans, emoji, name) { return __awaiter(void 0, void 0, void 0, function () {
-    var convex;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
-                    .users
-                    .map(function (u) { return status.FetchMember(u.id); }))];
-            case 1:
-                convex = (_a.sent()).filter(function (m) { return m; });
-                return [2, convex.map(function (m) {
-                        var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
-                        return (m === null || m === void 0 ? void 0 : m.name) + "[" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + "]" + (p ? " " + p.msg : '');
-                    })];
-        }
-    });
-}); };
-exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, declare;
+exports.RemainingHPChange = function (content) { return __awaiter(void 0, void 0, void 0, function () {
+    var at, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+                at = content.replace(/^.*@/g, '').replace(/\s.*$/g, '');
+                return [4, current.UpdateBossHp(at)];
             case 1:
-                declare = _a.sent();
-                return [4, declare.reactions.removeAll()];
+                state = _a.sent();
+                return [4, exports.Update(state)];
             case 2:
-                _a.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
-            case 3:
-                _a.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
-            case 4:
                 _a.sent();
                 return [2];
         }

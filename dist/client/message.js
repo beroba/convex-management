@@ -65,7 +65,7 @@ var report = __importStar(require("./report"));
 var plan = __importStar(require("./plan"));
 var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
-var calc = __importStar(require("./declare/calc"));
+var declare = __importStar(require("./declare/status"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
 var emoji = __importStar(require("./etc/emoji"));
@@ -81,7 +81,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
             case 1: return [2, _c.sent()];
             case 2:
                 emoji.React(msg);
-                return [4, calc.React(msg)];
+                return [4, declare.React(msg)];
             case 3:
                 comment = _c.sent();
                 if (comment)

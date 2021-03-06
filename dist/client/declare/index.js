@@ -65,20 +65,27 @@ var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("../plan/list"));
 var declaration = __importStar(require("./declaration"));
 var react = __importStar(require("./react"));
+var status = __importStar(require("./status"));
 exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, exports.SetPlanList(state)];
+            case 0:
+                if (!state)
+                    return [2];
+                return [4, status.Update(state)];
             case 1:
                 _a.sent();
-                return [4, declaration.ResetReact()];
+                return [4, exports.SetPlanList(state)];
             case 2:
                 _a.sent();
-                return [4, declaration.SetUser(state)];
+                return [4, declaration.ResetReact()];
             case 3:
                 _a.sent();
-                return [4, messageDelete()];
+                return [4, declaration.SetUser(state)];
             case 4:
+                _a.sent();
+                return [4, messageDelete()];
+            case 5:
                 _a.sent();
                 return [2];
         }
@@ -96,10 +103,10 @@ exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0
                 return [4, schedule.Fetch()];
             case 2:
                 plans = _a.sent();
-                return [4, list.CreatePlanText((state === null || state === void 0 ? void 0 : state.alpha) || '', (state === null || state === void 0 ? void 0 : state.stage) || '', plans)];
+                return [4, list.CreatePlanText(state.alpha, state.stage, plans)];
             case 3:
                 text = _a.sent();
-                plan.edit('凸予定 ' + text);
+                plan.edit('凸予定\n' + text.split('\n').slice(1).join('\n'));
                 return [2];
         }
     });

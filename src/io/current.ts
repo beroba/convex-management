@@ -60,7 +60,7 @@ const getStageName = (lap: string): string => {
  * 現在の状況のボスhpを設定する
  * @param hp ボスhp
  */
-export const UpdateBossHp = async (hp: string) => {
+export const UpdateBossHp = async (hp: string): Promise<Current> => {
   // 現在の状況を取得
   const json: Current = await Fetch()
 
@@ -69,6 +69,8 @@ export const UpdateBossHp = async (hp: string) => {
 
   // キャルステータスを更新する
   await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, json)
+
+  return json
 }
 
 /**

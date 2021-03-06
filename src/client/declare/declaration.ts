@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
@@ -18,7 +17,7 @@ type Emoji = {
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
  * @param state 現在の状況
  */
-export const SetUser = async (state: Option<Current>) => {
+export const SetUser = async (state: Current) => {
   // #凸宣言-ボス状況のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
@@ -32,7 +31,7 @@ export const SetUser = async (state: Option<Current>) => {
   const emoji: Emoji[] = declare.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
 
   // 削除したボスの凸予定一覧を取得
-  const plans = await schedule.FetchBoss(state?.alpha || '')
+  const plans = await schedule.FetchBoss(state.alpha)
 
   // 本戦の凸宣言者一覧を作成
   const honsen = await createDeclareList(plans, emoji, 'honsen')

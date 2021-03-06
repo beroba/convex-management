@@ -83,8 +83,9 @@ var update = __importStar(require("./update"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
+var declare = __importStar(require("../declare/status"));
+var react = __importStar(require("../declare/react"));
 var cancel = __importStar(require("../plan/delete"));
-var declare = __importStar(require("../declare/react"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member_1, state, content, _a, members, member;
     var _b;
@@ -110,20 +111,25 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
             case 2:
                 state = _c.sent();
                 content = util.Format(msg.content);
-                if (/^k|kill/i.test(content)) {
-                    lapAndBoss.Next();
-                }
-                else {
-                    declare.ConvexDone(msg.author);
-                }
+                if (!/^k|kill/i.test(content)) return [3, 3];
+                lapAndBoss.Next();
+                return [3, 5];
+            case 3:
+                react.ConvexDone(msg.author);
+                if (!/@\d/.test(content)) return [3, 5];
+                return [4, declare.RemainingHPChange(content)];
+            case 4:
+                _c.sent();
+                _c.label = 5;
+            case 5:
                 overDelete(msg);
                 return [4, update.Status(msg)];
-            case 3:
+            case 6:
                 _a = __read.apply(void 0, [_c.sent(), 2]), members = _a[0], member = _a[1];
                 if (!member)
                     return [2];
                 return [4, util.Sleep(50)];
-            case 4:
+            case 7:
                 _c.sent();
                 status.ReflectOnSheet(member);
                 if (!/;/i.test(content)) {

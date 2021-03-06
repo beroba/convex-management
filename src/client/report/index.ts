@@ -8,8 +8,9 @@ import * as update from './update'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
+import * as declare from '../declare/status'
+import * as react from '../declare/react'
 import * as cancel from '../plan/delete'
-import * as declare from '../declare/react'
 
 /**
  * 凸報告の管理を行う
@@ -52,7 +53,12 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     lapAndBoss.Next()
   } else {
     // 凸宣言を完了
-    declare.ConvexDone(msg.author)
+    react.ConvexDone(msg.author)
+
+    // @が入っている場合はHPの変更をする
+    if (/@\d/.test(content)) {
+      await declare.RemainingHPChange(content)
+    }
   }
 
   // 持ち越しがある場合、持ち越し状況のメッセージを全て削除

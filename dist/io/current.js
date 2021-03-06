@@ -135,7 +135,7 @@ exports.UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, 
                 return [4, io.UpdateJson(const_settings_1["default"].CAL_STATUS_ID.CURRENT, json)];
             case 2:
                 _a.sent();
-                return [2];
+                return [2, json];
         }
     });
 }); };
