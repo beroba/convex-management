@@ -174,9 +174,9 @@ var expectRemainingHP = function (state) { return __awaiter(void 0, void 0, void
                         return;
                     return Math.max.apply(Math, __spread(list.map(Number)));
                 })
-                    .map(Number);
+                    .map(Number)
+                    .map(function (n) { return (Number.isNaN(n) ? 0 : n); });
                 damage = list.length ? list.reduce(function (a, b) { return a + b; }) : 0;
-                damage = Number.isNaN(damage) ? 0 : damage;
                 hp = Number(state.hp) - damage;
                 return [2, hp >= 0 ? hp : 0];
         }

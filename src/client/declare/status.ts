@@ -110,11 +110,10 @@ const expectRemainingHP = async (state: Current): Promise<number> => {
       return Math.max(...list.map(Number))
     })
     .map(Number)
+    .map(n => (Number.isNaN(n) ? 0 : n)) // NaNが混ざってたら0に変換
 
   // ダメージがある場合は合計値、ない場合は0を代入
   let damage = list.length ? list.reduce((a, b) => a + b) : 0
-  // NaNだったら0にする
-  damage = Number.isNaN(damage) ? 0 : damage
 
   // 残りHPを計算
   const hp = Number(state.hp) - damage
