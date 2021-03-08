@@ -97,7 +97,7 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
             case 5: return [4, status.UpdateMember(member)];
             case 6:
                 members = _a.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 7:
                 _a.sent();
                 status.ReflectOnSheet(member);

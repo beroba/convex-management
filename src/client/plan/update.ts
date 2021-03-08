@@ -20,7 +20,7 @@ export const Plans = async (msg: Discord.Message) => {
 
   // 凸予定シートの値を更新
   const plans = await schedule.Add(plan)
-  await util.Sleep(50)
+  await util.Sleep(100)
 
   // 完了の絵文字をつける
   await msg.react(Settings.EMOJI_ID.KANRYOU)

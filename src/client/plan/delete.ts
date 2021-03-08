@@ -113,7 +113,7 @@ const planDelete = async (msg: Discord.Message): Promise<Plan[]> => {
   // 凸予定の完了を付ける
   const [plans, plan] = await schedule.Delete(msg.id)
   if (!plan) return plans
-  await util.Sleep(50)
+  await util.Sleep(100)
 
   // メッセージを削除
   await calMsgDel(plan.calID)

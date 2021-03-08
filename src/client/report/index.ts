@@ -70,7 +70,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 凸状況を更新
   const [members, member] = await update.Status(msg)
   if (!member) return
-  await util.Sleep(50)
+  await util.Sleep(100)
 
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)

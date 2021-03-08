@@ -79,7 +79,7 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
                 return [4, schedule.Add(plan)];
             case 3:
                 plans = _c.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 4:
                 _c.sent();
                 return [4, msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU)];

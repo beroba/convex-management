@@ -173,7 +173,7 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, status.UpdateUsers(users)];
             case 1:
                 _c.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 2:
                 _c.sent();
                 return [4, fetchNameAndID(users, const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];

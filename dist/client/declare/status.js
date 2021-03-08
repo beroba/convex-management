@@ -54,6 +54,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -94,6 +114,7 @@ exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, functi
                 if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
                 content = util.Format(msg.content);
+                content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content;
                 if (!/@\d/.test(content)) return [3, 2];
                 return [4, exports.RemainingHPChange(content)];
             case 1:
@@ -143,13 +164,18 @@ var expectRemainingHP = function (state) { return __awaiter(void 0, void 0, void
                     .map(function (m) { return m; })
                     .filter(function (m) { return !m.author.bot; })
                     .map(function (m) {
-                    return util
-                        .Format(m.content)
-                        .replace(/\d*s/g, '')
+                    var content = util.Format(m.content);
+                    content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content;
+                    var list = content
+                        .replace(/\d*(s|秒)/gi, '')
                         .trim()
-                        .replace(/(?![\d]+).*/g, '');
+                        .match(/[\d]+/g);
+                    if (!list)
+                        return;
+                    return Math.max.apply(Math, __spread(list.map(Number)));
                 })
-                    .map(Number);
+                    .map(Number)
+                    .map(function (n) { return (Number.isNaN(n) ? 0 : n); });
                 damage = list.length ? list.reduce(function (a, b) { return a + b; }) : 0;
                 hp = Number(state.hp) - damage;
                 return [2, hp >= 0 ? hp : 0];
