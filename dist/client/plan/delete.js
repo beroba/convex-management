@@ -213,7 +213,7 @@ var planDelete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 _a = __read.apply(void 0, [_b.sent(), 2]), plans = _a[0], plan = _a[1];
                 if (!plan)
                     return [2, plans];
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 2:
                 _b.sent();
                 return [4, calMsgDel(plan.calID)];

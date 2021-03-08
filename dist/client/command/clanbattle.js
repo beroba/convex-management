@@ -186,13 +186,13 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
             case 20: return [4, current.ReflectOnCal()];
             case 21:
                 _b.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 22:
                 _b.sent();
                 return [4, status.ReflectOnCal()];
             case 23:
                 _b.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 24:
                 _b.sent();
                 return [4, status.Fetch()];

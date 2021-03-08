@@ -130,7 +130,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 _a = __read.apply(void 0, [_c.sent(), 2]), members = _a[0], member = _a[1];
                 if (!member)
                     return [2];
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 7:
                 _c.sent();
                 status.ReflectOnSheet(member);

@@ -77,7 +77,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 return [4, schedule.Edit(text, msg.id)];
             case 1:
                 plans = _b.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 2:
                 _b.sent();
                 return [4, list.SituationEdit(plans)];

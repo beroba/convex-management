@@ -106,9 +106,9 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
     case /cb reflect/.test(command): {
       // スプレッドシートの値を反映
       await current.ReflectOnCal()
-      await util.Sleep(50)
+      await util.Sleep(100)
       await status.ReflectOnCal()
-      await util.Sleep(50)
+      await util.Sleep(100)
 
       // メンバー全員の状態を取得
       const members = await status.Fetch()

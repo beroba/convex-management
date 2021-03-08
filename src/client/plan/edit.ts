@@ -22,7 +22,7 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
 
   // 凸予定のメッセージを更新
   const plans = await schedule.Edit(text, msg.id)
-  await util.Sleep(50)
+  await util.Sleep(100)
 
   // 凸状況を更新
   await list.SituationEdit(plans)

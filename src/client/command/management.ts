@@ -119,7 +119,7 @@ const updateMembers = async (msg: Discord.Message) => {
 
   // ステータスを更新
   await status.UpdateUsers(users)
-  await util.Sleep(50)
+  await util.Sleep(100)
 
   // スプレッドシートに名前とidを保存する
   await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
