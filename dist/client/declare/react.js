@@ -187,7 +187,7 @@ exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0
                 msg = _a.sent();
                 msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send("<@!" + user.id + "> " + msg.content + "\u306E\u78BA\u5B9A\u3092\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
+                channel.send("<@!" + msg.author.id + "> " + msg.content + "\u306E\u78BA\u5B9A\u3092\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
                 return [2, 'Confirm notice'];
         }
     });
@@ -210,7 +210,7 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
                 msg = _a.sent();
                 msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-                channel.send("<@!" + user.id + "> " + msg.content + "\u3067\u6301\u3061\u8D8A\u3057\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
+                channel.send("<@!" + msg.author.id + "> " + msg.content + "\u3067\u6301\u3061\u8D8A\u3057\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
                 return [2, 'Carry over notice'];
         }
     });

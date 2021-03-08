@@ -119,7 +119,7 @@ exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, functi
                 return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS[(plans.length / 8) | 0], [])];
             case 2:
                 _a.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 3:
                 _a.sent();
                 _a.label = 4;

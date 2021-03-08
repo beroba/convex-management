@@ -54,7 +54,7 @@ export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
   // 1つ先の予定を消すようにする
   if (plans.length % 8 === 0) {
     await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS[(plans.length / 8) | 0], [])
-    await util.Sleep(50)
+    await util.Sleep(100)
   }
 
   // キャルステータスを更新

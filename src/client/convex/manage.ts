@@ -43,7 +43,7 @@ export const Update = async (arg: string, msg: Discord.Message) => {
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-  await util.Sleep(50)
+  await util.Sleep(100)
 
   // 凸状況をスプレッドシートに反映
   status.ReflectOnSheet(member)

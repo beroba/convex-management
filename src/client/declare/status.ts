@@ -34,7 +34,9 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
   // 全角を半角に変換
-  const content = util.Format(msg.content)
+  let content = util.Format(msg.content)
+  // @とsが両方ある場合は@を消す
+  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
 
   // @が入っている場合はHPの変更をする
   if (/@\d/.test(content)) {
@@ -89,17 +91,30 @@ const expectRemainingHP = async (state: Current): Promise<number> => {
   const list = (await channel.messages.fetch())
     .map(m => m)
     .filter(m => !m.author.bot)
-    .map(m =>
-      util // ダメージの部分だけ取り出す
-        .Format(m.content)
-        .replace(/\d*s/g, '')
+    .map(m => {
+      // 全角を半角に変換
+      let content = util.Format(m.content)
+      // @とsが両方ある場合は@を消す
+      content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
+
+      // ダメージだけ取りだす
+      const list = content
+        .replace(/\d*(s|秒)/gi, '')
         .trim()
-        .replace(/(?![\d]+).*/g, '')
-    )
+        .match(/[\d]+/g)
+
+      // リストがnullなら終了
+      if (!list) return
+
+      // リストの中から1番大きい値を返す
+      return Math.max(...list.map(Number))
+    })
     .map(Number)
 
   // ダメージがある場合は合計値、ない場合は0を代入
-  const damage = list.length ? list.reduce((a, b) => a + b) : 0
+  let damage = list.length ? list.reduce((a, b) => a + b) : 0
+  // NaNだったら0にする
+  damage = Number.isNaN(damage) ? 0 : damage
 
   // 残りHPを計算
   const hp = Number(state.hp) - damage

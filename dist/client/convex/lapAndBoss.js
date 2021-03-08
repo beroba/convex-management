@@ -94,7 +94,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 1:
                 state = _b.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 2:
                 _b.sent();
                 declare.ChangeBoss(state);
@@ -117,7 +117,7 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 2:
                 newState = _a.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 3:
                 _a.sent();
                 declare.ChangeBoss(newState);
@@ -140,7 +140,7 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 2:
                 newState = _a.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 3:
                 _a.sent();
                 declare.ChangeBoss(newState);

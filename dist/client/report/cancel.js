@@ -143,7 +143,7 @@ var statusRestore = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, status.UpdateMember(member)];
             case 2:
                 members = _a.sent();
-                return [4, util.Sleep(50)];
+                return [4, util.Sleep(100)];
             case 3:
                 _a.sent();
                 status.ReflectOnSheet(member);
