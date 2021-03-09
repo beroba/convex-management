@@ -69,7 +69,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Switch = exports.Remove = exports.Add = void 0;
+exports.Switch = exports.ReflectOnSheet = exports.Remove = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var status = __importStar(require("../../io/status"));
@@ -101,7 +101,10 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
                     react.users.remove(user);
                     return [2];
                 }
-                changeValueOfSheet('1', day, section, user);
+                changeValueOfSheet('1', day, section, user.id);
+                return [4, util.Sleep(100)];
+            case 2:
+                _a.sent();
                 return [2, 'Activity time questionnaire add'];
         }
     });
@@ -132,7 +135,10 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
                     react.users.remove(user);
                     return [2];
                 }
-                changeValueOfSheet('', day, section, user);
+                changeValueOfSheet('', day, section, user.id);
+                return [4, util.Sleep(100)];
+            case 2:
+                _a.sent();
                 return [2, 'Activity time questionnaire remove'];
         }
     });
@@ -155,65 +161,193 @@ var confirmSection = function (id) {
                             id === const_settings_1["default"].ACTIVITY_TIME.EMOJI._7 ? 7 :
                                 null;
 };
-var changeValueOfSheet = function (value, day, section, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var col1, col2, count, sheet, users, row, _a, _b, i, cell, e_1_1;
-    var e_1, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+var changeValueOfSheet = function (value, day, section, id) { return __awaiter(void 0, void 0, void 0, function () {
+    var col1, col2, sheet, users, row, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 col1 = day !== 1 ? alphabet_to_number_1.AtoA('A', day - 2) : '';
                 col2 = const_settings_1["default"].ACTIVITY_TIME_SHEET.SEPARATE[section - 1];
-                count = const_settings_1["default"].ACTIVITY_TIME_SHEET.NUMBER[section - 1];
                 return [4, spreadsheet.GetWorksheet(const_settings_1["default"].ACTIVITY_TIME_SHEET.SHEET_NAME)];
             case 1:
-                sheet = _d.sent();
+                sheet = _a.sent();
                 return [4, status.FetchUserFromSheet(sheet)];
             case 2:
-                users = _d.sent();
-                row = users.map(function (u) { return u.id; }).indexOf(user.id) + 3;
+                users = _a.sent();
+                row = users.map(function (u) { return u.id; }).indexOf(id) + 3;
                 if (row === 2)
                     return [2];
-                _d.label = 3;
+                return [4, sheet.getCell("" + col1 + col2 + row)];
             case 3:
-                _d.trys.push([3, 10, 11, 12]);
-                _a = __values(Array(count)
-                    .fill('')
-                    .map(function (_, i) { return i; })), _b = _a.next();
-                _d.label = 4;
-            case 4:
-                if (!!_b.done) return [3, 9];
-                i = _b.value;
-                return [4, sheet.getCell("" + col1 + alphabet_to_number_1.AtoA(col2, i) + row)];
-            case 5:
-                cell = _d.sent();
+                cell = _a.sent();
                 return [4, cell.setValue(value)];
-            case 6:
-                _d.sent();
-                return [4, util.Sleep(0)];
+            case 4:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var changeValueOfSheetUsers = function (value, day, section, idList, sheet, users) { return __awaiter(void 0, void 0, void 0, function () {
+    var idList_1, idList_1_1, id, col1, col2, row, cell, e_1_1;
+    var e_1, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 7, 8, 9]);
+                idList_1 = __values(idList), idList_1_1 = idList_1.next();
+                _b.label = 1;
+            case 1:
+                if (!!idList_1_1.done) return [3, 6];
+                id = idList_1_1.value;
+                col1 = day !== 1 ? alphabet_to_number_1.AtoA('A', day - 2) : '';
+                col2 = const_settings_1["default"].ACTIVITY_TIME_SHEET.SEPARATE[section - 1];
+                row = users.map(function (u) { return u.id; }).indexOf(id) + 3;
+                if (row === 2)
+                    return [3, 5];
+                return [4, sheet.getCell("" + col1 + col2 + row)];
+            case 2:
+                cell = _b.sent();
+                return [4, cell.setValue(value)];
+            case 3:
+                _b.sent();
+                console.log(id);
+                return [4, util.Sleep(100)];
+            case 4:
+                _b.sent();
+                _b.label = 5;
+            case 5:
+                idList_1_1 = idList_1.next();
+                return [3, 1];
+            case 6: return [3, 9];
             case 7:
-                _d.sent();
-                _d.label = 8;
-            case 8:
-                _b = _a.next();
-                return [3, 4];
-            case 9: return [3, 12];
-            case 10:
-                e_1_1 = _d.sent();
+                e_1_1 = _b.sent();
                 e_1 = { error: e_1_1 };
-                return [3, 12];
-            case 11:
+                return [3, 9];
+            case 8:
                 try {
-                    if (_b && !_b.done && (_c = _a["return"])) _c.call(_a);
+                    if (idList_1_1 && !idList_1_1.done && (_a = idList_1["return"])) _a.call(idList_1);
                 }
                 finally { if (e_1) throw e_1.error; }
                 return [7];
-            case 12: return [2];
+            case 9: return [2];
+        }
+    });
+}); };
+exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, sheet, users, _a, _b, day, msg, list, _loop_1, list_1, list_1_1, l, state_1, e_2_1, e_3_1;
+    var e_3, _c, e_2, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].ACTIVITY_TIME_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _e.sent();
+                return [4, status.FetchUserFromSheet(sheet)];
+            case 2:
+                users = _e.sent();
+                _e.label = 3;
+            case 3:
+                _e.trys.push([3, 17, 18, 19]);
+                _a = __values(Object.values(const_settings_1["default"].ACTIVITY_TIME.DAYS)), _b = _a.next();
+                _e.label = 4;
+            case 4:
+                if (!!_b.done) return [3, 16];
+                day = _b.value;
+                return [4, channel.messages.fetch(day)];
+            case 5:
+                msg = _e.sent();
+                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 6:
+                _e.sent();
+                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            return [2, ({
+                                    id: r.emoji.id,
+                                    users: r.users.cache.map(function (u) { return u; })
+                                })];
+                        });
+                    }); }))];
+            case 7:
+                list = _e.sent();
+                _loop_1 = function (l) {
+                    var checkIdList, noCheckIdList, d, s;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                checkIdList = l.users.filter(function (u) { return !u.bot; }).map(function (u) { return u.id; });
+                                noCheckIdList = users.map(function (u) { return u.id; }).filter(function (u) { return !checkIdList.some(function (c) { return c === u; }); });
+                                d = confirmDays(day);
+                                s = confirmSection(l.id);
+                                if (!d)
+                                    return [2, { value: void 0 }];
+                                if (!s)
+                                    return [2, { value: void 0 }];
+                                return [4, changeValueOfSheetUsers('1', d, s, checkIdList, sheet, users)];
+                            case 1:
+                                _a.sent();
+                                return [4, changeValueOfSheetUsers('', d, s, noCheckIdList, sheet, users)];
+                            case 2:
+                                _a.sent();
+                                console.log("day: " + d + ", section: " + s);
+                                return [2];
+                        }
+                    });
+                };
+                _e.label = 8;
+            case 8:
+                _e.trys.push([8, 13, 14, 15]);
+                list_1 = (e_2 = void 0, __values(list)), list_1_1 = list_1.next();
+                _e.label = 9;
+            case 9:
+                if (!!list_1_1.done) return [3, 12];
+                l = list_1_1.value;
+                return [5, _loop_1(l)];
+            case 10:
+                state_1 = _e.sent();
+                if (typeof state_1 === "object")
+                    return [2, state_1.value];
+                _e.label = 11;
+            case 11:
+                list_1_1 = list_1.next();
+                return [3, 9];
+            case 12: return [3, 15];
+            case 13:
+                e_2_1 = _e.sent();
+                e_2 = { error: e_2_1 };
+                return [3, 15];
+            case 14:
+                try {
+                    if (list_1_1 && !list_1_1.done && (_d = list_1["return"])) _d.call(list_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+                return [7];
+            case 15:
+                _b = _a.next();
+                return [3, 4];
+            case 16: return [3, 19];
+            case 17:
+                e_3_1 = _e.sent();
+                e_3 = { error: e_3_1 };
+                return [3, 19];
+            case 18:
+                try {
+                    if (_b && !_b.done && (_c = _a["return"])) _c.call(_a);
+                }
+                finally { if (e_3) throw e_3.error; }
+                return [7];
+            case 19: return [2];
         }
     });
 }); };
 exports.Switch = function (day, section) { return __awaiter(void 0, void 0, void 0, function () {
-    var col1, col2, sheet, users, users_1, users_1_1, u, guildMember, row, cell, e_2_1;
-    var e_2, _a;
+    var col1, col2, sheet, users, users_1, users_1_1, u, guildMember, row, cell, e_4_1;
+    var e_4, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -254,14 +388,14 @@ exports.Switch = function (day, section) { return __awaiter(void 0, void 0, void
                 return [3, 4];
             case 9: return [3, 12];
             case 10:
-                e_2_1 = _b.sent();
-                e_2 = { error: e_2_1 };
+                e_4_1 = _b.sent();
+                e_4 = { error: e_4_1 };
                 return [3, 12];
             case 11:
                 try {
                     if (users_1_1 && !users_1_1.done && (_a = users_1["return"])) _a.call(users_1);
                 }
-                finally { if (e_2) throw e_2.error; }
+                finally { if (e_4) throw e_4.error; }
                 return [7];
             case 12: return [2];
         }

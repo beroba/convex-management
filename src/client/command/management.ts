@@ -9,6 +9,7 @@ import * as dateTable from '../../io/dateTable'
 import * as status from '../../io/status'
 import {User} from '../../io/type'
 import * as category from './category'
+import * as activityTime from '../convex/activityTime'
 
 /**
  * 運営管理者用のコマンド
@@ -77,6 +78,11 @@ export const Management = async (command: string, msg: Discord.Message): Promise
 
       msg.reply('凸管理用の絵文字を設定したわよ！')
       return 'Set react for convex'
+    }
+
+    case /cb manage reflect activity time/.test(command): {
+      await activityTime.ReflectOnSheet()
+      return 'Reflect activity time on the sheet'
     }
 
     case /cb manage sheet/.test(command): {

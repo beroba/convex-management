@@ -88,10 +88,10 @@ export const ConvexDone = async (user: Discord.User) => {
   // #凸宣言-ボス状況のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
-  // 凸宣言のメッセージを取得
+  // 凸宣言のメッセージを
   const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
-  // 凸宣言に付いているリアクションをキャッシュする
+  // 凸宣言に付いているリアクションをキャッシュ
   await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
 
   // ユーザーのリアクションを全て外す
@@ -222,10 +222,10 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
   // 確認と持越以外の絵文字の場合は終了
   if (![Settings.EMOJI_ID.KAKUNIN, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) return
 
-  // リアクションからメッセージを取得する
+  // リアクションからメッセージを取得
   const msg = await fetchMessage(react)
 
-  // メッセージに付いているリアクションをキャッシュする
+  // メッセージに付いているリアクションをキャッシュ
   await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
 
   // 済の絵文字を取得

@@ -67,6 +67,7 @@ var bossTable = __importStar(require("../../io/bossTable"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var status = __importStar(require("../../io/status"));
 var category = __importStar(require("./category"));
+var activityTime = __importStar(require("../convex/activityTime"));
 exports.Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, _a, arg, arg, arg;
     var _b;
@@ -88,9 +89,10 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb manage update members/.test(command): return [3, 8];
                     case /cb manage update sisters/.test(command): return [3, 9];
                     case /cb manage set react/.test(command): return [3, 10];
-                    case /cb manage sheet/.test(command): return [3, 13];
+                    case /cb manage reflect activity time/.test(command): return [3, 13];
+                    case /cb manage sheet/.test(command): return [3, 15];
                 }
-                return [3, 14];
+                return [3, 16];
             case 1:
                 {
                     arg = command.replace('/cb manage create category', '');
@@ -143,13 +145,17 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                 _c.sent();
                 msg.reply('凸管理用の絵文字を設定したわよ！');
                 return [2, 'Set react for convex'];
-            case 13:
+            case 13: return [4, activityTime.ReflectOnSheet()];
+            case 14:
+                _c.sent();
+                return [2, 'Reflect activity time on the sheet'];
+            case 15:
                 {
                     msg.reply(const_settings_1["default"].URL.SPREADSHEET);
                     return [2, 'Show spreadsheet link'];
                 }
-                _c.label = 14;
-            case 14: return [2];
+                _c.label = 16;
+            case 16: return [2];
         }
     });
 }); };

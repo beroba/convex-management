@@ -81,7 +81,6 @@ export const ResetReact = async () => {
 
   // 凸宣言のリアクションを全て外す
   await declare.reactions.removeAll()
-  await util.Sleep(100)
 
   // 本戦と保険のリアクションを付ける
   await declare.react(Settings.EMOJI_ID.HONSEN)
