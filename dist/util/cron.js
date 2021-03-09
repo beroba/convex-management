@@ -153,8 +153,11 @@ var switchRole = function (expression, section) {
                     return [4, activityTime.Switch(Number(date.num[0]), section)];
                 case 2:
                     _a.sent();
-                    return [4, attendance.Edit()];
+                    return [4, util.Sleep(100)];
                 case 3:
+                    _a.sent();
+                    return [4, attendance.Edit()];
+                case 4:
                     _a.sent();
                     console.log("Switch Away In Role: " + date.num + " " + date.day);
                     return [2];

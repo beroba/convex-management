@@ -124,6 +124,8 @@ const switchRole = (expression: string, section: number) => {
 
     // 離席中ロールを切り替える
     await activityTime.Switch(Number(date.num[0]), section)
+    await util.Sleep(100)
+
     // 出欠のメッセージを更新する
     await attendance.Edit()
 
