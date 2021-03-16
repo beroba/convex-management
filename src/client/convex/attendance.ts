@@ -16,7 +16,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   // botのリアクションは実行しない
   if (user.bot) return
 
-  // #凸状況でなければ終了
+  // #活動時間でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
 
   // 付けたリアクションを外す
@@ -28,7 +28,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   if (!member) return
 
   // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.CONVEX_MESSAGE_ID.ATTENDANCE) return
+  if (react.message.id !== Settings.ACTIVITY_TIME.AWAY_IN) return
 
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.SHUSEKI) return
@@ -73,7 +73,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   if (!member) return
 
   // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.CONVEX_MESSAGE_ID.ATTENDANCE) return
+  if (react.message.id !== Settings.ACTIVITY_TIME.AWAY_IN) return
 
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.RISEKI) return
@@ -109,7 +109,7 @@ export const Edit = async () => {
 
   // 出欠のメッセージを取得する
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-  const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.ATTENDANCE)
+  const msg = await channel.messages.fetch(Settings.ACTIVITY_TIME.AWAY_IN)
 
   // メッセージを更新
   await msg.edit(text)

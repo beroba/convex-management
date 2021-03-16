@@ -80,7 +80,7 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
                 member = _c.sent();
                 if (!member)
                     return [2];
-                if (react.message.id !== const_settings_1["default"].CONVEX_MESSAGE_ID.ATTENDANCE)
+                if (react.message.id !== const_settings_1["default"].ACTIVITY_TIME.AWAY_IN)
                     return [2];
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.SHUSEKI)
                     return [2];
@@ -115,7 +115,7 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
                 member = _c.sent();
                 if (!member)
                     return [2];
-                if (react.message.id !== const_settings_1["default"].CONVEX_MESSAGE_ID.ATTENDANCE)
+                if (react.message.id !== const_settings_1["default"].ACTIVITY_TIME.AWAY_IN)
                     return [2];
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.RISEKI)
                     return [2];
@@ -144,7 +144,7 @@ exports.Edit = function () { return __awaiter(void 0, void 0, void 0, function (
                     ("> \u51F8\u4E88\u5B9A\u304C\u8868\u793A\u3055\u308C\u306A\u3044\u5834\u5408\u306F\u3001" + const_settings_1["default"].EMOJI_FULL_ID.SHUSEKI + "\u3092\u62BC\u3057\u3066\u4E0B\u3055\u3044\u3002\n") +
                     ("> \u96E2\u5E2D\u3059\u308B\u969B\u306F\u3001" + const_settings_1["default"].EMOJI_FULL_ID.RISEKI + "\u3092\u62BC\u3057\u3066\u4E0B\u3055\u3044\u3002");
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_MESSAGE_ID.ATTENDANCE)];
+                return [4, channel.messages.fetch(const_settings_1["default"].ACTIVITY_TIME.AWAY_IN)];
             case 1:
                 msg = _a.sent();
                 return [4, msg.edit(text)];

@@ -262,7 +262,7 @@ var setReactForDeclare = function () { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var setReactForActivityTime = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, awayIn, days;
+    var channel, awayIn, days, first, latter;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -292,6 +292,84 @@ var setReactForActivityTime = function () { return __awaiter(void 0, void 0, voi
                         }
                     });
                 }); }));
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
+            case 4:
+                first = _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._5)];
+            case 5:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._6)];
+            case 6:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._7)];
+            case 7:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._8)];
+            case 8:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._9)];
+            case 9:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._10)];
+            case 10:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._11)];
+            case 11:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._12)];
+            case 12:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._13)];
+            case 13:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._14)];
+            case 14:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._15)];
+            case 15:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._16)];
+            case 16:
+                _a.sent();
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
+            case 17:
+                latter = _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._17)];
+            case 18:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._18)];
+            case 19:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._19)];
+            case 20:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._20)];
+            case 21:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._21)];
+            case 22:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._22)];
+            case 23:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._23)];
+            case 24:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._0)];
+            case 25:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._1)];
+            case 26:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._2)];
+            case 27:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._3)];
+            case 28:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._4)];
+            case 29:
+                _a.sent();
                 return [2];
         }
     });

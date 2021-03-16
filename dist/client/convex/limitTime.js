@@ -58,86 +58,75 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.MessageReactionAdd = void 0;
-var throw_env_1 = __importDefault(require("throw-env"));
-var activityTime = __importStar(require("./convex/activityTime"));
-var attendance = __importStar(require("./convex/attendance"));
-var limitTime = __importStar(require("./convex/limitTime"));
-var over = __importStar(require("./convex/over"));
-var sister = __importStar(require("./convex/sister"));
-var plan = __importStar(require("./plan/delete"));
-var report = __importStar(require("./report/cancel"));
-var declare = __importStar(require("./declare/react"));
-var playerID = __importStar(require("./etc/playerID"));
-exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+exports.Toggle = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
+var util = __importStar(require("../../util"));
+var status = __importStar(require("../../io/status"));
+exports.Toggle = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, channel, first, latter;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                if (((_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.id) !== throw_env_1["default"]('CLAN_SERVER_ID'))
+                if (user.bot)
                     return [2];
-                return [4, declare.ConvexAdd(react, user)];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME)
+                    return [2];
+                if (![const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST, const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER].some(function (id) { return id === react.message.id; }))
+                    return [2];
+                return [4, status.FetchMember(user.id)];
             case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, declare.ConfirmNotice(react, user)];
+                member = _a.sent();
+                if (!member) {
+                    react.users.remove(user);
+                    return [2];
+                }
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
             case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, declare.OverNotice(react, user)];
+                first = _a.sent();
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
             case 3:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, report.Cancel(react, user)];
+                latter = _a.sent();
+                return [4, Promise.all(first.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
             case 4:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, plan.Already(react, user)];
+                _a.sent();
+                return [4, Promise.all(latter.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
             case 5:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, over.Delete(react, user)];
+                _a.sent();
+                return [4, Promise.all(first.reactions.cache
+                        .map(function (r) { return r; })
+                        .filter(function (r) { return r.emoji.id !== react.emoji.id; })
+                        .map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.remove(user)];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
             case 6:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, sister.Delete(react, user)];
+                _a.sent();
+                return [4, Promise.all(latter.reactions.cache
+                        .map(function (r) { return r; })
+                        .filter(function (r) { return r.emoji.id !== react.emoji.id; })
+                        .map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.remove(user)];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
             case 7:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, limitTime.Toggle(react, user)];
-            case 8:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, activityTime.Add(react, user)];
-            case 9:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, attendance.Remove(react, user)];
-            case 10:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, attendance.Add(react, user)];
-            case 11:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, playerID.RoleGrant(react, user)];
-            case 12:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
+                _a.sent();
+                console.log(react.emoji.name);
+                return [2, 'Setting the activity limit time'];
         }
     });
 }); };

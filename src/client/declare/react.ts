@@ -88,7 +88,7 @@ export const ConvexDone = async (user: Discord.User) => {
   // #凸宣言-ボス状況のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
-  // 凸宣言のメッセージを
+  // 凸宣言のメッセージを取得
   const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
   // 凸宣言に付いているリアクションをキャッシュ
