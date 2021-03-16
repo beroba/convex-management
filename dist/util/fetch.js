@@ -58,80 +58,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.SetPlanList = exports.ChangeBoss = void 0;
+exports.React = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
-var schedule = __importStar(require("../../io/schedule"));
-var list = __importStar(require("../plan/list"));
-var declaration = __importStar(require("./declaration"));
-var status = __importStar(require("./status"));
-exports.ChangeBoss = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+var util = __importStar(require("./"));
+exports.React = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var declare, msgs, activityTime, first, latter;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!state)
-                    return [2];
-                status.Update(state);
-                exports.SetPlanList(state);
-                return [4, declaration.ResetReact()];
+                declare = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, declare.messages.fetch()];
             case 1:
+                msgs = _a.sent();
+                return [4, Promise.all(msgs.map(function (msg) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        return [2, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4, r.users.fetch()];
+                                    case 1: return [2, _a.sent()];
+                                }
+                            }); }); }))];
+                    }); }); }))];
+            case 2:
                 _a.sent();
-                declaration.SetUser(state);
-                messageDelete();
-                return [2];
-        }
-    });
-}); };
-exports.SetPlanList = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, plan, plans, text;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.PLAN)];
-            case 1:
-                plan = _a.sent();
-                return [4, schedule.Fetch()];
-            case 2:
-                plans = _a.sent();
-                return [4, list.CreatePlanText(state.alpha, state.stage, plans)];
+                activityTime = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
+                return [4, activityTime.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
             case 3:
-                text = _a.sent();
-                plan.edit('凸予定\n' + text.split('\n').slice(1).join('\n'));
+                first = _a.sent();
+                return [4, activityTime.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
+            case 4:
+                latter = _a.sent();
+                return [4, Promise.all(first.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 5:
+                _a.sent();
+                return [4, Promise.all(latter.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 6:
+                _a.sent();
                 return [2];
         }
     });
 }); };
-var messageDelete = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, list, _a, _b, users;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                _b = (_a = Promise).all;
-                return [4, channel.messages.fetch()];
-            case 1: return [4, _b.apply(_a, [(_c.sent())
-                        .map(function (m) { return m; })
-                        .filter(function (m) { return !m.author.bot; })
-                        .map(function (m) { return m["delete"](); })])];
-            case 2:
-                list = _c.sent();
-                users = list
-                    .filter(function (m) { return !m.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; }); })
-                    .map(function (m) { return m.author; });
-                if (!users.length)
-                    return [2];
-                releaseNotice(users);
-                return [2];
-        }
-    });
-}); };
-var releaseNotice = function (users) {
-    var mentions = users
-        .filter(function (n, i, e) { return e.indexOf(n) == i; })
-        .map(function (u) { return "<@!" + u.id + ">"; })
-        .join(' ');
-    var channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
-    channel.send(mentions + " \u30DC\u30B9\u304C\u8A0E\u4F10\u3055\u308C\u305F\u304B\u3089\u901A\u3057\u3066\u5927\u4E08\u592B\u3088\uFF01");
-    console.log('Release notice');
-};

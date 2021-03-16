@@ -120,6 +120,7 @@ const updateMembers = async (msg: Discord.Message) => {
     ?.members.map(m => ({
       name: util.GetUserName(m),
       id: m.id,
+      limit: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -144,6 +145,7 @@ const updateSisters = async (msg: Discord.Message) => {
     ?.members.map(m => ({
       name: util.GetUserName(m),
       id: m.id,
+      limit: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 

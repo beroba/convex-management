@@ -22,13 +22,10 @@ export const SetUser = async (state: Current) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
   // 凸宣言のメッセージを取得
-  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
-
-  // 凸宣言に付いているリアクションをキャッシュする
-  await Promise.all(declare.reactions.cache.map(async r => await r.users.fetch()))
+  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
   // 本戦、保険に分けてリアクションしている人一覧を取得する
-  const emoji: Emoji[] = declare.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
+  const emoji: Emoji[] = msg.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
 
   // 削除したボスの凸予定一覧を取得
   const plans = await schedule.FetchBoss(state.alpha)
@@ -39,7 +36,7 @@ export const SetUser = async (state: Current) => {
 
   // prettier-ignore
   // 凸宣言のメッセージを編集
-  declare.edit(
+  msg.edit(
     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
     '```' +
     `\n――――本戦――――\n${honsen.join('\n')}${honsen.length ? '\n' : ''}\n――――保険――――\n${hoken.join('\n')}` +
@@ -65,7 +62,9 @@ const createDeclareList = async (plans: Plan[], emoji: Emoji[], name: string): P
   // テキストを作成
   return convex.map(m => {
     const p = plans.find(p => p.playerID === m?.id)
-    return `${m?.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}]${p ? ` ${p.msg}` : ''}`
+    return `${m?.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}${m?.limit !== '' ? `, ${m?.limit}時` : ''}]${
+      p ? ` ${p.msg}` : ''
+    }`
   })
 }
 
@@ -77,12 +76,12 @@ export const ResetReact = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
   // 凸宣言のメッセージを取得
-  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
   // 凸宣言のリアクションを全て外す
-  await declare.reactions.removeAll()
+  await msg.reactions.removeAll()
 
   // 本戦と保険のリアクションを付ける
-  await declare.react(Settings.EMOJI_ID.HONSEN)
-  await declare.react(Settings.EMOJI_ID.HOKEN)
+  await msg.react(Settings.EMOJI_ID.HONSEN)
+  await msg.react(Settings.EMOJI_ID.HOKEN)
 }

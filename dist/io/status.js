@@ -104,6 +104,7 @@ exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0
                 members = users === null || users === void 0 ? void 0 : users.map(function (u) { return ({
                     name: u.name,
                     id: u.id,
+                    limit: '',
                     convex: '',
                     over: '',
                     end: '',
@@ -128,6 +129,7 @@ exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, fun
                 members = members.map(function (s) { return ({
                     name: s.name,
                     id: s.id,
+                    limit: '',
                     convex: '',
                     over: '',
                     end: '',
@@ -167,17 +169,27 @@ exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet, users, col, row;
+    return __generator(this, function (_a) {
+        reflectOnConvex(member);
+        reflectOnLimit(member);
+        return [2];
+    });
+}); };
+var reflectOnConvex = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, info, users, col, row;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                return [4, exports.FetchUserFromSheet(sheet)];
+                return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 2:
+                info = _a.sent();
+                return [4, exports.FetchUserFromSheet(info)];
+            case 3:
                 users = _a.sent();
                 return [4, dateTable.TakeDate()];
-            case 3:
+            case 4:
                 col = (_a.sent()).col;
                 row = users.map(function (u) { return u.id; }).indexOf(member.id) + 3;
                 return [4, Promise.all([member.convex, member.over, member.end, member.history].map(function (v, i) { return __awaiter(void 0, void 0, void 0, function () {
@@ -194,6 +206,28 @@ exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, vo
                             }
                         });
                     }); }))];
+            case 5:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var reflectOnLimit = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet, users, col, row, cell;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 1:
+                sheet = _a.sent();
+                return [4, exports.FetchUserFromSheet(sheet)];
+            case 2:
+                users = _a.sent();
+                col = const_settings_1["default"].INFORMATION_SHEET.LIMIT_COLUMN;
+                row = users.map(function (u) { return u.id; }).indexOf(member.id) + 3;
+                return [4, sheet.getCell("" + col + row)];
+            case 3:
+                cell = _a.sent();
+                return [4, cell.setValue(member.limit)];
             case 4:
                 _a.sent();
                 return [2];
@@ -216,6 +250,7 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                 members = status.map(function (s, i) { return ({
                     name: users[i].name,
                     id: users[i].id,
+                    limit: users[i].limit,
                     convex: s.convex,
                     over: s.over,
                     end: s.end,
@@ -277,14 +312,15 @@ exports.FetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0,
     var cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].MANAGEMENT_SHEET.MEMBER_CELLS)];
+            case 0: return [4, spreadsheet.GetCells(sheet, const_settings_1["default"].INFORMATION_SHEET.MEMBER_CELLS)];
             case 1:
                 cells = _a.sent();
-                return [2, pieces_each_1["default"](cells, 2)
+                return [2, pieces_each_1["default"](cells, 3)
                         .filter(util.Omit)
                         .map(function (u) { return ({
                         name: u[0],
-                        id: u[1]
+                        id: u[1],
+                        limit: u[2]
                     }); })];
         }
     });

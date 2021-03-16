@@ -174,7 +174,8 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 0:
                 users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
                     name: util.GetUserName(m),
-                    id: m.id
+                    id: m.id,
+                    limit: ''
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
                 return [4, status.UpdateUsers(users)];
             case 1:
@@ -198,7 +199,8 @@ var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 0:
                 users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
                     name: util.GetUserName(m),
-                    id: m.id
+                    id: m.id,
+                    limit: ''
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
                 return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
             case 1:

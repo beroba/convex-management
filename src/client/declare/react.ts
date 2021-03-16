@@ -91,9 +91,6 @@ export const ConvexDone = async (user: Discord.User) => {
   // 凸宣言のメッセージを取得
   const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
-  // 凸宣言に付いているリアクションをキャッシュ
-  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
-
   // ユーザーのリアクションを全て外す
   await Promise.all(msg.reactions.cache.map(async r => await r.users.remove(user)))
 
@@ -224,9 +221,6 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
 
   // リアクションからメッセージを取得
   const msg = await fetchMessage(react)
-
-  // メッセージに付いているリアクションをキャッシュ
-  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
 
   // 済の絵文字を取得
   const sumi = msg.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI)

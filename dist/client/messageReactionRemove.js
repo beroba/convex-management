@@ -62,6 +62,7 @@ exports.MessageReactionRemove = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var declare = __importStar(require("./declare/react"));
 var activityTime = __importStar(require("./convex/activityTime"));
+var limitTime = __importStar(require("./convex/limitTime"));
 exports.MessageReactionRemove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
@@ -80,8 +81,13 @@ exports.MessageReactionRemove = function (react, user) { return __awaiter(void 0
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, activityTime.Remove(react, user)];
+                return [4, limitTime.Remove(react, user)];
             case 3:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, activityTime.Remove(react, user)];
+            case 4:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

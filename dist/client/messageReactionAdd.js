@@ -112,7 +112,7 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, limitTime.Toggle(react, user)];
+                return [4, limitTime.Add(react, user)];
             case 8:
                 comment = _b.sent();
                 if (comment)

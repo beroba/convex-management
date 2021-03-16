@@ -51,7 +51,7 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   if (comment) return console.log(comment)
 
   // 活動限界時間の設定を行う
-  comment = await limitTime.Toggle(react, user as Discord.User)
+  comment = await limitTime.Add(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // 活動時間の追加を行う

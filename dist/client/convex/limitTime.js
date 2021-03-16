@@ -58,12 +58,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Toggle = void 0;
+exports.Update = exports.Display = exports.Remove = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
-exports.Toggle = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, channel, first, latter;
+exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var member;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -80,53 +80,74 @@ exports.Toggle = function (react, user) { return __awaiter(void 0, void 0, void 
                     react.users.remove(user);
                     return [2];
                 }
+                exports.Update(user.id);
+                return [2, 'Setting the activity limit time'];
+        }
+    });
+}); };
+exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        if (user.bot)
+            return [2];
+        if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME)
+            return [2];
+        if (![const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST, const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER].some(function (id) { return id === react.message.id; }))
+            return [2];
+        exports.Update(user.id);
+        return [2, 'Setting the activity limit time'];
+    });
+}); };
+exports.Display = function () { };
+exports.Update = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, status.FetchMember(id)];
+            case 1:
+                member = _b.sent();
+                if (!member)
+                    return [2];
+                _a = member;
+                return [4, fetchLimit(id)];
+            case 2:
+                _a.limit = _b.sent();
+                return [4, status.UpdateMember(member)];
+            case 3:
+                _b.sent();
+                return [4, util.Sleep(100)];
+            case 4:
+                _b.sent();
+                status.ReflectOnSheet(member);
+                return [2];
+        }
+    });
+}); };
+var fetchLimit = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var channel, first, latter, f, l, list;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
                 return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
-            case 2:
+            case 1:
                 first = _a.sent();
                 return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
-            case 3:
+            case 2:
                 latter = _a.sent();
-                return [4, Promise.all(first.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.fetch()];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
-            case 4:
-                _a.sent();
-                return [4, Promise.all(latter.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.fetch()];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
-            case 5:
-                _a.sent();
                 return [4, Promise.all(first.reactions.cache
                         .map(function (r) { return r; })
-                        .filter(function (r) { return r.emoji.id !== react.emoji.id; })
-                        .map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.remove(user)];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
-            case 6:
-                _a.sent();
+                        .filter(function (r) { return r.users.cache.map(function (u) { return u.id; }).some(function (u) { return u === id; }); })
+                        .map(function (r) { return r.emoji.name.replace('_', ''); }))];
+            case 3:
+                f = _a.sent();
                 return [4, Promise.all(latter.reactions.cache
                         .map(function (r) { return r; })
-                        .filter(function (r) { return r.emoji.id !== react.emoji.id; })
-                        .map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.remove(user)];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
-            case 7:
-                _a.sent();
-                console.log(react.emoji.name);
-                return [2, 'Setting the activity limit time'];
+                        .filter(function (r) { return r.users.cache.map(function (u) { return u.id; }).some(function (u) { return u === id; }); })
+                        .map(function (r) { return r.emoji.name.replace('_', ''); }))];
+            case 4:
+                l = _a.sent();
+                list = f.concat(l);
+                return [2, list[list.length - 1] !== undefined ? list[list.length - 1] : ''];
         }
     });
 }); };

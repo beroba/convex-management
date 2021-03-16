@@ -62,6 +62,7 @@ exports.Ready = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
+var fetch = __importStar(require("../util/fetch"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     var _a;
@@ -72,6 +73,7 @@ exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function 
                 return [4, channel.send('きゃるきゃるーん')];
             case 1:
                 _b.sent();
+                fetch.React();
                 console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
                 return [2];
         }
