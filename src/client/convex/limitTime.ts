@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
+import {Member} from '../../io/type'
 
 /**
  * 活動限界時間を設定する
@@ -56,7 +57,83 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   return 'Setting the activity limit time'
 }
 
-export const Display = () => {}
+export const Display = async () => {
+  // 現在の時刻を取得
+  const h = getHours()
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 時間制限を迎えているメンバー一覧を取得
+  const over = overMember(h, members)
+
+  // 現在の時刻、次の時刻、その次の時刻が限界のメンバー一覧を取得
+  const now = filterMember(h, members)
+  const oneNext = filterMember(h + 1, members)
+  const twoNext = filterMember(h + 2, members)
+
+  // 活動限界時間のテキストを作成
+  const text = [
+    '活動限界時間',
+    '```',
+    `over: ${over}`,
+    `${h}: ${now}`,
+    `${h + 1}: ${oneNext}`,
+    `${h + 2}: ${twoNext}`,
+    '```',
+  ].join('\n')
+
+  // #活動時間のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
+
+  // 活動時間限界のメッセージを取得
+  const msg = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.DISPLAY)
+
+  // メッセージを編集
+  msg.edit(text)
+}
+
+/**
+ * 現在の時間を取得する
+ * @returns 時間
+ */
+const getHours = (): number => {
+  const h = new Date().getHours()
+  return createTime(h)
+}
+
+/**
+ * 受け取った時間が5未満なら+24して返す
+ * @param num 時間
+ * @returns 作成した時間
+ */
+const createTime = (num: number | string): number => {
+  // 強制的にnumberにする
+  const n = Number(num)
+  // 5未満は+24する
+  return n < 5 ? n + 24 : n
+}
+
+const overMember = (h: number, members: Member[]): string =>
+  members
+    .filter(m => {
+      if (m.limit === '') return false
+      const l = createTime(m.limit)
+      return l < h
+    })
+    .filter(m => !m.end)
+    .sort((a, b) => createTime(a.limit) - createTime(b.limit))
+    .map(m => `${m.name}[${m.limit}]`)
+    .join(', ')
+
+const filterMember = (h: number, members: Member[]): string =>
+  members
+    .filter(m => {
+      if (m.limit === '') return false
+      return createTime(m.limit) === h
+    })
+    .map(m => `${m.name}`)
+    .join(', ')
 
 /**
  * 引数で渡したユーザーidの活動限界時間を設定する

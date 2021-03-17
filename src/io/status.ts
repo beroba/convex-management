@@ -70,7 +70,7 @@ export const ResetConvex = async () => {
   members = members.map(s => ({
     name: s.name,
     id: s.id,
-    limit: '',
+    limit: s.limit,
     convex: '',
     over: '',
     end: '',
@@ -168,7 +168,7 @@ const reflectOnLimit = async (member: Member) => {
  */
 export const ReflectOnCal = async () => {
   // 凸状況のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得
   const users = await FetchUserFromSheet(sheet)
@@ -180,7 +180,7 @@ export const ReflectOnCal = async () => {
   const members: Member[] = status.map((s, i) => ({
     name: users[i].name,
     id: users[i].id,
-    limit: users[i].limit,
+    limit: users[i].limit.replace('時', ''),
     convex: s.convex,
     over: s.over,
     end: s.end,

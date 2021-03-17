@@ -129,7 +129,7 @@ exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, fun
                 members = members.map(function (s) { return ({
                     name: s.name,
                     id: s.id,
-                    limit: '',
+                    limit: s.limit,
                     convex: '',
                     over: '',
                     end: '',
@@ -238,7 +238,7 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
     var sheet, users, status, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].MANAGEMENT_SHEET.SHEET_NAME)];
+            case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
                 return [4, exports.FetchUserFromSheet(sheet)];
@@ -250,7 +250,7 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                 members = status.map(function (s, i) { return ({
                     name: users[i].name,
                     id: users[i].id,
-                    limit: users[i].limit,
+                    limit: users[i].limit.replace('時', ''),
                     convex: s.convex,
                     over: s.over,
                     end: s.end,

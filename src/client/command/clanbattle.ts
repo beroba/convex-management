@@ -7,6 +7,7 @@ import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as limitTime from '../convex/limitTime'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
 import * as cancel from '../plan/delete'
@@ -122,6 +123,11 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
     case /cb help/.test(command): {
       msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
       return 'Show help'
+    }
+
+    case /cb test/.test(command): {
+      limitTime.Display()
+      return 'test'
     }
   }
 }

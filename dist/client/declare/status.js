@@ -93,7 +93,7 @@ exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, fun
             case 1:
                 status = _e.sent();
                 _b = (_a = status).edit;
-                _c = state.boss + " `" + state.hp + "/" + maxHP + "`\n";
+                _c = state.lap + "\u9031\u76EE " + state.boss + " `" + state.hp + "/" + maxHP + "`\n";
                 _d = "\u4E88\u60F3\u6B8B\u308AHP `";
                 return [4, expectRemainingHP(state)];
             case 2: return [4, _b.apply(_a, [_c + (_d + (_e.sent()) + "`")])];
