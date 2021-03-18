@@ -62,14 +62,16 @@ exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var status = __importStar(require("../../io/status"));
 var category = __importStar(require("./category"));
 var activityTime = __importStar(require("../convex/activityTime"));
+var situation = __importStar(require("../convex/situation"));
 exports.Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, _a, arg, arg, arg;
+    var isRole, _a, members, arg, arg, arg;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -81,81 +83,100 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                     return [2];
                 _a = true;
                 switch (_a) {
-                    case /cb manage create category/.test(command): return [3, 1];
-                    case /cb manage delete category/.test(command): return [3, 2];
-                    case /cb manage set days/.test(command): return [3, 3];
-                    case /cb manage set boss/.test(command): return [3, 5];
-                    case /cb manage remove role/.test(command): return [3, 7];
-                    case /cb manage update members/.test(command): return [3, 8];
-                    case /cb manage update sisters/.test(command): return [3, 9];
-                    case /cb manage set react/.test(command): return [3, 10];
-                    case /cb manage reflect activity time/.test(command): return [3, 13];
-                    case /cb manage sheet/.test(command): return [3, 15];
+                    case /cb manage reflect/.test(command): return [3, 1];
+                    case /cb manage create category/.test(command): return [3, 7];
+                    case /cb manage delete category/.test(command): return [3, 8];
+                    case /cb manage set days/.test(command): return [3, 9];
+                    case /cb manage set boss/.test(command): return [3, 11];
+                    case /cb manage remove role/.test(command): return [3, 13];
+                    case /cb manage update members/.test(command): return [3, 14];
+                    case /cb manage update sisters/.test(command): return [3, 15];
+                    case /cb manage set react/.test(command): return [3, 16];
+                    case /cb manage reflect activity time/.test(command): return [3, 19];
+                    case /cb manage sheet/.test(command): return [3, 21];
                 }
-                return [3, 16];
-            case 1:
+                return [3, 22];
+            case 1: return [4, current.ReflectOnCal()];
+            case 2:
+                _c.sent();
+                return [4, util.Sleep(100)];
+            case 3:
+                _c.sent();
+                return [4, status.ReflectOnCal()];
+            case 4:
+                _c.sent();
+                return [4, util.Sleep(100)];
+            case 5:
+                _c.sent();
+                return [4, status.Fetch()];
+            case 6:
+                members = _c.sent();
+                situation.Report(members);
+                msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
+                return [2, 'Reflect spreadsheet values ​​in Cal'];
+            case 7:
                 {
                     arg = command.replace('/cb manage create category', '');
                     category.Create(arg, msg);
                     return [2, 'Create ClanBattle category'];
                 }
-                _c.label = 2;
-            case 2:
+                _c.label = 8;
+            case 8:
                 {
                     arg = command.replace('/cb manage delete category', '');
                     category.Delete(arg, msg);
                     return [2, 'Delete ClanBattle category'];
                 }
-                _c.label = 3;
-            case 3:
+                _c.label = 9;
+            case 9:
                 arg = command.replace('/cb manage set days ', '');
                 return [4, dateTable.Update(arg)];
-            case 4:
+            case 10:
                 _c.sent();
                 msg.reply('クランバトルの日付を設定したわよ！');
                 return [2, 'Set convex days'];
-            case 5: return [4, bossTable.Update()];
-            case 6:
+            case 11: return [4, bossTable.Update()];
+            case 12:
                 _c.sent();
                 msg.reply('クランバトルのボステーブルを設定したわよ！');
                 return [2, 'Set convex bossTable'];
-            case 7:
+            case 13:
                 {
                     removeRole(msg);
                     return [2, 'Release all remaining convex rolls'];
                 }
-                _c.label = 8;
-            case 8:
+                _c.label = 14;
+            case 14:
                 {
                     updateMembers(msg);
                     return [2, 'Update convex management members'];
                 }
-                _c.label = 9;
-            case 9:
+                _c.label = 15;
+            case 15:
                 {
                     updateSisters(msg);
                     return [2, 'Update convex management sisters'];
                 }
-                _c.label = 10;
-            case 10: return [4, setReactForDeclare()];
-            case 11:
+                _c.label = 16;
+            case 16: return [4, setReactForDeclare()];
+            case 17:
                 _c.sent();
                 return [4, setReactForActivityTime()];
-            case 12:
+            case 18:
                 _c.sent();
                 msg.reply('凸管理用の絵文字を設定したわよ！');
                 return [2, 'Set react for convex'];
-            case 13: return [4, activityTime.ReflectOnSheet()];
-            case 14:
+            case 19: return [4, activityTime.ReflectOnSheet()];
+            case 20:
                 _c.sent();
                 return [2, 'Reflect activity time on the sheet'];
-            case 15:
+            case 21:
                 {
                     msg.reply(const_settings_1["default"].URL.SPREADSHEET);
                     return [2, 'Show spreadsheet link'];
                 }
-                _c.label = 16;
-            case 16: return [2];
+                _c.label = 22;
+            case 22: return [2];
         }
     });
 }); };
@@ -174,7 +195,8 @@ var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 0:
                 users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
                     name: util.GetUserName(m),
-                    id: m.id
+                    id: m.id,
+                    limit: ''
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
                 return [4, status.UpdateUsers(users)];
             case 1:
@@ -198,7 +220,8 @@ var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, fu
             case 0:
                 users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
                     name: util.GetUserName(m),
-                    id: m.id
+                    id: m.id,
+                    limit: ''
                 }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
                 return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
             case 1:
@@ -262,7 +285,7 @@ var setReactForDeclare = function () { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var setReactForActivityTime = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, awayIn, days;
+    var channel, awayIn, days, first, latter;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -292,6 +315,84 @@ var setReactForActivityTime = function () { return __awaiter(void 0, void 0, voi
                         }
                     });
                 }); }));
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
+            case 4:
+                first = _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._5)];
+            case 5:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._6)];
+            case 6:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._7)];
+            case 7:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._8)];
+            case 8:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._9)];
+            case 9:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._10)];
+            case 10:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._11)];
+            case 11:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._12)];
+            case 12:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._13)];
+            case 13:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._14)];
+            case 14:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._15)];
+            case 15:
+                _a.sent();
+                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._16)];
+            case 16:
+                _a.sent();
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
+            case 17:
+                latter = _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._17)];
+            case 18:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._18)];
+            case 19:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._19)];
+            case 20:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._20)];
+            case 21:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._21)];
+            case 22:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._22)];
+            case 23:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._23)];
+            case 24:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._0)];
+            case 25:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._1)];
+            case 26:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._2)];
+            case 27:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._3)];
+            case 28:
+                _a.sent();
+                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._4)];
+            case 29:
+                _a.sent();
                 return [2];
         }
     });

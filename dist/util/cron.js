@@ -66,11 +66,13 @@ var dateTable = __importStar(require("../io/dateTable"));
 var status = __importStar(require("../io/status"));
 var activityTime = __importStar(require("../client/convex/activityTime"));
 var attendance = __importStar(require("../client/convex/attendance"));
+var limitTime = __importStar(require("../client/convex/limitTime"));
 exports.CronOperation = function () {
     setRemainConvex('0 10 5 * * *');
     removeTaskillRoll('0 0 5 * * *');
     resetConvex('0 0 5 * * *');
     notifyDailyMission('0 30 4 * * *');
+    limitTimeDisplay('0 1 */1 * * *');
     switchAwayInRole();
 };
 var setRemainConvex = function (expression) {
@@ -130,6 +132,23 @@ var notifyDailyMission = function (expression) {
         channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！');
         console.log('Notify daily mission digestion');
     });
+};
+var limitTimeDisplay = function (expression) {
+    cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
+        var members, channel;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4, status.Fetch()];
+                case 1:
+                    members = _a.sent();
+                    limitTime.Display(members);
+                    channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+                    channel.send('活動限界時間を更新したわ');
+                    console.log('Periodic update of activity time limit display');
+                    return [2];
+            }
+        });
+    }); });
 };
 var switchAwayInRole = function () {
     switchRole('0 0 5 * * *', 1);

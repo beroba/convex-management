@@ -62,6 +62,7 @@ exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
+var limitTime = __importStar(require("./limitTime"));
 var situation = __importStar(require("./situation"));
 exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var state, user, member, members;
@@ -107,7 +108,7 @@ exports.Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var convexEndProcess = function (member, user, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var guildMember, state, n;
+    var guildMember, members, n;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -120,9 +121,10 @@ var convexEndProcess = function (member, user, msg) { return __awaiter(void 0, v
                 guildMember.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
                 return [4, status.Fetch()];
             case 2:
-                state = _a.sent();
-                n = state.filter(function (s) { return s.end === '1'; }).length + 1;
+                members = _a.sent();
+                n = members.filter(function (s) { return s.end === '1'; }).length + 1;
                 msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01");
+                limitTime.Display(members);
                 return [2, member];
         }
     });

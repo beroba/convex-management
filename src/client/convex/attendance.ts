@@ -16,7 +16,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   // botのリアクションは実行しない
   if (user.bot) return
 
-  // #凸状況でなければ終了
+  // #活動時間でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
 
   // 付けたリアクションを外す
@@ -28,7 +28,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   if (!member) return
 
   // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.CONVEX_MESSAGE_ID.ATTENDANCE) return
+  if (react.message.id !== Settings.ACTIVITY_TIME.AWAY_IN) return
 
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.SHUSEKI) return
@@ -73,7 +73,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   if (!member) return
 
   // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.CONVEX_MESSAGE_ID.ATTENDANCE) return
+  if (react.message.id !== Settings.ACTIVITY_TIME.AWAY_IN) return
 
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.RISEKI) return
@@ -101,15 +101,16 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
  */
 export const Edit = async () => {
   // 更新するメッセージ
-  const text =
-    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージがオレンジ色になります。\n` +
-    `メッセージに付けたリアクションはすぐに消えます。\n\n` +
-    `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。\n` +
-    `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`
+  const text = [
+    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージがオレンジ色になります。`,
+    `メッセージに付けたリアクションはすぐに消えます。\n`,
+    `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。`,
+    `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`,
+  ].join('\n')
 
   // 出欠のメッセージを取得する
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-  const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.ATTENDANCE)
+  const msg = await channel.messages.fetch(Settings.ACTIVITY_TIME.AWAY_IN)
 
   // メッセージを更新
   await msg.edit(text)

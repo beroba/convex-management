@@ -62,6 +62,7 @@ exports.MessageReactionAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var activityTime = __importStar(require("./convex/activityTime"));
 var attendance = __importStar(require("./convex/attendance"));
+var limitTime = __importStar(require("./convex/limitTime"));
 var over = __importStar(require("./convex/over"));
 var sister = __importStar(require("./convex/sister"));
 var plan = __importStar(require("./plan/delete"));
@@ -111,23 +112,28 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, activityTime.Add(react, user)];
+                return [4, limitTime.Add(react, user)];
             case 8:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, attendance.Remove(react, user)];
+                return [4, activityTime.Add(react, user)];
             case 9:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, attendance.Add(react, user)];
+                return [4, attendance.Remove(react, user)];
             case 10:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];
-                return [4, playerID.RoleGrant(react, user)];
+                return [4, attendance.Add(react, user)];
             case 11:
+                comment = _b.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                return [4, playerID.RoleGrant(react, user)];
+            case 12:
                 comment = _b.sent();
                 if (comment)
                     return [2, console.log(comment)];

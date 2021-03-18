@@ -102,21 +102,19 @@ var createMessage = function (members) { return __awaiter(void 0, void 0, void 0
                 凸2 = userSorting(members, 2, 0);
                 持越3 = userSorting(members, 3, 1);
                 凸3 = userSorting(members, 3, 0);
-                return [2, ("`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7\n" +
-                        ("`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + remaining + "`\n") +
-                        '```\n' +
-                        ("\u672A\u51F8: " + 未凸 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越1 + "\n") +
-                        ("1\u51F8 : " + 凸1 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越2 + "\n") +
-                        ("2\u51F8 : " + 凸2 + "\n") +
-                        '\n' +
-                        ("\u6301\u8D8A: " + 持越3 + "\n") +
-                        ("3\u51F8 : " + 凸3 + "\n") +
-                        '\n' +
-                        '```')];
+                return [2, [
+                        "`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7",
+                        "`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + remaining + "`",
+                        '```',
+                        "\u672A\u51F8: " + 未凸 + "\n",
+                        "\u6301\u8D8A: " + 持越1,
+                        "1\u51F8 : " + 凸1 + "\n",
+                        "\u6301\u8D8A: " + 持越2,
+                        "2\u51F8 : " + 凸2 + "\n",
+                        "\u6301\u8D8A: " + 持越3,
+                        "3\u51F8 : " + 凸3 + "\n",
+                        '```'
+                    ].join('\n')];
         }
     });
 }); };

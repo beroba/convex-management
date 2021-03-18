@@ -17,8 +17,14 @@ export const Update = async (state: Current) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
   const status = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.STATUS)
 
+  // 表示するテキストを作成
+  const text = [
+    `\`${state.lap}\`週目 \`${state.boss}\` \`${state.hp}/${maxHP}\``,
+    `予想残りHP \`${await expectRemainingHP(state)}\``,
+  ].join('\n')
+
   // メッセージを編集
-  await status.edit(`${state.boss} \`${state.hp}/${maxHP}\`\n` + `予想残りHP \`${await expectRemainingHP(state)}\``)
+  await status.edit(text)
 }
 
 /**

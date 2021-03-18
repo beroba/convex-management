@@ -133,33 +133,25 @@ exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, 
                 msg = _c.sent();
                 return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, r.users.fetch()];
+                            case 0: return [4, r.users.remove(user)];
                             case 1: return [2, _a.sent()];
                         }
                     }); }); }))];
             case 2:
                 _c.sent();
-                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.remove(user)];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
-            case 3:
-                _c.sent();
                 return [4, current.Fetch()];
-            case 4:
+            case 3:
                 state = _c.sent();
                 return [4, declaration.SetUser(state)];
-            case 5:
+            case 4:
                 _c.sent();
                 _b = (_a = Promise).all;
                 return [4, channel.messages.fetch()];
-            case 6: return [4, _b.apply(_a, [(_c.sent())
+            case 5: return [4, _b.apply(_a, [(_c.sent())
                         .map(function (m) { return m; })
                         .filter(function (m) { return m.author.id === user.id; })
                         .map(function (m) { return m["delete"](); })])];
-            case 7:
+            case 6:
                 _c.sent();
                 declare.Update(state);
                 console.log('Completion of convex declaration');
@@ -229,14 +221,6 @@ exports.NoticeCancel = function (react, user) { return __awaiter(void 0, void 0,
                 return [4, fetchMessage(react)];
             case 1:
                 msg = _a.sent();
-                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, r.users.fetch()];
-                            case 1: return [2, _a.sent()];
-                        }
-                    }); }); }))];
-            case 2:
-                _a.sent();
                 sumi = msg.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; });
                 sumi === null || sumi === void 0 ? void 0 : sumi.remove();
                 return [2];

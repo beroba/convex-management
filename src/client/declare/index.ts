@@ -63,13 +63,7 @@ const messageDelete = async () => {
     (await channel.messages.fetch())
       .map(m => m)
       .filter(m => !m.author.bot)
-      .map(async m => {
-        // 凸宣言に付いているリアクションをキャッシュする
-        await Promise.all(m.reactions.cache.map(async r => await r.users.fetch()))
-
-        // メッセージを削除
-        return m.delete()
-      })
+      .map(m => m.delete())
   )
 
   // 済が付いていないメッセージのユーザー一覧のリストを作成

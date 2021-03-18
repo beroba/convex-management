@@ -34,6 +34,7 @@ export type Current = {
 export type User = {
   name: string
   id: string
+  limit: string
 }
 
 /**
@@ -50,6 +51,7 @@ export type Status = {
  * メンバーの状態
  * @type name: string
  * @type id: string
+ * @type limit: string
  * @type convex: string
  * @type over: string
  * @type end: string

@@ -3,7 +3,6 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
-import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
@@ -101,22 +100,6 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
 
       msg.reply('凸状況を更新したわよ！')
       return 'Convex situation updated'
-    }
-
-    case /cb reflect/.test(command): {
-      // スプレッドシートの値を反映
-      await current.ReflectOnCal()
-      await util.Sleep(100)
-      await status.ReflectOnCal()
-      await util.Sleep(100)
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
-      msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
-      return 'Reflect spreadsheet values ​​in Cal'
     }
 
     case /cb help/.test(command): {

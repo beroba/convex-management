@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
@@ -10,6 +11,7 @@ import * as status from '../../io/status'
 import {User} from '../../io/type'
 import * as category from './category'
 import * as activityTime from '../convex/activityTime'
+import * as situation from '../convex/situation'
 
 /**
  * 運営管理者用のコマンド
@@ -26,6 +28,22 @@ export const Management = async (command: string, msg: Discord.Message): Promise
   if (!isRole) return
 
   switch (true) {
+    case /cb manage reflect/.test(command): {
+      // スプレッドシートの値を反映
+      await current.ReflectOnCal()
+      await util.Sleep(100)
+      await status.ReflectOnCal()
+      await util.Sleep(100)
+
+      // メンバー全員の状態を取得
+      const members = await status.Fetch()
+      // 凸状況に報告
+      situation.Report(members)
+
+      msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
+      return 'Reflect spreadsheet values ​​in Cal'
+    }
+
     case /cb manage create category/.test(command): {
       const arg = command.replace('/cb manage create category', '')
       category.Create(arg, msg)
@@ -120,6 +138,7 @@ const updateMembers = async (msg: Discord.Message) => {
     ?.members.map(m => ({
       name: util.GetUserName(m),
       id: m.id,
+      limit: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -144,6 +163,7 @@ const updateSisters = async (msg: Discord.Message) => {
     ?.members.map(m => ({
       name: util.GetUserName(m),
       id: m.id,
+      limit: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -222,4 +242,34 @@ const setReactForActivityTime = async () => {
       Promise.all(emoji.map(async id => day.react(id)))
     })
   )
+
+  // 前半にリアクションを付ける
+  const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._5)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._6)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._7)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._8)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._9)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._10)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._11)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._12)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._13)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._14)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._15)
+  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._16)
+
+  // 後半にリアクションを付ける
+  const latter = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._17)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._18)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._19)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._20)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._21)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._22)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._23)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._0)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._1)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._2)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._3)
+  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._4)
 }

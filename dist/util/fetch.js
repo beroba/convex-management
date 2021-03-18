@@ -58,77 +58,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.ResetReact = exports.SetUser = void 0;
+exports.React = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var util = __importStar(require("../../util"));
-var schedule = __importStar(require("../../io/schedule"));
-var status = __importStar(require("../../io/status"));
-exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msg, emoji, plans, honsen, hoken, text;
+var util = __importStar(require("./"));
+exports.React = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var declare, msgs, activityTime, first, latter;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+                declare = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, declare.messages.fetch()];
             case 1:
-                msg = _a.sent();
-                emoji = msg.reactions.cache.map(function (r) { return ({ name: r.emoji.name, users: r.users.cache.map(function (u) { return u; }) }); });
-                return [4, schedule.FetchBoss(state.alpha)];
-            case 2:
-                plans = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'honsen')];
-            case 3:
-                honsen = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'hoken')];
-            case 4:
-                hoken = _a.sent();
-                text = [
-                    '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
-                    '```',
-                    '――――本戦――――',
-                    "" + honsen.join('\n') + (honsen.length ? '\n' : ''),
-                    '――――保険――――',
-                    "" + hoken.join('\n'),
-                    '```',
-                ].join('\n');
-                msg.edit(text);
-                return [2];
-        }
-    });
-}); };
-var createDeclareList = function (plans, emoji, name) { return __awaiter(void 0, void 0, void 0, function () {
-    var convex;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
-                    .users
-                    .map(function (u) { return status.FetchMember(u.id); }))];
-            case 1:
-                convex = (_a.sent()).filter(function (m) { return m; });
-                return [2, convex.map(function (m) {
-                        var p = plans.find(function (p) { return p.playerID === (m === null || m === void 0 ? void 0 : m.id); });
-                        return (m === null || m === void 0 ? void 0 : m.name) + "[" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + ((m === null || m === void 0 ? void 0 : m.limit) !== '' ? ", " + (m === null || m === void 0 ? void 0 : m.limit) + "\u6642" : '') + "]" + (p ? " " + p.msg : '');
-                    })];
-        }
-    });
-}); };
-exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msg;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
-            case 1:
-                msg = _a.sent();
-                return [4, msg.reactions.removeAll()];
+                msgs = _a.sent();
+                return [4, Promise.all(msgs.map(function (msg) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        return [2, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4, r.users.fetch()];
+                                    case 1: return [2, _a.sent()];
+                                }
+                            }); }); }))];
+                    }); }); }))];
             case 2:
                 _a.sent();
-                return [4, msg.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+                activityTime = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
+                return [4, activityTime.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
             case 3:
-                _a.sent();
-                return [4, msg.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
+                first = _a.sent();
+                return [4, activityTime.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
             case 4:
+                latter = _a.sent();
+                return [4, Promise.all(first.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 5:
+                _a.sent();
+                return [4, Promise.all(latter.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 6:
                 _a.sent();
                 return [2];
         }

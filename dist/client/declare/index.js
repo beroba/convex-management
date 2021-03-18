@@ -113,21 +113,7 @@ var messageDelete = function () { return __awaiter(void 0, void 0, void 0, funct
             case 1: return [4, _b.apply(_a, [(_c.sent())
                         .map(function (m) { return m; })
                         .filter(function (m) { return !m.author.bot; })
-                        .map(function (m) { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, Promise.all(m.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4, r.users.fetch()];
-                                            case 1: return [2, _a.sent()];
-                                        }
-                                    }); }); }))];
-                                case 1:
-                                    _a.sent();
-                                    return [2, m["delete"]()];
-                            }
-                        });
-                    }); })])];
+                        .map(function (m) { return m["delete"](); })])];
             case 2:
                 list = _c.sent();
                 users = list

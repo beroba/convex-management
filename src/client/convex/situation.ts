@@ -52,23 +52,19 @@ const createMessage = async (members: Member[]): Promise<string> => {
   const 持越3 = userSorting(members, 3, 1)
   const 凸3   = userSorting(members, 3, 0)
 
-  return (
-    `\`${time}\` ${date.num} 凸状況一覧\n` +
-    `\`${state.lap}\`周目 \`${state.boss}\` \`${remaining}\`\n` +
-    '```\n' +
-    `未凸: ${未凸}\n` +
-    '\n' +
-    `持越: ${持越1}\n` +
-    `1凸 : ${凸1}\n` +
-    '\n' +
-    `持越: ${持越2}\n` +
-    `2凸 : ${凸2}\n` +
-    '\n' +
-    `持越: ${持越3}\n` +
-    `3凸 : ${凸3}\n` +
-    '\n' +
+  return [
+    `\`${time}\` ${date.num} 凸状況一覧`,
+    `\`${state.lap}\`周目 \`${state.boss}\` \`${remaining}\``,
+    '```',
+    `未凸: ${未凸}\n`,
+    `持越: ${持越1}`,
+    `1凸 : ${凸1}\n`,
+    `持越: ${持越2}`,
+    `2凸 : ${凸2}\n`,
+    `持越: ${持越3}`,
+    `3凸 : ${凸3}\n`,
     '```'
-  )
+  ].join('\n')
 }
 
 /**
