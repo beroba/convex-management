@@ -6,6 +6,7 @@ import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as update from './update'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as limitTime from '../convex/limitTime'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
 import * as declare from '../declare/status'
@@ -87,6 +88,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // #凸状況に報告
   situation.Report(members)
+
+  // 活動限界時間の表示を更新
+  limitTime.Display(members)
 
   return 'Update status'
 }

@@ -81,6 +81,7 @@ var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var update = __importStar(require("./update"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
+var limitTime = __importStar(require("../convex/limitTime"));
 var over = __importStar(require("../convex/over"));
 var situation = __importStar(require("../convex/situation"));
 var declare = __importStar(require("../declare/status"));
@@ -143,6 +144,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     }
                 }
                 situation.Report(members);
+                limitTime.Display(members);
                 return [2, 'Update status'];
         }
     });

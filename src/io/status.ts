@@ -7,6 +7,7 @@ import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as dateTable from './dateTable'
 import {User, Status, Member} from './type'
+import * as limitTime from '../client/convex/limitTime'
 
 /**
  * キャルステータスのメンバーの状態を更新する
@@ -189,6 +190,9 @@ export const ReflectOnCal = async () => {
 
   // キャルステータスを更新する
   await Update(members)
+
+  // 活動限界時間の表示を更新
+  limitTime.Display(members)
 }
 
 /**

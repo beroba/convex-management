@@ -64,7 +64,7 @@ var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var status = __importStar(require("../../io/status"));
 exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msg, emoji, plans, honsen, hoken;
+    var channel, msg, emoji, plans, honsen, hoken, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -82,10 +82,16 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, createDeclareList(plans, emoji, 'hoken')];
             case 4:
                 hoken = _a.sent();
-                msg.edit('凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
-                    '```' +
-                    ("\n\u2015\u2015\u2015\u2015\u672C\u6226\u2015\u2015\u2015\u2015\n" + honsen.join('\n') + (honsen.length ? '\n' : '') + "\n\u2015\u2015\u2015\u2015\u4FDD\u967A\u2015\u2015\u2015\u2015\n" + hoken.join('\n')) +
-                    '```');
+                text = [
+                    '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
+                    '```',
+                    '――――本戦――――',
+                    "" + honsen.join('\n') + (honsen.length ? '\n' : ''),
+                    '――――保険――――',
+                    "" + hoken.join('\n'),
+                    '```',
+                ].join('\n');
+                msg.edit(text);
                 return [2];
         }
     });

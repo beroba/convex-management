@@ -34,14 +34,15 @@ export const UpdateArray = async <T>(id: string, json: T) => {
 
   // prettier-ignore
   // 見やすいように書式を追加するする
-  const text =
-    '```json\n' +
+  const text = [
+    '```json',
     JSON.stringify(json)
       .replace(/{/g, '\n  {')
       .replace(/]/g, '\n]')
       .replace(/:/g, ': ')
-      .replace(/,/g, ', ') +
-    '\n```'
+      .replace(/,/g, ', '),
+    '```',
+  ].join('\n')
 
   // メッセージを更新
   await msg.edit(text)
@@ -59,14 +60,15 @@ export const UpdateJson = async <T>(id: string, json: T) => {
 
   // prettier-ignore
   // 見やすいように書式を追加するする
-  const text =
-    '```json\n' +
+  const text = [
+    '```json',
     JSON.stringify(json)
       .replace(/{/g, '\n{\n  ')
       .replace(/}/g, '\n}\n')
       .replace(/:/g, ': ')
-      .replace(/,/g, ',\n  ') +
-    '\n```'
+      .replace(/,/g, ',\n  '),
+    '```',
+  ].join('\n')
 
   // メッセージを更新
   await msg.edit(text)

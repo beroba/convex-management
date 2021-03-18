@@ -88,13 +88,15 @@ exports.UpdateArray = function (id, json) { return __awaiter(void 0, void 0, voi
                 return [4, channel.messages.fetch(id)];
             case 1:
                 msg = _a.sent();
-                text = '```json\n' +
+                text = [
+                    '```json',
                     JSON.stringify(json)
                         .replace(/{/g, '\n  {')
                         .replace(/]/g, '\n]')
                         .replace(/:/g, ': ')
-                        .replace(/,/g, ', ') +
-                    '\n```';
+                        .replace(/,/g, ', '),
+                    '```',
+                ].join('\n');
                 return [4, msg.edit(text)];
             case 2:
                 _a.sent();
@@ -111,13 +113,15 @@ exports.UpdateJson = function (id, json) { return __awaiter(void 0, void 0, void
                 return [4, channel.messages.fetch(id)];
             case 1:
                 msg = _a.sent();
-                text = '```json\n' +
+                text = [
+                    '```json',
                     JSON.stringify(json)
                         .replace(/{/g, '\n{\n  ')
                         .replace(/}/g, '\n}\n')
                         .replace(/:/g, ': ')
-                        .replace(/,/g, ',\n  ') +
-                    '\n```';
+                        .replace(/,/g, ',\n  '),
+                    '```',
+                ].join('\n');
                 return [4, msg.edit(text)];
             case 2:
                 _a.sent();

@@ -83,22 +83,25 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var maxHP, channel, status, _a, _b, _c, _d;
-    return __generator(this, function (_e) {
-        switch (_e.label) {
+    var maxHP, channel, status, text, _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 maxHP = const_settings_1["default"].STAGE_HP[state.stage][state.alpha];
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
                 return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.STATUS)];
             case 1:
-                status = _e.sent();
-                _b = (_a = status).edit;
-                _c = state.lap + "\u9031\u76EE " + state.boss + " `" + state.hp + "/" + maxHP + "`\n";
-                _d = "\u4E88\u60F3\u6B8B\u308AHP `";
+                status = _c.sent();
+                _a = ["`" + state.lap + "`\u9031\u76EE `" + state.boss + "` `" + state.hp + "/" + maxHP + "`"];
+                _b = "\u4E88\u60F3\u6B8B\u308AHP `";
                 return [4, expectRemainingHP(state)];
-            case 2: return [4, _b.apply(_a, [_c + (_d + (_e.sent()) + "`")])];
+            case 2:
+                text = _a.concat([
+                    _b + (_c.sent()) + "`"
+                ]).join('\n');
+                return [4, status.edit(text)];
             case 3:
-                _e.sent();
+                _c.sent();
                 return [2];
         }
     });

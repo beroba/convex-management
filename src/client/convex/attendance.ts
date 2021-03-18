@@ -101,11 +101,12 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
  */
 export const Edit = async () => {
   // 更新するメッセージ
-  const text =
-    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージがオレンジ色になります。\n` +
-    `メッセージに付けたリアクションはすぐに消えます。\n\n` +
-    `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。\n` +
-    `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`
+  const text = [
+    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージがオレンジ色になります。`,
+    `メッセージに付けたリアクションはすぐに消えます。\n`,
+    `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。`,
+    `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`,
+  ].join('\n')
 
   // 出欠のメッセージを取得する
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)

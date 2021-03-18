@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as spreadsheet from '../../util/spreadsheet'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
@@ -10,6 +11,7 @@ import * as status from '../../io/status'
 import {User} from '../../io/type'
 import * as category from './category'
 import * as activityTime from '../convex/activityTime'
+import * as situation from '../convex/situation'
 
 /**
  * 運営管理者用のコマンド
@@ -26,6 +28,22 @@ export const Management = async (command: string, msg: Discord.Message): Promise
   if (!isRole) return
 
   switch (true) {
+    case /cb manage reflect/.test(command): {
+      // スプレッドシートの値を反映
+      await current.ReflectOnCal()
+      await util.Sleep(100)
+      await status.ReflectOnCal()
+      await util.Sleep(100)
+
+      // メンバー全員の状態を取得
+      const members = await status.Fetch()
+      // 凸状況に報告
+      situation.Report(members)
+
+      msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
+      return 'Reflect spreadsheet values ​​in Cal'
+    }
+
     case /cb manage create category/.test(command): {
       const arg = command.replace('/cb manage create category', '')
       category.Create(arg, msg)

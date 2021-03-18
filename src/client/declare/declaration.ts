@@ -34,14 +34,19 @@ export const SetUser = async (state: Current) => {
   const honsen = await createDeclareList(plans, emoji, 'honsen')
   const hoken = await createDeclareList(plans, emoji, 'hoken')
 
-  // prettier-ignore
+  // 凸宣言のメッセージを作成
+  const text = [
+    '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
+    '```',
+    '――――本戦――――',
+    `${honsen.join('\n')}${honsen.length ? '\n' : ''}`,
+    '――――保険――――',
+    `${hoken.join('\n')}`,
+    '```',
+  ].join('\n')
+
   // 凸宣言のメッセージを編集
-  msg.edit(
-    '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`\n' +
-    '```' +
-    `\n――――本戦――――\n${honsen.join('\n')}${honsen.length ? '\n' : ''}\n――――保険――――\n${hoken.join('\n')}` +
-    '```'
-  )
+  msg.edit(text)
 }
 
 /**

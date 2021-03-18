@@ -5,6 +5,7 @@ import * as dateTable from '../io/dateTable'
 import * as status from '../io/status'
 import * as activityTime from '../client/convex/activityTime'
 import * as attendance from '../client/convex/attendance'
+import * as limitTime from '../client/convex/limitTime'
 
 // prettier-ignore
 /**
@@ -15,6 +16,7 @@ export const CronOperation = () => {
   removeTaskillRoll('0 0 5 * * *')   // 05:00
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
+  limitTimeDisplay('0 1 */1 * * *')  // 1時間起き
   switchAwayInRole()
 }
 
@@ -84,7 +86,7 @@ const resetConvex = (expression: string) => {
 }
 
 /**
- デイリーミッション消化の通知するクーロンを作成する
+ * デイリーミッション消化の通知するクーロンを作成する
  * @param expression クーロン式
  */
 const notifyDailyMission = (expression: string) => {
@@ -94,6 +96,25 @@ const notifyDailyMission = (expression: string) => {
     channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！')
 
     console.log('Notify daily mission digestion')
+  })
+}
+
+/**
+ * 活動限界時間を1時間起きに更新するクーロンを作成する
+ * @param expression クーロン式
+ */
+const limitTimeDisplay = (expression: string) => {
+  cron.schedule(expression, async () => {
+    const members = await status.Fetch()
+
+    // 活動限界時間の表示を更新
+    limitTime.Display(members)
+
+    // bot-notifyに通知をする
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+    channel.send('活動限界時間を更新したわ')
+
+    console.log('Periodic update of activity time limit display')
   })
 }
 

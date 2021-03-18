@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.Update = exports.Display = exports.Remove = exports.Add = void 0;
+exports.Display = exports.Remove = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
@@ -80,7 +80,7 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
                     react.users.remove(user);
                     return [2];
                 }
-                exports.Update(user.id);
+                update(user.id);
                 return [2, 'Setting the activity limit time'];
         }
     });
@@ -93,71 +93,12 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
             return [2];
         if (![const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST, const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER].some(function (id) { return id === react.message.id; }))
             return [2];
-        exports.Update(user.id);
+        update(user.id);
         return [2, 'Setting the activity limit time'];
     });
 }); };
-exports.Display = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var h, members, over, first, second, third, text, channel, msg;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                h = getHours();
-                return [4, status.Fetch()];
-            case 1:
-                members = _a.sent();
-                over = members
-                    .filter(function (m) {
-                    if (m.limit === '')
-                        return false;
-                    var l = createTime(m.limit);
-                    return l < h;
-                })
-                    .filter(function (m) { return !m.end; })
-                    .sort(function (a, b) { return createTime(a.limit) - createTime(b.limit); })
-                    .map(function (m) { return m.name + "[" + m.limit + "]"; })
-                    .join(', ');
-                first = filterMember(h, members);
-                second = filterMember(h + 1, members);
-                third = filterMember(h + 2, members);
-                text = [
-                    '活動限界時間',
-                    '```',
-                    "over: " + over,
-                    h + ": " + first,
-                    h + 1 + ": " + second,
-                    h + 2 + ": " + third,
-                    '```',
-                ].join('\n');
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
-                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.DISPLAY)];
-            case 2:
-                msg = _a.sent();
-                msg.edit(text);
-                return [2];
-        }
-    });
-}); };
-var getHours = function () {
-    var h = new Date().getHours();
-    return createTime(h);
-};
-var createTime = function (num) {
-    var n = Number(num);
-    return n < 5 ? n + 24 : n;
-};
-var filterMember = function (h, members) {
-    return members
-        .filter(function (m) {
-        if (m.limit === '')
-            return false;
-        return createTime(m.limit) === h;
-    })
-        .map(function (m) { return "" + m.name; })
-        .join(', ');
-};
-exports.Update = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, _a;
+var update = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var member, _a, members;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4, status.FetchMember(id)];
@@ -171,10 +112,11 @@ exports.Update = function (id) { return __awaiter(void 0, void 0, void 0, functi
                 _a.limit = _b.sent();
                 return [4, status.UpdateMember(member)];
             case 3:
-                _b.sent();
+                members = _b.sent();
                 return [4, util.Sleep(100)];
             case 4:
                 _b.sent();
+                exports.Display(members);
                 status.ReflectOnSheet(member);
                 return [2];
         }
@@ -209,3 +151,63 @@ var fetchLimit = function (id) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
+exports.Display = function (members) { return __awaiter(void 0, void 0, void 0, function () {
+    var h, over, now, oneNext, twoNext, text, channel, msg;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                h = getHours();
+                over = overMember(h, members);
+                now = limitMember(h, members);
+                oneNext = limitMember(h + 1, members);
+                twoNext = limitMember(h + 2, members);
+                text = [
+                    '活動限界時間',
+                    '```',
+                    "over: " + over,
+                    h + ": " + now,
+                    h + 1 + ": " + oneNext,
+                    h + 2 + ": " + twoNext,
+                    '```',
+                ].join('\n');
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
+                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.DISPLAY)];
+            case 1:
+                msg = _a.sent();
+                msg.edit(text);
+                console.log('Updated activity time limit display');
+                return [2];
+        }
+    });
+}); };
+var getHours = function () {
+    var h = new Date().getHours();
+    return createTime(h);
+};
+var createTime = function (num) {
+    var n = Number(num);
+    return n < 5 ? n + 24 : n;
+};
+var overMember = function (h, members) {
+    return members
+        .filter(function (m) {
+        if (m.limit === '')
+            return false;
+        return createTime(m.limit) < h;
+    })
+        .filter(function (m) { return !m.end; })
+        .sort(function (a, b) { return createTime(a.limit) - createTime(b.limit); })
+        .map(function (m) { return m.name + "[" + m.limit + "]"; })
+        .join(', ');
+};
+var limitMember = function (h, members) {
+    return members
+        .filter(function (m) {
+        if (m.limit === '')
+            return false;
+        return createTime(m.limit) === h;
+    })
+        .filter(function (m) { return !m.end; })
+        .map(function (m) { return "" + m.name; })
+        .join(', ');
+};

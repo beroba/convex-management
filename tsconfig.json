@@ -28,6 +28,7 @@
         "src/client/command/index.ts",
         "src/client/command/management.ts",
         "src/client/convex/lapAndBoss.ts",
+        "src/client/convex/limitTime.ts",
         "src/client/convex/manage.ts",
         "src/client/convex/over.ts",
         "src/client/convex/sister.ts",

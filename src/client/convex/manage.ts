@@ -3,6 +3,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
+import * as limitTime from './limitTime'
 import * as situation from './situation'
 
 /**
@@ -70,9 +71,12 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
-  const state = await status.Fetch()
-  const n = state.filter(s => s.end === '1').length + 1
+  const members = await status.Fetch()
+  const n = members.filter(s => s.end === '1').length + 1
   msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
+
+  // 活動限界時間の表示を更新
+  limitTime.Display(members)
 
   return member
 }

@@ -66,6 +66,7 @@ var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var dateTable = __importStar(require("./dateTable"));
+var limitTime = __importStar(require("../client/convex/limitTime"));
 exports.Update = function (members) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         pieces_each_1["default"](members, 15).forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
@@ -259,6 +260,7 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
                 return [4, exports.Update(members)];
             case 4:
                 _a.sent();
+                limitTime.Display(members);
                 return [2];
         }
     });
