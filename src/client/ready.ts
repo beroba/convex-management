@@ -14,6 +14,12 @@ export const Ready = async () => {
   // リアクションのキャッシュを取る
   fetch.React()
 
+  // {
+  //   const channel = util.GetTextChannel('724824329413722173')
+  //   const msg = await channel.messages.fetch('822685685784772648')
+  //   msg.react('822685074666684416')
+  // }
+
   // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャルは悪い子')
 
   console.log(`Logged in as ${Client.user?.username}!`)

@@ -136,9 +136,9 @@ export const Display = async (members: Member[]) => {
     '活動限界時間',
     '```',
     `over: ${over}`,
-    `${h}: ${now}`,
-    `${h + 1}: ${oneNext}`,
-    `${h + 2}: ${twoNext}`,
+    `${h % 24}: ${now}`,
+    `${(h + 1) % 24}: ${oneNext}`,
+    `${(h + 2) % 24}: ${twoNext}`,
     '```',
   ].join('\n')
 

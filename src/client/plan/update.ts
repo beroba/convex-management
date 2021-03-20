@@ -4,6 +4,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as schedule from '../../io/schedule'
+import * as status from '../../io/status'
 import {Plan} from '../../io/type'
 
 /**
@@ -45,11 +46,14 @@ const createPlan = async (msg: Discord.Message): Promise<Plan> => {
   const alpha = NtoA(content[0])
   const boss = await bossTable.TakeName(alpha)
 
+  // メンバーの状態を取得
+  const member = await status.FetchMember(msg.author.id)
+
   return {
     done: '',
     senderID: msg.id,
     calID: '',
-    name: util.GetUserName(msg.member),
+    name: member?.name || '',
     playerID: msg.member?.id || '',
     num: content[0],
     alpha: alpha,

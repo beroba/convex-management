@@ -148,7 +148,7 @@ exports.CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 
             case 2:
                 name = _a.sent();
                 hp = const_settings_1["default"].STAGE_HP[stage][alpha];
-                return [2, name + " `" + hp + "`\n```\n" + (text ? text : ' ') + "\n```"];
+                return [2, name + " `" + hp + "`\n```\n" + (/^\s*$/.test(text) ? ' ' : text) + "\n```"];
         }
     });
 }); };

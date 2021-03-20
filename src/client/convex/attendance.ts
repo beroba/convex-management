@@ -2,9 +2,11 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
 import * as list from '../plan/list'
+import * as declare from '../declare'
 
 /**
  * 出欠のメッセージに出席のリアクションを付けたら離席中ロールを外す
@@ -47,6 +49,10 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   // 凸予定一覧を取得
   const plans = await schedule.Fetch()
   list.SituationEdit(plans)
+
+  // 凸宣言の凸予定の表示を更新
+  const state = await current.Fetch()
+  declare.SetPlanList(state)
 
   return 'Remove the role away in'
 }
@@ -92,6 +98,10 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   // 凸予定一覧を取得
   const plans = await schedule.Fetch()
   list.SituationEdit(plans)
+
+  // 凸宣言の凸予定の表示を更新
+  const state = await current.Fetch()
+  declare.SetPlanList(state)
 
   return 'Remove the role away in'
 }

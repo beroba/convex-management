@@ -61,11 +61,13 @@ exports.__esModule = true;
 exports.Edit = exports.Add = exports.Remove = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("../plan/list"));
+var declare = __importStar(require("../declare"));
 exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, plans;
+    var member, plans, state;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -95,12 +97,16 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
             case 4:
                 plans = _c.sent();
                 list.SituationEdit(plans);
+                return [4, current.Fetch()];
+            case 5:
+                state = _c.sent();
+                declare.SetPlanList(state);
                 return [2, 'Remove the role away in'];
         }
     });
 }); };
 exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, plans;
+    var member, plans, state;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -130,6 +136,10 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
             case 4:
                 plans = _c.sent();
                 list.SituationEdit(plans);
+                return [4, current.Fetch()];
+            case 5:
+                state = _c.sent();
+                declare.SetPlanList(state);
                 return [2, 'Remove the role away in'];
         }
     });

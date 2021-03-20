@@ -64,6 +64,7 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var schedule = __importStar(require("../../io/schedule"));
+var status = __importStar(require("../../io/status"));
 exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var plan, _a, plans, roleID;
     var _b;
@@ -94,7 +95,7 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 var createPlan = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, alpha, boss;
+    var content, alpha, boss, member;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -104,11 +105,14 @@ var createPlan = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, bossTable.TakeName(alpha)];
             case 1:
                 boss = _b.sent();
+                return [4, status.FetchMember(msg.author.id)];
+            case 2:
+                member = _b.sent();
                 return [2, {
                         done: '',
                         senderID: msg.id,
                         calID: '',
-                        name: util.GetUserName(msg.member),
+                        name: (member === null || member === void 0 ? void 0 : member.name) || '',
                         playerID: ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '',
                         num: content[0],
                         alpha: alpha,

@@ -88,7 +88,7 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
   const hp = Settings.STAGE_HP[stage][alpha]
 
   // レイアウトを調整して返す
-  return `${name} \`${hp}\`\n\`\`\`\n${text ? text : ' '}\n\`\`\``
+  return `${name} \`${hp}\`\n\`\`\`\n${/^\s*$/.test(text) ? ' ' : text}\n\`\`\``
 }
 
 /**

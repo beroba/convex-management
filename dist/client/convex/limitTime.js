@@ -165,9 +165,9 @@ exports.Display = function (members) { return __awaiter(void 0, void 0, void 0, 
                     '活動限界時間',
                     '```',
                     "over: " + over,
-                    h + ": " + now,
-                    h + 1 + ": " + oneNext,
-                    h + 2 + ": " + twoNext,
+                    h % 24 + ": " + now,
+                    (h + 1) % 24 + ": " + oneNext,
+                    (h + 2) % 24 + ": " + twoNext,
                     '```',
                 ].join('\n');
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
