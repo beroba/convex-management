@@ -62,10 +62,12 @@ exports.Convex = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
+var current = __importStar(require("../../io/current"));
 var list = __importStar(require("./list"));
 var update = __importStar(require("./update"));
+var declaration = __importStar(require("../declare/declaration"));
 exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var member, cal_1, cal_2, cal_3, plans;
+    var member, cal_1, cal_2, cal_3, plans, state;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -103,6 +105,10 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, list.SituationEdit(plans)];
             case 9:
                 _b.sent();
+                return [4, current.Fetch()];
+            case 10:
+                state = _b.sent();
+                declaration.SetUser(state);
                 return [2, 'Make a convex reservation'];
         }
     });

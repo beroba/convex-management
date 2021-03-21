@@ -88,8 +88,10 @@ exports.__esModule = true;
 exports.AllRemove = exports.Remove = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("./list"));
+var declaration = __importStar(require("../declare/declaration"));
 exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
@@ -113,7 +115,7 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var plans;
+    var plans, state;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -128,6 +130,10 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                 return [4, list.SituationEdit(plans)];
             case 2:
                 _b.sent();
+                return [4, current.Fetch()];
+            case 3:
+                state = _b.sent();
+                declaration.SetUser(state);
                 return [2, 'Delete completed message'];
         }
     });

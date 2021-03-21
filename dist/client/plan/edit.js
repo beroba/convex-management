@@ -61,10 +61,12 @@ exports.__esModule = true;
 exports.Message = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
+var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("./list"));
+var declaration = __importStar(require("../declare/declaration"));
 exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var text, plans;
+    var text, plans, state;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -83,6 +85,10 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 return [4, list.SituationEdit(plans)];
             case 3:
                 _b.sent();
+                return [4, current.Fetch()];
+            case 4:
+                state = _b.sent();
+                declaration.SetUser(state);
                 return [2, 'Edit appointment message'];
         }
     });
