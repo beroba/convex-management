@@ -3,6 +3,7 @@ import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
+import * as status from '../../io/status'
 import {Plan} from '../../io/type'
 import * as declare from '../declare'
 
@@ -77,7 +78,11 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
       .map(async p => {
         const member = await util.MemberFromId(p.playerID)
         const bool = util.IsRole(member, Settings.ROLE_ID.AWAY_IN)
-        return `${p.name}${bool ? '[離席中]' : ''} ${p.msg}`
+        const m = await status.FetchMember(p.playerID)
+
+        return `${p.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}${
+          m?.limit !== '' ? `, ${m?.limit}時` : ''
+        }]${bool ? '(離席中)' : ''} ${p.msg}`
       })
   )
   const text = [...new Set(p)].filter(m => m !== '').join('\n')
