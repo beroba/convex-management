@@ -40,7 +40,7 @@ export const Plans = async (msg: Discord.Message) => {
  */
 const createPlan = async (msg: Discord.Message): Promise<Plan> => {
   // prettier-ignore
-  const content = util.Format(msg.content.replace('\n', ' '))
+  const content = util.Format(msg.content.replace(/\n/g, ' '))
 
   // ボス番号とボス名を取得
   const alpha = NtoA(content[0])

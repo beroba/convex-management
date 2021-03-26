@@ -100,7 +100,7 @@ var createPlan = function (msg) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                content = util.Format(msg.content.replace('\n', ' '));
+                content = util.Format(msg.content.replace(/\n/g, ' '));
                 alpha = alphabet_to_number_1.NtoA(content[0]);
                 return [4, bossTable.TakeName(alpha)];
             case 1:
