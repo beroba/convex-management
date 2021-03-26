@@ -9,7 +9,7 @@ import * as fetch from '../util/fetch'
 export const Ready = async () => {
   // 起動通知を送る
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-  await channel.send('きゃるきゃるーん')
+  const msg = await channel.send('きゃるきゃるーん')
 
   // リアクションのキャッシュを取る
   fetch.React()
@@ -20,7 +20,7 @@ export const Ready = async () => {
   //   msg.react('822685074666684416')
   // }
 
-  // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャルは悪い子')
+  msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャル')
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

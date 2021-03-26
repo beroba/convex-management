@@ -64,17 +64,18 @@ var index_1 = require("../index");
 var util = __importStar(require("../util"));
 var fetch = __importStar(require("../util/fetch"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var channel, msg;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
                 return [4, channel.send('きゃるきゃるーん')];
             case 1:
-                _b.sent();
+                msg = _d.sent();
                 fetch.React();
-                console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
+                (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID)) === null || _b === void 0 ? void 0 : _b.setNickname('キャル');
+                console.log("Logged in as " + ((_c = index_1.Client.user) === null || _c === void 0 ? void 0 : _c.username) + "!");
                 return [2];
         }
     });

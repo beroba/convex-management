@@ -24,6 +24,9 @@ export const SetUser = async (state: Current) => {
   // 凸宣言のメッセージを取得
   const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
+  // 凸宣言に付いているリアクションをキャッシュ
+  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
+
   // 本戦、保険に分けてリアクションしている人一覧を取得する
   const emoji: Emoji[] = msg.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
 
