@@ -72,15 +72,23 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
             case 1:
                 msg = _a.sent();
+                return [4, Promise.all(msg.reactions.cache.map(function (r) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, r.users.fetch()];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 2:
+                _a.sent();
                 emoji = msg.reactions.cache.map(function (r) { return ({ name: r.emoji.name, users: r.users.cache.map(function (u) { return u; }) }); });
                 return [4, schedule.FetchBoss(state.alpha)];
-            case 2:
+            case 3:
                 plans = _a.sent();
                 return [4, createDeclareList(plans, emoji, 'honsen')];
-            case 3:
+            case 4:
                 honsen = _a.sent();
                 return [4, createDeclareList(plans, emoji, 'hoken')];
-            case 4:
+            case 5:
                 hoken = _a.sent();
                 text = [
                     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',

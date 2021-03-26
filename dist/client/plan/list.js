@@ -54,6 +54,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -137,13 +157,13 @@ exports.CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 
                             case 1:
                                 member = _a.sent();
                                 bool = util.IsRole(member, const_settings_1["default"].ROLE_ID.AWAY_IN);
-                                return [2, bool ? '' : p.name + " " + p.msg];
+                                return [2, "" + p.name + (bool ? '[離席中]' : '') + " " + p.msg];
                         }
                     });
                 }); }))];
             case 1:
                 p = _a.sent();
-                text = p.join('\n');
+                text = __spread(new Set(p)).filter(function (m) { return m !== ''; }).join('\n');
                 return [4, bossTable.TakeName(alpha)];
             case 2:
                 name = _a.sent();

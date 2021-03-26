@@ -77,11 +77,10 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
       .map(async p => {
         const member = await util.MemberFromId(p.playerID)
         const bool = util.IsRole(member, Settings.ROLE_ID.AWAY_IN)
-        // 離席中なら表示しない
-        return bool ? '' : `${p.name} ${p.msg}`
+        return `${p.name}${bool ? '[離席中]' : ''} ${p.msg}`
       })
   )
-  const text = p.join('\n')
+  const text = [...new Set(p)].filter(m => m !== '').join('\n')
 
   // ボス名とHPを取得
   const name = await bossTable.TakeName(alpha)
