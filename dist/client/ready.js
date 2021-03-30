@@ -64,18 +64,23 @@ var index_1 = require("../index");
 var util = __importStar(require("../util"));
 var fetch = __importStar(require("../util/fetch"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msg;
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var channel, declare;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-                return [4, channel.send('きゃるきゃるーん')];
-            case 1:
-                msg = _d.sent();
                 fetch.React();
-                (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID)) === null || _b === void 0 ? void 0 : _b.setNickname('キャル');
-                console.log("Logged in as " + ((_c = index_1.Client.user) === null || _c === void 0 ? void 0 : _c.username) + "!");
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
+                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+            case 1:
+                declare = _b.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+            case 2:
+                _b.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
+            case 3:
+                _b.sent();
+                console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
                 return [2];
         }
     });
