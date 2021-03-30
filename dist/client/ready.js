@@ -70,8 +70,8 @@ exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function 
         switch (_b.label) {
             case 0:
                 fetch.React();
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
+                channel = util.GetTextChannel('795631150512603147');
+                return [4, channel.messages.fetch('816143889227710464')];
             case 1:
                 declare = _b.sent();
                 return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];

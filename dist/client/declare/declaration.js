@@ -84,7 +84,7 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, schedule.FetchBoss(state.alpha)];
             case 3:
                 plans = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'honsen')];
+                return [4, createDeclareList(plans, emoji, 'hon_sen')];
             case 4:
                 honsen = _a.sent();
                 return [4, createDeclareList(plans, emoji, 'hoken')];
@@ -99,6 +99,7 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
                     "" + hoken.join('\n'),
                     '```',
                 ].join('\n');
+                console.log(text);
                 msg.edit(text);
                 return [2];
         }

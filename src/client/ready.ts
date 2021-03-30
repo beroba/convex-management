@@ -26,10 +26,10 @@ export const Ready = async () => {
   //   }
 
   // チャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+  const channel = util.GetTextChannel('795631150512603147')
 
   // 凸宣言のメッセージを取得
-  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+  const declare = await channel.messages.fetch('816143889227710464')
 
   // 本戦、保険の絵文字を付ける
   await declare.react(Settings.EMOJI_ID.HONSEN)

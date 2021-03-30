@@ -29,12 +29,11 @@ export const SetUser = async (state: Current) => {
 
   // 本戦、保険に分けてリアクションしている人一覧を取得する
   const emoji: Emoji[] = msg.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
-
   // 削除したボスの凸予定一覧を取得
   const plans = await schedule.FetchBoss(state.alpha)
 
   // 本戦の凸宣言者一覧を作成
-  const honsen = await createDeclareList(plans, emoji, 'honsen')
+  const honsen = await createDeclareList(plans, emoji, 'hon_sen')
   const hoken = await createDeclareList(plans, emoji, 'hoken')
 
   // 凸宣言のメッセージを作成
@@ -47,6 +46,8 @@ export const SetUser = async (state: Current) => {
     `${hoken.join('\n')}`,
     '```',
   ].join('\n')
+
+  console.log(text)
 
   // 凸宣言のメッセージを編集
   msg.edit(text)
