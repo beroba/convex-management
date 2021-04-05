@@ -308,7 +308,7 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   if (content === 'ア') return aEmoji(msg)
 
   // 他人TLの絵文字を送信する
-  content = msg.content.replace(/他人tl/, '他人TL')
+  content = msg.content.replace(/他人tl|tl奪取/i, '他人TL')
   if (content === '他人TL') return taninEmoji(msg)
 }
 

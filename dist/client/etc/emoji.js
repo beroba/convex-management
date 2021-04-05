@@ -203,7 +203,7 @@ exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         content = msg.content;
         if (content === 'ア')
             return [2, aEmoji(msg)];
-        content = msg.content.replace(/他人tl/, '他人TL');
+        content = msg.content.replace(/他人tl|tl奪取/i, '他人TL');
         if (content === '他人TL')
             return [2, taninEmoji(msg)];
         return [2];
