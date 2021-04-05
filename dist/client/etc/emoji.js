@@ -203,6 +203,9 @@ exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         content = msg.content;
         if (content === 'ア')
             return [2, aEmoji(msg)];
+        content = msg.content.replace(/他人tl/, '他人TL');
+        if (content === '他人TL')
+            return [2, taninEmoji(msg)];
         return [2];
     });
 }); };
@@ -313,6 +316,17 @@ var aEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function 
                 _a.sent();
                 setTimeout(function () { return msg["delete"](); }, 100);
                 return [2, util.GetUserName(msg.member) + " Send A Emoji"];
+        }
+    });
+}); };
+var taninEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, msg.channel.send(const_settings_1["default"].EMOJI_FULL_ID.TANIN)];
+            case 1:
+                _a.sent();
+                setTimeout(function () { return msg["delete"](); }, 100);
+                return [2, util.GetUserName(msg.member) + " Send TaninTL Emoji"];
         }
     });
 }); };

@@ -54,23 +54,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
 exports.Ready = void 0;
+var const_settings_1 = __importDefault(require("const-settings"));
 var index_1 = require("../index");
 var util = __importStar(require("../util"));
 var fetch = __importStar(require("../util/fetch"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msg;
+    var channel, c, declare;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                fetch.React();
-                channel = util.GetTextChannel('791537113459589192');
-                return [4, channel.messages.fetch('806336640414515210')];
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+                return [4, channel.send('きゃるきゃるーん')];
             case 1:
-                msg = _b.sent();
-                msg.edit("\n```json\n[\n]\n```\n");
+                _b.sent();
+                fetch.React();
+                c = util.GetTextChannel('795631150512603147');
+                return [4, c.messages.fetch('826330504558673930')];
+            case 2:
+                declare = _b.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+            case 3:
+                _b.sent();
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
+            case 4:
+                _b.sent();
                 console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
                 return [2];
         }

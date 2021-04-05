@@ -306,6 +306,10 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   // アの絵文字を送信する
   content = msg.content
   if (content === 'ア') return aEmoji(msg)
+
+  // 他人TLの絵文字を送信する
+  content = msg.content.replace(/他人tl/, '他人TL')
+  if (content === '他人TL') return taninEmoji(msg)
 }
 
 /**
@@ -446,4 +450,18 @@ const aEmoji = async (msg: Discord.Message) => {
   setTimeout(() => msg.delete(), 100)
 
   return `${util.GetUserName(msg.member)} Send A Emoji`
+}
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、他人TLの絵文字を送信する
+ * @param msg DiscordからのMessage
+ */
+const taninEmoji = async (msg: Discord.Message) => {
+  // スタンプ保管庫の絵文字を送信
+  await msg.channel.send(Settings.EMOJI_FULL_ID.TANIN)
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return `${util.GetUserName(msg.member)} Send TaninTL Emoji`
 }
