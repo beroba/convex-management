@@ -158,6 +158,36 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
 }
 
 /**
+ * 送信されたメッセージが履歴埋めの場合アリーナガイジを送信する
+ * @param msg DiscordからのMessage
+ * @return 履歴埋めかどうかの結果
+ */
+export const ArenaGaiji = (msg: Discord.Message): Option<string> => {
+  // botのメッセージは実行しない
+  if (msg.member?.user.bot) return
+
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+
+  // 履歴埋めでなければ終了
+  if (msg.content !== '履歴埋め') return
+
+  // 履歴埋めのメッセージ
+  const message = [
+    '君プリコネ上手いね？誰推し？てかアリーナやってる？',
+    '履歴埋めってのがあってさ、一瞬！1回だけやってみない？',
+    '大丈夫すぐやめれるし',
+    '気持ちよくなれるよ',
+  ].join('\n')
+
+  // メッセージ送信先のチャンネルを取得
+  const channel = util.GetTextChannel(msg.channel.id)
+  channel.send(message)
+
+  return 'Arena Gaiji'
+}
+
+/**
  * 送信されたメッセージにヤバイの文字が含まれていた場合、ヤバイわよ！の画像を送信する
  * @param msg DiscordからのMessage
  * @return 画像を送信したかの結果

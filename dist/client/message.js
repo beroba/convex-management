@@ -110,6 +110,9 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.GoodMorning(msg);
                 if (comment)
                     return [2, console.log(comment)];
+                comment = send.ArenaGaiji(msg);
+                if (comment)
+                    return [2, console.log(comment)];
                 _c.label = 7;
             case 7: return [4, send.Speak(msg)];
             case 8:

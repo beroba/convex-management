@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.AddSeihekiRole = exports.NikuPicture = exports.ShinyTmoImage = exports.YabaiImage = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
+exports.AddSeihekiRole = exports.NikuPicture = exports.ShinyTmoImage = exports.YabaiImage = exports.ArenaGaiji = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -139,6 +139,24 @@ exports.GoodMorning = function (msg) {
     var channel = util.GetTextChannel(msg.channel.id);
     channel.send(message);
     return 'Good morning';
+};
+exports.ArenaGaiji = function (msg) {
+    var _a;
+    if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
+        return;
+    if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
+        return;
+    if (msg.content !== '履歴埋め')
+        return;
+    var message = [
+        '君プリコネ上手いね？誰推し？てかアリーナやってる？',
+        '履歴埋めってのがあってさ、一瞬！1回だけやってみない？',
+        '大丈夫すぐやめれるし',
+        '気持ちよくなれるよ',
+    ].join('\n');
+    var channel = util.GetTextChannel(msg.channel.id);
+    channel.send(message);
+    return 'Arena Gaiji';
 };
 exports.YabaiImage = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
