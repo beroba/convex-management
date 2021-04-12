@@ -146,7 +146,7 @@ exports.ArenaGaiji = function (msg) {
         return;
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
-    if (msg.content !== '履歴埋め')
+    if (msg.content.replace(/^(en|us|zh|cn|es|ru|de|it|vi|vn|gb|ja|jp)/i, '').trim() !== '履歴埋め')
         return;
     var message = [
         '君プリコネ上手いね？誰推し？てかアリーナやってる？',

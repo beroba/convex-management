@@ -170,7 +170,7 @@ export const ArenaGaiji = (msg: Discord.Message): Option<string> => {
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // 履歴埋めでなければ終了
-  if (msg.content !== '履歴埋め') return
+  if (msg.content.replace(/^(en|us|zh|cn|es|ru|de|it|vi|vn|gb|ja|jp)/i, '').trim() !== '履歴埋め') return
 
   // 履歴埋めのメッセージ
   const message = [
