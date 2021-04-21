@@ -274,11 +274,8 @@ var setReactForDeclare = function () { return __awaiter(void 0, void 0, void 0, 
                 return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
             case 1:
                 declare = _a.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+                return [4, declare.react(const_settings_1["default"].EMOJI_ID.TOTU)];
             case 2:
-                _a.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
-            case 3:
                 _a.sent();
                 return [2];
         }

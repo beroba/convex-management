@@ -23,8 +23,8 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   // 凸宣言のメッセージでなければ終了
   if (react.message.id !== Settings.CONVEX_DECLARE_ID.DECLARE) return
 
-  // 本戦と保険以外の絵文字の場合は終了
-  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) {
+  // 凸以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TOTU) {
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -32,8 +32,8 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
 
   // メンバーの状態を取得
   const member = await status.FetchMember(user.id)
-  // クランメンバーでない、もしくは3凸していた場合は終了
-  if (!member || member.end === '1') {
+  // クランメンバーでない場合は終了
+  if (!member) {
     // リアクションを外す
     react.users.remove(user)
     return
@@ -64,8 +64,8 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   // 凸宣言のメッセージでなければ終了
   if (react.message.id !== Settings.CONVEX_DECLARE_ID.DECLARE) return
 
-  // 本戦と保険以外の絵文字の場合は終了
-  if (![Settings.EMOJI_ID.HONSEN, Settings.EMOJI_ID.HOKEN].some(id => id === react.emoji.id)) {
+  // 凸以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TOTU) {
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -127,23 +127,15 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   // #凸宣言-ボス状況でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
-  // 確認以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.KAKUNIN) {
-    // 持越の場合は終了
-    if (react.emoji.id === Settings.EMOJI_ID.MOCHIKOSHI) return
+  // 通し以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TOOSHI) {
+    // 持越と待機以外の絵文字の場合は終了
+    if ([Settings.EMOJI_ID.MOCHIKOSHI, Settings.EMOJI_ID.TAIKI].some(id => id === react.emoji.id)) return
 
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
   }
-
-  // 進行役が付いていない場合は終了
-  // const member = await util.MemberFromId(user.id)
-  // if (!util.IsRole(member, Settings.ROLE_ID.PROGRESS)) {
-  //   // リアクションを外す
-  //   react.users.remove(user)
-  //   return
-  // }
 
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
@@ -175,18 +167,13 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // 持越以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) {
+    // 待機の絵文字の場合は終了
+    if (react.emoji.id === Settings.EMOJI_ID.TAIKI) return
+
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
   }
-
-  // 進行役が付いていない場合は終了
-  // const member = await util.MemberFromId(user.id)
-  // if (!util.IsRole(member, Settings.ROLE_ID.PROGRESS)) {
-  //   // リアクションを外す
-  //   react.users.remove(user)
-  //   return
-  // }
 
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
@@ -204,7 +191,42 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 }
 
 /**
- * 確認か持越のリアクションを外した際に済も外す
+ * リアクションを押すことで持越通知を行う
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 取り消し処理の実行結果
+ */
+export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+  // botのリアクションは実行しない
+  if (user.bot) return
+
+  // #凸宣言-ボス状況でなければ終了
+  if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
+
+  // 待機以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TAIKI) {
+    // 関係のないリアクションを外す
+    react.users.remove(user)
+    return
+  }
+
+  // リアクションからメッセージを取得する
+  const msg = await fetchMessage(react)
+
+  // 済のリアクションを付ける
+  msg.react(Settings.EMOJI_ID.SUMI)
+
+  // #進行-連携のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+  // メンションを行う
+  channel.send(`<@!${msg.author.id}> ${msg.content}は待機でお願いするわ！`)
+
+  return 'Carry over notice'
+}
+
+/**
+ * 通しか持越か待機のリアクションを外した際に済も外す
  * @param react DiscordからのReaction
  * @param user リアクションしたユーザー
  * @return 取り消し処理の実行結果
@@ -216,8 +238,11 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
   // #凸宣言-ボス状況でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_DECLARE) return
 
-  // 確認と持越以外の絵文字の場合は終了
-  if (![Settings.EMOJI_ID.KAKUNIN, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) return
+  // 確認と持越と待機以外の絵文字の場合は終了
+  if (
+    ![Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.MOCHIKOSHI, Settings.EMOJI_ID.TAIKI].some(id => id === react.emoji.id)
+  )
+    return
 
   // リアクションからメッセージを取得
   const msg = await fetchMessage(react)

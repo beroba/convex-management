@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.NoticeCancel = exports.OverNotice = exports.ConfirmNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
+exports.NoticeCancel = exports.WaitNotice = exports.OverNotice = exports.ConfirmNotice = exports.ConvexDone = exports.ConvexRemove = exports.ConvexAdd = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
@@ -76,14 +76,14 @@ exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, vo
                     return [2];
                 if (react.message.id !== const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)
                     return [2];
-                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; })) {
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.TOTU) {
                     react.users.remove(user);
                     return [2];
                 }
                 return [4, status.FetchMember(user.id)];
             case 1:
                 member = _a.sent();
-                if (!member || member.end === '1') {
+                if (!member) {
                     react.users.remove(user);
                     return [2];
                 }
@@ -108,7 +108,7 @@ exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0,
                     return [2];
                 if (react.message.id !== const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)
                     return [2];
-                if (![const_settings_1["default"].EMOJI_ID.HONSEN, const_settings_1["default"].EMOJI_ID.HOKEN].some(function (id) { return id === react.emoji.id; })) {
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.TOTU) {
                     react.users.remove(user);
                     return [2];
                 }
@@ -168,8 +168,8 @@ exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
-                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.KAKUNIN) {
-                    if (react.emoji.id === const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.TOOSHI) {
+                    if ([const_settings_1["default"].EMOJI_ID.MOCHIKOSHI, const_settings_1["default"].EMOJI_ID.TAIKI].some(function (id) { return id === react.emoji.id; }))
                         return [2];
                     react.users.remove(user);
                     return [2];
@@ -194,6 +194,8 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.MOCHIKOSHI) {
+                    if (react.emoji.id === const_settings_1["default"].EMOJI_ID.TAIKI)
+                        return [2];
                     react.users.remove(user);
                     return [2];
                 }
@@ -207,6 +209,29 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
+exports.WaitNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+    var msg, channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (user.bot)
+                    return [2];
+                if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
+                    return [2];
+                if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.TAIKI) {
+                    react.users.remove(user);
+                    return [2];
+                }
+                return [4, fetchMessage(react)];
+            case 1:
+                msg = _a.sent();
+                msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
+                channel.send("<@!" + msg.author.id + "> " + msg.content + "\u306F\u5F85\u6A5F\u3067\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
+                return [2, 'Carry over notice'];
+        }
+    });
+}); };
 exports.NoticeCancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, sumi;
     return __generator(this, function (_a) {
@@ -216,7 +241,7 @@ exports.NoticeCancel = function (react, user) { return __awaiter(void 0, void 0,
                     return [2];
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
-                if (![const_settings_1["default"].EMOJI_ID.KAKUNIN, const_settings_1["default"].EMOJI_ID.MOCHIKOSHI].some(function (id) { return id === react.emoji.id; }))
+                if (![const_settings_1["default"].EMOJI_ID.TOOSHI, const_settings_1["default"].EMOJI_ID.MOCHIKOSHI, const_settings_1["default"].EMOJI_ID.TAIKI].some(function (id) { return id === react.emoji.id; }))
                     return [2];
                 return [4, fetchMessage(react)];
             case 1:

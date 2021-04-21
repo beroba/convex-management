@@ -27,27 +27,21 @@ export const SetUser = async (state: Current) => {
   // 凸宣言に付いているリアクションをキャッシュ
   await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
 
-  // 本戦、保険に分けてリアクションしている人一覧を取得する
+  // リアクションしている人一覧を取得する
   const emoji: Emoji[] = msg.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
   // 削除したボスの凸予定一覧を取得
   const plans = await schedule.FetchBoss(state.alpha)
 
-  // 本戦の凸宣言者一覧を作成
-  const honsen = await createDeclareList(plans, emoji, 'hon_sen')
-  const hoken = await createDeclareList(plans, emoji, 'hoken')
+  // 凸宣言者一覧を作成
+  const list = await createDeclareList(plans, emoji)
 
   // 凸宣言のメッセージを作成
   const text = [
     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
     '```',
-    '――――本戦――――',
-    `${honsen.join('\n')}${honsen.length ? '\n' : ''}`,
-    '――――保険――――',
-    `${hoken.join('\n')}`,
+    `${list.join('\n')}${list.length ? '' : ' '}`,
     '```',
   ].join('\n')
-
-  console.log(text)
 
   // 凸宣言のメッセージを編集
   msg.edit(text)
@@ -57,13 +51,12 @@ export const SetUser = async (state: Current) => {
  * 凸宣言一覧のリストを作成する
  * @param plans 凸予定一覧
  * @param emoji 絵文字のリスト
- * @param name honsenかhoken
  * @return 作成したリスト
  */
-const createDeclareList = async (plans: Plan[], emoji: Emoji[], name: string): Promise<string[]> => {
+const createDeclareList = async (plans: Plan[], emoji: Emoji[]): Promise<string[]> => {
   // prettier-ignore
   const convex = (await Promise.all(
-    emoji.filter(e => e.name === name)[0]
+    emoji.filter(e => e.name === 'totu')[0]
       .users
       .map(u => status.FetchMember(u.id)))
     ).filter(m => m)
@@ -91,6 +84,5 @@ export const ResetReact = async () => {
   await msg.reactions.removeAll()
 
   // 本戦と保険のリアクションを付ける
-  await msg.react(Settings.EMOJI_ID.HONSEN)
-  await msg.react(Settings.EMOJI_ID.HOKEN)
+  await msg.react(Settings.EMOJI_ID.TOTU)
 }
