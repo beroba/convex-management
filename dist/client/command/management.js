@@ -148,6 +148,10 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
                 _c.label = 14;
             case 14:
                 {
+                    if (msg.author.id !== const_settings_1["default"].ADMIN_ID) {
+                        msg.reply('botの管理者に更新して貰うように言ってね');
+                        return [2];
+                    }
                     updateMembers(msg);
                     return [2, 'Update convex management members'];
                 }
