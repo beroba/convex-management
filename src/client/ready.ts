@@ -25,16 +25,6 @@ export const Ready = async () => {
   // `)
   //   }
 
-  // チャンネルを取得
-  const c = util.GetTextChannel('795631150512603147')
-
-  // 凸宣言のメッセージを取得
-  const declare = await c.messages.fetch('826330504558673930')
-
-  // 本戦、保険の絵文字を付ける
-  await declare.react(Settings.EMOJI_ID.HONSEN)
-  await declare.react(Settings.EMOJI_ID.HOKEN)
-
   // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャル')
 
   console.log(`Logged in as ${Client.user?.username}!`)

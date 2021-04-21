@@ -55,9 +55,10 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Remaining HP change'
   }
 
-  // 確認と持越の絵文字を付ける
-  await msg.react(Settings.EMOJI_ID.KAKUNIN)
+  // 通しと持越と待機の絵文字を付ける
+  await msg.react(Settings.EMOJI_ID.TOOSHI)
   await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
+  await msg.react(Settings.EMOJI_ID.TAIKI)
   console.log('Set declare reactions')
 
   // 現在の状況を取得

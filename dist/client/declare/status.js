@@ -124,15 +124,18 @@ exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, functi
                 _b.sent();
                 msg["delete"]();
                 return [2, 'Remaining HP change'];
-            case 2: return [4, msg.react(const_settings_1["default"].EMOJI_ID.KAKUNIN)];
+            case 2: return [4, msg.react(const_settings_1["default"].EMOJI_ID.TOOSHI)];
             case 3:
                 _b.sent();
                 return [4, msg.react(const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)];
             case 4:
                 _b.sent();
+                return [4, msg.react(const_settings_1["default"].EMOJI_ID.TAIKI)];
+            case 5:
+                _b.sent();
                 console.log('Set declare reactions');
                 return [4, current.Fetch()];
-            case 5:
+            case 6:
                 state = _b.sent();
                 exports.Update(state);
                 return [2, 'Calculate the HP'];

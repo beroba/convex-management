@@ -64,7 +64,7 @@ var index_1 = require("../index");
 var util = __importStar(require("../util"));
 var fetch = __importStar(require("../util/fetch"));
 exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, c, declare;
+    var channel;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -74,16 +74,6 @@ exports.Ready = function () { return __awaiter(void 0, void 0, void 0, function 
             case 1:
                 _b.sent();
                 fetch.React();
-                c = util.GetTextChannel('795631150512603147');
-                return [4, c.messages.fetch('826330504558673930')];
-            case 2:
-                declare = _b.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
-            case 3:
-                _b.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
-            case 4:
-                _b.sent();
                 console.log("Logged in as " + ((_a = index_1.Client.user) === null || _a === void 0 ? void 0 : _a.username) + "!");
                 return [2];
         }

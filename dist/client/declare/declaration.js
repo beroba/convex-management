@@ -64,7 +64,7 @@ var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var status = __importStar(require("../../io/status"));
 exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msg, emoji, plans, honsen, hoken, text;
+    var channel, msg, emoji, plans, list, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -84,32 +84,25 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, schedule.FetchBoss(state.alpha)];
             case 3:
                 plans = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'hon_sen')];
+                return [4, createDeclareList(plans, emoji)];
             case 4:
-                honsen = _a.sent();
-                return [4, createDeclareList(plans, emoji, 'hoken')];
-            case 5:
-                hoken = _a.sent();
+                list = _a.sent();
                 text = [
                     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
                     '```',
-                    '――――本戦――――',
-                    "" + honsen.join('\n') + (honsen.length ? '\n' : ''),
-                    '――――保険――――',
-                    "" + hoken.join('\n'),
+                    "" + list.join('\n') + (list.length ? '' : ' '),
                     '```',
                 ].join('\n');
-                console.log(text);
                 msg.edit(text);
                 return [2];
         }
     });
 }); };
-var createDeclareList = function (plans, emoji, name) { return __awaiter(void 0, void 0, void 0, function () {
+var createDeclareList = function (plans, emoji) { return __awaiter(void 0, void 0, void 0, function () {
     var convex;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === name; })[0]
+            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === 'totu'; })[0]
                     .users
                     .map(function (u) { return status.FetchMember(u.id); }))];
             case 1:
@@ -133,11 +126,8 @@ exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, func
                 return [4, msg.reactions.removeAll()];
             case 2:
                 _a.sent();
-                return [4, msg.react(const_settings_1["default"].EMOJI_ID.HONSEN)];
+                return [4, msg.react(const_settings_1["default"].EMOJI_ID.TOTU)];
             case 3:
-                _a.sent();
-                return [4, msg.react(const_settings_1["default"].EMOJI_ID.HOKEN)];
-            case 4:
                 _a.sent();
                 return [2];
         }
