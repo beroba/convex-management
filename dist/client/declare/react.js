@@ -160,7 +160,7 @@ exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var msg, channel;
+    var msg, sumi, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -177,6 +177,9 @@ exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0
                 return [4, fetchMessage(react)];
             case 1:
                 msg = _a.sent();
+                sumi = msg.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; });
+                if (sumi)
+                    return [2];
                 msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send("<@!" + msg.author.id + "> " + msg.content + "\u306E\u78BA\u5B9A\u3092\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
@@ -185,7 +188,7 @@ exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0
     });
 }); };
 exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var msg, channel;
+    var msg, sumi, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -194,7 +197,7 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.MOCHIKOSHI) {
-                    if (react.emoji.id === const_settings_1["default"].EMOJI_ID.TAIKI)
+                    if ([const_settings_1["default"].EMOJI_ID.TOOSHI, const_settings_1["default"].EMOJI_ID.TAIKI].some(function (id) { return id === react.emoji.id; }))
                         return [2];
                     react.users.remove(user);
                     return [2];
@@ -202,6 +205,9 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
                 return [4, fetchMessage(react)];
             case 1:
                 msg = _a.sent();
+                sumi = msg.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; });
+                if (sumi)
+                    return [2];
                 msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send("<@!" + msg.author.id + "> " + msg.content + "\u3067\u6301\u3061\u8D8A\u3057\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");
@@ -210,7 +216,7 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
     });
 }); };
 exports.WaitNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
-    var msg, channel;
+    var msg, sumi, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -219,12 +225,17 @@ exports.WaitNotice = function (react, user) { return __awaiter(void 0, void 0, v
                 if (react.message.channel.id !== const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE)
                     return [2];
                 if (react.emoji.id !== const_settings_1["default"].EMOJI_ID.TAIKI) {
+                    if ([const_settings_1["default"].EMOJI_ID.TOOSHI, const_settings_1["default"].EMOJI_ID.MOCHIKOSHI].some(function (id) { return id === react.emoji.id; }))
+                        return [2];
                     react.users.remove(user);
                     return [2];
                 }
                 return [4, fetchMessage(react)];
             case 1:
                 msg = _a.sent();
+                sumi = msg.reactions.cache.map(function (r) { return r; }).find(function (r) { return r.emoji.id === const_settings_1["default"].EMOJI_ID.SUMI; });
+                if (sumi)
+                    return [2];
                 msg.react(const_settings_1["default"].EMOJI_ID.SUMI);
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PROGRESS);
                 channel.send("<@!" + msg.author.id + "> " + msg.content + "\u306F\u5F85\u6A5F\u3067\u304A\u9858\u3044\u3059\u308B\u308F\uFF01");

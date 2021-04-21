@@ -140,6 +140,12 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
 
+  // 済の絵文字を取得
+  const sumi = msg.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI)
+
+  // 既に済が付いている場合は通知しない
+  if (sumi) return
+
   // 済のリアクションを付ける
   msg.react(Settings.EMOJI_ID.SUMI)
 
@@ -167,8 +173,8 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // 持越以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) {
-    // 待機の絵文字の場合は終了
-    if (react.emoji.id === Settings.EMOJI_ID.TAIKI) return
+    // 通しと待機以外の絵文字の場合は終了
+    if ([Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.TAIKI].some(id => id === react.emoji.id)) return
 
     // 関係のないリアクションを外す
     react.users.remove(user)
@@ -177,6 +183,12 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
+
+  // 済の絵文字を取得
+  const sumi = msg.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI)
+
+  // 既に済が付いている場合は通知しない
+  if (sumi) return
 
   // 済のリアクションを付ける
   msg.react(Settings.EMOJI_ID.SUMI)
@@ -205,6 +217,9 @@ export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // 待機以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.TAIKI) {
+    // 通しと持越以外の絵文字の場合は終了
+    if ([Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) return
+
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -212,6 +227,12 @@ export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // リアクションからメッセージを取得する
   const msg = await fetchMessage(react)
+
+  // 済の絵文字を取得
+  const sumi = msg.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI)
+
+  // 既に済が付いている場合は通知しない
+  if (sumi) return
 
   // 済のリアクションを付ける
   msg.react(Settings.EMOJI_ID.SUMI)
