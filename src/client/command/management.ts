@@ -79,6 +79,11 @@ export const Management = async (command: string, msg: Discord.Message): Promise
     }
 
     case /cb manage update members/.test(command): {
+      // 管理者以外実行できないようにする
+      if (msg.author.id !== Settings.ADMIN_ID) {
+        msg.reply('botの管理者に更新して貰うように言ってね')
+        return
+      }
       updateMembers(msg)
       return 'Update convex management members'
     }
