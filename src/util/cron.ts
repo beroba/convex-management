@@ -3,8 +3,6 @@ import Settings from 'const-settings'
 import * as util from '../util'
 import * as dateTable from '../io/dateTable'
 import * as status from '../io/status'
-import * as activityTime from '../client/convex/activityTime'
-import * as attendance from '../client/convex/attendance'
 import * as limitTime from '../client/convex/limitTime'
 
 // prettier-ignore
@@ -17,7 +15,6 @@ export const CronOperation = () => {
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
   limitTimeDisplay('0 1 */1 * * *')  // 1時間起き
-  switchAwayInRole()
 }
 
 /**
@@ -115,41 +112,5 @@ const limitTimeDisplay = (expression: string) => {
     channel.send('活動限界時間を更新したわ')
 
     console.log('Periodic update of activity time limit display')
-  })
-}
-
-// prettier-ignore
-/**
- * 離席中ロールを切り替えるクーロンの一覧
- */
-const switchAwayInRole = () => {
-  switchRole('0 0 5 * * *',  1) // 05:00
-  switchRole('0 0 8 * * *',  2) // 08:00
-  switchRole('0 0 12 * * *', 3) // 12:00
-  switchRole('0 0 14 * * *', 4) // 14:00
-  switchRole('0 0 18 * * *', 5) // 18:00
-  switchRole('0 0 22 * * *', 6) // 22:00
-  switchRole('0 0 2 * * *',  7) // 02:00
-}
-
-/**
- * 離席中ロールの切り替えをするクーロンを作成する
- * @param expression クーロン式
- * @param section 確認する区分
- */
-const switchRole = (expression: string, section: number) => {
-  cron.schedule(expression, async () => {
-    // クラバトの日じゃない場合は終了
-    const date = await dateTable.TakeDate()
-    if (date.num === '練習日') return
-
-    // 離席中ロールを切り替える
-    await activityTime.Switch(Number(date.num[0]), section)
-    await util.Sleep(100)
-
-    // 出欠のメッセージを更新する
-    await attendance.Edit()
-
-    console.log(`Switch Away In Role: ${date.num} ${date.day}`)
   })
 }
