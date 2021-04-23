@@ -74,7 +74,7 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
             case 1:
                 plan = _c.sent();
                 _a = plan;
-                return [4, msg.reply(plan.boss + "\u3092\u4E88\u5B9A\u3057\u305F\u308F\u3088\uFF01")];
+                return [4, msg.reply(plan.boss + "\u3092\u4E88\u5B9A\u3057\u305F\u308F\u3088\uFF01\nid: " + plan.senderID)];
             case 2:
                 _a.calID = (_c.sent()).id;
                 return [4, schedule.Add(plan)];

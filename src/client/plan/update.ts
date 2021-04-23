@@ -17,7 +17,7 @@ export const Plans = async (msg: Discord.Message) => {
   const plan = await createPlan(msg)
 
   // 予定したボスを報告し、報告したキャルのメッセージIDを取得
-  plan.calID = (await msg.reply(`${plan.boss}を予定したわよ！`)).id
+  plan.calID = (await msg.reply(`${plan.boss}を予定したわよ！\nid: ${plan.senderID}`)).id
 
   // 凸予定シートの値を更新
   const plans = await schedule.Add(plan)

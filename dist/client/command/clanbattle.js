@@ -83,7 +83,6 @@ var schedule = __importStar(require("../../io/schedule"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
-var cancel = __importStar(require("../plan/delete"));
 var list = __importStar(require("../plan/list"));
 exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, arg, members, members, arg, arg, arg, arg, members, plans;
@@ -100,7 +99,7 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                     case /cb boss back/.test(command): return [3, 7];
                     case /cb boss previous/.test(command): return [3, 7];
                     case /cb boss/.test(command): return [3, 10];
-                    case /cb remove plan/.test(command): return [3, 12];
+                    case /cb delete plan/.test(command): return [3, 12];
                     case /cb plan/.test(command): return [3, 13];
                     case /cb over/.test(command): return [3, 14];
                     case /cb task/.test(command): return [3, 15];
@@ -144,9 +143,9 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
                 return [2, 'Change laps and boss'];
             case 12:
                 {
-                    arg = command.replace('/cb complete plan ', '');
-                    removePlan(arg, msg);
-                    return [2, 'All reset plan'];
+                    arg = command.replace('/cb delete plan ', '');
+                    deletePlan(arg, msg);
+                    return [2, 'Delete plan'];
                 }
                 _b.label = 13;
             case 13:
@@ -208,18 +207,21 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var removePlan = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var id;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var deletePlan = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, _a, plans;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 if (arg === '/cb complete plan')
-                    return [2, msg.reply('凸予定をリセットする人が分からないわ')];
+                    return [2, msg.reply('削除する凸予定のidを指定しないと消せないわ')];
                 id = util.Format(arg).replace(/[^0-9]/g, '');
-                return [4, cancel.AllRemove(id)];
+                return [4, schedule.Delete(id)];
             case 1:
-                _a.sent();
-                msg.reply('凸予定をリセットしたわ');
+                _a = __read.apply(void 0, [_b.sent(), 1]), plans = _a[0];
+                return [4, list.SituationEdit(plans)];
+            case 2:
+                _b.sent();
+                msg.reply('凸予定を削除したわ');
                 return [2];
         }
     });
