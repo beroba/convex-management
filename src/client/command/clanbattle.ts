@@ -8,7 +8,6 @@ import * as schedule from '../../io/schedule'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
-import * as cancel from '../plan/delete'
 import * as list from '../plan/list'
 
 /**
@@ -65,10 +64,10 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Change laps and boss'
     }
 
-    case /cb remove plan/.test(command): {
-      const arg = command.replace('/cb complete plan ', '')
-      removePlan(arg, msg)
-      return 'All reset plan'
+    case /cb delete plan/.test(command): {
+      const arg = command.replace('/cb delete plan ', '')
+      deletePlan(arg, msg)
+      return 'Delete plan'
     }
 
     case /cb plan/.test(command): {
@@ -126,21 +125,24 @@ const changeBoss = async (arg: string, msg: Discord.Message) => {
 }
 
 /**
- * 引数に渡されたユーザーの凸予定を全て消す
+ * 引数に渡されたidの凸予定を消す
  * @param arg 凸予定を消すユーザーのidかメンション
  * @param msg DiscordからのMessage
  */
-const removePlan = async (arg: string, msg: Discord.Message) => {
+const deletePlan = async (arg: string, msg: Discord.Message) => {
   // 引数が無い場合は終了
-  if (arg === '/cb complete plan') return msg.reply('凸予定をリセットする人が分からないわ')
+  if (arg === '/cb complete plan') return msg.reply('削除する凸予定のidを指定しないと消せないわ')
 
   // メンションからユーザーidだけを取り除く
   const id = util.Format(arg).replace(/[^0-9]/g, '')
 
-  // 凸予定を全て削除する
-  await cancel.AllRemove(id)
+  // 凸予定を削除する
+  const [plans] = await schedule.Delete(id)
 
-  msg.reply('凸予定をリセットしたわ')
+  // 凸予定一覧を取得
+  await list.SituationEdit(plans)
+
+  msg.reply('凸予定を削除したわ')
 }
 
 /**
