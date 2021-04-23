@@ -208,16 +208,19 @@ var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 var deletePlan = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var id;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var id, _a, plans;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 if (arg === '/cb complete plan')
                     return [2, msg.reply('削除する凸予定のidを指定しないと消せないわ')];
                 id = util.Format(arg).replace(/[^0-9]/g, '');
                 return [4, schedule.Delete(id)];
             case 1:
-                _a.sent();
+                _a = __read.apply(void 0, [_b.sent(), 1]), plans = _a[0];
+                return [4, list.SituationEdit(plans)];
+            case 2:
+                _b.sent();
                 msg.reply('凸予定を削除したわ');
                 return [2];
         }
