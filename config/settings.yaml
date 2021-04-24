@@ -274,6 +274,7 @@ COMMAND_CHANNEL:
   # クラバトコマンドが入力できるチャンネル
   CLAN_BATTLE:
     - 進行-連携
+    - おためしキャルちゃん
     - bot-test
   # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
@@ -295,6 +296,7 @@ THIS_AND_THAT_CHANNEL:
   - くらばと-vc用
   - bot-test
   - しろはの部屋
+  - おためしキャルちゃん
   - aki
   - ttsチャンネル
 
