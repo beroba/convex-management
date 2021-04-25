@@ -184,7 +184,7 @@ ACTIVITY_TIME:
     _6: '805189079448420362'
     _7: '805189090504998953'
   # 離席中のメッセージID
-  AWAY_IN: '821398658360672270'
+  AWAY_IN: '835782794037821470'
 
 # 活動限界時間
 TIME_LIMIT_EMOJI:
@@ -274,6 +274,7 @@ COMMAND_CHANNEL:
   # クラバトコマンドが入力できるチャンネル
   CLAN_BATTLE:
     - 進行-連携
+    - おためしキャルちゃん
     - bot-test
   # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
@@ -295,6 +296,7 @@ THIS_AND_THAT_CHANNEL:
   - くらばと-vc用
   - bot-test
   - しろはの部屋
+  - おためしキャルちゃん
   - aki
   - ttsチャンネル
 
