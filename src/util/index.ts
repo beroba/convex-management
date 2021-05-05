@@ -75,7 +75,7 @@ export const MemberFromId = async (id: string): Promise<Discord.GuildMember> =>
  * @return Userの名前
  */
 export const GetUserName = (m: Option<Discord.GuildMember>): string =>
-  m?.nickname ? m?.nickname : m?.user.username || ''
+  m?.nickname ? m?.nickname : m?.user.username ?? ''
 
 /**
  * Membersから指定されたUserのMemberを返す
