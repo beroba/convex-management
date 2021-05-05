@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -69,7 +69,7 @@ var declare = __importStar(require("./declare/status"));
 var playerID = __importStar(require("./etc/playerID"));
 var send = __importStar(require("./etc/send"));
 var emoji = __importStar(require("./etc/emoji"));
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -122,7 +122,7 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.AorB(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                if (!(((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 10];
+                if (!(((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id) === throw_env_1["default"]('CLAN_SERVER_ID'))) return [3, 11];
                 return [4, emoji.Send(msg)];
             case 9:
                 comment = _c.sent();
@@ -138,8 +138,14 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
                 comment = send.ShinyTmoImage(msg);
                 if (comment)
                     return [2, console.log(comment)];
-                _c.label = 10;
-            case 10: return [2];
+                return [4, send.KusaGacha(msg)];
+            case 10:
+                comment = _c.sent();
+                if (comment)
+                    return [2, console.log(comment)];
+                _c.label = 11;
+            case 11: return [2];
         }
     });
 }); };
+exports.Message = Message;

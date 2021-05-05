@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -59,7 +59,7 @@ exports.Command = void 0;
 var util = __importStar(require("../../util"));
 var clanbattle_1 = require("./clanbattle");
 var management_1 = require("./management");
-exports.Command = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Command = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content, comment;
     var _a;
     return __generator(this, function (_b) {
@@ -82,3 +82,4 @@ exports.Command = function (msg) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+exports.Command = Command;

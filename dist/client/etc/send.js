@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -58,10 +58,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.AddSeihekiRole = exports.NikuPicture = exports.ShinyTmoImage = exports.YabaiImage = exports.ArenaGaiji = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
+exports.AddSeihekiRole = exports.NikuPicture = exports.KusaGacha = exports.ShinyTmoImage = exports.YabaiImage = exports.ArenaGaiji = exports.GoodMorning = exports.AorB = exports.Speak = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Speak = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var adjustment, match, content, channel;
     var _a;
     return __generator(this, function (_b) {
@@ -81,7 +81,8 @@ exports.Speak = function (msg) { return __awaiter(void 0, void 0, void 0, functi
         return [2, 'Speaking Cal'];
     });
 }); };
-exports.AorB = function (msg) {
+exports.Speak = Speak;
+var AorB = function (msg) {
     var _a, _b;
     if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
         return;
@@ -113,6 +114,7 @@ exports.AorB = function (msg) {
     console.log(util.GetUserName(msg.member) + ", " + content);
     return 'Returned any of or';
 };
+exports.AorB = AorB;
 var replaceEmoji = function (list, emoji) {
     if (!emoji)
         return list;
@@ -127,7 +129,7 @@ var replaceEmoji = function (list, emoji) {
     });
 };
 var createRandNumber = function (n) { return require('get-random-values')(new Uint8Array(1))[0] % n; };
-exports.GoodMorning = function (msg) {
+var GoodMorning = function (msg) {
     var _a;
     if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
         return;
@@ -140,7 +142,8 @@ exports.GoodMorning = function (msg) {
     channel.send(message);
     return 'Good morning';
 };
-exports.ArenaGaiji = function (msg) {
+exports.GoodMorning = GoodMorning;
+var ArenaGaiji = function (msg) {
     var _a;
     if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
         return;
@@ -158,7 +161,8 @@ exports.ArenaGaiji = function (msg) {
     channel.send(message);
     return 'Arena Gaiji';
 };
-exports.YabaiImage = function (msg) {
+exports.ArenaGaiji = ArenaGaiji;
+var YabaiImage = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     var match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/);
@@ -167,7 +171,8 @@ exports.YabaiImage = function (msg) {
     msg.channel.send('', { files: [const_settings_1["default"].URL.YABAIWAYO] });
     return 'Send Yabai Image';
 };
-exports.ShinyTmoImage = function (msg) {
+exports.YabaiImage = YabaiImage;
+var ShinyTmoImage = function (msg) {
     if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
         return;
     if (msg.content !== 'シャイニートモ')
@@ -176,7 +181,22 @@ exports.ShinyTmoImage = function (msg) {
     setTimeout(function () { return msg["delete"](); }, 100);
     return 'Send Yabai Image';
 };
-exports.NikuPicture = function (msg) {
+exports.ShinyTmoImage = ShinyTmoImage;
+var KusaGacha = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var items, rand;
+    return __generator(this, function (_a) {
+        if (!util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel))
+            return [2];
+        if (msg.content !== '草')
+            return [2];
+        items = const_settings_1["default"].KUSA.map(function (v) { return Array(v.RATIO).fill(v.NAME); }).flat();
+        rand = createRandNumber(items.length);
+        msg.reply(items[rand], { files: ["./assets/kusa/" + items[rand] + ".png"] });
+        return [2, 'Send Kusa Gacha'];
+    });
+}); };
+exports.KusaGacha = KusaGacha;
+var NikuPicture = function (msg) {
     var _a;
     if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.NIKU)
         return;
@@ -187,10 +207,12 @@ exports.NikuPicture = function (msg) {
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.add(const_settings_1["default"].ROLE_ID.MESHI_TERO);
     return 'React Niku Channel';
 };
-exports.AddSeihekiRole = function (msg) {
+exports.NikuPicture = NikuPicture;
+var AddSeihekiRole = function (msg) {
     var _a;
     if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.SEIHEKI && msg.channel.id !== const_settings_1["default"].CHANNEL_ID.SEIHEKI_YOROZU)
         return;
     (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.add(const_settings_1["default"].ROLE_ID.SEIHEKI);
     return 'Add Seiheki Role';
 };
+exports.AddSeihekiRole = AddSeihekiRole;

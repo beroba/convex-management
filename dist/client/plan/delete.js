@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -92,7 +92,7 @@ var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("./list"));
 var declaration = __importStar(require("../declare/declaration"));
-exports.Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var Already = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -114,7 +114,8 @@ exports.Already = function (react, user) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Already = Already;
+var Delete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var plans, state;
     var _a;
     return __generator(this, function (_b) {
@@ -138,7 +139,8 @@ exports.Delete = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-exports.Remove = function (alpha, id) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Delete = Delete;
+var Remove = function (alpha, id) { return __awaiter(void 0, void 0, void 0, function () {
     var plans, plan, channel, msg;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -158,7 +160,8 @@ exports.Remove = function (alpha, id) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
-exports.AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Remove = Remove;
+var AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msgs, list, list_1, list_1_1, m, e_1_1, plans;
     var e_1, _a;
     return __generator(this, function (_b) {
@@ -210,6 +213,7 @@ exports.AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+exports.AllRemove = AllRemove;
 var planDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, plans, plan;
     return __generator(this, function (_b) {

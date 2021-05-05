@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.AllDelete = exports.React = exports.Delete = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var Delete = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -83,13 +83,15 @@ exports.Delete = function (react, user) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
-exports.React = function (msg) {
+exports.Delete = Delete;
+var React = function (msg) {
     if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.CARRYOVER_SITUATION)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.KANRYOU);
     return 'React Kanryou';
 };
-exports.AllDelete = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+exports.React = React;
+var AllDelete = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     var channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -106,3 +108,4 @@ exports.AllDelete = function (member) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); };
+exports.AllDelete = AllDelete;

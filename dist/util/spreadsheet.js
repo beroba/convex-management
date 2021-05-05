@@ -42,7 +42,7 @@ exports.__esModule = true;
 exports.SetValue = exports.GetValue = exports.GetCells = exports.GetWorksheet = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var GoogleSpreadsheetAsPromised = require('google-spreadsheet-as-promised');
-exports.GetWorksheet = function (name) { return __awaiter(void 0, void 0, void 0, function () {
+var GetWorksheet = function (name) { return __awaiter(void 0, void 0, void 0, function () {
     var CREDS, SHEET_ID, sheet;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -57,21 +57,25 @@ exports.GetWorksheet = function (name) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.GetCells = function (sheet, range) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+exports.GetWorksheet = GetWorksheet;
+var GetCells = function (sheet, range) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     switch (_a.label) {
         case 0: return [4, sheet.getCells(range)];
         case 1: return [2, (_a.sent()).getAllValues()];
     }
 }); }); };
-exports.GetValue = function (cell) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+exports.GetCells = GetCells;
+var GetValue = function (cell) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     switch (_a.label) {
         case 0: return [4, cell];
         case 1: return [2, (_a.sent()).getValue()];
     }
 }); }); };
-exports.SetValue = function (cell, v) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+exports.GetValue = GetValue;
+var SetValue = function (cell, v) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     switch (_a.label) {
         case 0: return [4, cell];
         case 1: return [2, (_a.sent()).setValue(v)];
     }
 }); }); };
+exports.SetValue = SetValue;

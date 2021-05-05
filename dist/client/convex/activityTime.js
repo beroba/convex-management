@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -75,7 +75,7 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var status = __importStar(require("../../io/status"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
-exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, day, section;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -109,7 +109,8 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Add = Add;
+var Remove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, day, section;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -143,6 +144,7 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
+exports.Remove = Remove;
 var confirmDays = function (id) {
     return id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY1 ? 1 :
         id === const_settings_1["default"].ACTIVITY_TIME.DAYS.DAY2 ? 2 :
@@ -233,7 +235,7 @@ var changeValueOfSheetUsers = function (value, day, section, idList, sheet, user
         }
     });
 }); };
-exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
+var ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
     var channel, sheet, users, _a, _b, day, msg, list, _loop_1, list_1, list_1_1, l, state_1, e_2_1, e_3_1;
     var e_3, _c, e_2, _d;
     return __generator(this, function (_e) {
@@ -277,8 +279,8 @@ exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, 
                 list = _e.sent();
                 _loop_1 = function (l) {
                     var checkIdList, noCheckIdList, d, s;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
                             case 0:
                                 checkIdList = l.users.filter(function (u) { return !u.bot; }).map(function (u) { return u.id; });
                                 noCheckIdList = users.map(function (u) { return u.id; }).filter(function (u) { return !checkIdList.some(function (c) { return c === u; }); });
@@ -290,10 +292,10 @@ exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, 
                                     return [2, { value: void 0 }];
                                 return [4, changeValueOfSheetUsers('1', d, s, checkIdList, sheet, users)];
                             case 1:
-                                _a.sent();
+                                _f.sent();
                                 return [4, changeValueOfSheetUsers('', d, s, noCheckIdList, sheet, users)];
                             case 2:
-                                _a.sent();
+                                _f.sent();
                                 console.log("day: " + d + ", section: " + s);
                                 return [2];
                         }
@@ -345,7 +347,8 @@ exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.Switch = function (day, section) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ReflectOnSheet = ReflectOnSheet;
+var Switch = function (day, section) { return __awaiter(void 0, void 0, void 0, function () {
     var col1, col2, sheet, users, users_1, users_1_1, u, guildMember, row, cell, e_4_1;
     var e_4, _a;
     return __generator(this, function (_b) {
@@ -401,3 +404,4 @@ exports.Switch = function (day, section) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
+exports.Switch = Switch;

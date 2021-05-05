@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -74,7 +74,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../util"));
 var io = __importStar(require("."));
-exports.Update = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         pieces_each_1["default"](plans, 8).forEach(function (p, i) { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -89,7 +89,8 @@ exports.Update = function (plans) { return __awaiter(void 0, void 0, void 0, fun
         return [2];
     });
 }); };
-exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Update = Update;
+var Add = function (plan) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -104,7 +105,8 @@ exports.Add = function (plan) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Add = Add;
+var Delete = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var plans, plan;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -130,7 +132,8 @@ exports.Delete = function (id) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
-exports.Edit = function (text, id) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Delete = Delete;
+var Edit = function (text, id) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -150,7 +153,8 @@ exports.Edit = function (text, id) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Edit = Edit;
+var Fetch = function () { return __awaiter(void 0, void 0, void 0, function () {
     var plans, range, range_1, range_1_1, i, p, e_1_1;
     var e_1, _a;
     return __generator(this, function (_b) {
@@ -191,7 +195,8 @@ exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
-exports.FetchBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Fetch = Fetch;
+var FetchBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -202,3 +207,4 @@ exports.FetchBoss = function (alpha) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
+exports.FetchBoss = FetchBoss;

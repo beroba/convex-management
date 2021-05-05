@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.UpdateJson = exports.UpdateArray = exports.Fetch = void 0;
 var util = __importStar(require("../util"));
 var const_settings_1 = __importDefault(require("const-settings"));
-exports.Fetch = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+var Fetch = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg, json;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -79,7 +79,8 @@ exports.Fetch = function (id) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-exports.UpdateArray = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Fetch = Fetch;
+var UpdateArray = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -104,7 +105,8 @@ exports.UpdateArray = function (id, json) { return __awaiter(void 0, void 0, voi
         }
     });
 }); };
-exports.UpdateJson = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
+exports.UpdateArray = UpdateArray;
+var UpdateJson = function (id, json) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -129,3 +131,4 @@ exports.UpdateJson = function (id, json) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
+exports.UpdateJson = UpdateJson;

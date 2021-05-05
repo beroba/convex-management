@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -65,13 +65,14 @@ var util = __importStar(require("../util"));
 var dateTable = __importStar(require("../io/dateTable"));
 var status = __importStar(require("../io/status"));
 var limitTime = __importStar(require("../client/convex/limitTime"));
-exports.CronOperation = function () {
+var CronOperation = function () {
     setRemainConvex('0 10 5 * * *');
     removeTaskillRoll('0 0 5 * * *');
     resetConvex('0 0 5 * * *');
     notifyDailyMission('0 30 4 * * *');
     limitTimeDisplay('0 1 */1 * * *');
 };
+exports.CronOperation = CronOperation;
 var setRemainConvex = function (expression) {
     cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
         var date, clanMembers, channel;

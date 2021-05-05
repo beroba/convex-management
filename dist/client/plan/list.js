@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -70,9 +70,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -86,7 +87,7 @@ var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 var status = __importStar(require("../../io/status"));
 var declare = __importStar(require("../declare"));
-exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+var Output = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var state, plans, text, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -105,7 +106,8 @@ exports.Output = function (alpha) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Output = Output;
+var AllOutput = function () { return __awaiter(void 0, void 0, void 0, function () {
     var plans, text, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -121,7 +123,8 @@ exports.AllOutput = function () { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
+exports.AllOutput = AllOutput;
+var SituationEdit = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
     var text, channel, msg, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -136,15 +139,19 @@ exports.SituationEdit = function (plans) { return __awaiter(void 0, void 0, void
                 return [4, current.Fetch()];
             case 3:
                 state = _a.sent();
-                return [4, declare.SetPlanList(state)];
+                return [4, util.Sleep(500)];
             case 4:
+                _a.sent();
+                return [4, declare.SetPlanList(state)];
+            case 5:
                 _a.sent();
                 console.log('Edit the convex schedule of the convex situation');
                 return [2];
         }
     });
 }); };
-exports.CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 0, void 0, void 0, function () {
+exports.SituationEdit = SituationEdit;
+var CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 0, void 0, void 0, function () {
     var p, text, name, hp;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -167,7 +174,7 @@ exports.CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 
                 }); }))];
             case 1:
                 p = _a.sent();
-                text = __spread(new Set(p)).filter(function (m) { return m !== ''; }).join('\n');
+                text = __spreadArray([], __read(new Set(p))).filter(function (m) { return m !== ''; }).join('\n');
                 return [4, bossTable.TakeName(alpha)];
             case 2:
                 name = _a.sent();
@@ -176,6 +183,7 @@ exports.CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 
         }
     });
 }); };
+exports.CreatePlanText = CreatePlanText;
 var createAllPlanText = function (plans) { return __awaiter(void 0, void 0, void 0, function () {
     var state, stage, a, b, c, d, e;
     return __generator(this, function (_a) {

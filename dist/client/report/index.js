@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -87,7 +87,7 @@ var situation = __importStar(require("../convex/situation"));
 var declare = __importStar(require("../declare/status"));
 var react = __importStar(require("../declare/react"));
 var cancel = __importStar(require("../plan/delete"));
-exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member_1, state, content, _a, members, member;
     var _b;
     return __generator(this, function (_c) {
@@ -149,6 +149,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
+exports.Convex = Convex;
 var overDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member;
     return __generator(this, function (_a) {
