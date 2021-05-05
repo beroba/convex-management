@@ -73,9 +73,8 @@ var React = function (msg) { return __awaiter(void 0, void 0, void 0, function (
         pantiesReact(msg);
         ringorouReact(msg);
         smicleReact(msg);
-        ohayouReact(msg);
-        oyasumiReact(msg);
         otukareReact(msg);
+        yoroshikuReact(msg);
         chuukaReact(msg);
         return [2];
     });
@@ -145,25 +144,18 @@ var smicleReact = function (msg) {
     msg.react(const_settings_1["default"].EMOJI_ID.SMICLE);
     console.log('React smicle');
 };
-var ohayouReact = function (msg) {
-    var match = msg.content.replace(/ohayou/gi, 'おはよう').match(/おはよう/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.OHAYOU);
-    console.log('React ohayou');
-};
-var oyasumiReact = function (msg) {
-    var match = msg.content.replace(/oyasumi/gi, 'おやすみ').match(/おやすみ/);
-    if (!match)
-        return;
-    msg.react(const_settings_1["default"].EMOJI_ID.OYASUMI);
-    console.log('React oyasumi');
-};
 var otukareReact = function (msg) {
-    var match = msg.content.replace(/otukare/gi, 'おつかれ').match(/おつかれ/);
+    var match = msg.content.replace(/otukare|お疲れ/gi, 'おつかれ').match(/おつかれ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.OTUKARE);
+    console.log('React otukare');
+};
+var yoroshikuReact = function (msg) {
+    var match = msg.content.replace(/yoroshiku|宜しく/gi, 'よろしく').match(/よろしく/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.YOROSHIKU);
     console.log('React otukare');
 };
 var chuukaReact = function (msg) {
