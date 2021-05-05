@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -64,7 +64,7 @@ var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
-exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -93,6 +93,7 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
+exports.Update = Update;
 var setDate = function (arg, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var days;
     return __generator(this, function (_a) {
@@ -120,10 +121,11 @@ var setDate = function (arg, sheet) { return __awaiter(void 0, void 0, void 0, f
     });
 }); };
 var parseZero = function (d) { return d.split('/').map(Number).join('/'); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+var Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.DAYS_TABLE)];
 }); }); };
-exports.TakeDate = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Fetch = Fetch;
+var TakeDate = function () { return __awaiter(void 0, void 0, void 0, function () {
     var table, date;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -135,4 +137,5 @@ exports.TakeDate = function () { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
+exports.TakeDate = TakeDate;
 var mmdd = function () { return (function (d) { return d.getMonth() + 1 + "/" + (d.getDate() - (d.getHours() < 5 ? 1 : 0)); })(new Date()); };

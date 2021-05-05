@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -63,7 +63,7 @@ var throw_env_1 = __importDefault(require("throw-env"));
 var declare = __importStar(require("./declare/status"));
 var report = __importStar(require("./report/cancel"));
 var plan = __importStar(require("./plan/delete"));
-exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
     return __generator(this, function (_b) {
@@ -90,3 +90,4 @@ exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
+exports.MessageDelete = MessageDelete;

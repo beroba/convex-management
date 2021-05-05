@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.Send = exports.React = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
             return [2];
@@ -76,11 +76,17 @@ exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, functi
         ohayouReact(msg);
         oyasumiReact(msg);
         otukareReact(msg);
+        yoroshikuReact(msg);
         chuukaReact(msg);
         return [2];
     });
 }); };
+exports.React = React;
 var yuiKusanoReact = function (msg) {
+    if (util.IsChannel(const_settings_1["default"].THIS_AND_THAT_CHANNEL, msg.channel)) {
+        if (msg.content === '草')
+            return;
+    }
     var match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/);
     if (!match)
         return;
@@ -141,25 +147,32 @@ var smicleReact = function (msg) {
     console.log('React smicle');
 };
 var ohayouReact = function (msg) {
-    var match = msg.content.replace(/ohayou/gi, 'おはよう').match(/おはよう/);
+    var match = msg.content.match(/おはよう/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.OHAYOU);
     console.log('React ohayou');
 };
 var oyasumiReact = function (msg) {
-    var match = msg.content.replace(/oyasumi/gi, 'おやすみ').match(/おやすみ/);
+    var match = msg.content.replace(/お休み/g, 'おやすみ').match(/おやすみ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.OYASUMI);
     console.log('React oyasumi');
 };
 var otukareReact = function (msg) {
-    var match = msg.content.replace(/otukare/gi, 'おつかれ').match(/おつかれ/);
+    var match = msg.content.replace(/お疲れ/g, 'おつかれ').match(/おつかれ/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.OTUKARE);
     console.log('React otukare');
+};
+var yoroshikuReact = function (msg) {
+    var match = msg.content.replace(/宜しく/g, 'よろしく').match(/よろしく/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.YOROSHIKU);
+    console.log('React yoroshiku');
 };
 var chuukaReact = function (msg) {
     var match = msg.content.match(/中華/);
@@ -168,7 +181,7 @@ var chuukaReact = function (msg) {
     msg.react(const_settings_1["default"].EMOJI_ID.CHUUKA);
     console.log('React chuuka');
 };
-exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Send = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
         if (util.IsChannel(const_settings_1["default"].NOT_EMOJI_CHANNEL, msg.channel))
@@ -209,6 +222,7 @@ exports.Send = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         return [2];
     });
 }); };
+exports.Send = Send;
 var ruruEmoji = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

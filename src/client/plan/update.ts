@@ -53,11 +53,11 @@ const createPlan = async (msg: Discord.Message): Promise<Plan> => {
     done: '',
     senderID: msg.id,
     calID: '',
-    name: member?.name || '',
-    playerID: msg.member?.id || '',
+    name: member?.name ?? '',
+    playerID: msg.member?.id ?? '',
     num: content[0],
     alpha: alpha,
-    boss: boss || '',
+    boss: boss ?? '',
     msg: content.slice(1).trim(),
   }
 }

@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -69,7 +69,7 @@ var plan = __importStar(require("./plan/delete"));
 var report = __importStar(require("./report/cancel"));
 var declare = __importStar(require("./declare/react"));
 var playerID = __importStar(require("./etc/playerID"));
-exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var MessageReactionAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var comment;
     var _a;
     return __generator(this, function (_b) {
@@ -146,3 +146,4 @@ exports.MessageReactionAdd = function (react, user) { return __awaiter(void 0, v
         }
     });
 }); };
+exports.MessageReactionAdd = MessageReactionAdd;

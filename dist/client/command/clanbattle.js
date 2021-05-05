@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -84,7 +84,7 @@ var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
-exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, arg, members, members, arg, arg, arg, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -190,6 +190,7 @@ exports.ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
+exports.ClanBattle = ClanBattle;
 var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var result, members;
     return __generator(this, function (_a) {

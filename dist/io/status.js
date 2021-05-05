@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -67,7 +67,7 @@ var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var dateTable = __importStar(require("./dateTable"));
 var limitTime = __importStar(require("../client/convex/limitTime"));
-exports.Update = function (members) { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function (members) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         pieces_each_1["default"](members, 15).forEach(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -82,7 +82,8 @@ exports.Update = function (members) { return __awaiter(void 0, void 0, void 0, f
         return [2];
     });
 }); };
-exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Update = Update;
+var UpdateMember = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -97,7 +98,8 @@ exports.UpdateMember = function (member) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0, function () {
+exports.UpdateMember = UpdateMember;
+var UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -120,7 +122,8 @@ exports.UpdateUsers = function (users) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.UpdateUsers = UpdateUsers;
+var ResetConvex = function () { return __awaiter(void 0, void 0, void 0, function () {
     var members;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -143,7 +146,8 @@ exports.ResetConvex = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.ResetConvex = ResetConvex;
+var Fetch = function () { return __awaiter(void 0, void 0, void 0, function () {
     var m1, m2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -157,7 +161,8 @@ exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
-exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Fetch = Fetch;
+var FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var members, member;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -169,13 +174,15 @@ exports.FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-exports.ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+exports.FetchMember = FetchMember;
+var ReflectOnSheet = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         reflectOnConvex(member);
         reflectOnLimit(member);
         return [2];
     });
 }); };
+exports.ReflectOnSheet = ReflectOnSheet;
 var reflectOnConvex = function (member) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, info, users, col, row;
     return __generator(this, function (_a) {
@@ -235,7 +242,7 @@ var reflectOnLimit = function (member) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+var ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, users, status, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -265,7 +272,8 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
-exports.ResetConvexOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.ReflectOnCal = ReflectOnCal;
+var ResetConvexOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
     var state, sheet, col;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -310,7 +318,8 @@ exports.ResetConvexOnSheet = function () { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-exports.FetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ResetConvexOnSheet = ResetConvexOnSheet;
+var FetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var cells;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -327,6 +336,7 @@ exports.FetchUserFromSheet = function (sheet) { return __awaiter(void 0, void 0,
         }
     });
 }); };
+exports.FetchUserFromSheet = FetchUserFromSheet;
 var fetchStatusFromSheet = function (users, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var col, cells;
     return __generator(this, function (_a) {

@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -70,7 +70,7 @@ var status = __importStar(require("../../io/status"));
 var category = __importStar(require("./category"));
 var activityTime = __importStar(require("../convex/activityTime"));
 var situation = __importStar(require("../convex/situation"));
-exports.Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, _a, members, arg, arg, arg;
     var _b;
     return __generator(this, function (_c) {
@@ -184,6 +184,7 @@ exports.Management = function (command, msg) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
+exports.Management = Management;
 var removeRole = function (msg) {
     var _a, _b;
     var clanMembers = (_b = (_a = util

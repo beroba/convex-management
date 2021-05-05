@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -79,7 +79,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
 var bossTable = __importStar(require("./bossTable"));
-exports.UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void 0, void 0, function () {
+var UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var state, num, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -109,6 +109,7 @@ exports.UpdateLapAndBoss = function (lap, alpha) { return __awaiter(void 0, void
         }
     });
 }); };
+exports.UpdateLapAndBoss = UpdateLapAndBoss;
 var getStageName = function (lap) {
     var l = Number(lap);
     switch (true) {
@@ -124,7 +125,7 @@ var getStageName = function (lap) {
             return 'fifth';
     }
 };
-exports.UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
+var UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, function () {
     var state;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -139,10 +140,12 @@ exports.UpdateBossHp = function (hp) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+exports.UpdateBossHp = UpdateBossHp;
+var Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.CURRENT)];
 }); }); };
-exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Fetch = Fetch;
+var ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, function () {
     var state, sheet, _a, lap, boss, alpha, lap_cell, boss_cell, alpha_cell;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -169,7 +172,8 @@ exports.ReflectOnSheet = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.ReflectOnSheet = ReflectOnSheet;
+var ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, _a, lap_cell, alpha_cell, lap, alpha;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -190,3 +194,4 @@ exports.ReflectOnCal = function () { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+exports.ReflectOnCal = ReflectOnCal;

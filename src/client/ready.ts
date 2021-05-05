@@ -25,7 +25,8 @@ export const Ready = async () => {
   // `)
   //   }
 
-  // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャル')
+  // const msg = await channel.send('名前の変更をしたわ')
+  // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('きゃるぴょい🐴')
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

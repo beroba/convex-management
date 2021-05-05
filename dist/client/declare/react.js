@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -65,7 +65,7 @@ var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var declaration = __importStar(require("./declaration"));
 var declare = __importStar(require("./status"));
-exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -97,7 +97,8 @@ exports.ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, vo
         }
     });
 }); };
-exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ConvexAdd = ConvexAdd;
+var ConvexRemove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var state;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -122,7 +123,8 @@ exports.ConvexRemove = function (react, user) { return __awaiter(void 0, void 0,
         }
     });
 }); };
-exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ConvexRemove = ConvexRemove;
+var ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg, state, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -159,7 +161,8 @@ exports.ConvexDone = function (user) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ConvexDone = ConvexDone;
+var ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, sumi, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -187,7 +190,8 @@ exports.ConfirmNotice = function (react, user) { return __awaiter(void 0, void 0
         }
     });
 }); };
-exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.ConfirmNotice = ConfirmNotice;
+var OverNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, sumi, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -215,7 +219,8 @@ exports.OverNotice = function (react, user) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
-exports.WaitNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.OverNotice = OverNotice;
+var WaitNotice = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, sumi, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -243,7 +248,8 @@ exports.WaitNotice = function (react, user) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
-exports.NoticeCancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.WaitNotice = WaitNotice;
+var NoticeCancel = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, sumi;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -263,6 +269,7 @@ exports.NoticeCancel = function (react, user) { return __awaiter(void 0, void 0,
         }
     });
 }); };
+exports.NoticeCancel = NoticeCancel;
 var fetchMessage = function (react) { return __awaiter(void 0, void 0, void 0, function () {
     var msg, channel;
     return __generator(this, function (_a) {

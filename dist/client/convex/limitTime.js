@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -62,7 +62,7 @@ exports.Display = exports.Remove = exports.Add = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
-exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var Add = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -85,7 +85,8 @@ exports.Add = function (react, user) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Add = Add;
+var Remove = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         if (user.bot)
             return [2];
@@ -97,6 +98,7 @@ exports.Remove = function (react, user) { return __awaiter(void 0, void 0, void 
         return [2, 'Setting the activity limit time'];
     });
 }); };
+exports.Remove = Remove;
 var update = function (id) { return __awaiter(void 0, void 0, void 0, function () {
     var member, _a, members;
     return __generator(this, function (_b) {
@@ -151,7 +153,7 @@ var fetchLimit = function (id) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
-exports.Display = function (members) { return __awaiter(void 0, void 0, void 0, function () {
+var Display = function (members) { return __awaiter(void 0, void 0, void 0, function () {
     var h, over, now, oneNext, twoNext, text, channel, msg;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -180,6 +182,7 @@ exports.Display = function (members) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
+exports.Display = Display;
 var getHours = function () {
     var h = new Date().getHours();
     return createTime(h);

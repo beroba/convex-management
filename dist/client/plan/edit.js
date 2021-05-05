@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -65,7 +65,7 @@ var current = __importStar(require("../../io/current"));
 var schedule = __importStar(require("../../io/schedule"));
 var list = __importStar(require("./list"));
 var declaration = __importStar(require("../declare/declaration"));
-exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Message = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var text, plans, state;
     var _a;
     return __generator(this, function (_b) {
@@ -93,3 +93,4 @@ exports.Message = function (msg) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+exports.Message = Message;

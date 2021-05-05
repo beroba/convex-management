@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -79,9 +79,8 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
-var category = __importStar(require("../command/category"));
 var declare = __importStar(require("../declare"));
-exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, alpha, state;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -100,12 +99,12 @@ exports.Update = function (arg) { return __awaiter(void 0, void 0, void 0, funct
                 declare.ChangeBoss(state);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                stageConfirm();
                 return [2, true];
         }
     });
 }); };
-exports.Next = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Update = Update;
+var Next = function () { return __awaiter(void 0, void 0, void 0, function () {
     var state, lap, alpha, newState;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -123,12 +122,12 @@ exports.Next = function () { return __awaiter(void 0, void 0, void 0, function (
                 declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                stageConfirm();
                 return [2];
         }
     });
 }); };
-exports.Previous = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Next = Next;
+var Previous = function () { return __awaiter(void 0, void 0, void 0, function () {
     var state, lap, alpha, newState;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -146,12 +145,12 @@ exports.Previous = function () { return __awaiter(void 0, void 0, void 0, functi
                 declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                stageConfirm();
                 return [2];
         }
     });
 }); };
-exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.Previous = Previous;
+var ProgressReport = function () { return __awaiter(void 0, void 0, void 0, function () {
     var state, role, channel;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -165,30 +164,4 @@ exports.ProgressReport = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, current.Fetch()];
-            case 1:
-                state = _a.sent();
-                if (state.alpha !== 'a')
-                    return [2];
-                switch (state.lap) {
-                    case '4': {
-                        return [2, category.CheckTheStage(2)];
-                    }
-                    case '11': {
-                        return [2, category.CheckTheStage(3)];
-                    }
-                    case '35': {
-                        return [2, category.CheckTheStage(4)];
-                    }
-                    case '45': {
-                        return [2, category.CheckTheStage(5)];
-                    }
-                }
-                return [2];
-        }
-    });
-}); };
+exports.ProgressReport = ProgressReport;

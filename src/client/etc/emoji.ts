@@ -44,6 +44,9 @@ export const React = async (msg: Discord.Message) => {
   // おつかれの絵文字を押す
   otukareReact(msg)
 
+  // よろしくの絵文字を押す
+  yoroshikuReact(msg)
+
   // 中華の絵文字を押す
   chuukaReact(msg)
 }
@@ -53,6 +56,11 @@ export const React = async (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const yuiKusanoReact = (msg: Discord.Message) => {
+  // 指定のチャンネルで草を入力した場合はリアクションを付けない
+  if (util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) {
+    if (msg.content === '草') return
+  }
+
   // 草野優衣っぽい文字が含まれているか確認
   const match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/)
 
@@ -194,7 +202,7 @@ const smicleReact = (msg: Discord.Message) => {
  */
 const ohayouReact = (msg: Discord.Message) => {
   // おはようの文字が含まれているか確認
-  const match = msg.content.replace(/ohayou/gi, 'おはよう').match(/おはよう/)
+  const match = msg.content.match(/おはよう/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -211,7 +219,7 @@ const ohayouReact = (msg: Discord.Message) => {
  */
 const oyasumiReact = (msg: Discord.Message) => {
   // おやすみの文字が含まれているか確認
-  const match = msg.content.replace(/oyasumi/gi, 'おやすみ').match(/おやすみ/)
+  const match = msg.content.replace(/お休み/g, 'おやすみ').match(/おやすみ/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -228,7 +236,7 @@ const oyasumiReact = (msg: Discord.Message) => {
  */
 const otukareReact = (msg: Discord.Message) => {
   // おつかれの文字が含まれているか確認
-  const match = msg.content.replace(/otukare/gi, 'おつかれ').match(/おつかれ/)
+  const match = msg.content.replace(/お疲れ/g, 'おつかれ').match(/おつかれ/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -237,6 +245,23 @@ const otukareReact = (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.OTUKARE)
 
   console.log('React otukare')
+}
+
+/**
+ * 送信されたメッセージによろしくが含まれていた場合、よろしくの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const yoroshikuReact = (msg: Discord.Message) => {
+  // よろしくの文字が含まれているか確認
+  const match = msg.content.replace(/宜しく/g, 'よろしく').match(/よろしく/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // よろしくの絵文字をつける
+  msg.react(Settings.EMOJI_ID.YOROSHIKU)
+
+  console.log('React yoroshiku')
 }
 
 /**

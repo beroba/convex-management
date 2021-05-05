@@ -57,6 +57,8 @@ export const SituationEdit = async (plans: Plan[]) => {
   // 現在の状況を取得
   const state = await current.Fetch()
 
+  await util.Sleep(500)
+
   // 凸宣言を設定する
   await declare.SetPlanList(state)
 
