@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var schedule = __importStar(require("../../io/schedule"));
 var status = __importStar(require("../../io/status"));
-exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+var SetUser = function (state) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg, emoji, plans, list, text;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -98,6 +98,7 @@ exports.SetUser = function (state) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+exports.SetUser = SetUser;
 var createDeclareList = function (plans, emoji) { return __awaiter(void 0, void 0, void 0, function () {
     var convex;
     return __generator(this, function (_a) {
@@ -114,7 +115,7 @@ var createDeclareList = function (plans, emoji) { return __awaiter(void 0, void 
         }
     });
 }); };
-exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, function () {
+var ResetReact = function () { return __awaiter(void 0, void 0, void 0, function () {
     var channel, msg;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -133,3 +134,4 @@ exports.ResetReact = function () { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
+exports.ResetReact = ResetReact;

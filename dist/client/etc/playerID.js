@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -61,7 +61,7 @@ exports.__esModule = true;
 exports.Save = exports.RoleGrant = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
-exports.RoleGrant = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
+var RoleGrant = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, msg;
     var _a;
     return __generator(this, function (_b) {
@@ -79,7 +79,8 @@ exports.RoleGrant = function (react, user) { return __awaiter(void 0, void 0, vo
         }
     });
 }); };
-exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.RoleGrant = RoleGrant;
+var Save = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var url, channel, content;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -105,3 +106,4 @@ exports.Save = function (msg) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
+exports.Save = Save;

@@ -196,7 +196,7 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // ヤバイの文字が含まれているか確認
+  // 文字にやばいが含まれているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
 
   // 含まれていない場合は終了
@@ -217,7 +217,7 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // シャイニートモの文字か確認
+  // 文字がシャイニートモか確認
   if (msg.content !== 'シャイニートモ') return
 
   // シャイニートモの画像を送信
@@ -234,17 +234,23 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
  * @param msg DiscordからのMessage
  * @return 画像を送信したかの結果
  */
-export const KusaGacha = (msg: Discord.Message): Option<string> => {
+export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // シャイニートモの文字か確認
+  // 文字が草か確認
   if (msg.content !== '草') return
 
-  // 草の画像を送信
-  // msg.reply('', {files: [Settings.URL.SHINYTMO]})
+  // ガチャの内容を作成
+  const items: string[] = Settings.KUSA.map((v: {NAME: string; RATIO: string}) => Array(v.RATIO).fill(v.NAME)).flat()
 
-  return 'Send Yabai Image'
+  // 乱数を生成
+  const rand = createRandNumber(items.length)
+
+  // 草の画像を送信
+  msg.reply(items[rand], {files: [`./assets/kusa/${items[rand]}.png`]})
+
+  return 'Send Kusa Gacha'
 }
 
 /**

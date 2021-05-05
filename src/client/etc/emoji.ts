@@ -53,6 +53,11 @@ export const React = async (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const yuiKusanoReact = (msg: Discord.Message) => {
+  // 指定のチャンネルで草を入力した場合はリアクションを付けない
+  if (util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) {
+    if (msg.content === '草') return
+  }
+
   // 草野優衣っぽい文字が含まれているか確認
   const match = msg.content.replace(/草|優衣|くさ$/g, 'ユイ').match(/ユイ/)
 

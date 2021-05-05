@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -64,7 +64,7 @@ var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
-exports.Update = function () { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function () { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -88,10 +88,12 @@ exports.Update = function () { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); };
-exports.Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+exports.Update = Update;
+var Fetch = function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
     return [2, io.Fetch(const_settings_1["default"].CAL_STATUS_ID.BOSS_TABLE)];
 }); }); };
-exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Fetch = Fetch;
+var TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var table, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -105,7 +107,8 @@ exports.TakeName = function (alpha) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
+exports.TakeName = TakeName;
+var TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, function () {
     var table, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -119,7 +122,8 @@ exports.TakeAlpha = function (name) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-exports.TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
+exports.TakeAlpha = TakeAlpha;
+var TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, function () {
     var table, boss;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -133,3 +137,4 @@ exports.TakeNum = function (alpha) { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); };
+exports.TakeNum = TakeNum;

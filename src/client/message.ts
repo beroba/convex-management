@@ -89,7 +89,7 @@ export const Message = async (msg: Discord.Message) => {
     if (comment) return console.log(comment)
 
     // 草の場合に草ガチャを実施
-    comment = send.KusaGacha(msg)
+    comment = await send.KusaGacha(msg)
     if (comment) return console.log(comment)
   }
 }

@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -66,7 +66,7 @@ var current = __importStar(require("../../io/current"));
 var list = __importStar(require("./list"));
 var update = __importStar(require("./update"));
 var declaration = __importStar(require("../declare/declaration"));
-exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member, cal_1, cal_2, cal_3, plans, state;
     var _a;
     return __generator(this, function (_b) {
@@ -113,6 +113,7 @@ exports.Convex = function (msg) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
+exports.Convex = Convex;
 var formatConfirm = function (msg) {
     var num = util.Format(msg.content).split(' ')[0];
     return /[1-5]/.test(num);

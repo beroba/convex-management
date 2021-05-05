@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -80,7 +80,7 @@ var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../../util"));
 var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var bossTable = __importStar(require("../../io/bossTable"));
-exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, year, day, channel, names, list, sheet;
     var _b;
     return __generator(this, function (_c) {
@@ -122,7 +122,8 @@ exports.Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.Delete = function (arg, msg) {
+exports.Create = Create;
+var Delete = function (arg, msg) {
     var _a;
     var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
     if (!year)
@@ -135,7 +136,8 @@ exports.Delete = function (arg, msg) {
     channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
     msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
 };
-exports.CheckTheStage = function (n) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Delete = Delete;
+var CheckTheStage = function (n) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, stage, _a, category, col, cell;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -166,6 +168,7 @@ exports.CheckTheStage = function (n) { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
+exports.CheckTheStage = CheckTheStage;
 var separate = function (n) { return "\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC" + n + "\u6BB5\u968E\u76EE\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC\u30FC"; };
 var settingPermissions = function (msg) {
     var _a, _b, _c, _d, _e, _f;

@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -70,9 +70,10 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -82,7 +83,7 @@ exports.UserMessageAllDelete = exports.MessageDelete = exports.RemainingHPChange
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
-exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function (state) { return __awaiter(void 0, void 0, void 0, function () {
     var maxHP, channel, status, text, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -106,7 +107,8 @@ exports.Update = function (state) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+exports.Update = Update;
+var React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content, state;
     var _a;
     return __generator(this, function (_b) {
@@ -142,7 +144,8 @@ exports.React = function (msg) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
-exports.RemainingHPChange = function (content) { return __awaiter(void 0, void 0, void 0, function () {
+exports.React = React;
+var RemainingHPChange = function (content) { return __awaiter(void 0, void 0, void 0, function () {
     var at, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -158,6 +161,7 @@ exports.RemainingHPChange = function (content) { return __awaiter(void 0, void 0
         }
     });
 }); };
+exports.RemainingHPChange = RemainingHPChange;
 var expectRemainingHP = function (state) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, list, damage, hp;
     return __generator(this, function (_a) {
@@ -178,7 +182,7 @@ var expectRemainingHP = function (state) { return __awaiter(void 0, void 0, void
                         .match(/[\d]+/g);
                     if (!list)
                         return;
-                    return Math.max.apply(Math, __spread(list.map(Number)));
+                    return Math.max.apply(Math, __spreadArray([], __read(list.map(Number))));
                 })
                     .map(Number)
                     .map(function (n) { return (Number.isNaN(n) ? 0 : n); });
@@ -188,7 +192,7 @@ var expectRemainingHP = function (state) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var state;
     var _a;
     return __generator(this, function (_b) {
@@ -206,7 +210,8 @@ exports.MessageDelete = function (msg) { return __awaiter(void 0, void 0, void 0
         }
     });
 }); };
-exports.UserMessageAllDelete = function (user) { return __awaiter(void 0, void 0, void 0, function () {
+exports.MessageDelete = MessageDelete;
+var UserMessageAllDelete = function (user) { return __awaiter(void 0, void 0, void 0, function () {
     var channel, _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -224,3 +229,4 @@ exports.UserMessageAllDelete = function (user) { return __awaiter(void 0, void 0
         }
     });
 }); };
+exports.UserMessageAllDelete = UserMessageAllDelete;

@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -63,7 +63,7 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var current = __importStar(require("../../io/current"));
-exports.Report = function (members) { return __awaiter(void 0, void 0, void 0, function () {
+var Report = function (members) { return __awaiter(void 0, void 0, void 0, function () {
     var text, situation, msg, history;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -82,6 +82,7 @@ exports.Report = function (members) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
+exports.Report = Report;
 var createMessage = function (members) { return __awaiter(void 0, void 0, void 0, function () {
     var time, date, state, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {

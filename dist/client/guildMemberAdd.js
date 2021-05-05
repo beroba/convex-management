@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -26,7 +26,7 @@ exports.GuildMemberAdd = void 0;
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
-exports.GuildMemberAdd = function (member) {
+var GuildMemberAdd = function (member) {
     var _a, _b;
     if (member.guild.id !== throw_env_1["default"]('CLAN_SERVER_ID'))
         return;
@@ -36,3 +36,4 @@ exports.GuildMemberAdd = function (member) {
         ("\u30AF\u30E9\u30F3\u306B\u5165\u308B\u4EBA\u306F <#" + const_settings_1["default"].CHANNEL_ID.PLAYER_ID_ROLE_GRANT + "> \u3092\u898B\u3066\u6307\u793A\u901A\u308A\u306B\u3057\u305F\u304C\u3063\u3066\u306D"));
     console.log("I\u2019m " + ((_b = member.user) === null || _b === void 0 ? void 0 : _b.username) + ", a new member.");
 };
+exports.GuildMemberAdd = GuildMemberAdd;

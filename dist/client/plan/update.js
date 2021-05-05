@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -65,7 +65,7 @@ var util = __importStar(require("../../util"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var schedule = __importStar(require("../../io/schedule"));
 var status = __importStar(require("../../io/status"));
-exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Plans = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var plan, _a, plans, roleID;
     var _b;
     return __generator(this, function (_c) {
@@ -94,29 +94,30 @@ exports.Plans = function (msg) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
+exports.Plans = Plans;
 var createPlan = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content, alpha, boss, member;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 content = util.Format(msg.content.replace(/\n/g, ' '));
                 alpha = alphabet_to_number_1.NtoA(content[0]);
                 return [4, bossTable.TakeName(alpha)];
             case 1:
-                boss = _b.sent();
+                boss = _d.sent();
                 return [4, status.FetchMember(msg.author.id)];
             case 2:
-                member = _b.sent();
+                member = _d.sent();
                 return [2, {
                         done: '',
                         senderID: msg.id,
                         calID: '',
-                        name: (member === null || member === void 0 ? void 0 : member.name) || '',
-                        playerID: ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.id) || '',
+                        name: (_a = member === null || member === void 0 ? void 0 : member.name) !== null && _a !== void 0 ? _a : '',
+                        playerID: (_c = (_b = msg.member) === null || _b === void 0 ? void 0 : _b.id) !== null && _c !== void 0 ? _c : '',
                         num: content[0],
                         alpha: alpha,
-                        boss: boss || '',
+                        boss: boss !== null && boss !== void 0 ? boss : '',
                         msg: content.slice(1).trim()
                     }];
         }
