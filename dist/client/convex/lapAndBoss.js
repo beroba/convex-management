@@ -79,7 +79,6 @@ var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
-var category = __importStar(require("../command/category"));
 var declare = __importStar(require("../declare"));
 var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, lap, alpha, state;
@@ -100,7 +99,6 @@ var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function 
                 declare.ChangeBoss(state);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                stageConfirm();
                 return [2, true];
         }
     });
@@ -124,7 +122,6 @@ var Next = function () { return __awaiter(void 0, void 0, void 0, function () {
                 declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                stageConfirm();
                 return [2];
         }
     });
@@ -148,7 +145,6 @@ var Previous = function () { return __awaiter(void 0, void 0, void 0, function (
                 declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                stageConfirm();
                 return [2];
         }
     });
@@ -169,30 +165,3 @@ var ProgressReport = function () { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 exports.ProgressReport = ProgressReport;
-var stageConfirm = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, current.Fetch()];
-            case 1:
-                state = _a.sent();
-                if (state.alpha !== 'a')
-                    return [2];
-                switch (state.lap) {
-                    case '4': {
-                        return [2, category.CheckTheStage(2)];
-                    }
-                    case '11': {
-                        return [2, category.CheckTheStage(3)];
-                    }
-                    case '35': {
-                        return [2, category.CheckTheStage(4)];
-                    }
-                    case '45': {
-                        return [2, category.CheckTheStage(5)];
-                    }
-                }
-                return [2];
-        }
-    });
-}); };

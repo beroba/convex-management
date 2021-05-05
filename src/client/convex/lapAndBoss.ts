@@ -2,7 +2,6 @@ import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import * as category from '../command/category'
 import * as declare from '../declare'
 
 /**
@@ -31,9 +30,6 @@ export const Update = async (arg: string): Promise<boolean> => {
   // 現在の状況をスプレッドシートに反映
   current.ReflectOnSheet()
 
-  // 段階数の区切りを付ける
-  stageConfirm()
-
   return true
 }
 
@@ -60,9 +56,6 @@ export const Next = async () => {
 
   // 現在の状況をスプレッドシートに反映
   current.ReflectOnSheet()
-
-  // 段階数の区切りを付ける
-  stageConfirm()
 }
 
 /**
@@ -88,9 +81,6 @@ export const Previous = async () => {
 
   // 現在の状況をスプレッドシートに反映
   current.ReflectOnSheet()
-
-  // 段階数の区切りを付ける
-  stageConfirm()
 }
 
 /**
@@ -106,34 +96,4 @@ export const ProgressReport = async () => {
   // 進行に報告
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
-}
-
-/**
- * 段階が切り替わるタイミングを確認する
- */
-const stageConfirm = async () => {
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  // 1ボスでない場合は終了
-  if (state.alpha !== 'a') return
-
-  switch (state.lap) {
-    // 2段階目
-    case '4': {
-      return category.CheckTheStage(2)
-    }
-    // 3段階目
-    case '11': {
-      return category.CheckTheStage(3)
-    }
-    // 4段階目
-    case '35': {
-      return category.CheckTheStage(4)
-    }
-    // 5段階目
-    case '45': {
-      return category.CheckTheStage(5)
-    }
-  }
 }
