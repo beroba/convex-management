@@ -220,11 +220,29 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   // シャイニートモの文字か確認
   if (msg.content !== 'シャイニートモ') return
 
-  // ヤバイわよ！の画像を送信
+  // シャイニートモの画像を送信
   msg.channel.send('', {files: [Settings.URL.SHINYTMO]})
 
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
+
+  return 'Send Yabai Image'
+}
+
+/**
+ * 送信されたメッセージが草の場合、草ガチャを実施する
+ * @param msg DiscordからのMessage
+ * @return 画像を送信したかの結果
+ */
+export const KusaGacha = (msg: Discord.Message): Option<string> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+
+  // シャイニートモの文字か確認
+  if (msg.content !== '草') return
+
+  // 草の画像を送信
+  // msg.reply('', {files: [Settings.URL.SHINYTMO]})
 
   return 'Send Yabai Image'
 }
