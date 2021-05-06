@@ -5,6 +5,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
+// import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -12,28 +13,48 @@ import * as list from '../plan/list'
 
 /**
  * クラバト用のコマンド
- * @param command 入力されたコマンド
+ * @param content 入力されたコマンド
  * @param msg DiscordからのMessage
  * @return 実行したコマンドの結果
  */
-export const ClanBattle = async (command: string, msg: Discord.Message): Promise<Option<string>> => {
+export const ClanBattle = async (content: string, msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)) return
 
   switch (true) {
-    case /cb convex/.test(command): {
-      const arg = command.replace('/cb convex ', '')
+    case /cb tl/i.test(content): {
+      // tlController()
+      const arg = msg.content
+        .split('\n')[0]
+        .trim()
+        .replace(/\/cb tl/i, '')
+        .trim()
+
+      const time = ((arg: string): Option<string> => {
+        const t = arg.replace(/\.|;/g, ':')
+        const isNaN = Number.isNaN(Number(t.replace(':', '')))
+        return isNaN ? null : t
+      })(arg)
+
+      console.log(time)
+
+      // await format.TL(msg)
+      return 'TL shaping'
+    }
+
+    case /cb convex/.test(content): {
+      const arg = content.replace('/cb convex ', '')
       await manage.Update(arg, msg)
       return 'Change of convex management'
     }
 
-    case /cb boss now/.test(command): {
+    case /cb boss now/.test(content): {
       // #進行に現在の周回数とボスを報告
       lapAndBoss.ProgressReport()
       return 'Show current boss'
     }
 
-    case /cb boss next/.test(command): {
+    case /cb boss next/.test(content): {
       // 次のボスに進める
       await lapAndBoss.Next()
 
@@ -45,8 +66,8 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Advance to next lap and boss'
     }
 
-    case /cb boss back/.test(command):
-    case /cb boss previous/.test(command): {
+    case /cb boss back/.test(content):
+    case /cb boss previous/.test(content): {
       // 前のボスに戻す
       await lapAndBoss.Previous()
 
@@ -58,36 +79,36 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Advance to previous lap and boss'
     }
 
-    case /cb boss/.test(command): {
-      const arg = command.replace('/cb boss ', '')
+    case /cb boss/.test(content): {
+      const arg = content.replace('/cb boss ', '')
       await changeBoss(arg, msg)
       return 'Change laps and boss'
     }
 
-    case /cb delete plan/.test(command): {
-      const arg = command.replace('/cb delete plan ', '')
+    case /cb delete plan/.test(content): {
+      const arg = content.replace('/cb delete plan ', '')
       deletePlan(arg, msg)
       return 'Delete plan'
     }
 
-    case /cb plan/.test(command): {
-      const arg = command.replace('/cb plan ', '')
+    case /cb plan/.test(content): {
+      const arg = content.replace('/cb plan ', '')
       planList(arg)
       return 'Display convex plan list'
     }
 
-    case /cb over/.test(command): {
-      const arg = command.replace('/cb over ', '')
+    case /cb over/.test(content): {
+      const arg = content.replace('/cb over ', '')
       simultConvexCalc(arg, msg)
       return 'Simultaneous convex carryover calculation'
     }
 
-    case /cb task/.test(command): {
+    case /cb task/.test(content): {
       addTaskKillRoll(msg)
       return 'Add task kill roll'
     }
 
-    case /cb update report/.test(command): {
+    case /cb update report/.test(content): {
       // メンバー全員の状態を取得
       const members = await status.Fetch()
       // 凸状況に報告
@@ -101,7 +122,7 @@ export const ClanBattle = async (command: string, msg: Discord.Message): Promise
       return 'Convex situation updated'
     }
 
-    case /cb help/.test(command): {
+    case /cb help/.test(content): {
       msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
       return 'Show help'
     }

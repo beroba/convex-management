@@ -85,7 +85,7 @@ var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, members, members, arg, arg, arg, arg, members, plans;
+    var _a, arg, arg, members, members, arg, arg, arg, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -93,100 +93,111 @@ var ClanBattle = function (command, msg) { return __awaiter(void 0, void 0, void
                     return [2];
                 _a = true;
                 switch (_a) {
-                    case /cb convex/.test(command): return [3, 1];
-                    case /cb boss now/.test(command): return [3, 3];
-                    case /cb boss next/.test(command): return [3, 4];
-                    case /cb boss back/.test(command): return [3, 7];
-                    case /cb boss previous/.test(command): return [3, 7];
-                    case /cb boss/.test(command): return [3, 10];
-                    case /cb delete plan/.test(command): return [3, 12];
-                    case /cb plan/.test(command): return [3, 13];
-                    case /cb over/.test(command): return [3, 14];
-                    case /cb task/.test(command): return [3, 15];
-                    case /cb update report/.test(command): return [3, 16];
-                    case /cb help/.test(command): return [3, 20];
+                    case /cb tl/i.test(command): return [3, 1];
+                    case /cb convex/.test(command): return [3, 2];
+                    case /cb boss now/.test(command): return [3, 4];
+                    case /cb boss next/.test(command): return [3, 5];
+                    case /cb boss back/.test(command): return [3, 8];
+                    case /cb boss previous/.test(command): return [3, 8];
+                    case /cb boss/.test(command): return [3, 11];
+                    case /cb delete plan/.test(command): return [3, 13];
+                    case /cb plan/.test(command): return [3, 14];
+                    case /cb over/.test(command): return [3, 15];
+                    case /cb task/.test(command): return [3, 16];
+                    case /cb update report/.test(command): return [3, 17];
+                    case /cb help/.test(command): return [3, 21];
                 }
-                return [3, 21];
+                return [3, 22];
             case 1:
+                {
+                    arg = msg.content
+                        .split('\n')[0]
+                        .trim()
+                        .replace(/\/cb tl/i, '');
+                    console.log(arg);
+                    return [2, 'TL shaping'];
+                }
+                _b.label = 2;
+            case 2:
                 arg = command.replace('/cb convex ', '');
                 return [4, manage.Update(arg, msg)];
-            case 2:
+            case 3:
                 _b.sent();
                 return [2, 'Change of convex management'];
-            case 3:
+            case 4:
                 {
                     lapAndBoss.ProgressReport();
                     return [2, 'Show current boss'];
                 }
-                _b.label = 4;
-            case 4: return [4, lapAndBoss.Next()];
-            case 5:
+                _b.label = 5;
+            case 5: return [4, lapAndBoss.Next()];
+            case 6:
                 _b.sent();
                 return [4, status.Fetch()];
-            case 6:
+            case 7:
                 members = _b.sent();
                 situation.Report(members);
                 return [2, 'Advance to next lap and boss'];
-            case 7: return [4, lapAndBoss.Previous()];
-            case 8:
+            case 8: return [4, lapAndBoss.Previous()];
+            case 9:
                 _b.sent();
                 return [4, status.Fetch()];
-            case 9:
+            case 10:
                 members = _b.sent();
                 situation.Report(members);
                 return [2, 'Advance to previous lap and boss'];
-            case 10:
+            case 11:
                 arg = command.replace('/cb boss ', '');
                 return [4, changeBoss(arg, msg)];
-            case 11:
+            case 12:
                 _b.sent();
                 return [2, 'Change laps and boss'];
-            case 12:
+            case 13:
                 {
                     arg = command.replace('/cb delete plan ', '');
                     deletePlan(arg, msg);
                     return [2, 'Delete plan'];
                 }
-                _b.label = 13;
-            case 13:
+                _b.label = 14;
+            case 14:
                 {
                     arg = command.replace('/cb plan ', '');
                     planList(arg);
                     return [2, 'Display convex plan list'];
                 }
-                _b.label = 14;
-            case 14:
+                _b.label = 15;
+            case 15:
                 {
                     arg = command.replace('/cb over ', '');
                     simultConvexCalc(arg, msg);
                     return [2, 'Simultaneous convex carryover calculation'];
                 }
-                _b.label = 15;
-            case 15:
+                _b.label = 16;
+            case 16:
                 {
                     addTaskKillRoll(msg);
                     return [2, 'Add task kill roll'];
                 }
-                _b.label = 16;
-            case 16: return [4, status.Fetch()];
-            case 17:
+                _b.label = 17;
+            case 17: return [4, status.Fetch()];
+            case 18:
                 members = _b.sent();
                 situation.Report(members);
                 return [4, schedule.Fetch()];
-            case 18:
+            case 19:
                 plans = _b.sent();
                 return [4, list.SituationEdit(plans)];
-            case 19:
+            case 20:
                 _b.sent();
                 msg.reply('凸状況を更新したわよ！');
                 return [2, 'Convex situation updated'];
-            case 20:
+            case 21:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 21;
-            case 21: return [2];
+                _b.label = 22;
+            case 22: return [2];
         }
     });
 }); };
