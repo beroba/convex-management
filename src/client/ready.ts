@@ -14,17 +14,6 @@ export const Ready = async () => {
   // リアクションのキャッシュを取る
   fetch.React()
 
-  //   {
-  //     const channel = util.GetTextChannel('791537113459589192')
-  //     const msg = await channel.messages.fetch('806336380967190588')
-  //     msg.edit(`
-  // \`\`\`json
-  // [
-  // ]
-  // \`\`\`
-  // `)
-  //   }
-
   // const msg = await channel.send('名前の変更をしたわ')
   // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('きゃるぴょい🐴')
 

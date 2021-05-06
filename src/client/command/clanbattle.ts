@@ -2,10 +2,11 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
+import * as command from './'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
-// import * as format from '../convex/format'
+import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
@@ -23,22 +24,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
 
   switch (true) {
     case /cb tl/i.test(content): {
-      // tlController()
-      const arg = msg.content
-        .split('\n')[0]
-        .trim()
-        .replace(/\/cb tl/i, '')
-        .trim()
-
-      const time = ((arg: string): Option<string> => {
-        const t = arg.replace(/\.|;/g, ':')
-        const isNaN = Number.isNaN(Number(t.replace(':', '')))
-        return isNaN ? null : t
-      })(arg)
-
-      console.log(time)
-
-      // await format.TL(msg)
+      await tlController('/cb tl', content, msg)
       return 'TL shaping'
     }
 
@@ -127,6 +113,41 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Show help'
     }
   }
+}
+
+/**
+ * `/cb tl`のController
+ * @param _command 引数以外のコマンド部分
+ * @param content 入力された内容
+ * @param msg DiscordからのMessage
+ */
+const tlController = async (_command: string, content: string, msg: Discord.Message) => {
+  /**
+   * 引数からtimeを作成する、作成できない場合はnullを返す
+   * @param args 受け取った引数
+   * @returns time
+   */
+  const toTime = (args: string): Option<string> => {
+    // `.|;`を`:`に置き換える
+    const time = args.replace(/\.|;/g, ':')
+
+    // 引数の書式が正しい書式か確認
+    const isNaN = Number.isNaN(Number(time.replace(':', '')))
+
+    return isNaN ? null : time
+  }
+
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, content)
+
+  // TL部分の生成
+  const tl = msg.content.split('\n').slice(1).join('\n')
+
+  // timeを作成
+  const time = args && toTime(args)
+
+  // TLの整T形をする
+  await format.TL(tl, time, msg)
 }
 
 /**

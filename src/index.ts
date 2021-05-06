@@ -39,7 +39,7 @@ Client.on('messageReactionRemove', (react, user) => MessageReactionRemove(react,
 // メッセージが更新された際に実行
 Client.on('messageUpdate', (_, msg) => MessageUpdate(msg))
 
-// クーロンの内容
+// クーロンの処理
 CronOperation()
 
 Client.login(ThrowEnv('CAL_TOKEN'))

@@ -41,26 +41,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.TL = void 0;
 var moji_1 = __importDefault(require("moji"));
-var TL = function (msg, time) { return __awaiter(void 0, void 0, void 0, function () {
+var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
-        content = new generate(msg.content, time).zenkakuToHankaku().toString();
+        content = new generate(tl, time)
+            .zenkakuToHankaku()
+            .toString();
         msg.reply(content);
         return [2];
     });
 }); };
 exports.TL = TL;
 var generate = (function () {
-    function generate(content, time) {
-        this.content = content;
+    function generate(tl, time) {
+        this.tl = tl;
         this.time = time;
     }
     generate.prototype.zenkakuToHankaku = function () {
-        this.content = moji_1["default"](this.content).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+        this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
         return this;
     };
     generate.prototype.toString = function () {
-        return this.content;
+        return this.tl;
     };
     return generate;
 }());

@@ -70,7 +70,7 @@ var status = __importStar(require("../../io/status"));
 var category = __importStar(require("./category"));
 var activityTime = __importStar(require("../convex/activityTime"));
 var situation = __importStar(require("../convex/situation"));
-var Management = function (command, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var Management = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, _a, members, arg, arg, arg;
     var _b;
     return __generator(this, function (_c) {
@@ -83,17 +83,17 @@ var Management = function (command, msg) { return __awaiter(void 0, void 0, void
                     return [2];
                 _a = true;
                 switch (_a) {
-                    case /cb manage reflect/.test(command): return [3, 1];
-                    case /cb manage create category/.test(command): return [3, 7];
-                    case /cb manage delete category/.test(command): return [3, 8];
-                    case /cb manage set days/.test(command): return [3, 9];
-                    case /cb manage set boss/.test(command): return [3, 11];
-                    case /cb manage remove role/.test(command): return [3, 13];
-                    case /cb manage update members/.test(command): return [3, 14];
-                    case /cb manage update sisters/.test(command): return [3, 15];
-                    case /cb manage set react/.test(command): return [3, 16];
-                    case /cb manage reflect activity time/.test(command): return [3, 19];
-                    case /cb manage sheet/.test(command): return [3, 21];
+                    case /cb manage reflect/.test(content): return [3, 1];
+                    case /cb manage create category/.test(content): return [3, 7];
+                    case /cb manage delete category/.test(content): return [3, 8];
+                    case /cb manage set days/.test(content): return [3, 9];
+                    case /cb manage set boss/.test(content): return [3, 11];
+                    case /cb manage remove role/.test(content): return [3, 13];
+                    case /cb manage update members/.test(content): return [3, 14];
+                    case /cb manage update sisters/.test(content): return [3, 15];
+                    case /cb manage set react/.test(content): return [3, 16];
+                    case /cb manage reflect activity time/.test(content): return [3, 19];
+                    case /cb manage sheet/.test(content): return [3, 21];
                 }
                 return [3, 22];
             case 1: return [4, current.ReflectOnCal()];
@@ -116,20 +116,20 @@ var Management = function (command, msg) { return __awaiter(void 0, void 0, void
                 return [2, 'Reflect spreadsheet values ​​in Cal'];
             case 7:
                 {
-                    arg = command.replace('/cb manage create category', '');
+                    arg = content.replace('/cb manage create category', '');
                     category.Create(arg, msg);
                     return [2, 'Create ClanBattle category'];
                 }
                 _c.label = 8;
             case 8:
                 {
-                    arg = command.replace('/cb manage delete category', '');
+                    arg = content.replace('/cb manage delete category', '');
                     category.Delete(arg, msg);
                     return [2, 'Delete ClanBattle category'];
                 }
                 _c.label = 9;
             case 9:
-                arg = command.replace('/cb manage set days ', '');
+                arg = content.replace('/cb manage set days ', '');
                 return [4, dateTable.Update(arg)];
             case 10:
                 _c.sent();

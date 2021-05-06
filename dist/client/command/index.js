@@ -55,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.Command = void 0;
+exports.ExtractArgument = exports.Command = void 0;
 var util = __importStar(require("../../util"));
 var clanbattle_1 = require("./clanbattle");
 var management_1 = require("./management");
@@ -83,3 +83,12 @@ var Command = function (msg) { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 exports.Command = Command;
+var ExtractArgument = function (_command, content) {
+    var c = content
+        .split('\n')[0]
+        .trim()
+        .replace(new RegExp(_command, 'i'), '')
+        .trim();
+    return c || null;
+};
+exports.ExtractArgument = ExtractArgument;
