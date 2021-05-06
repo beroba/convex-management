@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -54,41 +35,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
-exports.ExtractArgument = exports.Command = void 0;
-var util = __importStar(require("../../util"));
-var clanbattle_1 = require("./clanbattle");
-var management_1 = require("./management");
-var Command = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var content, comment;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
-                    return [2];
-                content = util.Format(msg.content);
-                return [4, clanbattle_1.ClanBattle(content, msg)];
-            case 1:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [4, management_1.Management(content, msg)];
-            case 2:
-                comment = _b.sent();
-                if (comment)
-                    return [2, console.log(comment)];
-                return [2];
-        }
+exports.TL = void 0;
+var moji_1 = __importDefault(require("moji"));
+var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var content;
+    return __generator(this, function (_a) {
+        content = new generate(tl, time)
+            .zenkakuToHankaku()
+            .toString();
+        msg.reply(content);
+        return [2];
     });
 }); };
-exports.Command = Command;
-var ExtractArgument = function (_command, content) {
-    var c = content
-        .split('\n')[0]
-        .trim()
-        .replace(new RegExp(_command, 'i'), '')
-        .trim();
-    return c || null;
-};
-exports.ExtractArgument = ExtractArgument;
+exports.TL = TL;
+var generate = (function () {
+    function generate(tl, time) {
+        this.tl = tl;
+        this.time = time;
+    }
+    generate.prototype.zenkakuToHankaku = function () {
+        this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+        return this;
+    };
+    generate.prototype.toString = function () {
+        return this.tl;
+    };
+    return generate;
+}());
