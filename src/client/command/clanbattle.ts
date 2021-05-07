@@ -43,16 +43,13 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Advance to next lap and boss'
     }
 
-    case /cb boss back/.test(content):
+    case /cb boss back/.test(content): {
+      await bossBackController('/cb boss back', content, msg)
+      return 'Advance to previous lap and boss'
+    }
+
     case /cb boss previous/.test(content): {
-      // 前のボスに戻す
-      await lapAndBoss.Previous()
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
+      await bossPreviousController('/cb boss back', content, msg)
       return 'Advance to previous lap and boss'
     }
 
@@ -181,6 +178,40 @@ const bossNowController = async (_command: string, _content: string, _msg: Disco
 const bossNextController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 次のボスに進める
   await lapAndBoss.Next()
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 凸状況に報告
+  await situation.Report(members)
+}
+
+/**
+ * `/cb boss back`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossBackController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 前のボスに戻す
+  await lapAndBoss.Previous()
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 凸状況に報告
+  await situation.Report(members)
+}
+
+/**
+ * `/cb boss previous`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossPreviousController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 前のボスに戻す
+  await lapAndBoss.Previous()
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
