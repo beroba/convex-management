@@ -59,12 +59,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage update members/.test(content): {
-      // 管理者以外実行できないようにする
-      if (msg.author.id !== Settings.ADMIN_ID) {
-        msg.reply('botの管理者に更新して貰うように言ってね')
-        return
-      }
-      etc.UpdateMembers(msg)
+      await updateMembersController('/cb manage update members', content, msg)
       return 'Update convex management members'
     }
 
@@ -191,4 +186,23 @@ const removeRoleController = async (_command: string, _content: string, _msg: Di
   etc.RemoveRole()
 
   _msg.reply('凸残ロール全て外したわよ！')
+}
+
+/**
+ * `/cb manage update members`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const updateMembersController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 管理者以外実行できないようにする
+  if (_msg.author.id !== Settings.ADMIN_ID) {
+    _msg.reply('botの管理者に更新して貰うように言ってね')
+    return
+  }
+
+  // クランメンバーの更新をする
+  await etc.UpdateMembers(_msg)
+
+  _msg.reply('クランメンバー一覧を更新したわよ！')
 }

@@ -89,8 +89,6 @@ export const UpdateMembers = async (msg: Discord.Message) => {
 
   // スプレッドシートに名前とidを保存する
   await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  msg.reply('クランメンバー一覧を更新したわよ！')
 }
 
 /**
