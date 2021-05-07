@@ -1,16 +1,14 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {AtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
 import * as status from '../../io/status'
-import {User} from '../../io/type'
-import * as category from './category'
+import * as category from '../convex/category'
 import * as activityTime from '../convex/activityTime'
+import * as etc from '../convex/etc'
 import * as react from '../convex/react'
 import * as situation from '../convex/situation'
 
@@ -75,7 +73,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage remove role/.test(content): {
-      removeRole(msg)
+      etc.RemoveRole(msg)
       return 'Release all remaining convex rolls'
     }
 
@@ -85,12 +83,12 @@ export const Management = async (content: string, msg: Discord.Message): Promise
         msg.reply('botの管理者に更新して貰うように言ってね')
         return
       }
-      updateMembers(msg)
+      etc.UpdateMembers(msg)
       return 'Update convex management members'
     }
 
     case /cb manage update sisters/.test(content): {
-      updateSisters(msg)
+      etc.UpdateSisters(msg)
       return 'Update convex management sisters'
     }
 
@@ -114,95 +112,4 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'Show spreadsheet link'
     }
   }
-}
-
-/**
- * 凸残ロールを全て外す
- * @param msg DiscordからのMessage
- */
-const removeRole = (msg: Discord.Message) => {
-  // べろばあのクランメンバー一覧を取得
-  const clanMembers = util
-    .GetGuild()
-    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => m)
-
-  // クランメンバーの凸残ロールを全て外す
-  clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
-
-  msg.reply('凸残ロール全て外したわよ！')
-}
-
-/**
- * スプレッドシートのメンバー一覧を更新する
- * @param msg DiscordからのMessage
- */
-const updateMembers = async (msg: Discord.Message) => {
-  // クランメンバー一覧をニックネームで取得
-  const users: Option<User[]> = msg.guild?.roles.cache
-    .get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => ({
-      name: util.GetUserName(m),
-      id: m.id,
-      limit: '',
-    }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
-
-  // ステータスを更新
-  await status.UpdateUsers(users)
-  await util.Sleep(100)
-
-  // スプレッドシートに名前とidを保存する
-  await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  msg.reply('クランメンバー一覧を更新したわよ！')
-}
-
-/**
- * 妹クランのメンバー一覧を更新する
- * @param msg DiscordからのMessage
- */
-const updateSisters = async (msg: Discord.Message) => {
-  // 妹クランメンバー一覧をニックネームで取得
-  const users: Option<User[]> = msg.guild?.roles.cache
-    .get(Settings.ROLE_ID.SISTER_MEMBERS)
-    ?.members.map(m => ({
-      name: util.GetUserName(m),
-      id: m.id,
-      limit: '',
-    }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
-
-  // スプレッドシートに名前とidを保存する
-  await fetchNameAndID(users, Settings.SISTER_SHEET.SHEET_NAME)
-
-  msg.reply('妹クランメンバー一覧を更新したわよ！')
-}
-
-/**
- * 指定されたシートにメンバーの名前とidを保存する
- * @param members メンバーの情報
- * @param name 書き込むシートの名前
- */
-const fetchNameAndID = async (users: Option<User[]>, name: string) => {
-  // 値がない場合は終了
-  if (!users) return
-
-  // 書き込み先のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(name)
-
-  // メンバー一覧を更新
-  await Promise.all(
-    users.map(async (m, i) => {
-      const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
-
-      // 名前を更新
-      const name_cell = await sheet.getCell(`${col}${i + 3}`)
-      name_cell.setValue(m.name)
-
-      // idを更新
-      const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
-      id_cell.setValue(m.id)
-    })
-  )
 }

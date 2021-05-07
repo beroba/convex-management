@@ -23,7 +23,7 @@
       "src/client/messageReactionAdd.ts",
       "src/client/messageUpdate.ts",
       "src/client/ready.ts",
-        "src/client/command/category.ts",
+        "src/client/convex/category.ts",
         "src/client/command/clanbattle.ts",
         "src/client/command/index.ts",
         "src/client/command/management.ts",
