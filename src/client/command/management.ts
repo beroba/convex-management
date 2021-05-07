@@ -49,10 +49,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage set boss/.test(content): {
-      // ボステーブルを更新する
-      await bossTable.Update()
-
-      msg.reply('クランバトルのボステーブルを設定したわよ！')
+      await setBossController('/cb manage set boss', content, msg)
       return 'Set convex bossTable'
     }
 
@@ -168,4 +165,17 @@ const setDaysController = async (_command: string, _content: string, _msg: Disco
   await dateTable.Update(args)
 
   _msg.reply('クランバトルの日付を設定したわよ！')
+}
+
+/**
+ * `/cb manage set boss`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setBossController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // ボステーブルを更新する
+  await bossTable.Update()
+
+  _msg.reply('クランバトルのボステーブルを設定したわよ！')
 }
