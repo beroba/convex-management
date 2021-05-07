@@ -74,7 +74,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage reflect activity time/.test(content): {
-      await activityTime.ReflectOnSheet()
+      await reflectActivityTimeController('/cb manage reflect activity time', content, msg)
       return 'Reflect activity time on the sheet'
     }
 
@@ -227,6 +227,19 @@ const setReactController = async (_command: string, _content: string, _msg: Disc
 
   // #活動時間のチャンネルを取得
   await react.SetActivityTime()
+
+  _msg.reply('凸管理用の絵文字を設定したわよ！')
+}
+
+/**
+ * `/cb manage reflect activity time`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const reflectActivityTimeController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // スプレッドシートに反映
+  await activityTime.ReflectOnSheet()
 
   _msg.reply('凸管理用の絵文字を設定したわよ！')
 }
