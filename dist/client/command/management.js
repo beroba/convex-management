@@ -54,12 +54,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var command = __importStar(require("./"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var bossTable = __importStar(require("../../io/bossTable"));
@@ -71,7 +88,7 @@ var etc = __importStar(require("../convex/etc"));
 var react = __importStar(require("../convex/react"));
 var situation = __importStar(require("../convex/situation"));
 var Management = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, _a, members, arg, arg, arg;
+    var isRole, _a;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -84,69 +101,46 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
                 _a = true;
                 switch (_a) {
                     case /cb manage reflect/.test(content): return [3, 1];
-                    case /cb manage create category/.test(content): return [3, 7];
-                    case /cb manage delete category/.test(content): return [3, 8];
-                    case /cb manage set days/.test(content): return [3, 9];
-                    case /cb manage set boss/.test(content): return [3, 11];
-                    case /cb manage remove role/.test(content): return [3, 13];
-                    case /cb manage update members/.test(content): return [3, 14];
-                    case /cb manage update sisters/.test(content): return [3, 15];
-                    case /cb manage set react/.test(content): return [3, 16];
-                    case /cb manage reflect activity time/.test(content): return [3, 19];
-                    case /cb manage sheet/.test(content): return [3, 21];
+                    case /cb manage create category/.test(content): return [3, 3];
+                    case /cb manage delete category/.test(content): return [3, 5];
+                    case /cb manage set days/.test(content): return [3, 7];
+                    case /cb manage set boss/.test(content): return [3, 9];
+                    case /cb manage remove role/.test(content): return [3, 11];
+                    case /cb manage update members/.test(content): return [3, 12];
+                    case /cb manage update sisters/.test(content): return [3, 13];
+                    case /cb manage set react/.test(content): return [3, 14];
+                    case /cb manage reflect activity time/.test(content): return [3, 17];
+                    case /cb manage sheet/.test(content): return [3, 19];
                 }
-                return [3, 22];
-            case 1: return [4, current.ReflectOnCal()];
+                return [3, 20];
+            case 1: return [4, reflectController('/cb manage reflect', content, msg)];
             case 2:
                 _c.sent();
-                return [4, util.Sleep(100)];
-            case 3:
-                _c.sent();
-                return [4, status.ReflectOnCal()];
+                return [2, 'Reflect spreadsheet values ​​in Cal'];
+            case 3: return [4, createCategoryController('/cb manage create category', content, msg)];
             case 4:
                 _c.sent();
-                return [4, util.Sleep(100)];
-            case 5:
-                _c.sent();
-                return [4, status.Fetch()];
+                return [2, 'Create ClanBattle category'];
+            case 5: return [4, deleteCategoryController('/cb manage delete category', content, msg)];
             case 6:
-                members = _c.sent();
-                situation.Report(members);
-                msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
-                return [2, 'Reflect spreadsheet values ​​in Cal'];
-            case 7:
-                {
-                    arg = content.replace('/cb manage create category', '');
-                    category.Create(arg, msg);
-                    return [2, 'Create ClanBattle category'];
-                }
-                _c.label = 8;
-            case 8:
-                {
-                    arg = content.replace('/cb manage delete category', '');
-                    category.Delete(arg, msg);
-                    return [2, 'Delete ClanBattle category'];
-                }
-                _c.label = 9;
-            case 9:
-                arg = content.replace('/cb manage set days ', '');
-                return [4, dateTable.Update(arg)];
-            case 10:
                 _c.sent();
-                msg.reply('クランバトルの日付を設定したわよ！');
+                return [2, 'Delete ClanBattle category'];
+            case 7: return [4, setDaysController('/cb manage set days', content, msg)];
+            case 8:
+                _c.sent();
                 return [2, 'Set convex days'];
-            case 11: return [4, bossTable.Update()];
-            case 12:
+            case 9: return [4, bossTable.Update()];
+            case 10:
                 _c.sent();
                 msg.reply('クランバトルのボステーブルを設定したわよ！');
                 return [2, 'Set convex bossTable'];
-            case 13:
+            case 11:
                 {
                     etc.RemoveRole(msg);
                     return [2, 'Release all remaining convex rolls'];
                 }
-                _c.label = 14;
-            case 14:
+                _c.label = 12;
+            case 12:
                 {
                     if (msg.author.id !== const_settings_1["default"].ADMIN_ID) {
                         msg.reply('botの管理者に更新して貰うように言ってね');
@@ -155,33 +149,92 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
                     etc.UpdateMembers(msg);
                     return [2, 'Update convex management members'];
                 }
-                _c.label = 15;
-            case 15:
+                _c.label = 13;
+            case 13:
                 {
                     etc.UpdateSisters(msg);
                     return [2, 'Update convex management sisters'];
                 }
-                _c.label = 16;
-            case 16: return [4, react.SetDeclare()];
-            case 17:
+                _c.label = 14;
+            case 14: return [4, react.SetDeclare()];
+            case 15:
                 _c.sent();
                 return [4, react.SetActivityTime()];
-            case 18:
+            case 16:
                 _c.sent();
                 msg.reply('凸管理用の絵文字を設定したわよ！');
                 return [2, 'Set react for convex'];
-            case 19: return [4, activityTime.ReflectOnSheet()];
-            case 20:
+            case 17: return [4, activityTime.ReflectOnSheet()];
+            case 18:
                 _c.sent();
                 return [2, 'Reflect activity time on the sheet'];
-            case 21:
+            case 19:
                 {
                     msg.reply(const_settings_1["default"].URL.SPREADSHEET);
                     return [2, 'Show spreadsheet link'];
                 }
-                _c.label = 22;
-            case 22: return [2];
+                _c.label = 20;
+            case 20: return [2];
         }
     });
 }); };
 exports.Management = Management;
+var reflectController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, current.ReflectOnCal()];
+            case 1:
+                _a.sent();
+                return [4, util.Sleep(100)];
+            case 2:
+                _a.sent();
+                return [4, status.ReflectOnCal()];
+            case 3:
+                _a.sent();
+                return [4, util.Sleep(100)];
+            case 4:
+                _a.sent();
+                return [4, status.Fetch()];
+            case 5:
+                members = _a.sent();
+                situation.Report(members);
+                _msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
+                return [2];
+        }
+    });
+}); };
+var createCategoryController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, _a, year, month;
+    return __generator(this, function (_b) {
+        args = command.ExtractArgument(_command, _content);
+        _a = __read(args ? args.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], month = _a[1];
+        category.Create(year, month, _msg);
+        return [2];
+    });
+}); };
+var deleteCategoryController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, _a, year, month;
+    return __generator(this, function (_b) {
+        args = command.ExtractArgument(_command, _content);
+        if (!args)
+            return [2, _msg.reply('削除したい年と月を入力しなさい！')];
+        _a = __read(args.split('/').map(Number), 2), year = _a[0], month = _a[1];
+        category.Delete(year, month, _msg);
+        return [2];
+    });
+}); };
+var setDaysController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                args = command.ExtractArgument(_command, _content);
+                return [4, dateTable.Update(args)];
+            case 1:
+                _a.sent();
+                _msg.reply('クランバトルの日付を設定したわよ！');
+                return [2];
+        }
+    });
+}); };

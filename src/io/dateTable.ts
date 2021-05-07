@@ -8,14 +8,14 @@ import {DateTable} from './type'
 
 /**
  * 日付テーブルを設定する
- * @param arg 開始日の日付
+ * @param args 開始日の日付
  */
-export const Update = async (arg: string) => {
+export const Update = async (args: Option<string>) => {
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // 引数がある場合は日付を更新
-  if (arg !== '/cb manage set days') await setDate(arg, sheet)
+  if (args) await setDate(args, sheet)
 
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.DATE_CELLS)
 
@@ -34,12 +34,12 @@ export const Update = async (arg: string) => {
 
 /**
  * クランバトルの日付を引数に渡された開始日から設定する
- * @param arg 開始日の日付
+ * @param args 開始日の日付
  * @param sheet 情報のシート
  */
-const setDate = async (arg: string, sheet: any) => {
+const setDate = async (args: string, sheet: any) => {
   // 開始日から順番に日付の配列を作成
-  const days = Array.from(Array(5), (_, i) => `${arg.split('/')[0]}/${Number(arg.split('/')[1]) + i}`)
+  const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${Number(args.split('/').last()) + i}`)
 
   await Promise.all(
     // 日付を更新

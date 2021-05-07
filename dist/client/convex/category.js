@@ -77,23 +77,21 @@ exports.__esModule = true;
 exports.Delete = exports.Create = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var bossTable = __importStar(require("../../io/bossTable"));
-var Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, year, month, category, names;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _a = __read(arg ? arg.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], month = _a[1];
-                return [4, ((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.channels.create(year + "\u5E74" + month + "\u6708\u30AF\u30E9\u30D0\u30C8", {
-                        type: 'category',
-                        position: const_settings_1["default"].CATEGORY.POSITION,
-                        permissionOverwrites: settingPermissions(msg)
-                    }))];
+var Create = function (year, month, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var category, names;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(year + "\u5E74" + month + "\u6708\u30AF\u30E9\u30D0\u30C8", {
+                    type: 'category',
+                    position: const_settings_1["default"].CATEGORY.POSITION,
+                    permissionOverwrites: settingPermissions(msg)
+                }))];
             case 1:
-                category = _c.sent();
+                category = _b.sent();
                 return [4, createChannelName(month)];
             case 2:
-                names = _c.sent();
+                names = _b.sent();
                 return [4, Promise.all(names.map(function (name) { return __awaiter(void 0, void 0, void 0, function () {
                         var c;
                         var _a;
@@ -108,26 +106,32 @@ var Create = function (arg, msg) { return __awaiter(void 0, void 0, void 0, func
                         });
                     }); }))];
             case 3:
-                _c.sent();
+                _b.sent();
                 msg.reply(year + "\u5E74" + month + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u4F5C\u6210\u3057\u305F\u308F\u3088\uFF01");
                 return [2];
         }
     });
 }); };
 exports.Create = Create;
-var Delete = function (arg, msg) {
+var Delete = function (year, month, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var category, channels;
     var _a;
-    var _b = __read(arg.split('/').map(Number), 2), year = _b[0], day = _b[1];
-    if (!year)
-        return msg.reply('ちゃんと年と月を入力しなさい');
-    var category = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.find(function (c) { return c.name === year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8"; });
-    if (!category)
-        return msg.reply(year + "\u5E74" + day + "\u6708\u30AF\u30E9\u30D0\u30C8\u306A\u3093\u3066\u306A\u3044\u3093\u3060\u3051\u3069\uFF01");
-    var channels = category.guild.channels.cache.filter(function (c) { return c.parentID === category.id; });
-    category === null || category === void 0 ? void 0 : category["delete"]();
-    channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
-    msg.reply(year + "\u5E74" + day + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
-};
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                category = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.find(function (c) { return c.name === year + "\u5E74" + month + "\u6708\u30AF\u30E9\u30D0\u30C8"; });
+                if (!category)
+                    return [2, msg.reply(year + "\u5E74" + month + "\u6708\u30AF\u30E9\u30D0\u30C8\u306A\u3093\u3066\u306A\u3044\u3093\u3060\u3051\u3069\uFF01")];
+                channels = category.guild.channels.cache.filter(function (c) { return c.parentID === category.id; });
+                return [4, (category === null || category === void 0 ? void 0 : category["delete"]())];
+            case 1:
+                _b.sent();
+                channels === null || channels === void 0 ? void 0 : channels.forEach(function (c) { return setTimeout(function () { return c["delete"](); }, 1000); });
+                msg.reply(year + "\u5E74" + month + "\u6708\u306E\u30AB\u30C6\u30B4\u30EA\u30FC\u3092\u524A\u9664\u3057\u305F\u308F");
+                return [2];
+        }
+    });
+}); };
 exports.Delete = Delete;
 var settingPermissions = function (msg) {
     var _a, _b, _c, _d, _e, _f;

@@ -44,11 +44,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage set days/.test(content): {
-      const arg = content.replace('/cb manage set days ', '')
-      // 日付テーブルを更新する
-      await dateTable.Update(arg)
-
-      msg.reply('クランバトルの日付を設定したわよ！')
+      await setDaysController('/cb manage set days', content, msg)
       return 'Set convex days'
     }
 
@@ -156,4 +152,20 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
   const [year, month] = args.split('/').map(Number)
 
   category.Delete(year, month, _msg)
+}
+
+/**
+ * `/cb manage set days`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setDaysController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 日付テーブルを更新する
+  await dateTable.Update(args)
+
+  _msg.reply('クランバトルの日付を設定したわよ！')
 }
