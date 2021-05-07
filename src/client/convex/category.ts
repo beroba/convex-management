@@ -5,13 +5,11 @@ import * as bossTable from '../../io/bossTable'
 /**
  * クラバト用のカテゴリーとチャンネルを作成する
  * 引数がある場合は引数の年と日で作成し、ない場合は現在の年と日で作成する
- * @param arg 作成する年と月
+ * @param year 作成する年
+ * @param month 作成する月
  * @param msg DiscordからのMessage
  */
-export const Create = async (arg: string, msg: Discord.Message) => {
-  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と月を代入
-  const [year, month] = arg ? arg.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
-
+export const Create = async (year: number, month: number, msg: Discord.Message) => {
   // カテゴリーの作成
   const category = await msg.guild?.channels.create(`${year}年${month}月クラバト`, {
     type: 'category',

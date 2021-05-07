@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as command from './'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as bossTable from '../../io/bossTable'
@@ -33,8 +34,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage create category/.test(content): {
-      const arg = content.replace('/cb manage create category', '')
-      category.Create(arg, msg)
+      createCategoryController('/cb manage create category', content, msg)
       return 'Create ClanBattle category'
     }
 
@@ -122,4 +122,20 @@ const reflectController = async (_command: string, _content: string, _msg: Disco
   situation.Report(members)
 
   _msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
+}
+
+/**
+ * `/cb manage create category`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const createCategoryController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と月を代入
+  const [year, month] = args ? args.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
+
+  category.Create(year, month, _msg)
 }
