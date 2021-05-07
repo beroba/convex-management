@@ -6,6 +6,7 @@ import * as command from './'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
+import * as etc from '../convex/etc'
 import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
@@ -69,8 +70,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb over/.test(content): {
-      const arg = content.replace('/cb over ', '')
-      simultConvexCalc(arg, msg)
+      await overController('/cb over', content, msg)
       return 'Simultaneous convex carryover calculation'
     }
 
@@ -303,25 +303,24 @@ const planController = async (_command: string, _content: string, _msg: Discord.
 }
 
 /**
- * 同時凸の持ち越し計算を行う
- * @param arg HPとダメージA・B
- * @param msg DiscordからのMessage
+ * `/cb over`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const simultConvexCalc = (arg: string, msg: Discord.Message) => {
-  const [HP, A, B] = arg.replace(/　/g, ' ').split(' ').map(Number)
-  const word = 'ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！'
-  msg.reply(`\`\`\`A ${overCalc(HP, A, B)}s\nB ${overCalc(HP, B, A)}s\`\`\`${word}`)
-}
+const overController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
 
-/**
- * 持ち越しの計算をする
- * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
- * @param HP ボスのHP
- * @param a AのHP
- * @param b BのHP
- * @return 計算結果
- */
-const overCalc = (HP: number, a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('HP A Bを指定しなさい')
+
+  // HP, A, Bを分割して代入
+  const [HP, A, B] = util.Format(args).split(' ').map(Number)
+
+  // 計算結果を出力
+  etc.SimultConvexCalc(HP, A, B, _msg)
+}
 
 /**
  * メッセージ送信者にタスキルロールを付与する

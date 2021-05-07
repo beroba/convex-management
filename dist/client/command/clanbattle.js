@@ -81,13 +81,14 @@ var command = __importStar(require("./"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
 var schedule = __importStar(require("../../io/schedule"));
+var etc = __importStar(require("../convex/etc"));
 var format = __importStar(require("../convex/format"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, members, plans;
+    var _a, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -105,11 +106,11 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
                     case /cb delete plan/.test(content): return [3, 15];
                     case /cb plan/.test(content): return [3, 17];
                     case /cb over/.test(content): return [3, 19];
-                    case /cb task/.test(content): return [3, 20];
-                    case /cb update report/.test(content): return [3, 21];
-                    case /cb help/.test(content): return [3, 25];
+                    case /cb task/.test(content): return [3, 21];
+                    case /cb update report/.test(content): return [3, 22];
+                    case /cb help/.test(content): return [3, 26];
                 }
-                return [3, 26];
+                return [3, 27];
             case 1: return [4, tlController('/cb tl', content, msg)];
             case 2:
                 _b.sent();
@@ -146,38 +147,35 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 18:
                 _b.sent();
                 return [2, 'Display convex plan list'];
-            case 19:
-                {
-                    arg = content.replace('/cb over ', '');
-                    simultConvexCalc(arg, msg);
-                    return [2, 'Simultaneous convex carryover calculation'];
-                }
-                _b.label = 20;
+            case 19: return [4, overController('/cb over', content, msg)];
             case 20:
+                _b.sent();
+                return [2, 'Simultaneous convex carryover calculation'];
+            case 21:
                 {
                     addTaskKillRoll(msg);
                     return [2, 'Add task kill roll'];
                 }
-                _b.label = 21;
-            case 21: return [4, status.Fetch()];
-            case 22:
+                _b.label = 22;
+            case 22: return [4, status.Fetch()];
+            case 23:
                 members = _b.sent();
                 situation.Report(members);
                 return [4, schedule.Fetch()];
-            case 23:
+            case 24:
                 plans = _b.sent();
                 return [4, list.SituationEdit(plans)];
-            case 24:
+            case 25:
                 _b.sent();
                 msg.reply('凸状況を更新したわよ！');
                 return [2, 'Convex situation updated'];
-            case 25:
+            case 26:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 26;
-            case 26: return [2];
+                _b.label = 27;
+            case 27: return [2];
         }
     });
 }); };
@@ -348,12 +346,17 @@ var planController = function (_command, _content, _msg) { return __awaiter(void
         return [2];
     });
 }); };
-var simultConvexCalc = function (arg, msg) {
-    var _a = __read(arg.replace(/　/g, ' ').split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
-    var word = 'ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！';
-    msg.reply("```A " + overCalc(HP, A, B) + "s\nB " + overCalc(HP, B, A) + "s```" + word);
-};
-var overCalc = function (HP, a, b) { return Math.ceil(90 - (((HP - a) * 90) / b - 20)); };
+var overController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, _a, HP, A, B;
+    return __generator(this, function (_b) {
+        args = command.ExtractArgument(_command, _content);
+        if (!args)
+            return [2, _msg.reply('HP A Bを指定しなさい')];
+        _a = __read(util.Format(args).split(' ').map(Number), 3), HP = _a[0], A = _a[1], B = _a[2];
+        etc.SimultConvexCalc(HP, A, B, _msg);
+        return [2];
+    });
+}); };
 var addTaskKillRoll = function (msg) {
     var _a;
     var isRole = util.IsRole(msg.member, const_settings_1["default"].ROLE_ID.TASK_KILL);
