@@ -104,7 +104,7 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 
   // メンバーが存在しない場合はundefinedを返す
   const member = members.filter(s => s.id === id)
-  return member.length === 0 ? undefined : member[0]
+  return member.length === 0 ? undefined : member.first()
 }
 
 /**

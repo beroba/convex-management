@@ -263,7 +263,7 @@ export const NikuPicture = (msg: Discord.Message): Option<string> => {
   if (msg.channel.id !== Settings.CHANNEL_ID.NIKU) return
 
   // メッセージに画像があるか確認する
-  const url = msg.attachments.map(a => a.url)[0]
+  const url = msg.attachments.map(a => a.url).first()
   if (!url) return
 
   // 肉の絵文字をつける

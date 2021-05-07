@@ -56,7 +56,8 @@ export const SetUser = async (state: Current) => {
 const createDeclareList = async (plans: Plan[], emoji: Emoji[]): Promise<string[]> => {
   // prettier-ignore
   const convex = (await Promise.all(
-    emoji.filter(e => e.name === 'totu')[0]
+    emoji.filter(e => e.name === 'totu')
+      .first()
       .users
       .map(u => status.FetchMember(u.id)))
     ).filter(m => m)
