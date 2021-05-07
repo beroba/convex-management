@@ -60,15 +60,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var status = __importStar(require("../../io/status"));
-var category = __importStar(require("./category"));
+var category = __importStar(require("../convex/category"));
 var activityTime = __importStar(require("../convex/activityTime"));
+var etc = __importStar(require("../convex/etc"));
+var react = __importStar(require("../convex/react"));
 var situation = __importStar(require("../convex/situation"));
 var Management = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var isRole, _a, members, arg, arg, arg;
@@ -142,7 +142,7 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
                 return [2, 'Set convex bossTable'];
             case 13:
                 {
-                    removeRole(msg);
+                    etc.RemoveRole(msg);
                     return [2, 'Release all remaining convex rolls'];
                 }
                 _c.label = 14;
@@ -152,20 +152,20 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
                         msg.reply('botの管理者に更新して貰うように言ってね');
                         return [2];
                     }
-                    updateMembers(msg);
+                    etc.UpdateMembers(msg);
                     return [2, 'Update convex management members'];
                 }
                 _c.label = 15;
             case 15:
                 {
-                    updateSisters(msg);
+                    etc.UpdateSisters(msg);
                     return [2, 'Update convex management sisters'];
                 }
                 _c.label = 16;
-            case 16: return [4, setReactForDeclare()];
+            case 16: return [4, react.SetDeclare()];
             case 17:
                 _c.sent();
-                return [4, setReactForActivityTime()];
+                return [4, react.SetActivityTime()];
             case 18:
                 _c.sent();
                 msg.reply('凸管理用の絵文字を設定したわよ！');
@@ -185,217 +185,3 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.Management = Management;
-var removeRole = function (msg) {
-    var _a, _b;
-    var clanMembers = (_b = (_a = util
-        .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
-    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
-    msg.reply('凸残ロール全て外したわよ！');
-};
-var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
-                    name: util.GetUserName(m),
-                    id: m.id,
-                    limit: ''
-                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                return [4, status.UpdateUsers(users)];
-            case 1:
-                _c.sent();
-                return [4, util.Sleep(100)];
-            case 2:
-                _c.sent();
-                return [4, fetchNameAndID(users, const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 3:
-                _c.sent();
-                msg.reply('クランメンバー一覧を更新したわよ！');
-                return [2];
-        }
-    });
-}); };
-var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
-                    name: util.GetUserName(m),
-                    id: m.id,
-                    limit: ''
-                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
-            case 1:
-                _c.sent();
-                msg.reply('妹クランメンバー一覧を更新したわよ！');
-                return [2];
-        }
-    });
-}); };
-var fetchNameAndID = function (users, name) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (!users)
-                    return [2];
-                return [4, spreadsheet.GetWorksheet(name)];
-            case 1:
-                sheet = _a.sent();
-                return [4, Promise.all(users.map(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var col, name_cell, id_cell;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
-                                    return [4, sheet.getCell("" + col + (i + 3))];
-                                case 1:
-                                    name_cell = _a.sent();
-                                    name_cell.setValue(m.name);
-                                    return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
-                                case 2:
-                                    id_cell = _a.sent();
-                                    id_cell.setValue(m.id);
-                                    return [2];
-                            }
-                        });
-                    }); }))];
-            case 2:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-var setReactForDeclare = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, declare;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
-            case 1:
-                declare = _a.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.TOTU)];
-            case 2:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-var setReactForActivityTime = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, awayIn, days, first, latter;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
-                return [4, channel.messages.fetch(const_settings_1["default"].ACTIVITY_TIME.AWAY_IN)];
-            case 1:
-                awayIn = _a.sent();
-                return [4, awayIn.react(const_settings_1["default"].EMOJI_ID.SHUSEKI)];
-            case 2:
-                _a.sent();
-                return [4, awayIn.react(const_settings_1["default"].EMOJI_ID.RISEKI)];
-            case 3:
-                _a.sent();
-                days = Object.values(const_settings_1["default"].ACTIVITY_TIME.DAYS);
-                Promise.all(days.map(function (id) { return __awaiter(void 0, void 0, void 0, function () {
-                    var day, emoji;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, channel.messages.fetch(id)];
-                            case 1:
-                                day = _a.sent();
-                                emoji = Object.values(const_settings_1["default"].ACTIVITY_TIME.EMOJI);
-                                Promise.all(emoji.map(function (id) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                                    return [2, day.react(id)];
-                                }); }); }));
-                                return [2];
-                        }
-                    });
-                }); }));
-                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
-            case 4:
-                first = _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._5)];
-            case 5:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._6)];
-            case 6:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._7)];
-            case 7:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._8)];
-            case 8:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._9)];
-            case 9:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._10)];
-            case 10:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._11)];
-            case 11:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._12)];
-            case 12:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._13)];
-            case 13:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._14)];
-            case 14:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._15)];
-            case 15:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._16)];
-            case 16:
-                _a.sent();
-                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
-            case 17:
-                latter = _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._17)];
-            case 18:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._18)];
-            case 19:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._19)];
-            case 20:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._20)];
-            case 21:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._21)];
-            case 22:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._22)];
-            case 23:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._23)];
-            case 24:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._0)];
-            case 25:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._1)];
-            case 26:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._2)];
-            case 27:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._3)];
-            case 28:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._4)];
-            case 29:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };

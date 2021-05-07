@@ -58,8 +58,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.AddTaskKillRoll = exports.SimultConvexCalc = void 0;
+exports.UpdateSisters = exports.UpdateMembers = exports.RemoveRole = exports.AddTaskKillRoll = exports.SimultConvexCalc = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
+var alphabet_to_number_1 = require("alphabet-to-number");
+var status = __importStar(require("../../io/status"));
+var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var util = __importStar(require("../../util"));
 var SimultConvexCalc = function (HP, A, B, msg) {
     var a = overCalc(HP, A, B);
@@ -90,3 +93,105 @@ var AddTaskKillRoll = function (msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.AddTaskKillRoll = AddTaskKillRoll;
+var RemoveRole = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var clanMembers;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                clanMembers = (_c = (_b = (_a = util
+                    .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; })) !== null && _c !== void 0 ? _c : [];
+                return [4, Promise.all(clanMembers.map(function (m) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, (m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX))];
+                            case 1: return [2, _a.sent()];
+                        }
+                    }); }); }))];
+            case 1:
+                _d.sent();
+                msg.reply('凸残ロール全て外したわよ！');
+                return [2];
+        }
+    });
+}); };
+exports.RemoveRole = RemoveRole;
+var UpdateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
+                    name: util.GetUserName(m),
+                    id: m.id,
+                    limit: ''
+                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
+                return [4, status.UpdateUsers(users)];
+            case 1:
+                _c.sent();
+                return [4, util.Sleep(100)];
+            case 2:
+                _c.sent();
+                return [4, fetchNameAndID(users, const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
+            case 3:
+                _c.sent();
+                msg.reply('クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+exports.UpdateMembers = UpdateMembers;
+var UpdateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
+                    name: util.GetUserName(m),
+                    id: m.id,
+                    limit: ''
+                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
+                return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
+            case 1:
+                _c.sent();
+                msg.reply('妹クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+exports.UpdateSisters = UpdateSisters;
+var fetchNameAndID = function (users, name) { return __awaiter(void 0, void 0, void 0, function () {
+    var sheet;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!users)
+                    return [2];
+                return [4, spreadsheet.GetWorksheet(name)];
+            case 1:
+                sheet = _a.sent();
+                return [4, Promise.all(users.map(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
+                        var col, name_cell, id_cell;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
+                                    return [4, sheet.getCell("" + col + (i + 3))];
+                                case 1:
+                                    name_cell = _a.sent();
+                                    name_cell.setValue(m.name);
+                                    return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
+                                case 2:
+                                    id_cell = _a.sent();
+                                    id_cell.setValue(m.id);
+                                    return [2];
+                            }
+                        });
+                    }); }))];
+            case 2:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
