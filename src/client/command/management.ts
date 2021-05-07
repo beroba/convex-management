@@ -28,18 +28,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
 
   switch (true) {
     case /cb manage reflect/.test(content): {
-      // スプレッドシートの値を反映
-      await current.ReflectOnCal()
-      await util.Sleep(100)
-      await status.ReflectOnCal()
-      await util.Sleep(100)
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
-      msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
+      reflectController('/cb manage reflect', content, msg)
       return 'Reflect spreadsheet values ​​in Cal'
     }
 
@@ -112,4 +101,25 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'Show spreadsheet link'
     }
   }
+}
+
+/**
+ * `/cb manage reflect`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const reflectController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // スプレッドシートの値を反映
+  await current.ReflectOnCal()
+  await util.Sleep(100)
+  await status.ReflectOnCal()
+  await util.Sleep(100)
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+  // 凸状況に報告
+  situation.Report(members)
+
+  _msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
 }
