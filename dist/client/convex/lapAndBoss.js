@@ -65,24 +65,19 @@ var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var declare = __importStar(require("../declare"));
 var Update = function (lap, alpha) { return __awaiter(void 0, void 0, void 0, function () {
-    var state;
+    var newState;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                if (!/\d/.test(lap))
-                    return [2, false];
-                if (!/[a-e]/i.test(alpha))
-                    return [2, false];
-                return [4, current.UpdateLapAndBoss(lap, alpha)];
+            case 0: return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 1:
-                state = _a.sent();
+                newState = _a.sent();
                 return [4, util.Sleep(100)];
             case 2:
                 _a.sent();
-                declare.ChangeBoss(state);
+                declare.ChangeBoss(newState);
                 exports.ProgressReport();
                 current.ReflectOnSheet();
-                return [2, true];
+                return [2];
         }
     });
 }); };

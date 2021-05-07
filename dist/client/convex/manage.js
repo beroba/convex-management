@@ -69,10 +69,6 @@ var Update = function (state, msg) { return __awaiter(void 0, void 0, void 0, fu
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!/^(0|[1-3]\+?)$/.test(state)) {
-                    msg.reply('凸状況の書式が違うわ');
-                    return [2];
-                }
                 user = msg.mentions.users.first();
                 if (!user) {
                     msg.reply('メンションで誰の凸状況を変更したいか指定しなさい');

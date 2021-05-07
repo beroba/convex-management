@@ -59,8 +59,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb delete plan/.test(content): {
-      const arg = content.replace('/cb delete plan ', '')
-      deletePlan(arg, msg)
+      await deletePlanController('/cb delete plan', content, msg)
       return 'Delete plan'
     }
 
@@ -145,13 +144,19 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
  */
 const convexController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 引数を抽出
-  const args = command.ExtractArgument(_command, _content) ?? ''
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('更新したいプレイヤーと凸状況を指定しなさい')
 
   // 更新先の凸状況を取得
   const state = util
     .Format(args)
     .replace(/<.+>/, '') // プレイヤーIDを省く
     .trim()
+
+  // 凸状況の書式がおかしい場合は終了
+  if (!/^(0|[1-3]\+?)$/.test(state)) return _msg.reply('凸状況の書式が違うわ')
 
   // 凸状況を更新する
   await manage.Update(state, _msg)
@@ -227,15 +232,21 @@ const bossPreviousController = async (_command: string, _content: string, _msg: 
  */
 const bossController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 引数を抽出
-  const args = command.ExtractArgument(_command, _content) ?? ''
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('周回数とボス番号を指定しなさい')
 
   // 周回数とボス番号を取得
   const lap = util.Format(args).replace(/\s|[a-e]/gi, '')
   const alpha = util.Format(args).replace(/\s|\d/gi, '')
 
+  // 書式が違う場合は終了
+  if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ')
+  if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
+
   // 任意のボスへ移動させる
-  const result = await lapAndBoss.Update(lap, alpha)
-  if (!result) return _msg.reply('形式が違うわ、やりなおし！')
+  await lapAndBoss.Update(lap, alpha)
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
@@ -245,16 +256,20 @@ const bossController = async (_command: string, _content: string, _msg: Discord.
 }
 
 /**
- * 引数に渡されたidの凸予定を消す
- * @param arg 凸予定を消すユーザーのidかメンション
- * @param msg DiscordからのMessage
+ * `/cb delete plan`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const deletePlan = async (arg: string, msg: Discord.Message) => {
+const deletePlanController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
   // 引数が無い場合は終了
-  if (arg === '/cb complete plan') return msg.reply('削除する凸予定のidを指定しないと消せないわ')
+  if (!args) return _msg.reply('削除する凸予定のidを指定しないと消せないわ')
 
   // メンションからユーザーidだけを取り除く
-  const id = util.Format(arg).replace(/[^0-9]/g, '')
+  const id = util.Format(args).replace(/[^0-9]/g, '')
 
   // 凸予定を削除する
   const [plans] = await schedule.Delete(id)
@@ -262,7 +277,7 @@ const deletePlan = async (arg: string, msg: Discord.Message) => {
   // 凸予定一覧を取得
   await list.SituationEdit(plans)
 
-  msg.reply('凸予定を削除したわ')
+  _msg.reply('凸予定を削除したわ')
 }
 
 /**

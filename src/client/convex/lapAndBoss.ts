@@ -7,27 +7,20 @@ import * as declare from '../declare'
 /**
  * 現在の周回数とボスを変更する
  * @param lap 周回数
- * @return Updateしたかの真偽値
  */
-export const Update = async (lap: string, alpha: string): Promise<boolean> => {
-  // 書式が違う場合は終了
-  if (!/\d/.test(lap)) return false
-  if (!/[a-e]/i.test(alpha)) return false
-
+export const Update = async (lap: string, alpha: string) => {
   // 現在の状況を更新
-  const state = await current.UpdateLapAndBoss(lap, alpha)
+  const newState = await current.UpdateLapAndBoss(lap, alpha)
   await util.Sleep(100)
 
   // 凸宣言のボスを変更
-  declare.ChangeBoss(state)
+  declare.ChangeBoss(newState)
 
   // 進行に現在のボスと周回数を報告
   ProgressReport()
 
   // 現在の状況をスプレッドシートに反映
   current.ReflectOnSheet()
-
-  return true
 }
 
 /**

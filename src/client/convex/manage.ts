@@ -12,12 +12,6 @@ import * as situation from './situation'
  * @param msg DiscordからのMessage
  */
 export const Update = async (state: string, msg: Discord.Message) => {
-  // 凸状況の書式がおかしい場合は終了
-  if (!/^(0|[1-3]\+?)$/.test(state)) {
-    msg.reply('凸状況の書式が違うわ')
-    return
-  }
-
   // 凸状況を更新するユーザーを取得する
   const user = msg.mentions.users.first()
   if (!user) {

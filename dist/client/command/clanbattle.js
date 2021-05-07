@@ -87,7 +87,7 @@ var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, arg, arg, members, plans;
+    var _a, arg, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -103,13 +103,13 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
                     case /cb boss previous/.test(content): return [3, 11];
                     case /cb boss/.test(content): return [3, 13];
                     case /cb delete plan/.test(content): return [3, 15];
-                    case /cb plan/.test(content): return [3, 16];
-                    case /cb over/.test(content): return [3, 17];
-                    case /cb task/.test(content): return [3, 18];
-                    case /cb update report/.test(content): return [3, 19];
-                    case /cb help/.test(content): return [3, 23];
+                    case /cb plan/.test(content): return [3, 17];
+                    case /cb over/.test(content): return [3, 18];
+                    case /cb task/.test(content): return [3, 19];
+                    case /cb update report/.test(content): return [3, 20];
+                    case /cb help/.test(content): return [3, 24];
                 }
-                return [3, 24];
+                return [3, 25];
             case 1: return [4, tlController('/cb tl', content, msg)];
             case 2:
                 _b.sent();
@@ -138,52 +138,49 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 14:
                 _b.sent();
                 return [2, 'Change laps and boss'];
-            case 15:
-                {
-                    arg = content.replace('/cb delete plan ', '');
-                    deletePlan(arg, msg);
-                    return [2, 'Delete plan'];
-                }
-                _b.label = 16;
+            case 15: return [4, deletePlanController('/cb delete plan', content, msg)];
             case 16:
+                _b.sent();
+                return [2, 'Delete plan'];
+            case 17:
                 {
                     arg = content.replace('/cb plan ', '');
                     planList(arg);
                     return [2, 'Display convex plan list'];
                 }
-                _b.label = 17;
-            case 17:
+                _b.label = 18;
+            case 18:
                 {
                     arg = content.replace('/cb over ', '');
                     simultConvexCalc(arg, msg);
                     return [2, 'Simultaneous convex carryover calculation'];
                 }
-                _b.label = 18;
-            case 18:
+                _b.label = 19;
+            case 19:
                 {
                     addTaskKillRoll(msg);
                     return [2, 'Add task kill roll'];
                 }
-                _b.label = 19;
-            case 19: return [4, status.Fetch()];
-            case 20:
+                _b.label = 20;
+            case 20: return [4, status.Fetch()];
+            case 21:
                 members = _b.sent();
                 situation.Report(members);
                 return [4, schedule.Fetch()];
-            case 21:
+            case 22:
                 plans = _b.sent();
                 return [4, list.SituationEdit(plans)];
-            case 22:
+            case 23:
                 _b.sent();
                 msg.reply('凸状況を更新したわよ！');
                 return [2, 'Convex situation updated'];
-            case 23:
+            case 24:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 24;
-            case 24: return [2];
+                _b.label = 25;
+            case 25: return [2];
         }
     });
 }); };
@@ -210,18 +207,21 @@ var tlController = function (_command, _content, _msg) { return __awaiter(void 0
 }); };
 var convexController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
     var args, state;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                args = (_a = command.ExtractArgument(_command, _content)) !== null && _a !== void 0 ? _a : '';
+                args = command.ExtractArgument(_command, _content);
+                if (!args)
+                    return [2, _msg.reply('更新したいプレイヤーと凸状況を指定しなさい')];
                 state = util
                     .Format(args)
                     .replace(/<.+>/, '')
                     .trim();
+                if (!/^(0|[1-3]\+?)$/.test(state))
+                    return [2, _msg.reply('凸状況の書式が違うわ')];
                 return [4, manage.Update(state, _msg)];
             case 1:
-                _b.sent();
+                _a.sent();
                 return [2];
         }
     });
@@ -288,44 +288,48 @@ var bossPreviousController = function (_command, _content, _msg) { return __awai
     });
 }); };
 var bossController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var args, lap, alpha, result, members;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var args, lap, alpha, members;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                args = (_a = command.ExtractArgument(_command, _content)) !== null && _a !== void 0 ? _a : '';
+                args = command.ExtractArgument(_command, _content);
+                if (!args)
+                    return [2, _msg.reply('周回数とボス番号を指定しなさい')];
                 lap = util.Format(args).replace(/\s|[a-e]/gi, '');
                 alpha = util.Format(args).replace(/\s|\d/gi, '');
+                if (!/\d/.test(lap))
+                    return [2, _msg.reply('周回数の書式が違うわ')];
+                if (!/[a-e]/i.test(alpha))
+                    return [2, _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')];
                 return [4, lapAndBoss.Update(lap, alpha)];
             case 1:
-                result = _b.sent();
-                if (!result)
-                    return [2, _msg.reply('形式が違うわ、やりなおし！')];
+                _a.sent();
                 return [4, status.Fetch()];
             case 2:
-                members = _b.sent();
+                members = _a.sent();
                 return [4, situation.Report(members)];
             case 3:
-                _b.sent();
+                _a.sent();
                 return [2];
         }
     });
 }); };
-var deletePlan = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, plans;
+var deletePlanController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, id, _a, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (arg === '/cb complete plan')
-                    return [2, msg.reply('削除する凸予定のidを指定しないと消せないわ')];
-                id = util.Format(arg).replace(/[^0-9]/g, '');
+                args = command.ExtractArgument(_command, _content);
+                if (!args)
+                    return [2, _msg.reply('削除する凸予定のidを指定しないと消せないわ')];
+                id = util.Format(args).replace(/[^0-9]/g, '');
                 return [4, schedule.Delete(id)];
             case 1:
                 _a = __read.apply(void 0, [_b.sent(), 1]), plans = _a[0];
                 return [4, list.SituationEdit(plans)];
             case 2:
                 _b.sent();
-                msg.reply('凸予定を削除したわ');
+                _msg.reply('凸予定を削除したわ');
                 return [2];
         }
     });
