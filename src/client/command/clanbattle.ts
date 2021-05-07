@@ -34,8 +34,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb boss now/.test(content): {
-      // #進行に現在の周回数とボスを報告
-      lapAndBoss.ProgressReport()
+      await bossNowController('/cb boss now', content, msg)
       return 'Show current boss'
     }
 
@@ -117,10 +116,10 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
 /**
  * `/cb tl`のController
  * @param _command 引数以外のコマンド部分
- * @param content 入力された内容
- * @param msg DiscordからのMessage
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const tlController = async (_command: string, content: string, msg: Discord.Message) => {
+const tlController = async (_command: string, _content: string, _msg: Discord.Message) => {
   /**
    * 引数からtimeを作成する、作成できない場合はnullを返す
    * @param args 受け取った引数
@@ -137,27 +136,27 @@ const tlController = async (_command: string, content: string, msg: Discord.Mess
   }
 
   // 引数を抽出
-  const args = command.ExtractArgument(_command, content)
+  const args = command.ExtractArgument(_command, _content)
 
   // TL部分の生成
-  const tl = msg.content.split('\n').slice(1).join('\n')
+  const tl = _msg.content.split('\n').slice(1).join('\n')
 
   // timeを作成
   const time = args && toTime(args)
 
   // TLの整形をする
-  await format.TL(tl, time, msg)
+  await format.TL(tl, time, _msg)
 }
 
 /**
  * `/cb convex`のController
  * @param _command 引数以外のコマンド部分
- * @param content 入力された内容
- * @param msg DiscordからのMessage
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const convexController = async (_command: string, content: string, msg: Discord.Message) => {
+const convexController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 引数を抽出
-  const args = command.ExtractArgument(_command, content)
+  const args = command.ExtractArgument(_command, _content)
 
   // 更新先の凸状況を取得
   const state = util
@@ -166,7 +165,18 @@ const convexController = async (_command: string, content: string, msg: Discord.
     .trim()
 
   // 凸状況を更新する
-  await manage.Update(state, msg)
+  await manage.Update(state, _msg)
+}
+
+/**
+ * `/cb boss now`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossNowController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // #進行に現在の周回数とボスを報告
+  await lapAndBoss.ProgressReport()
 }
 
 /**
