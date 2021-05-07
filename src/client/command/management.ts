@@ -29,18 +29,17 @@ export const Management = async (content: string, msg: Discord.Message): Promise
 
   switch (true) {
     case /cb manage reflect/.test(content): {
-      reflectController('/cb manage reflect', content, msg)
+      await reflectController('/cb manage reflect', content, msg)
       return 'Reflect spreadsheet values ​​in Cal'
     }
 
     case /cb manage create category/.test(content): {
-      createCategoryController('/cb manage create category', content, msg)
+      await createCategoryController('/cb manage create category', content, msg)
       return 'Create ClanBattle category'
     }
 
     case /cb manage delete category/.test(content): {
-      const arg = content.replace('/cb manage delete category', '')
-      category.Delete(arg, msg)
+      await deleteCategoryController('/cb manage delete category', content, msg)
       return 'Delete ClanBattle category'
     }
 
@@ -138,4 +137,23 @@ const createCategoryController = async (_command: string, _content: string, _msg
   const [year, month] = args ? args.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
 
   category.Create(year, month, _msg)
+}
+
+/**
+ * `/cb manage delete category`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const deleteCategoryController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('削除したい年と月を入力しなさい！')
+
+  // 年と月がない場合終了
+  const [year, month] = args.split('/').map(Number)
+
+  category.Delete(year, month, _msg)
 }
