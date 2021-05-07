@@ -43,7 +43,7 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   await msg.member?.roles.remove(Settings.ROLE_ID.PLAYER_ID_SEND)
 
   // 画像のURLを取得
-  const url = msg.attachments.map(a => a.url)[0]
+  const url = msg.attachments.map(a => a.url).first()
 
   // #プレイヤーidリストにメッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)

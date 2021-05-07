@@ -35,7 +35,7 @@ export const Command = async (msg: Discord.Message) => {
 export const ExtractArgument = (_command: string, content: string): Option<string> => {
   const c = content
     .split('\n') // 改行で分割
-    [0] // 先頭の行だけ取り出す
+    .first() // 先頭の行だけ取り出す
     .trim() // 前後の空白を削除
     .replace(new RegExp(_command, 'i'), '') // コマンド部分を削除
     .trim() // 前後の空白を削除

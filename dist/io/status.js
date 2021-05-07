@@ -170,7 +170,7 @@ var FetchMember = function (id) { return __awaiter(void 0, void 0, void 0, funct
             case 1:
                 members = _a.sent();
                 member = members.filter(function (s) { return s.id === id; });
-                return [2, member.length === 0 ? undefined : member[0]];
+                return [2, member.length === 0 ? undefined : member.first()];
         }
     });
 }); };

@@ -115,6 +115,6 @@ var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function 
 }); };
 exports.Convex = Convex;
 var formatConfirm = function (msg) {
-    var num = util.Format(msg.content).split(' ')[0];
+    var num = util.Format(msg.content).split(' ').first();
     return /[1-5]/.test(num);
 };

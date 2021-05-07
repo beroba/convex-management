@@ -64,6 +64,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 const formatConfirm = (msg: Discord.Message): boolean => {
   // prettier-ignore
-  const num = util.Format(msg.content).split(' ')[0]
+  const num = util.Format(msg.content).split(' ').first()
   return /[1-5]/.test(num)
 }

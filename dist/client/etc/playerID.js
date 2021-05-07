@@ -93,7 +93,7 @@ var Save = function (msg) { return __awaiter(void 0, void 0, void 0, function ()
                 return [4, ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.remove(const_settings_1["default"].ROLE_ID.PLAYER_ID_SEND))];
             case 1:
                 _c.sent();
-                url = msg.attachments.map(function (a) { return a.url; })[0];
+                url = msg.attachments.map(function (a) { return a.url; }).first();
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.PLAYER_ID_LIST);
                 content = util.Format(msg.content);
                 return [4, channel.send(util.GetUserName(msg.member) + "\n" + content, url ? { files: [url] } : {})];

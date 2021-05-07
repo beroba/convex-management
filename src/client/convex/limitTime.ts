@@ -112,7 +112,7 @@ const fetchLimit = async (id: string): Promise<string> => {
   const list = f.concat(l)
 
   // 1番後ろの値を取得、なければ空
-  return list[list.length - 1] !== undefined ? list[list.length - 1] : ''
+  return list.last() !== undefined ? list.last() : ''
 }
 
 /**
