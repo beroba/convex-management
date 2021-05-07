@@ -64,12 +64,11 @@ var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
 var limitTime = __importStar(require("./limitTime"));
 var situation = __importStar(require("./situation"));
-var Update = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var state, user, member, members;
+var Update = function (state, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, member, members;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                state = util.Format(arg).replace(/<.+>/, '').trim();
                 if (!/^(0|[1-3]\+?)$/.test(state)) {
                     msg.reply('凸状況の書式が違うわ');
                     return [2];

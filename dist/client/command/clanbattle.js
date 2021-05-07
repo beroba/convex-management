@@ -87,7 +87,7 @@ var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, members, members, arg, arg, arg, arg, members, plans;
+    var _a, members, members, arg, arg, arg, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -114,9 +114,7 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 2:
                 _b.sent();
                 return [2, 'TL shaping'];
-            case 3:
-                arg = content.replace('/cb convex ', '');
-                return [4, manage.Update(arg, msg)];
+            case 3: return [4, convexController('/cb convex', content, msg)];
             case 4:
                 _b.sent();
                 return [2, 'Change of convex management'];
@@ -212,6 +210,23 @@ var tlController = function (_command, content, msg) { return __awaiter(void 0, 
                 tl = msg.content.split('\n').slice(1).join('\n');
                 time = args && toTime(args);
                 return [4, format.TL(tl, time, msg)];
+            case 1:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var convexController = function (_command, content, msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, state;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                args = command.ExtractArgument(_command, content);
+                state = util
+                    .Format(args !== null && args !== void 0 ? args : '')
+                    .replace(/<.+>/, '')
+                    .trim();
+                return [4, manage.Update(state, msg)];
             case 1:
                 _a.sent();
                 return [2];

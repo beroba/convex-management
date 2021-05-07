@@ -29,8 +29,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb convex/.test(content): {
-      const arg = content.replace('/cb convex ', '')
-      await manage.Update(arg, msg)
+      await convexController('/cb convex', content, msg)
       return 'Change of convex management'
     }
 
@@ -146,8 +145,28 @@ const tlController = async (_command: string, content: string, msg: Discord.Mess
   // timeを作成
   const time = args && toTime(args)
 
-  // TLの整T形をする
+  // TLの整形をする
   await format.TL(tl, time, msg)
+}
+
+/**
+ * `/cb convex`のController
+ * @param _command 引数以外のコマンド部分
+ * @param content 入力された内容
+ * @param msg DiscordからのMessage
+ */
+const convexController = async (_command: string, content: string, msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, content)
+
+  // 更新先の凸状況を取得
+  const state = util
+    .Format(args ?? '')
+    .replace(/<.+>/, '') // プレイヤーIDを省く
+    .trim()
+
+  // 凸状況を更新する
+  await manage.Update(state, msg)
 }
 
 /**
