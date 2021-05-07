@@ -54,7 +54,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage remove role/.test(content): {
-      etc.RemoveRole(msg)
+      await removeRoleController('/cb manage remove role', content, msg)
       return 'Release all remaining convex rolls'
     }
 
@@ -178,4 +178,17 @@ const setBossController = async (_command: string, _content: string, _msg: Disco
   await bossTable.Update()
 
   _msg.reply('クランバトルのボステーブルを設定したわよ！')
+}
+
+/**
+ * `/cb manage remove role`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const removeRoleController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 凸残ロールを全て外す
+  etc.RemoveRole()
+
+  _msg.reply('凸残ロール全て外したわよ！')
 }
