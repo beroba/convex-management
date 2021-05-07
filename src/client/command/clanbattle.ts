@@ -54,8 +54,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb boss/.test(content): {
-      const arg = content.replace('/cb boss ', '')
-      await changeBoss(arg, msg)
+      await bossController('/cb boss', content, msg)
       return 'Change laps and boss'
     }
 
@@ -146,11 +145,11 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
  */
 const convexController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 引数を抽出
-  const args = command.ExtractArgument(_command, _content)
+  const args = command.ExtractArgument(_command, _content) ?? ''
 
   // 更新先の凸状況を取得
   const state = util
-    .Format(args ?? '')
+    .Format(args)
     .replace(/<.+>/, '') // プレイヤーIDを省く
     .trim()
 
@@ -221,19 +220,28 @@ const bossPreviousController = async (_command: string, _content: string, _msg: 
 }
 
 /**
- * 引数で指定した周回数とボスに変更する
- * @param arg 周回数とボス番号
- * @param msg DiscordからのMessage
+ * `/cb boss`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const changeBoss = async (arg: string, msg: Discord.Message) => {
+const bossController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content) ?? ''
+
+  // 周回数とボス番号を取得
+  const lap = util.Format(args).replace(/\s|[a-e]/gi, '')
+  const alpha = util.Format(args).replace(/\s|\d/gi, '')
+
   // 任意のボスへ移動させる
-  const result = await lapAndBoss.Update(arg)
-  if (!result) return msg.reply('形式が違うわ、やりなおし！')
+  const result = await lapAndBoss.Update(lap, alpha)
+  if (!result) return _msg.reply('形式が違うわ、やりなおし！')
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
+
   // 凸状況に報告
-  situation.Report(members)
+  await situation.Report(members)
 }
 
 /**

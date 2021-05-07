@@ -54,22 +54,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -80,22 +64,21 @@ var alphabet_to_number_1 = require("alphabet-to-number");
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var declare = __importStar(require("../declare"));
-var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, lap, alpha, state;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+var Update = function (lap, alpha) { return __awaiter(void 0, void 0, void 0, function () {
+    var state;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _a = __read(arg.replace(/　/g, ' ').split(' '), 2), lap = _a[0], alpha = _a[1];
                 if (!/\d/.test(lap))
                     return [2, false];
                 if (!/[a-e]/i.test(alpha))
                     return [2, false];
                 return [4, current.UpdateLapAndBoss(lap, alpha)];
             case 1:
-                state = _b.sent();
+                state = _a.sent();
                 return [4, util.Sleep(100)];
             case 2:
-                _b.sent();
+                _a.sent();
                 declare.ChangeBoss(state);
                 exports.ProgressReport();
                 current.ReflectOnSheet();

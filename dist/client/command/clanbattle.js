@@ -87,7 +87,7 @@ var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, arg, arg, arg, members, plans;
+    var _a, arg, arg, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -134,9 +134,7 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 12:
                 _b.sent();
                 return [2, 'Advance to previous lap and boss'];
-            case 13:
-                arg = content.replace('/cb boss ', '');
-                return [4, changeBoss(arg, msg)];
+            case 13: return [4, bossController('/cb boss', content, msg)];
             case 14:
                 _b.sent();
                 return [2, 'Change laps and boss'];
@@ -212,17 +210,18 @@ var tlController = function (_command, _content, _msg) { return __awaiter(void 0
 }); };
 var convexController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
     var args, state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                args = command.ExtractArgument(_command, _content);
+                args = (_a = command.ExtractArgument(_command, _content)) !== null && _a !== void 0 ? _a : '';
                 state = util
-                    .Format(args !== null && args !== void 0 ? args : '')
+                    .Format(args)
                     .replace(/<.+>/, '')
                     .trim();
                 return [4, manage.Update(state, _msg)];
             case 1:
-                _a.sent();
+                _b.sent();
                 return [2];
         }
     });
@@ -288,19 +287,26 @@ var bossPreviousController = function (_command, _content, _msg) { return __awai
         }
     });
 }); };
-var changeBoss = function (arg, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, members;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, lapAndBoss.Update(arg)];
+var bossController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, lap, alpha, result, members;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                args = (_a = command.ExtractArgument(_command, _content)) !== null && _a !== void 0 ? _a : '';
+                lap = util.Format(args).replace(/\s|[a-e]/gi, '');
+                alpha = util.Format(args).replace(/\s|\d/gi, '');
+                return [4, lapAndBoss.Update(lap, alpha)];
             case 1:
-                result = _a.sent();
+                result = _b.sent();
                 if (!result)
-                    return [2, msg.reply('形式が違うわ、やりなおし！')];
+                    return [2, _msg.reply('形式が違うわ、やりなおし！')];
                 return [4, status.Fetch()];
             case 2:
-                members = _a.sent();
-                situation.Report(members);
+                members = _b.sent();
+                return [4, situation.Report(members)];
+            case 3:
+                _b.sent();
                 return [2];
         }
     });

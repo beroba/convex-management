@@ -6,13 +6,10 @@ import * as declare from '../declare'
 
 /**
  * 現在の周回数とボスを変更する
- * @param arg 変更したい周回数とボス番号
+ * @param lap 周回数
  * @return Updateしたかの真偽値
  */
-export const Update = async (arg: string): Promise<boolean> => {
-  // 周回数とボス番号を取得
-  const [lap, alpha] = arg.replace(/　/g, ' ').split(' ')
-
+export const Update = async (lap: string, alpha: string): Promise<boolean> => {
   // 書式が違う場合は終了
   if (!/\d/.test(lap)) return false
   if (!/[a-e]/i.test(alpha)) return false
