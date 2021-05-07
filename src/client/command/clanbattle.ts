@@ -39,14 +39,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb boss next/.test(content): {
-      // 次のボスに進める
-      await lapAndBoss.Next()
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
+      await bossNextController('/cb boss next', content, msg)
       return 'Advance to next lap and boss'
     }
 
@@ -177,6 +170,23 @@ const convexController = async (_command: string, _content: string, _msg: Discor
 const bossNowController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // #進行に現在の周回数とボスを報告
   await lapAndBoss.ProgressReport()
+}
+
+/**
+ * `/cb boss next`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossNextController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 次のボスに進める
+  await lapAndBoss.Next()
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 凸状況に報告
+  await situation.Report(members)
 }
 
 /**

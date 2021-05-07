@@ -87,7 +87,7 @@ var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, members, members, arg, arg, arg, arg, members, plans;
+    var _a, members, arg, arg, arg, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -98,7 +98,7 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
                     case /cb tl/i.test(content): return [3, 1];
                     case /cb convex/.test(content): return [3, 3];
                     case /cb boss now/.test(content): return [3, 5];
-                    case /cb boss next/.test(content): return [3, 6];
+                    case /cb boss next/.test(content): return [3, 7];
                     case /cb boss back/.test(content): return [3, 9];
                     case /cb boss previous/.test(content): return [3, 9];
                     case /cb boss/.test(content): return [3, 12];
@@ -118,19 +118,13 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 4:
                 _b.sent();
                 return [2, 'Change of convex management'];
-            case 5:
-                {
-                    lapAndBoss.ProgressReport();
-                    return [2, 'Show current boss'];
-                }
-                _b.label = 6;
-            case 6: return [4, lapAndBoss.Next()];
-            case 7:
+            case 5: return [4, bossNowController('/cb boss now', content, msg)];
+            case 6:
                 _b.sent();
-                return [4, status.Fetch()];
+                return [2, 'Show current boss'];
+            case 7: return [4, bossNextController('/cb boss next', content, msg)];
             case 8:
-                members = _b.sent();
-                situation.Report(members);
+                _b.sent();
                 return [2, 'Advance to next lap and boss'];
             case 9: return [4, lapAndBoss.Previous()];
             case 10:
@@ -196,7 +190,7 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.ClanBattle = ClanBattle;
-var tlController = function (_command, content, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var tlController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
     var toTime, args, tl, time;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -206,28 +200,55 @@ var tlController = function (_command, content, msg) { return __awaiter(void 0, 
                     var isNaN = Number.isNaN(Number(time.replace(':', '')));
                     return isNaN ? null : time;
                 };
-                args = command.ExtractArgument(_command, content);
-                tl = msg.content.split('\n').slice(1).join('\n');
+                args = command.ExtractArgument(_command, _content);
+                tl = _msg.content.split('\n').slice(1).join('\n');
                 time = args && toTime(args);
-                return [4, format.TL(tl, time, msg)];
+                return [4, format.TL(tl, time, _msg)];
             case 1:
                 _a.sent();
                 return [2];
         }
     });
 }); };
-var convexController = function (_command, content, msg) { return __awaiter(void 0, void 0, void 0, function () {
+var convexController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
     var args, state;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                args = command.ExtractArgument(_command, content);
+                args = command.ExtractArgument(_command, _content);
                 state = util
                     .Format(args !== null && args !== void 0 ? args : '')
                     .replace(/<.+>/, '')
                     .trim();
-                return [4, manage.Update(state, msg)];
+                return [4, manage.Update(state, _msg)];
             case 1:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var bossNowController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, lapAndBoss.ProgressReport()];
+            case 1:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+var bossNextController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, lapAndBoss.Next()];
+            case 1:
+                _a.sent();
+                return [4, status.Fetch()];
+            case 2:
+                members = _a.sent();
+                return [4, situation.Report(members)];
+            case 3:
                 _a.sent();
                 return [2];
         }
