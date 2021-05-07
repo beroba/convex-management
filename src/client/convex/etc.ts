@@ -108,8 +108,6 @@ export const UpdateSisters = async (msg: Discord.Message) => {
 
   // スプレッドシートに名前とidを保存する
   await fetchNameAndID(users, Settings.SISTER_SHEET.SHEET_NAME)
-
-  msg.reply('妹クランメンバー一覧を更新したわよ！')
 }
 
 /**

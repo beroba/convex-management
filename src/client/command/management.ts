@@ -64,7 +64,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage update sisters/.test(content): {
-      etc.UpdateSisters(msg)
+      await updateSistersController('/cb manage update sisters', content, msg)
       return 'Update convex management sisters'
     }
 
@@ -205,4 +205,17 @@ const updateMembersController = async (_command: string, _content: string, _msg:
   await etc.UpdateMembers(_msg)
 
   _msg.reply('クランメンバー一覧を更新したわよ！')
+}
+
+/**
+ * `/cb manage update sisters`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const updateSistersController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 妹クランメンバーの更新をする
+  await etc.UpdateSisters(_msg)
+
+  _msg.reply('妹クランメンバー一覧を更新したわよ！')
 }
