@@ -6,6 +6,7 @@ import * as command from './'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
+import * as etc from '../convex/etc'
 import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
@@ -29,87 +30,67 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb convex/.test(content): {
-      const arg = content.replace('/cb convex ', '')
-      await manage.Update(arg, msg)
+      await convexController('/cb convex', content, msg)
       return 'Change of convex management'
     }
 
     case /cb boss now/.test(content): {
-      // #進行に現在の周回数とボスを報告
-      lapAndBoss.ProgressReport()
+      await bossNowController('/cb boss now', content, msg)
       return 'Show current boss'
     }
 
     case /cb boss next/.test(content): {
-      // 次のボスに進める
-      await lapAndBoss.Next()
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
+      await bossNextController('/cb boss next', content, msg)
       return 'Advance to next lap and boss'
     }
 
-    case /cb boss back/.test(content):
+    case /cb boss back/.test(content): {
+      await bossPreviousController('/cb boss back', content, msg)
+      return 'Advance to previous lap and boss'
+    }
+
     case /cb boss previous/.test(content): {
-      // 前のボスに戻す
-      await lapAndBoss.Previous()
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
+      await bossPreviousController('/cb boss previous', content, msg)
       return 'Advance to previous lap and boss'
     }
 
     case /cb boss/.test(content): {
-      const arg = content.replace('/cb boss ', '')
-      await changeBoss(arg, msg)
+      await bossController('/cb boss', content, msg)
       return 'Change laps and boss'
     }
 
     case /cb delete plan/.test(content): {
-      const arg = content.replace('/cb delete plan ', '')
-      deletePlan(arg, msg)
+      await deletePlanController('/cb delete plan', content, msg)
       return 'Delete plan'
     }
 
     case /cb plan/.test(content): {
-      const arg = content.replace('/cb plan ', '')
-      planList(arg)
+      await planController('/cb plan', content, msg)
       return 'Display convex plan list'
     }
 
     case /cb over/.test(content): {
-      const arg = content.replace('/cb over ', '')
-      simultConvexCalc(arg, msg)
+      await overController('/cb over', content, msg)
       return 'Simultaneous convex carryover calculation'
     }
 
     case /cb task/.test(content): {
-      addTaskKillRoll(msg)
+      await taskKillController('/cb task', content, msg)
+      return 'Add task kill roll'
+    }
+
+    case /cb kill/.test(content): {
+      await taskKillController('/cb kill', content, msg)
       return 'Add task kill roll'
     }
 
     case /cb update report/.test(content): {
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
-      // 凸予定一覧を取得
-      const plans = await schedule.Fetch()
-      await list.SituationEdit(plans)
-
-      msg.reply('凸状況を更新したわよ！')
+      await updateReportController('/cb update report', content, msg)
       return 'Convex situation updated'
     }
 
     case /cb help/.test(content): {
-      msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
+      await helpController('/cb help', content, msg)
       return 'Show help'
     }
   }
@@ -118,10 +99,10 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
 /**
  * `/cb tl`のController
  * @param _command 引数以外のコマンド部分
- * @param content 入力された内容
- * @param msg DiscordからのMessage
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const tlController = async (_command: string, content: string, msg: Discord.Message) => {
+const tlController = async (_command: string, _content: string, _msg: Discord.Message) => {
   /**
    * 引数からtimeを作成する、作成できない場合はnullを返す
    * @param args 受け取った引数
@@ -138,45 +119,135 @@ const tlController = async (_command: string, content: string, msg: Discord.Mess
   }
 
   // 引数を抽出
-  const args = command.ExtractArgument(_command, content)
+  const args = command.ExtractArgument(_command, _content)
 
   // TL部分の生成
-  const tl = msg.content.split('\n').slice(1).join('\n')
+  const tl = _msg.content.split('\n').slice(1).join('\n')
 
   // timeを作成
   const time = args && toTime(args)
 
-  // TLの整T形をする
-  await format.TL(tl, time, msg)
+  // TLの整形をする
+  await format.TL(tl, time, _msg)
 }
 
 /**
- * 引数で指定した周回数とボスに変更する
- * @param arg 周回数とボス番号
- * @param msg DiscordからのMessage
+ * `/cb convex`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const changeBoss = async (arg: string, msg: Discord.Message) => {
-  // 任意のボスへ移動させる
-  const result = await lapAndBoss.Update(arg)
-  if (!result) return msg.reply('形式が違うわ、やりなおし！')
+const convexController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('更新したいプレイヤーと凸状況を指定しなさい')
+
+  // 更新先の凸状況を取得
+  const state = util
+    .Format(args)
+    .replace(/<.+>/, '') // プレイヤーIDを省く
+    .trim()
+
+  // 凸状況の書式がおかしい場合は終了
+  if (!/^(0|[1-3]\+?)$/.test(state)) return _msg.reply('凸状況の書式が違うわ')
+
+  // 凸状況を更新する
+  await manage.Update(state, _msg)
+}
+
+/**
+ * `/cb boss now`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossNowController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // #進行に現在の周回数とボスを報告
+  await lapAndBoss.ProgressReport()
+}
+
+/**
+ * `/cb boss next`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossNextController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 次のボスに進める
+  await lapAndBoss.Next()
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
+
   // 凸状況に報告
-  situation.Report(members)
+  await situation.Report(members)
 }
 
 /**
- * 引数に渡されたidの凸予定を消す
- * @param arg 凸予定を消すユーザーのidかメンション
- * @param msg DiscordからのMessage
+ * `/cb boss previous`, `/cb boss previous`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const deletePlan = async (arg: string, msg: Discord.Message) => {
+const bossPreviousController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 前のボスに戻す
+  await lapAndBoss.Previous()
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 凸状況に報告
+  await situation.Report(members)
+}
+
+/**
+ * `/cb boss`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const bossController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
   // 引数が無い場合は終了
-  if (arg === '/cb complete plan') return msg.reply('削除する凸予定のidを指定しないと消せないわ')
+  if (!args) return _msg.reply('周回数とボス番号を指定しなさい')
+
+  // 周回数とボス番号を取得
+  const lap = util.Format(args).replace(/\s|[a-e]/gi, '')
+  const alpha = util.Format(args).replace(/\s|\d/gi, '')
+
+  // 書式が違う場合は終了
+  if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ')
+  if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
+
+  // 任意のボスへ移動させる
+  await lapAndBoss.Update(lap, alpha)
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 凸状況に報告
+  await situation.Report(members)
+}
+
+/**
+ * `/cb delete plan`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const deletePlanController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('削除する凸予定のidを指定しないと消せないわ')
 
   // メンションからユーザーidだけを取り除く
-  const id = util.Format(arg).replace(/[^0-9]/g, '')
+  const id = util.Format(args).replace(/[^0-9]/g, '')
 
   // 凸予定を削除する
   const [plans] = await schedule.Delete(id)
@@ -184,22 +255,26 @@ const deletePlan = async (arg: string, msg: Discord.Message) => {
   // 凸予定一覧を取得
   await list.SituationEdit(plans)
 
-  msg.reply('凸予定を削除したわ')
+  _msg.reply('凸予定を削除したわ')
 }
 
 /**
- * 凸予定一覧を表示する。
- * 引数にボス番号がある場合、そのボスの予定一覧を表示する
- * @param arg ボス番号
+ * `/cb plan`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const planList = async (arg: string) => {
+const planController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content) ?? ''
+
   // 引数にボス番号があるか確認
-  if (/^[a-e]$/i.test(arg)) {
+  if (/^[a-e]$/i.test(args)) {
     // ボス番号の凸予定一覧を表示
-    list.Output(arg)
-  } else if (/^[1-5]$/i.test(arg)) {
+    list.Output(args)
+  } else if (/^[1-5]$/i.test(args)) {
     // ボス番号の凸予定一覧を表示
-    list.Output(NtoA(arg))
+    list.Output(NtoA(args))
   } else {
     // 凸予定一覧を全て表示
     list.AllOutput()
@@ -207,40 +282,61 @@ const planList = async (arg: string) => {
 }
 
 /**
- * 同時凸の持ち越し計算を行う
- * @param arg HPとダメージA・B
- * @param msg DiscordからのMessage
+ * `/cb over`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const simultConvexCalc = (arg: string, msg: Discord.Message) => {
-  const [HP, A, B] = arg.replace(/　/g, ' ').split(' ').map(Number)
-  const word = 'ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！'
-  msg.reply(`\`\`\`A ${overCalc(HP, A, B)}s\nB ${overCalc(HP, B, A)}s\`\`\`${word}`)
+const overController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('HP A Bを指定しなさい')
+
+  // HP, A, Bを分割して代入
+  const [HP, A, B] = util.Format(args).split(' ').map(Number)
+
+  // 計算結果を出力
+  etc.SimultConvexCalc(HP, A, B, _msg)
 }
 
 /**
- * 持ち越しの計算をする
- * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
- * @param HP ボスのHP
- * @param a AのHP
- * @param b BのHP
- * @return 計算結果
+ * `/cb task`, `/cb kill`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const overCalc = (HP: number, a: number, b: number): number => Math.ceil(90 - (((HP - a) * 90) / b - 20))
+const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // タスキルのロールを付与する
+  etc.AddTaskKillRoll(_msg)
+}
 
 /**
- * メッセージ送信者にタスキルロールを付与する
- * @param msg DiscordからのMessage
+ * `/cb update report`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const addTaskKillRoll = (msg: Discord.Message) => {
-  // 既にタスキルしてるか確認する
-  const isRole = util.IsRole(msg.member, Settings.ROLE_ID.TASK_KILL)
+const updateReportController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+  situation.Report(members)
 
-  if (isRole) {
-    msg.reply('既にタスキルしてるわ')
-  } else {
-    // タスキルロールを付与する
-    msg.member?.roles.add(Settings.ROLE_ID.TASK_KILL)
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
 
-    msg.reply('タスキルロールを付けたわよ！')
-  }
+  _msg.reply('凸状況を更新したわよ！')
+}
+
+/**
+ * `/cb help`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const helpController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const url = 'https://github.com/beroba/convex-management/blob/master/docs/command.md'
+  _msg.reply('ここを確認しなさい！\n' + url)
 }

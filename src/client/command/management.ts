@@ -1,16 +1,16 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {AtoA} from 'alphabet-to-number'
+import * as command from './'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import * as spreadsheet from '../../util/spreadsheet'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
 import * as status from '../../io/status'
-import {User} from '../../io/type'
-import * as category from './category'
+import * as category from '../convex/category'
 import * as activityTime from '../convex/activityTime'
+import * as etc from '../convex/etc'
+import * as react from '../convex/react'
 import * as situation from '../convex/situation'
 
 /**
@@ -29,251 +29,212 @@ export const Management = async (content: string, msg: Discord.Message): Promise
 
   switch (true) {
     case /cb manage reflect/.test(content): {
-      // スプレッドシートの値を反映
-      await current.ReflectOnCal()
-      await util.Sleep(100)
-      await status.ReflectOnCal()
-      await util.Sleep(100)
-
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
-      msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
+      await reflectController('/cb manage reflect', content, msg)
       return 'Reflect spreadsheet values ​​in Cal'
     }
 
     case /cb manage create category/.test(content): {
-      const arg = content.replace('/cb manage create category', '')
-      category.Create(arg, msg)
+      await createCategoryController('/cb manage create category', content, msg)
       return 'Create ClanBattle category'
     }
 
     case /cb manage delete category/.test(content): {
-      const arg = content.replace('/cb manage delete category', '')
-      category.Delete(arg, msg)
+      await deleteCategoryController('/cb manage delete category', content, msg)
       return 'Delete ClanBattle category'
     }
 
     case /cb manage set days/.test(content): {
-      const arg = content.replace('/cb manage set days ', '')
-      // 日付テーブルを更新する
-      await dateTable.Update(arg)
-
-      msg.reply('クランバトルの日付を設定したわよ！')
+      await setDaysController('/cb manage set days', content, msg)
       return 'Set convex days'
     }
 
     case /cb manage set boss/.test(content): {
-      // ボステーブルを更新する
-      await bossTable.Update()
-
-      msg.reply('クランバトルのボステーブルを設定したわよ！')
+      await setBossController('/cb manage set boss', content, msg)
       return 'Set convex bossTable'
     }
 
     case /cb manage remove role/.test(content): {
-      removeRole(msg)
+      await removeRoleController('/cb manage remove role', content, msg)
       return 'Release all remaining convex rolls'
     }
 
     case /cb manage update members/.test(content): {
-      // 管理者以外実行できないようにする
-      if (msg.author.id !== Settings.ADMIN_ID) {
-        msg.reply('botの管理者に更新して貰うように言ってね')
-        return
-      }
-      updateMembers(msg)
+      await updateMembersController('/cb manage update members', content, msg)
       return 'Update convex management members'
     }
 
     case /cb manage update sisters/.test(content): {
-      updateSisters(msg)
+      await updateSistersController('/cb manage update sisters', content, msg)
       return 'Update convex management sisters'
     }
 
     case /cb manage set react/.test(content): {
-      // #凸宣言-ボス状況の絵文字を設定
-      await setReactForDeclare()
-      // #活動時間のチャンネルを取得
-      await setReactForActivityTime()
-
-      msg.reply('凸管理用の絵文字を設定したわよ！')
+      await setReactController('/cb manage set react', content, msg)
       return 'Set react for convex'
     }
 
     case /cb manage reflect activity time/.test(content): {
-      await activityTime.ReflectOnSheet()
+      await reflectActivityTimeController('/cb manage reflect activity time', content, msg)
       return 'Reflect activity time on the sheet'
-    }
-
-    case /cb manage sheet/.test(content): {
-      msg.reply(Settings.URL.SPREADSHEET)
-      return 'Show spreadsheet link'
     }
   }
 }
 
 /**
- * 凸残ロールを全て外す
- * @param msg DiscordからのMessage
+ * `/cb manage reflect`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const removeRole = (msg: Discord.Message) => {
-  // べろばあのクランメンバー一覧を取得
-  const clanMembers = util
-    .GetGuild()
-    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => m)
-
-  // クランメンバーの凸残ロールを全て外す
-  clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
-
-  msg.reply('凸残ロール全て外したわよ！')
-}
-
-/**
- * スプレッドシートのメンバー一覧を更新する
- * @param msg DiscordからのMessage
- */
-const updateMembers = async (msg: Discord.Message) => {
-  // クランメンバー一覧をニックネームで取得
-  const users: Option<User[]> = msg.guild?.roles.cache
-    .get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => ({
-      name: util.GetUserName(m),
-      id: m.id,
-      limit: '',
-    }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
-
-  // ステータスを更新
-  await status.UpdateUsers(users)
+const reflectController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // スプレッドシートの値を反映
+  await current.ReflectOnCal()
+  await util.Sleep(100)
+  await status.ReflectOnCal()
   await util.Sleep(100)
 
-  // スプレッドシートに名前とidを保存する
-  await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+  // 凸状況に報告
+  situation.Report(members)
 
-  msg.reply('クランメンバー一覧を更新したわよ！')
+  _msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
 }
 
 /**
- * 妹クランのメンバー一覧を更新する
- * @param msg DiscordからのMessage
+ * `/cb manage create category`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const updateSisters = async (msg: Discord.Message) => {
-  // 妹クランメンバー一覧をニックネームで取得
-  const users: Option<User[]> = msg.guild?.roles.cache
-    .get(Settings.ROLE_ID.SISTER_MEMBERS)
-    ?.members.map(m => ({
-      name: util.GetUserName(m),
-      id: m.id,
-      limit: '',
-    }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
+const createCategoryController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
 
-  // スプレッドシートに名前とidを保存する
-  await fetchNameAndID(users, Settings.SISTER_SHEET.SHEET_NAME)
+  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と月を代入
+  const [year, month] = args ? args.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
 
-  msg.reply('妹クランメンバー一覧を更新したわよ！')
+  category.Create(year, month, _msg)
 }
 
 /**
- * 指定されたシートにメンバーの名前とidを保存する
- * @param members メンバーの情報
- * @param name 書き込むシートの名前
+ * `/cb manage delete category`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const fetchNameAndID = async (users: Option<User[]>, name: string) => {
-  // 値がない場合は終了
-  if (!users) return
+const deleteCategoryController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
 
-  // 書き込み先のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(name)
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('削除したい年と月を入力しなさい！')
 
-  // メンバー一覧を更新
-  await Promise.all(
-    users.map(async (m, i) => {
-      const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
+  // 年と月がない場合終了
+  const [year, month] = args.split('/').map(Number)
 
-      // 名前を更新
-      const name_cell = await sheet.getCell(`${col}${i + 3}`)
-      name_cell.setValue(m.name)
-
-      // idを更新
-      const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
-      id_cell.setValue(m.id)
-    })
-  )
+  category.Delete(year, month, _msg)
 }
 
 /**
- * #凸宣言-ボス状況の絵文字を設定する
+ * `/cb manage set days`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const setReactForDeclare = async () => {
-  // チャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+const setDaysController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
 
-  // 凸宣言のメッセージを取得
-  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+  // 日付テーブルを更新する
+  await dateTable.Update(args)
 
-  // 本戦、保険の絵文字を付ける
-  await declare.react(Settings.EMOJI_ID.TOTU)
+  _msg.reply('クランバトルの日付を設定したわよ！')
 }
 
 /**
- * #活動時間のチャンネルを取得する
+ * `/cb manage set boss`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const setReactForActivityTime = async () => {
-  // チャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
+const setBossController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // ボステーブルを更新する
+  await bossTable.Update()
 
-  // 離席中のメッセージを取得
-  const awayIn = await channel.messages.fetch(Settings.ACTIVITY_TIME.AWAY_IN)
+  _msg.reply('クランバトルのボステーブルを設定したわよ！')
+}
 
-  // 出席、離席の絵文字を付ける
-  await awayIn.react(Settings.EMOJI_ID.SHUSEKI)
-  await awayIn.react(Settings.EMOJI_ID.RISEKI)
+/**
+ * `/cb manage remove role`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const removeRoleController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 凸残ロールを全て外す
+  etc.RemoveRole()
 
-  // 1-5日目の処理をする
-  const days: string[] = Object.values(Settings.ACTIVITY_TIME.DAYS)
-  Promise.all(
-    days.map(async id => {
-      // 日付のメッセージを取得
-      const day = await channel.messages.fetch(id)
+  _msg.reply('凸残ロール全て外したわよ！')
+}
 
-      // 1-7までの絵文字を付ける
-      const emoji: string[] = Object.values(Settings.ACTIVITY_TIME.EMOJI)
-      Promise.all(emoji.map(async id => day.react(id)))
-    })
-  )
+/**
+ * `/cb manage update members`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const updateMembersController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 管理者以外実行できないようにする
+  if (_msg.author.id !== Settings.ADMIN_ID) {
+    _msg.reply('botの管理者に更新して貰うように言ってね')
+    return
+  }
 
-  // 前半にリアクションを付ける
-  const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._5)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._6)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._7)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._8)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._9)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._10)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._11)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._12)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._13)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._14)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._15)
-  await first.react(Settings.TIME_LIMIT_EMOJI.EMOJI._16)
+  // クランメンバーの更新をする
+  await etc.UpdateMembers(_msg)
 
-  // 後半にリアクションを付ける
-  const latter = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._17)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._18)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._19)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._20)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._21)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._22)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._23)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._0)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._1)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._2)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._3)
-  await latter.react(Settings.TIME_LIMIT_EMOJI.EMOJI._4)
+  _msg.reply('クランメンバー一覧を更新したわよ！')
+}
+
+/**
+ * `/cb manage update sisters`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const updateSistersController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 妹クランメンバーの更新をする
+  await etc.UpdateSisters(_msg)
+
+  _msg.reply('妹クランメンバー一覧を更新したわよ！')
+}
+
+/**
+ * `/cb manage set react`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setReactController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // #凸宣言-ボス状況の絵文字を設定
+  await react.SetDeclare()
+
+  // #活動時間のチャンネルを取得
+  await react.SetActivityTime()
+
+  _msg.reply('凸管理用の絵文字を設定したわよ！')
+}
+
+/**
+ * `/cb manage reflect activity time`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const reflectActivityTimeController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // スプレッドシートに反映
+  await activityTime.ReflectOnSheet()
+
+  _msg.reply('凸管理用の絵文字を設定したわよ！')
 }

@@ -10,37 +10,46 @@ import {Client} from '../index'
  * @param str 文字列
  * @return 整形した文字列
  */
-export const Format = (str: string): string =>
-  moji(str)
-    .convert('ZE', 'HE')
-    .convert('ZS', 'HS')
-    .toString()
-    .replace(/[^\S\n\r]+/g, ' ')
+export const Format = (str: string): string => {
+  return moji(str) // moji型に変換
+    .convert('ZE', 'HE') // 全角英数を半角英数に変換
+    .convert('ZS', 'HS') // 全角スペースを半角スペースに変換
+    .toString() // 文字列に変換
+    .replace(/[^\S\n\r]+/g, ' ') // 連続したスペースを1つにする
+}
 
 /**
  * 特定の秒数遅延させる
  * @param ms 遅延させる秒数
  */
-export const Sleep = (ms: number) => new Promise(res => setTimeout(res, ms))
+export const Sleep = (ms: number): Promise<unknown> => {
+  return new Promise(res => setTimeout(res, ms))
+}
 
 /**
  * 空の配列を省く
  * @param v 配列
  * @return 真偽値
  */
-export const Omit = (v: any): boolean => !/^,+$/.test(v.toString())
+export const Omit = (v: any): boolean => {
+  return !/^,+$/.test(v.toString())
+}
 
 /**
  * クランサーバーのguildを取得する
  * @return クランサーバーのguild
  */
-export const GetGuild = (): Option<Discord.Guild> => Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
+export const GetGuild = (): Option<Discord.Guild> => {
+  return Client.guilds.cache.get(ThrowEnv('CLAN_SERVER_ID'))
+}
 
 /**
  * キャルのメンバー情報を取得する
  * @return キャルのメンバー情報
  */
-export const GetCalInfo = (): Option<Discord.GuildMember> => GetGuild()?.members.cache.get(Settings.CAL_ID)
+export const GetCalInfo = (): Option<Discord.GuildMember> => {
+  return GetGuild()?.members.cache.get(Settings.CAL_ID)
+}
 
 /**
  * 配列の中に確認用のチャンネルがあるか確認する
@@ -48,8 +57,12 @@ export const GetCalInfo = (): Option<Discord.GuildMember> => GetGuild()?.members
  * @param channel 比較するチャンネル
  * @return 真偽値
  */
-export const IsChannel = (array: string[], channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel) =>
-  array.some((c: string) => c === (channel as Discord.TextChannel).name)
+export const IsChannel = (
+  array: string[],
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+): boolean => {
+  return array.some((c: string) => c === (channel as Discord.TextChannel).name)
+}
 
 /**
  * メンバーに指定のロールが付いているか確認する
@@ -57,16 +70,18 @@ export const IsChannel = (array: string[], channel: Discord.TextChannel | Discor
  * @param role 確認したいロール
  * @return 真偽値
  */
-export const IsRole = (member: Option<Discord.GuildMember>, role: string): Option<boolean> =>
-  member?.roles.cache.some(r => r.id === role)
+export const IsRole = (member: Option<Discord.GuildMember>, role: string): Option<boolean> => {
+  return member?.roles.cache.some(r => r.id === role)
+}
 
 /**
  * idからMemberを取得する
  * @param id 取得したいメンバーのid
  * @return 取得したMember
  */
-export const MemberFromId = async (id: string): Promise<Discord.GuildMember> =>
-  (await GetGuild()?.members.fetch())?.map(m => m).find(m => m.id === id) as Discord.GuildMember
+export const MemberFromId = async (id: string): Promise<Discord.GuildMember> => {
+  return (await GetGuild()?.members.fetch())?.map(m => m).find(m => m.id === id) as Discord.GuildMember
+}
 
 /**
  * Userの名前を取得する。
@@ -74,8 +89,9 @@ export const MemberFromId = async (id: string): Promise<Discord.GuildMember> =>
  * @param m Userの情報
  * @return Userの名前
  */
-export const GetUserName = (m: Option<Discord.GuildMember>): string =>
-  m?.nickname ? m?.nickname : m?.user.username ?? ''
+export const GetUserName = (m: Option<Discord.GuildMember>): string => {
+  return m?.nickname ? m?.nickname : m?.user.username ?? ''
+}
 
 /**
  * Membersから指定されたUserのMemberを返す
@@ -94,4 +110,6 @@ export const GetMembersFromUser = (
  * 渡されたidのTextChannelを取得する
  * @param id チャンネルのid
  */
-export const GetTextChannel = (id: string): Discord.TextChannel => Client.channels.cache.get(id) as Discord.TextChannel
+export const GetTextChannel = (id: string): Discord.TextChannel => {
+  return Client.channels.cache.get(id) as Discord.TextChannel
+}

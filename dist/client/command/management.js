@@ -54,24 +54,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
 exports.Management = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
-var alphabet_to_number_1 = require("alphabet-to-number");
+var command = __importStar(require("./"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
-var spreadsheet = __importStar(require("../../util/spreadsheet"));
 var bossTable = __importStar(require("../../io/bossTable"));
 var dateTable = __importStar(require("../../io/dateTable"));
 var status = __importStar(require("../../io/status"));
-var category = __importStar(require("./category"));
+var category = __importStar(require("../convex/category"));
 var activityTime = __importStar(require("../convex/activityTime"));
+var etc = __importStar(require("../convex/etc"));
+var react = __importStar(require("../convex/react"));
 var situation = __importStar(require("../convex/situation"));
 var Management = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var isRole, _a, members, arg, arg, arg;
+    var isRole, _a;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -84,317 +101,187 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
                 _a = true;
                 switch (_a) {
                     case /cb manage reflect/.test(content): return [3, 1];
-                    case /cb manage create category/.test(content): return [3, 7];
-                    case /cb manage delete category/.test(content): return [3, 8];
-                    case /cb manage set days/.test(content): return [3, 9];
-                    case /cb manage set boss/.test(content): return [3, 11];
-                    case /cb manage remove role/.test(content): return [3, 13];
-                    case /cb manage update members/.test(content): return [3, 14];
+                    case /cb manage create category/.test(content): return [3, 3];
+                    case /cb manage delete category/.test(content): return [3, 5];
+                    case /cb manage set days/.test(content): return [3, 7];
+                    case /cb manage set boss/.test(content): return [3, 9];
+                    case /cb manage remove role/.test(content): return [3, 11];
+                    case /cb manage update members/.test(content): return [3, 13];
                     case /cb manage update sisters/.test(content): return [3, 15];
-                    case /cb manage set react/.test(content): return [3, 16];
+                    case /cb manage set react/.test(content): return [3, 17];
                     case /cb manage reflect activity time/.test(content): return [3, 19];
-                    case /cb manage sheet/.test(content): return [3, 21];
                 }
-                return [3, 22];
-            case 1: return [4, current.ReflectOnCal()];
+                return [3, 21];
+            case 1: return [4, reflectController('/cb manage reflect', content, msg)];
             case 2:
                 _c.sent();
-                return [4, util.Sleep(100)];
-            case 3:
-                _c.sent();
-                return [4, status.ReflectOnCal()];
+                return [2, 'Reflect spreadsheet values ​​in Cal'];
+            case 3: return [4, createCategoryController('/cb manage create category', content, msg)];
             case 4:
                 _c.sent();
-                return [4, util.Sleep(100)];
-            case 5:
-                _c.sent();
-                return [4, status.Fetch()];
+                return [2, 'Create ClanBattle category'];
+            case 5: return [4, deleteCategoryController('/cb manage delete category', content, msg)];
             case 6:
-                members = _c.sent();
-                situation.Report(members);
-                msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
-                return [2, 'Reflect spreadsheet values ​​in Cal'];
-            case 7:
-                {
-                    arg = content.replace('/cb manage create category', '');
-                    category.Create(arg, msg);
-                    return [2, 'Create ClanBattle category'];
-                }
-                _c.label = 8;
+                _c.sent();
+                return [2, 'Delete ClanBattle category'];
+            case 7: return [4, setDaysController('/cb manage set days', content, msg)];
             case 8:
-                {
-                    arg = content.replace('/cb manage delete category', '');
-                    category.Delete(arg, msg);
-                    return [2, 'Delete ClanBattle category'];
-                }
-                _c.label = 9;
-            case 9:
-                arg = content.replace('/cb manage set days ', '');
-                return [4, dateTable.Update(arg)];
+                _c.sent();
+                return [2, 'Set convex days'];
+            case 9: return [4, setBossController('/cb manage set boss', content, msg)];
             case 10:
                 _c.sent();
-                msg.reply('クランバトルの日付を設定したわよ！');
-                return [2, 'Set convex days'];
-            case 11: return [4, bossTable.Update()];
+                return [2, 'Set convex bossTable'];
+            case 11: return [4, removeRoleController('/cb manage remove role', content, msg)];
             case 12:
                 _c.sent();
-                msg.reply('クランバトルのボステーブルを設定したわよ！');
-                return [2, 'Set convex bossTable'];
-            case 13:
-                {
-                    removeRole(msg);
-                    return [2, 'Release all remaining convex rolls'];
-                }
-                _c.label = 14;
+                return [2, 'Release all remaining convex rolls'];
+            case 13: return [4, updateMembersController('/cb manage update members', content, msg)];
             case 14:
-                {
-                    if (msg.author.id !== const_settings_1["default"].ADMIN_ID) {
-                        msg.reply('botの管理者に更新して貰うように言ってね');
-                        return [2];
-                    }
-                    updateMembers(msg);
-                    return [2, 'Update convex management members'];
-                }
-                _c.label = 15;
-            case 15:
-                {
-                    updateSisters(msg);
-                    return [2, 'Update convex management sisters'];
-                }
-                _c.label = 16;
-            case 16: return [4, setReactForDeclare()];
-            case 17:
                 _c.sent();
-                return [4, setReactForActivityTime()];
+                return [2, 'Update convex management members'];
+            case 15: return [4, updateSistersController('/cb manage update sisters', content, msg)];
+            case 16:
+                _c.sent();
+                return [2, 'Update convex management sisters'];
+            case 17: return [4, setReactController('/cb manage set react', content, msg)];
             case 18:
                 _c.sent();
-                msg.reply('凸管理用の絵文字を設定したわよ！');
                 return [2, 'Set react for convex'];
-            case 19: return [4, activityTime.ReflectOnSheet()];
+            case 19: return [4, reflectActivityTimeController('/cb manage reflect activity time', content, msg)];
             case 20:
                 _c.sent();
                 return [2, 'Reflect activity time on the sheet'];
-            case 21:
-                {
-                    msg.reply(const_settings_1["default"].URL.SPREADSHEET);
-                    return [2, 'Show spreadsheet link'];
-                }
-                _c.label = 22;
-            case 22: return [2];
+            case 21: return [2];
         }
     });
 }); };
 exports.Management = Management;
-var removeRole = function (msg) {
-    var _a, _b;
-    var clanMembers = (_b = (_a = util
-        .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
-    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return m === null || m === void 0 ? void 0 : m.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX); });
-    msg.reply('凸残ロール全て外したわよ！');
-};
-var updateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
-                    name: util.GetUserName(m),
-                    id: m.id,
-                    limit: ''
-                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                return [4, status.UpdateUsers(users)];
+var reflectController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var members;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, current.ReflectOnCal()];
             case 1:
-                _c.sent();
+                _a.sent();
                 return [4, util.Sleep(100)];
             case 2:
-                _c.sent();
-                return [4, fetchNameAndID(users, const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
-            case 3:
-                _c.sent();
-                msg.reply('クランメンバー一覧を更新したわよ！');
-                return [2];
-        }
-    });
-}); };
-var updateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                users = (_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.SISTER_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return ({
-                    name: util.GetUserName(m),
-                    id: m.id,
-                    limit: ''
-                }); }).sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
-                return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
-            case 1:
-                _c.sent();
-                msg.reply('妹クランメンバー一覧を更新したわよ！');
-                return [2];
-        }
-    });
-}); };
-var fetchNameAndID = function (users, name) { return __awaiter(void 0, void 0, void 0, function () {
-    var sheet;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (!users)
-                    return [2];
-                return [4, spreadsheet.GetWorksheet(name)];
-            case 1:
-                sheet = _a.sent();
-                return [4, Promise.all(users.map(function (m, i) { return __awaiter(void 0, void 0, void 0, function () {
-                        var col, name_cell, id_cell;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    col = const_settings_1["default"].INFORMATION_SHEET.MEMBER_COLUMN;
-                                    return [4, sheet.getCell("" + col + (i + 3))];
-                                case 1:
-                                    name_cell = _a.sent();
-                                    name_cell.setValue(m.name);
-                                    return [4, sheet.getCell("" + alphabet_to_number_1.AtoA(col, 1) + (i + 3))];
-                                case 2:
-                                    id_cell = _a.sent();
-                                    id_cell.setValue(m.id);
-                                    return [2];
-                            }
-                        });
-                    }); }))];
-            case 2:
                 _a.sent();
-                return [2];
-        }
-    });
-}); };
-var setReactForDeclare = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, declare;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_DECLARE);
-                return [4, channel.messages.fetch(const_settings_1["default"].CONVEX_DECLARE_ID.DECLARE)];
-            case 1:
-                declare = _a.sent();
-                return [4, declare.react(const_settings_1["default"].EMOJI_ID.TOTU)];
-            case 2:
-                _a.sent();
-                return [2];
-        }
-    });
-}); };
-var setReactForActivityTime = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, awayIn, days, first, latter;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.ACTIVITY_TIME);
-                return [4, channel.messages.fetch(const_settings_1["default"].ACTIVITY_TIME.AWAY_IN)];
-            case 1:
-                awayIn = _a.sent();
-                return [4, awayIn.react(const_settings_1["default"].EMOJI_ID.SHUSEKI)];
-            case 2:
-                _a.sent();
-                return [4, awayIn.react(const_settings_1["default"].EMOJI_ID.RISEKI)];
+                return [4, status.ReflectOnCal()];
             case 3:
                 _a.sent();
-                days = Object.values(const_settings_1["default"].ACTIVITY_TIME.DAYS);
-                Promise.all(days.map(function (id) { return __awaiter(void 0, void 0, void 0, function () {
-                    var day, emoji;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4, channel.messages.fetch(id)];
-                            case 1:
-                                day = _a.sent();
-                                emoji = Object.values(const_settings_1["default"].ACTIVITY_TIME.EMOJI);
-                                Promise.all(emoji.map(function (id) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                                    return [2, day.react(id)];
-                                }); }); }));
-                                return [2];
-                        }
-                    });
-                }); }));
-                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.FIRST)];
+                return [4, util.Sleep(100)];
             case 4:
-                first = _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._5)];
+                _a.sent();
+                return [4, status.Fetch()];
             case 5:
+                members = _a.sent();
+                situation.Report(members);
+                _msg.reply('スプレッドシートの値をキャルに反映させたわよ！');
+                return [2];
+        }
+    });
+}); };
+var createCategoryController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, _a, year, month;
+    return __generator(this, function (_b) {
+        args = command.ExtractArgument(_command, _content);
+        _a = __read(args ? args.split('/').map(Number) : (function (d) { return [d.getFullYear(), d.getMonth() + 1]; })(new Date()), 2), year = _a[0], month = _a[1];
+        category.Create(year, month, _msg);
+        return [2];
+    });
+}); };
+var deleteCategoryController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args, _a, year, month;
+    return __generator(this, function (_b) {
+        args = command.ExtractArgument(_command, _content);
+        if (!args)
+            return [2, _msg.reply('削除したい年と月を入力しなさい！')];
+        _a = __read(args.split('/').map(Number), 2), year = _a[0], month = _a[1];
+        category.Delete(year, month, _msg);
+        return [2];
+    });
+}); };
+var setDaysController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                args = command.ExtractArgument(_command, _content);
+                return [4, dateTable.Update(args)];
+            case 1:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._6)];
-            case 6:
+                _msg.reply('クランバトルの日付を設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var setBossController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, bossTable.Update()];
+            case 1:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._7)];
-            case 7:
+                _msg.reply('クランバトルのボステーブルを設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var removeRoleController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        etc.RemoveRole();
+        _msg.reply('凸残ロール全て外したわよ！');
+        return [2];
+    });
+}); };
+var updateMembersController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (_msg.author.id !== const_settings_1["default"].ADMIN_ID) {
+                    _msg.reply('botの管理者に更新して貰うように言ってね');
+                    return [2];
+                }
+                return [4, etc.UpdateMembers(_msg)];
+            case 1:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._8)];
-            case 8:
+                _msg.reply('クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+var updateSistersController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, etc.UpdateSisters(_msg)];
+            case 1:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._9)];
-            case 9:
+                _msg.reply('妹クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+var setReactController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, react.SetDeclare()];
+            case 1:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._10)];
-            case 10:
+                return [4, react.SetActivityTime()];
+            case 2:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._11)];
-            case 11:
+                _msg.reply('凸管理用の絵文字を設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var reflectActivityTimeController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, activityTime.ReflectOnSheet()];
+            case 1:
                 _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._12)];
-            case 12:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._13)];
-            case 13:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._14)];
-            case 14:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._15)];
-            case 15:
-                _a.sent();
-                return [4, first.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._16)];
-            case 16:
-                _a.sent();
-                return [4, channel.messages.fetch(const_settings_1["default"].TIME_LIMIT_EMOJI.LATTER)];
-            case 17:
-                latter = _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._17)];
-            case 18:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._18)];
-            case 19:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._19)];
-            case 20:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._20)];
-            case 21:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._21)];
-            case 22:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._22)];
-            case 23:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._23)];
-            case 24:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._0)];
-            case 25:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._1)];
-            case 26:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._2)];
-            case 27:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._3)];
-            case 28:
-                _a.sent();
-                return [4, latter.react(const_settings_1["default"].TIME_LIMIT_EMOJI.EMOJI._4)];
-            case 29:
-                _a.sent();
+                _msg.reply('凸管理用の絵文字を設定したわよ！');
                 return [2];
         }
     });

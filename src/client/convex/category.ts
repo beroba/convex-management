@@ -5,13 +5,11 @@ import * as bossTable from '../../io/bossTable'
 /**
  * クラバト用のカテゴリーとチャンネルを作成する
  * 引数がある場合は引数の年と日で作成し、ない場合は現在の年と日で作成する
- * @param arg 作成する年と月
+ * @param year 作成する年
+ * @param month 作成する月
  * @param msg DiscordからのMessage
  */
-export const Create = async (arg: string, msg: Discord.Message) => {
-  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と月を代入
-  const [year, month] = arg ? arg.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
-
+export const Create = async (year: number, month: number, msg: Discord.Message) => {
   // カテゴリーの作成
   const category = await msg.guild?.channels.create(`${year}年${month}月クラバト`, {
     type: 'category',
@@ -35,26 +33,23 @@ export const Create = async (arg: string, msg: Discord.Message) => {
 
 /**
  * 不要になったクラバト用のカテゴリーとチャンネルを削除する
- * @param arg 削除する年と月
+ * @param year 作成する年
+ * @param month 作成する月
  * @param msg DiscordからのMessage
  */
-export const Delete = (arg: string, msg: Discord.Message) => {
-  // 年と月がない場合終了
-  const [year, day] = arg.split('/').map(Number)
-  if (!year) return msg.reply('ちゃんと年と月を入力しなさい')
-
+export const Delete = async (year: number, month: number, msg: Discord.Message) => {
   // カテゴリーが見つからなかった場合終了
-  const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${day}月クラバト`)
-  if (!category) return msg.reply(`${year}年${day}月クラバトなんてないんだけど！`)
+  const category = msg.guild?.channels.cache.find(c => c.name === `${year}年${month}月クラバト`)
+  if (!category) return msg.reply(`${year}年${month}月クラバトなんてないんだけど！`)
 
   const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
 
   // カテゴリとチャンネルを削除
-  category?.delete()
+  await category?.delete()
   // 表示バグが発生してしまうので削除する際に時間の猶予を持たせている
   channels?.forEach(c => setTimeout(() => c.delete(), 1000))
 
-  msg.reply(`${year}年${day}月のカテゴリーを削除したわ`)
+  msg.reply(`${year}年${month}月のカテゴリーを削除したわ`)
 }
 
 /**
