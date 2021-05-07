@@ -49,7 +49,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb boss previous/.test(content): {
-      await bossPreviousController('/cb boss back', content, msg)
+      await bossPreviousController('/cb boss previous', content, msg)
       return 'Advance to previous lap and boss'
     }
 
@@ -64,8 +64,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb plan/.test(content): {
-      const arg = content.replace('/cb plan ', '')
-      planList(arg)
+      await planController('/cb plan', content, msg)
       return 'Display convex plan list'
     }
 
@@ -281,18 +280,22 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
 }
 
 /**
- * 凸予定一覧を表示する。
- * 引数にボス番号がある場合、そのボスの予定一覧を表示する
- * @param arg ボス番号
+ * `/cb plan`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const planList = async (arg: string) => {
+const planController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content) ?? ''
+
   // 引数にボス番号があるか確認
-  if (/^[a-e]$/i.test(arg)) {
+  if (/^[a-e]$/i.test(args)) {
     // ボス番号の凸予定一覧を表示
-    list.Output(arg)
-  } else if (/^[1-5]$/i.test(arg)) {
+    list.Output(args)
+  } else if (/^[1-5]$/i.test(args)) {
     // ボス番号の凸予定一覧を表示
-    list.Output(NtoA(arg))
+    list.Output(NtoA(args))
   } else {
     // 凸予定一覧を全て表示
     list.AllOutput()

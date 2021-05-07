@@ -87,7 +87,7 @@ var manage = __importStar(require("../convex/manage"));
 var situation = __importStar(require("../convex/situation"));
 var list = __importStar(require("../plan/list"));
 var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, arg, arg, members, plans;
+    var _a, arg, members, plans;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -104,12 +104,12 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
                     case /cb boss/.test(content): return [3, 13];
                     case /cb delete plan/.test(content): return [3, 15];
                     case /cb plan/.test(content): return [3, 17];
-                    case /cb over/.test(content): return [3, 18];
-                    case /cb task/.test(content): return [3, 19];
-                    case /cb update report/.test(content): return [3, 20];
-                    case /cb help/.test(content): return [3, 24];
+                    case /cb over/.test(content): return [3, 19];
+                    case /cb task/.test(content): return [3, 20];
+                    case /cb update report/.test(content): return [3, 21];
+                    case /cb help/.test(content): return [3, 25];
                 }
-                return [3, 25];
+                return [3, 26];
             case 1: return [4, tlController('/cb tl', content, msg)];
             case 2:
                 _b.sent();
@@ -130,7 +130,7 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 10:
                 _b.sent();
                 return [2, 'Advance to previous lap and boss'];
-            case 11: return [4, bossPreviousController('/cb boss back', content, msg)];
+            case 11: return [4, bossPreviousController('/cb boss previous', content, msg)];
             case 12:
                 _b.sent();
                 return [2, 'Advance to previous lap and boss'];
@@ -142,45 +142,42 @@ var ClanBattle = function (content, msg) { return __awaiter(void 0, void 0, void
             case 16:
                 _b.sent();
                 return [2, 'Delete plan'];
-            case 17:
-                {
-                    arg = content.replace('/cb plan ', '');
-                    planList(arg);
-                    return [2, 'Display convex plan list'];
-                }
-                _b.label = 18;
+            case 17: return [4, planController('/cb plan', content, msg)];
             case 18:
+                _b.sent();
+                return [2, 'Display convex plan list'];
+            case 19:
                 {
                     arg = content.replace('/cb over ', '');
                     simultConvexCalc(arg, msg);
                     return [2, 'Simultaneous convex carryover calculation'];
                 }
-                _b.label = 19;
-            case 19:
+                _b.label = 20;
+            case 20:
                 {
                     addTaskKillRoll(msg);
                     return [2, 'Add task kill roll'];
                 }
-                _b.label = 20;
-            case 20: return [4, status.Fetch()];
-            case 21:
+                _b.label = 21;
+            case 21: return [4, status.Fetch()];
+            case 22:
                 members = _b.sent();
                 situation.Report(members);
                 return [4, schedule.Fetch()];
-            case 22:
+            case 23:
                 plans = _b.sent();
                 return [4, list.SituationEdit(plans)];
-            case 23:
+            case 24:
                 _b.sent();
                 msg.reply('凸状況を更新したわよ！');
                 return [2, 'Convex situation updated'];
-            case 24:
+            case 25:
                 {
                     msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md');
                     return [2, 'Show help'];
                 }
-                _b.label = 25;
-            case 25: return [2];
+                _b.label = 26;
+            case 26: return [2];
         }
     });
 }); };
@@ -334,13 +331,16 @@ var deletePlanController = function (_command, _content, _msg) { return __awaite
         }
     });
 }); };
-var planList = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        if (/^[a-e]$/i.test(arg)) {
-            list.Output(arg);
+var planController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    var args;
+    var _a;
+    return __generator(this, function (_b) {
+        args = (_a = command.ExtractArgument(_command, _content)) !== null && _a !== void 0 ? _a : '';
+        if (/^[a-e]$/i.test(args)) {
+            list.Output(args);
         }
-        else if (/^[1-5]$/i.test(arg)) {
-            list.Output(alphabet_to_number_1.NtoA(arg));
+        else if (/^[1-5]$/i.test(args)) {
+            list.Output(alphabet_to_number_1.NtoA(args));
         }
         else {
             list.AllOutput();
