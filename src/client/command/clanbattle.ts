@@ -45,7 +45,7 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb boss back/.test(content): {
-      await bossBackController('/cb boss back', content, msg)
+      await bossPreviousController('/cb boss back', content, msg)
       return 'Advance to previous lap and boss'
     }
 
@@ -75,26 +75,22 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb task/.test(content): {
-      addTaskKillRoll(msg)
+      await taskKillController('/cb task', content, msg)
+      return 'Add task kill roll'
+    }
+
+    case /cb kill/.test(content): {
+      await taskKillController('/cb kill', content, msg)
       return 'Add task kill roll'
     }
 
     case /cb update report/.test(content): {
-      // メンバー全員の状態を取得
-      const members = await status.Fetch()
-      // 凸状況に報告
-      situation.Report(members)
-
-      // 凸予定一覧を取得
-      const plans = await schedule.Fetch()
-      await list.SituationEdit(plans)
-
-      msg.reply('凸状況を更新したわよ！')
+      await updateReportController('/cb update report', content, msg)
       return 'Convex situation updated'
     }
 
     case /cb help/.test(content): {
-      msg.reply('ここを確認しなさい！\nhttps://github.com/beroba/convex-management/blob/master/docs/command.md')
+      await helpController('/cb help', content, msg)
       return 'Show help'
     }
   }
@@ -190,24 +186,7 @@ const bossNextController = async (_command: string, _content: string, _msg: Disc
 }
 
 /**
- * `/cb boss back`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const bossBackController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 前のボスに戻す
-  await lapAndBoss.Previous()
-
-  // メンバー全員の状態を取得
-  const members = await status.Fetch()
-
-  // 凸状況に報告
-  await situation.Report(members)
-}
-
-/**
- * `/cb boss previous`のController
+ * `/cb boss previous`, `/cb boss previous`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -323,19 +302,41 @@ const overController = async (_command: string, _content: string, _msg: Discord.
 }
 
 /**
- * メッセージ送信者にタスキルロールを付与する
- * @param msg DiscordからのMessage
+ * `/cb task`, `/cb kill`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
  */
-const addTaskKillRoll = (msg: Discord.Message) => {
-  // 既にタスキルしてるか確認する
-  const isRole = util.IsRole(msg.member, Settings.ROLE_ID.TASK_KILL)
+const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // タスキルのロールを付与する
+  etc.AddTaskKillRoll(_msg)
+}
 
-  if (isRole) {
-    msg.reply('既にタスキルしてるわ')
-  } else {
-    // タスキルロールを付与する
-    msg.member?.roles.add(Settings.ROLE_ID.TASK_KILL)
+/**
+ * `/cb update report`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const updateReportController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+  situation.Report(members)
 
-    msg.reply('タスキルロールを付けたわよ！')
-  }
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
+
+  _msg.reply('凸状況を更新したわよ！')
+}
+
+/**
+ * `/cb help`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const helpController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const url = 'https://github.com/beroba/convex-management/blob/master/docs/command.md'
+  _msg.reply('ここを確認しなさい！\n' + url)
 }

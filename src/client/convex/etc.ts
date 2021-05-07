@@ -1,4 +1,6 @@
 import * as Discord from 'discord.js'
+import Settings from 'const-settings'
+import * as util from '../../util'
 
 /**
  * 同時凸の持ち越し計算を行う
@@ -26,4 +28,22 @@ export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.
  */
 const overCalc = (HP: number, a: number, b: number): number => {
   return Math.ceil(90 - (((HP - a) * 90) / b - 20))
+}
+
+/**
+ * メッセージ送信者にタスキルロールを付与する
+ * @param msg DiscordからのMessage
+ */
+export const AddTaskKillRoll = async (msg: Discord.Message) => {
+  // 既にタスキルしてるか確認する
+  const isRole = util.IsRole(msg.member, Settings.ROLE_ID.TASK_KILL)
+
+  if (isRole) {
+    msg.reply('既にタスキルしてるわ')
+  } else {
+    // タスキルロールを付与する
+    await msg.member?.roles.add(Settings.ROLE_ID.TASK_KILL)
+
+    msg.reply('タスキルロールを付けたわよ！')
+  }
 }
