@@ -93,7 +93,7 @@ var AddTaskKillRoll = function (msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.AddTaskKillRoll = AddTaskKillRoll;
-var RemoveRole = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
+var RemoveRole = function () { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers;
     var _a, _b, _c;
     return __generator(this, function (_d) {
@@ -109,7 +109,6 @@ var RemoveRole = function (msg) { return __awaiter(void 0, void 0, void 0, funct
                     }); }); }))];
             case 1:
                 _d.sent();
-                msg.reply('凸残ロール全て外したわよ！');
                 return [2];
         }
     });
@@ -135,7 +134,6 @@ var UpdateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, fetchNameAndID(users, const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 3:
                 _c.sent();
-                msg.reply('クランメンバー一覧を更新したわよ！');
                 return [2];
         }
     });
@@ -155,7 +153,6 @@ var UpdateSisters = function (msg) { return __awaiter(void 0, void 0, void 0, fu
                 return [4, fetchNameAndID(users, const_settings_1["default"].SISTER_SHEET.SHEET_NAME)];
             case 1:
                 _c.sent();
-                msg.reply('妹クランメンバー一覧を更新したわよ！');
                 return [2];
         }
     });

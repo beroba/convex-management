@@ -77,11 +77,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       await reflectActivityTimeController('/cb manage reflect activity time', content, msg)
       return 'Reflect activity time on the sheet'
     }
-
-    case /cb manage sheet/.test(content): {
-      msg.reply(Settings.URL.SPREADSHEET)
-      return 'Show spreadsheet link'
-    }
   }
 }
 

@@ -106,13 +106,12 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
                     case /cb manage set days/.test(content): return [3, 7];
                     case /cb manage set boss/.test(content): return [3, 9];
                     case /cb manage remove role/.test(content): return [3, 11];
-                    case /cb manage update members/.test(content): return [3, 12];
-                    case /cb manage update sisters/.test(content): return [3, 13];
-                    case /cb manage set react/.test(content): return [3, 14];
-                    case /cb manage reflect activity time/.test(content): return [3, 17];
-                    case /cb manage sheet/.test(content): return [3, 19];
+                    case /cb manage update members/.test(content): return [3, 13];
+                    case /cb manage update sisters/.test(content): return [3, 15];
+                    case /cb manage set react/.test(content): return [3, 17];
+                    case /cb manage reflect activity time/.test(content): return [3, 19];
                 }
-                return [3, 20];
+                return [3, 21];
             case 1: return [4, reflectController('/cb manage reflect', content, msg)];
             case 2:
                 _c.sent();
@@ -129,52 +128,31 @@ var Management = function (content, msg) { return __awaiter(void 0, void 0, void
             case 8:
                 _c.sent();
                 return [2, 'Set convex days'];
-            case 9: return [4, bossTable.Update()];
+            case 9: return [4, setBossController('/cb manage set boss', content, msg)];
             case 10:
                 _c.sent();
-                msg.reply('クランバトルのボステーブルを設定したわよ！');
                 return [2, 'Set convex bossTable'];
-            case 11:
-                {
-                    etc.RemoveRole(msg);
-                    return [2, 'Release all remaining convex rolls'];
-                }
-                _c.label = 12;
+            case 11: return [4, removeRoleController('/cb manage remove role', content, msg)];
             case 12:
-                {
-                    if (msg.author.id !== const_settings_1["default"].ADMIN_ID) {
-                        msg.reply('botの管理者に更新して貰うように言ってね');
-                        return [2];
-                    }
-                    etc.UpdateMembers(msg);
-                    return [2, 'Update convex management members'];
-                }
-                _c.label = 13;
-            case 13:
-                {
-                    etc.UpdateSisters(msg);
-                    return [2, 'Update convex management sisters'];
-                }
-                _c.label = 14;
-            case 14: return [4, react.SetDeclare()];
-            case 15:
                 _c.sent();
-                return [4, react.SetActivityTime()];
+                return [2, 'Release all remaining convex rolls'];
+            case 13: return [4, updateMembersController('/cb manage update members', content, msg)];
+            case 14:
+                _c.sent();
+                return [2, 'Update convex management members'];
+            case 15: return [4, updateSistersController('/cb manage update sisters', content, msg)];
             case 16:
                 _c.sent();
-                msg.reply('凸管理用の絵文字を設定したわよ！');
-                return [2, 'Set react for convex'];
-            case 17: return [4, activityTime.ReflectOnSheet()];
+                return [2, 'Update convex management sisters'];
+            case 17: return [4, setReactController('/cb manage set react', content, msg)];
             case 18:
                 _c.sent();
+                return [2, 'Set react for convex'];
+            case 19: return [4, reflectActivityTimeController('/cb manage reflect activity time', content, msg)];
+            case 20:
+                _c.sent();
                 return [2, 'Reflect activity time on the sheet'];
-            case 19:
-                {
-                    msg.reply(const_settings_1["default"].URL.SPREADSHEET);
-                    return [2, 'Show spreadsheet link'];
-                }
-                _c.label = 20;
-            case 20: return [2];
+            case 21: return [2];
         }
     });
 }); };
@@ -234,6 +212,76 @@ var setDaysController = function (_command, _content, _msg) { return __awaiter(v
             case 1:
                 _a.sent();
                 _msg.reply('クランバトルの日付を設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var setBossController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, bossTable.Update()];
+            case 1:
+                _a.sent();
+                _msg.reply('クランバトルのボステーブルを設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var removeRoleController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        etc.RemoveRole();
+        _msg.reply('凸残ロール全て外したわよ！');
+        return [2];
+    });
+}); };
+var updateMembersController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (_msg.author.id !== const_settings_1["default"].ADMIN_ID) {
+                    _msg.reply('botの管理者に更新して貰うように言ってね');
+                    return [2];
+                }
+                return [4, etc.UpdateMembers(_msg)];
+            case 1:
+                _a.sent();
+                _msg.reply('クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+var updateSistersController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, etc.UpdateSisters(_msg)];
+            case 1:
+                _a.sent();
+                _msg.reply('妹クランメンバー一覧を更新したわよ！');
+                return [2];
+        }
+    });
+}); };
+var setReactController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, react.SetDeclare()];
+            case 1:
+                _a.sent();
+                return [4, react.SetActivityTime()];
+            case 2:
+                _a.sent();
+                _msg.reply('凸管理用の絵文字を設定したわよ！');
+                return [2];
+        }
+    });
+}); };
+var reflectActivityTimeController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, activityTime.ReflectOnSheet()];
+            case 1:
+                _a.sent();
+                _msg.reply('凸管理用の絵文字を設定したわよ！');
                 return [2];
         }
     });
