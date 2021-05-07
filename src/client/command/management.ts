@@ -69,12 +69,7 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     }
 
     case /cb manage set react/.test(content): {
-      // #凸宣言-ボス状況の絵文字を設定
-      await react.SetDeclare()
-      // #活動時間のチャンネルを取得
-      await react.SetActivityTime()
-
-      msg.reply('凸管理用の絵文字を設定したわよ！')
+      await setReactController('/cb manage set react', content, msg)
       return 'Set react for convex'
     }
 
@@ -218,4 +213,20 @@ const updateSistersController = async (_command: string, _content: string, _msg:
   await etc.UpdateSisters(_msg)
 
   _msg.reply('妹クランメンバー一覧を更新したわよ！')
+}
+
+/**
+ * `/cb manage set react`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setReactController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // #凸宣言-ボス状況の絵文字を設定
+  await react.SetDeclare()
+
+  // #活動時間のチャンネルを取得
+  await react.SetActivityTime()
+
+  _msg.reply('凸管理用の絵文字を設定したわよ！')
 }
