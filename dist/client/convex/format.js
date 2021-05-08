@@ -59,6 +59,11 @@ var generate = (function () {
     }
     generate.prototype.zenkakuToHankaku = function () {
         this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+        this.tl = this.tl
+            .replace(/ *\( */g, '(')
+            .replace(/ *\) */g, ')')
+            .replace(/\(/g, ' (')
+            .replace(/\)/g, ') ');
         return this;
     };
     generate.prototype.toString = function () {

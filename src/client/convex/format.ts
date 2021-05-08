@@ -13,6 +13,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
   // TLの整形をする
   const content = new generate(tl, time) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
+    .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -41,6 +42,18 @@ class generate {
     return this
   }
 
+  /**
+   * 括弧の前後スペースを調整する
+   * @returns this
+   */
+  bracketSpaceAdjustment() {
+    this.tl = this.tl
+      .replace(/ *\( */g, '(')
+      .replace(/ *\) */g, ')')
+      .replace(/\(/g, ' (')
+      .replace(/\)/g, ') ')
+    return this
+  }
   /**
    * 文字列に変換する
    * @returns 整形したTL
