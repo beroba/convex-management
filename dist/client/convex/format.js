@@ -46,6 +46,7 @@ var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, fun
     return __generator(this, function (_a) {
         content = new generate(tl, time)
             .zenkakuToHankaku()
+            .bracketSpaceAdjustment()
             .toString();
         msg.reply(content);
         return [2];
@@ -59,6 +60,9 @@ var generate = (function () {
     }
     generate.prototype.zenkakuToHankaku = function () {
         this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+        return this;
+    };
+    generate.prototype.bracketSpaceAdjustment = function () {
         this.tl = this.tl
             .replace(/ *\( */g, '(')
             .replace(/ *\) */g, ')')
