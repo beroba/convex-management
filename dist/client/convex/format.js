@@ -47,6 +47,10 @@ var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, fun
         content = new generate(tl, time)
             .zenkakuToHankaku()
             .bracketSpaceAdjustment()
+            .timeParser()
+            .toCodeBlock()
+            .alignVertically()
+            .removeSomeSecond()
             .toString();
         msg.reply(content);
         return [2];
@@ -63,11 +67,94 @@ var generate = (function () {
         return this;
     };
     generate.prototype.bracketSpaceAdjustment = function () {
+        this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')');
+        this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ');
+        return this;
+    };
+    generate.prototype.timeParser = function () {
+        this.tl = this.tl.replace(/\./g, ':');
+        var tl = this.tl.split('');
+        var countUpToChar = function (tl, i) {
+            for (; i < tl.length; i++) {
+                if (!/\d/.test(tl[i]))
+                    break;
+            }
+            return i;
+        };
+        for (var i = 0; i < tl.length; i++) {
+            if (!/\d/.test(tl[i]))
+                continue;
+            if (/:/.test(tl[i + 1])) {
+                if (!/\d/.test(tl[i + 2]))
+                    continue;
+                if (/\d/.test(tl[i + 3])) {
+                    if (!/\d/.test(tl[i + 4])) {
+                        i += 3;
+                        continue;
+                    }
+                    i = countUpToChar(tl, i + 4);
+                }
+                else {
+                    i += 2;
+                    tl[i] = "0" + tl[i];
+                }
+            }
+            else if (/\d/.test(tl[i + 1])) {
+                if (!/\d/.test(tl[i + 2])) {
+                    tl[i] = "0:" + tl[i];
+                    i++;
+                    continue;
+                }
+                if (/\d/.test(tl[i + 3])) {
+                    i = countUpToChar(tl, i + 3);
+                }
+                else {
+                    if (/0|1/.test(tl[i])) {
+                        tl[i] = tl[i] + ":";
+                    }
+                    i += 2;
+                }
+            }
+            else {
+                tl[i] = "0:0" + tl[i];
+            }
+        }
+        this.tl = tl.join('');
+        return this;
+    };
+    generate.prototype.toCodeBlock = function () {
+        if (!/\`\`\`/.test(this.tl)) {
+            this.tl = "```" + this.tl + "```";
+        }
+        return this;
+    };
+    generate.prototype.alignVertically = function () {
+        this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ');
         this.tl = this.tl
-            .replace(/ *\( */g, '(')
-            .replace(/ *\) */g, ')')
-            .replace(/\(/g, ' (')
-            .replace(/\)/g, ') ');
+            .split('\n')
+            .map(function (l) {
+            if (!/^\d/.test(l))
+                return l;
+            if (/ /.test(l[4]))
+                return l;
+            return l.slice(0, 4) + " " + l.slice(4);
+        })
+            .map(function (l) { return (/ /.test(l[0]) ? "    " + l : l); })
+            .map(function (l) { return l.replace(/ +$/g, ''); })
+            .join('\n');
+        return this;
+    };
+    generate.prototype.removeSomeSecond = function () {
+        this.tl = this.tl
+            .split('\n')
+            .map(function (l, i, arr) {
+            if (!i)
+                return l;
+            if (l.slice(0, 4) !== arr[i - 1].slice(0, 4))
+                return l;
+            return "    " + l.slice(4);
+        })
+            .join('\n');
         return this;
     };
     generate.prototype.toString = function () {
