@@ -46,6 +46,8 @@ var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, fun
     return __generator(this, function (_a) {
         content = new generate(tl, time)
             .zenkakuToHankaku()
+            .bracketSpaceAdjustment()
+            .timeParser()
             .toString();
         msg.reply(content);
         return [2];
@@ -59,6 +61,62 @@ var generate = (function () {
     }
     generate.prototype.zenkakuToHankaku = function () {
         this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
+        return this;
+    };
+    generate.prototype.bracketSpaceAdjustment = function () {
+        this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')');
+        this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ');
+        return this;
+    };
+    generate.prototype.timeParser = function () {
+        this.tl = this.tl.replace(/\./g, ':');
+        var tl = this.tl.split('');
+        var countUpToChar = function (tl, i) {
+            for (; i < tl.length; i++) {
+                if (!/\d/.test(tl[i]))
+                    break;
+            }
+            return i;
+        };
+        for (var i = 0; i < tl.length; i++) {
+            if (!/\d/.test(tl[i]))
+                continue;
+            if (/:/.test(tl[i + 1])) {
+                if (!/\d/.test(tl[i + 2]))
+                    continue;
+                if (/\d/.test(tl[i + 3])) {
+                    if (!/\d/.test(tl[i + 4])) {
+                        i += 3;
+                        continue;
+                    }
+                    i = countUpToChar(tl, i + 4);
+                }
+                else {
+                    i += 2;
+                    tl[i] = "0" + tl[i];
+                }
+            }
+            else if (/\d/.test(tl[i + 1])) {
+                if (!/\d/.test(tl[i + 2])) {
+                    tl[i] = "0:" + tl[i];
+                    i++;
+                    continue;
+                }
+                if (/\d/.test(tl[i + 3])) {
+                    i = countUpToChar(tl, i + 3);
+                }
+                else {
+                    if (/0|1/.test(tl[i])) {
+                        tl[i] = tl[i] + ":";
+                    }
+                    i += 2;
+                }
+            }
+            else {
+                tl[i] = "0:0" + tl[i];
+            }
+        }
+        this.tl = tl.join('');
         return this;
     };
     generate.prototype.toString = function () {
