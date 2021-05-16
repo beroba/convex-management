@@ -13,6 +13,8 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
   // TLの整形をする
   const content = new generate(tl, time) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
+    .bracketSpaceAdjustment() // 括弧の前後スペースを調整
+    .timeParser() // 時間のパースをする
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -34,7 +36,7 @@ class generate {
 
   /**
    * 全角を半角に置き換える
-   * @returns this
+   * @return this
    */
   zenkakuToHankaku() {
     this.tl = moji(this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString()
@@ -42,8 +44,92 @@ class generate {
   }
 
   /**
+   * 括弧の前後スペースを調整する
+   * @return this
+   */
+  bracketSpaceAdjustment() {
+    this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')')
+    this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ')
+    return this
+  }
+
+  /**
+   * 時間の形を整形する
+   * @return this
+   */
+  timeParser() {
+    this.tl = this.tl.replace(/\./g, ':')
+
+    const tl = this.tl.split('')
+
+    /**
+     * 数字以外になるまでカウンタを進める
+     * @param tl TL
+     * @param i カウンタ
+     * @returns 返却するカウンタ
+     */
+    const countUpToChar = (tl: string[], i: number): number => {
+      for (; i < tl.length; i++) {
+        if (!/\d/.test(tl[i])) break
+      }
+      return i
+    }
+
+    for (let i = 0; i < tl.length; i++) {
+      // 数字以外は次へ
+      if (!/\d/.test(tl[i])) continue
+
+      if (/:/.test(tl[i + 1])) {
+        // :の次が数字でないなら次へ
+        if (!/\d/.test(tl[i + 2])) continue
+
+        if (/\d/.test(tl[i + 3])) {
+          // N:NNなので次へ
+          if (!/\d/.test(tl[i + 4])) {
+            i += 3
+            continue
+          }
+
+          // N:NNN*なので、数字以外になるまでカウンターを進める
+          i = countUpToChar(tl, i + 4)
+        } else {
+          // N:N→N:0N
+          i += 2
+          tl[i] = `0${tl[i]}`
+        }
+      } else if (/\d/.test(tl[i + 1])) {
+        if (!/\d/.test(tl[i + 2])) {
+          // NN→0:NN
+          tl[i] = `0:${tl[i]}`
+          i++
+          continue
+        }
+
+        if (/\d/.test(tl[i + 3])) {
+          // NNNN*なので、数字以外になるまでカウンターを進める
+          i = countUpToChar(tl, i + 3)
+        } else {
+          // 0NNと1NNだけ:を入れる
+          if (/0|1/.test(tl[i])) {
+            // 0NN,1NN→0:NN,1:NN
+            tl[i] = `${tl[i]}:`
+          }
+          i += 2
+        }
+      } else {
+        // N→0:0N
+        tl[i] = `0:0${tl[i]}`
+      }
+    }
+
+    this.tl = tl.join('')
+
+    return this
+  }
+
+  /**
    * 文字列に変換する
-   * @returns 整形したTL
+   * @return 整形したTL
    */
   toString(): string {
     return this.tl

@@ -64,10 +64,10 @@ var index_1 = require("../index");
 var util = __importStar(require("../util"));
 var fetch = __importStar(require("../util/fetch"));
 var Ready = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var channel;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var channel, msg;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
                 return [4, channel.send('きゃるきゃるーん')];
