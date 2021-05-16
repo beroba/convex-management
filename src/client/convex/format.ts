@@ -17,6 +17,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
     .timeParser() // 時間のパースをする
     .toCodeBlock() // コードブロックにする
     .alignVertically() // TLの縦を合わせる
+    .removeSomeSecond() // 先頭が同じ秒数なら消す
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -149,17 +150,37 @@ class generate {
     this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ')
     this.tl = this.tl
       .split('\n')
-      .map(v => {
-        // 先頭文字が数字でない場合はそのまま帰す
-        if (!/^\d/.test(v)) return v
-        // 5文字目がスペースでない場合はスペースを挿入
-        v = / /.test(v[4]) ? v : `${v.slice(0, 4)} ${v.slice(4)}`
-        return v
+      .map(l => {
+        // 先頭文字が数字でない場合は処理しない
+        if (!/^\d/.test(l)) return l
+        // 5文字目がスペースの場合は処理しない
+        if (/ /.test(l[4])) return l
+        // 5文字目にスペースを挿入
+        return `${l.slice(0, 4)} ${l.slice(4)}`
       })
       // 先頭がスペースの場合は4文字スペースを追加する
-      .map(v => (/ /.test(v[0]) ? `    ${v}` : v))
+      .map(l => (/ /.test(l[0]) ? `    ${l}` : l))
       // 行末のスペースを取り除く
-      .map(v => v.replace(/ +$/g, ''))
+      .map(l => l.replace(/ +$/g, ''))
+      .join('\n')
+    return this
+  }
+
+  /**
+   * 先頭が同じ秒数なら消す
+   * @return this
+   */
+  removeSomeSecond(): this {
+    this.tl = this.tl
+      .split('\n')
+      .map((l, i, arr) => {
+        // 1行目の場合は処理しない
+        if (!i) return l
+        // 現在の行の先頭4文字と1行前の先頭4文字が一致していない場合は処理しない
+        if (l.slice(0, 4) !== arr[i - 1].slice(0, 4)) return l
+        // 先頭4文字をスペースに置き換える
+        return `    ${l.slice(4)}`
+      })
       .join('\n')
     return this
   }

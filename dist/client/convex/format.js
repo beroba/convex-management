@@ -50,6 +50,7 @@ var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, fun
             .timeParser()
             .toCodeBlock()
             .alignVertically()
+            .removeSomeSecond()
             .toString();
         msg.reply(content);
         return [2];
@@ -131,14 +132,28 @@ var generate = (function () {
         this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ');
         this.tl = this.tl
             .split('\n')
-            .map(function (v) {
-            if (!/^\d/.test(v))
-                return v;
-            v = / /.test(v[4]) ? v : v.slice(0, 4) + " " + v.slice(4);
-            return v;
+            .map(function (l) {
+            if (!/^\d/.test(l))
+                return l;
+            if (/ /.test(l[4]))
+                return l;
+            return l.slice(0, 4) + " " + l.slice(4);
         })
-            .map(function (v) { return (/ /.test(v[0]) ? "    " + v : v); })
-            .map(function (v) { return v.replace(/ +$/g, ''); })
+            .map(function (l) { return (/ /.test(l[0]) ? "    " + l : l); })
+            .map(function (l) { return l.replace(/ +$/g, ''); })
+            .join('\n');
+        return this;
+    };
+    generate.prototype.removeSomeSecond = function () {
+        this.tl = this.tl
+            .split('\n')
+            .map(function (l, i, arr) {
+            if (!i)
+                return l;
+            if (l.slice(0, 4) !== arr[i - 1].slice(0, 4))
+                return l;
+            return "    " + l.slice(4);
+        })
             .join('\n');
         return this;
     };
