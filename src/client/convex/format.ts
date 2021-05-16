@@ -15,6 +15,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
     .zenkakuToHankaku() // 全角を半角に変換
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .timeParser() // 時間のパースをする
+    .toCodeBlock() // コードブロックにする
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -38,7 +39,7 @@ class generate {
    * 全角を半角に置き換える
    * @return this
    */
-  zenkakuToHankaku() {
+  zenkakuToHankaku(): this {
     this.tl = moji(this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString()
     return this
   }
@@ -47,7 +48,7 @@ class generate {
    * 括弧の前後スペースを調整する
    * @return this
    */
-  bracketSpaceAdjustment() {
+  bracketSpaceAdjustment(): this {
     this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')')
     this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ')
     return this
@@ -57,7 +58,7 @@ class generate {
    * 時間の形を整形する
    * @return this
    */
-  timeParser() {
+  timeParser(): this {
     this.tl = this.tl.replace(/\./g, ':')
 
     const tl = this.tl.split('')
@@ -124,6 +125,17 @@ class generate {
 
     this.tl = tl.join('')
 
+    return this
+  }
+
+  /**
+   * コードブロックじゃない場合はコードブロックにする
+   * @return this
+   */
+  toCodeBlock(): this {
+    if (!/\`\`\`/.test(this.tl)) {
+      this.tl = '```' + this.tl + '```'
+    }
     return this
   }
 

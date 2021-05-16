@@ -48,6 +48,7 @@ var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, fun
             .zenkakuToHankaku()
             .bracketSpaceAdjustment()
             .timeParser()
+            .toCodeBlock()
             .toString();
         msg.reply(content);
         return [2];
@@ -117,6 +118,12 @@ var generate = (function () {
             }
         }
         this.tl = tl.join('');
+        return this;
+    };
+    generate.prototype.toCodeBlock = function () {
+        if (!/\`\`\`/.test(this.tl)) {
+            this.tl = '```' + this.tl + '```';
+        }
         return this;
     };
     generate.prototype.toString = function () {
