@@ -64,15 +64,15 @@ var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../util"));
 var spreadsheet = __importStar(require("../util/spreadsheet"));
 var io = __importStar(require("."));
-var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
+var Update = function (args) { return __awaiter(void 0, void 0, void 0, function () {
     var sheet, cells, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, spreadsheet.GetWorksheet(const_settings_1["default"].INFORMATION_SHEET.SHEET_NAME)];
             case 1:
                 sheet = _a.sent();
-                if (!(arg !== '/cb manage set days')) return [3, 3];
-                return [4, setDate(arg, sheet)];
+                if (!args) return [3, 3];
+                return [4, setDate(args, sheet)];
             case 2:
                 _a.sent();
                 _a.label = 3;
@@ -94,12 +94,12 @@ var Update = function (arg) { return __awaiter(void 0, void 0, void 0, function 
     });
 }); };
 exports.Update = Update;
-var setDate = function (arg, sheet) { return __awaiter(void 0, void 0, void 0, function () {
+var setDate = function (args, sheet) { return __awaiter(void 0, void 0, void 0, function () {
     var days;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                days = Array.from(Array(5), function (_, i) { return arg.split('/')[0] + "/" + (Number(arg.split('/')[1]) + i); });
+                days = Array.from(Array(5), function (_, i) { return args.split('/').first() + "/" + (Number(args.split('/').last()) + i); });
                 return [4, Promise.all(days.map(function (d, i) { return __awaiter(void 0, void 0, void 0, function () {
                         var cell;
                         return __generator(this, function (_a) {

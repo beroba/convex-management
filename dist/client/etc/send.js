@@ -200,7 +200,7 @@ var NikuPicture = function (msg) {
     var _a;
     if (msg.channel.id !== const_settings_1["default"].CHANNEL_ID.NIKU)
         return;
-    var url = msg.attachments.map(function (a) { return a.url; })[0];
+    var url = msg.attachments.map(function (a) { return a.url; }).first();
     if (!url)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.NIKU);

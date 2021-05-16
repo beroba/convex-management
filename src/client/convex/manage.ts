@@ -8,19 +8,10 @@ import * as situation from './situation'
 
 /**
  * 引数で渡されたプレイヤーidの凸状況を変更する
- * @param arg プレイヤーidと凸状況
+ * @param state 更新先の凸状況
  * @param msg DiscordからのMessage
  */
-export const Update = async (arg: string, msg: Discord.Message) => {
-  // 凸状況を取得
-  const state = util.Format(arg).replace(/<.+>/, '').trim()
-
-  // 凸状況の書式がおかしい場合は終了
-  if (!/^(0|[1-3]\+?)$/.test(state)) {
-    msg.reply('凸状況の書式が違うわ')
-    return
-  }
-
+export const Update = async (state: string, msg: Discord.Message) => {
   // 凸状況を更新するユーザーを取得する
   const user = msg.mentions.users.first()
   if (!user) {

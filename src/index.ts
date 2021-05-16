@@ -1,3 +1,4 @@
+import './util/prototype'
 import * as Discord from 'discord.js'
 import ThrowEnv from 'throw-env'
 import {Ready} from './client/ready'

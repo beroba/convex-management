@@ -1,7 +1,7 @@
 import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
-import * as fetch from '../util/fetch'
+import * as react from './convex/react'
 
 /**
  * キャルが起動した際に通知を送る
@@ -12,7 +12,7 @@ export const Ready = async () => {
   await channel.send('きゃるきゃるーん')
 
   // リアクションのキャッシュを取る
-  fetch.React()
+  react.Fetch()
 
   // const msg = await channel.send('名前の変更をしたわ')
   // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャルは悪くない')

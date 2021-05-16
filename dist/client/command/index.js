@@ -83,11 +83,12 @@ var Command = function (msg) { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 exports.Command = Command;
-var ExtractArgument = function (_command, content) {
+var ExtractArgument = function (command, content) {
     var c = content
-        .split('\n')[0]
+        .split('\n')
+        .first()
         .trim()
-        .replace(new RegExp(_command, 'i'), '')
+        .replace(new RegExp(command, 'i'), '')
         .trim();
     return c || null;
 };

@@ -149,7 +149,7 @@ var fetchLimit = function (id) { return __awaiter(void 0, void 0, void 0, functi
             case 4:
                 l = _a.sent();
                 list = f.concat(l);
-                return [2, list[list.length - 1] !== undefined ? list[list.length - 1] : ''];
+                return [2, list.last() !== undefined ? list.last() : ''];
         }
     });
 }); };

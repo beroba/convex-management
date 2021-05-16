@@ -103,7 +103,8 @@ var createDeclareList = function (plans, emoji) { return __awaiter(void 0, void 
     var convex;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === 'totu'; })[0]
+            case 0: return [4, Promise.all(emoji.filter(function (e) { return e.name === 'totu'; })
+                    .first()
                     .users
                     .map(function (u) { return status.FetchMember(u.id); }))];
             case 1:

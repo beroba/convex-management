@@ -52,13 +52,22 @@ var Format = function (str) {
         .replace(/[^\S\n\r]+/g, ' ');
 };
 exports.Format = Format;
-var Sleep = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
+var Sleep = function (ms) {
+    return new Promise(function (res) { return setTimeout(res, ms); });
+};
 exports.Sleep = Sleep;
-var Omit = function (v) { return !/^,+$/.test(v.toString()); };
+var Omit = function (v) {
+    return !/^,+$/.test(v.toString());
+};
 exports.Omit = Omit;
-var GetGuild = function () { return index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID')); };
+var GetGuild = function () {
+    return index_1.Client.guilds.cache.get(throw_env_1["default"]('CLAN_SERVER_ID'));
+};
 exports.GetGuild = GetGuild;
-var GetCalInfo = function () { var _a; return (_a = exports.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID); };
+var GetCalInfo = function () {
+    var _a;
+    return (_a = exports.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.cache.get(const_settings_1["default"].CAL_ID);
+};
 exports.GetCalInfo = GetCalInfo;
 var IsChannel = function (array, channel) {
     return array.some(function (c) { return c === channel.name; });
@@ -68,18 +77,26 @@ var IsRole = function (member, role) {
     return member === null || member === void 0 ? void 0 : member.roles.cache.some(function (r) { return r.id === role; });
 };
 exports.IsRole = IsRole;
-var MemberFromId = function (id) { return __awaiter(void 0, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
-    switch (_c.label) {
-        case 0: return [4, ((_a = exports.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.fetch())];
-        case 1: return [2, (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.map(function (m) { return m; }).find(function (m) { return m.id === id; })];
-    }
-}); }); };
+var MemberFromId = function (id) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4, ((_a = exports.GetGuild()) === null || _a === void 0 ? void 0 : _a.members.fetch())];
+            case 1: return [2, (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.map(function (m) { return m; }).find(function (m) { return m.id === id; })];
+        }
+    });
+}); };
 exports.MemberFromId = MemberFromId;
-var GetUserName = function (m) { var _a; return (m === null || m === void 0 ? void 0 : m.nickname) ? m === null || m === void 0 ? void 0 : m.nickname : (_a = m === null || m === void 0 ? void 0 : m.user.username) !== null && _a !== void 0 ? _a : ''; };
+var GetUserName = function (m) {
+    var _a;
+    return (m === null || m === void 0 ? void 0 : m.nickname) ? m === null || m === void 0 ? void 0 : m.nickname : (_a = m === null || m === void 0 ? void 0 : m.user.username) !== null && _a !== void 0 ? _a : '';
+};
 exports.GetUserName = GetUserName;
 var GetMembersFromUser = function (member, user) {
     return member === null || member === void 0 ? void 0 : member.cache.map(function (m) { return m; }).find(function (m) { return m.user.id === user.id; });
 };
 exports.GetMembersFromUser = GetMembersFromUser;
-var GetTextChannel = function (id) { return index_1.Client.channels.cache.get(id); };
+var GetTextChannel = function (id) {
+    return index_1.Client.channels.cache.get(id);
+};
 exports.GetTextChannel = GetTextChannel;

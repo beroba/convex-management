@@ -23,6 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 exports.Client = void 0;
+require("./util/prototype");
 var Discord = __importStar(require("discord.js"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var ready_1 = require("./client/ready");
