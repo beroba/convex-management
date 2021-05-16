@@ -16,6 +16,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .timeParser() // 時間のパースをする
     .toCodeBlock() // コードブロックにする
+    .alignVertically() // TLの縦を合わせる
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -134,8 +135,32 @@ class generate {
    */
   toCodeBlock(): this {
     if (!/\`\`\`/.test(this.tl)) {
-      this.tl = '```' + this.tl + '```'
+      this.tl = `\`\`\`` + this.tl + `\`\`\``
     }
+    return this
+  }
+
+  /**
+   * TLの縦を合わせる
+   * @return this
+   */
+  alignVertically(): this {
+    // スペースを1つにする
+    this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ')
+    this.tl = this.tl
+      .split('\n')
+      .map(v => {
+        // 先頭文字が数字でない場合はそのまま帰す
+        if (!/^\d/.test(v)) return v
+        // 5文字目がスペースでない場合はスペースを挿入
+        v = / /.test(v[4]) ? v : `${v.slice(0, 4)} ${v.slice(4)}`
+        return v
+      })
+      // 先頭がスペースの場合は4文字スペースを追加する
+      .map(v => (/ /.test(v[0]) ? `    ${v}` : v))
+      // 行末のスペースを取り除く
+      .map(v => v.replace(/ +$/g, ''))
+      .join('\n')
     return this
   }
 

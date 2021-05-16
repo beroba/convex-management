@@ -49,6 +49,7 @@ var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, fun
             .bracketSpaceAdjustment()
             .timeParser()
             .toCodeBlock()
+            .alignVertically()
             .toString();
         msg.reply(content);
         return [2];
@@ -122,8 +123,23 @@ var generate = (function () {
     };
     generate.prototype.toCodeBlock = function () {
         if (!/\`\`\`/.test(this.tl)) {
-            this.tl = '```' + this.tl + '```';
+            this.tl = "```" + this.tl + "```";
         }
+        return this;
+    };
+    generate.prototype.alignVertically = function () {
+        this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ');
+        this.tl = this.tl
+            .split('\n')
+            .map(function (v) {
+            if (!/^\d/.test(v))
+                return v;
+            v = / /.test(v[4]) ? v : v.slice(0, 4) + " " + v.slice(4);
+            return v;
+        })
+            .map(function (v) { return (/ /.test(v[0]) ? "    " + v : v); })
+            .map(function (v) { return v.replace(/ +$/g, ''); })
+            .join('\n');
         return this;
     };
     generate.prototype.toString = function () {
