@@ -84,7 +84,7 @@ var Report = function (members) { return __awaiter(void 0, void 0, void 0, funct
 }); };
 exports.Report = Report;
 var createMessage = function (members) { return __awaiter(void 0, void 0, void 0, function () {
-    var time, date, state, remaining, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
+    var time, date, state, remaining, stage, after, 未凸, 持越1, 凸1, 持越2, 凸2, 持越3, 凸3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -96,6 +96,8 @@ var createMessage = function (members) { return __awaiter(void 0, void 0, void 0
             case 2:
                 state = _a.sent();
                 remaining = remainingConvexNumber(members);
+                stage = getStageNumber(state);
+                after = lapsToTheNextStage(state);
                 未凸 = userSorting(members, 0, 0);
                 持越1 = userSorting(members, 1, 1);
                 凸1 = userSorting(members, 1, 0);
@@ -105,6 +107,7 @@ var createMessage = function (members) { return __awaiter(void 0, void 0, void 0
                 凸3 = userSorting(members, 3, 0);
                 return [2, [
                         "`" + time + "` " + date.num + " \u51F8\u72B6\u6CC1\u4E00\u89A7",
+                        "`" + stage + "`\u6BB5\u968E\u76EE \u6B8B\u308A`" + after + "`\u5468",
                         "`" + state.lap + "`\u5468\u76EE `" + state.boss + "` `" + remaining + "`",
                         '```',
                         "\u672A\u51F8: " + 未凸 + "\n",
@@ -128,6 +131,29 @@ var remainingConvexNumber = function (members) {
     var remaining = members.map(function (s) { return 3 - Number(s.convex) + Number(s.over); }).reduce(function (a, b) { return a + b; });
     var over = members.map(function (s) { return Number(s.over); }).reduce(function (a, b) { return a + b; });
     return remaining + "/" + members.length * 3 + "(" + over + ")";
+};
+var getStageNumber = function (state) {
+    var _a, _b;
+    var table = [
+        { num: 1, stage: 'first' },
+        { num: 2, stage: 'second' },
+        { num: 3, stage: 'third' },
+        { num: 4, stage: 'fourth' },
+        { num: 5, stage: 'fifth' },
+    ];
+    return (_b = (_a = table.find(function (v) { return v.stage === state.stage; })) === null || _a === void 0 ? void 0 : _a.num) !== null && _b !== void 0 ? _b : 0;
+};
+var lapsToTheNextStage = function (state) {
+    var _a;
+    var table = [
+        { lap: 4, stage: 'first' },
+        { lap: 11, stage: 'second' },
+        { lap: 35, stage: 'third' },
+        { lap: 45, stage: 'fourth' },
+        { lap: 0, stage: 'fifth' },
+    ];
+    var t = (_a = table.find(function (v) { return v.stage === state.stage; })) !== null && _a !== void 0 ? _a : { lap: 0 };
+    return t.lap ? t.lap - Number(state.lap) : '-';
 };
 var userSorting = function (members, convex, over) {
     return members
