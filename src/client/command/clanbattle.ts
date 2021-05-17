@@ -124,6 +124,8 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
   // TL部分の生成
   const tl = _msg.content.split('\n').slice(1).join('\n')
 
+  if (!tl) return _msg.reply('TLがないわ')
+
   // timeを作成
   const time = args && toTime(args)
 

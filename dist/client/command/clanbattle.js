@@ -185,6 +185,8 @@ var tlController = function (_command, _content, _msg) { return __awaiter(void 0
                 };
                 args = command.ExtractArgument(_command, _content);
                 tl = _msg.content.split('\n').slice(1).join('\n');
+                if (!tl)
+                    return [2, _msg.reply('TLがないわ')];
                 time = args && toTime(args);
                 return [4, format.TL(tl, time, _msg)];
             case 1:

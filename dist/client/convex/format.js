@@ -35,6 +35,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -60,8 +76,20 @@ exports.TL = TL;
 var generate = (function () {
     function generate(tl, time) {
         this.tl = tl;
-        this.time = time;
+        this.time = this.convertTime(time);
+        console.log(this.time);
     }
+    generate.prototype.convertTime = function (time) {
+        if (!time)
+            return null;
+        if (/:/.test(time)) {
+            var _a = __read(time.split(':').map(Number), 2), p = _a[0], q = _a[1];
+            return 90 - (p * 60 + q);
+        }
+        else {
+            return 90 - Number(time);
+        }
+    };
     generate.prototype.zenkakuToHankaku = function () {
         this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
         return this;
@@ -124,7 +152,7 @@ var generate = (function () {
     };
     generate.prototype.toCodeBlock = function () {
         if (!/\`\`\`/.test(this.tl)) {
-            this.tl = "```" + this.tl + "```";
+            this.tl = "```\n" + this.tl + "```\n";
         }
         return this;
     };

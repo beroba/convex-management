@@ -25,7 +25,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
 
 class generate {
   tl: string
-  time: Option<string>
+  time: Option<number>
 
   /**
    * TLを整形させるクラス
@@ -34,7 +34,25 @@ class generate {
    */
   constructor(tl: string, time: Option<string>) {
     this.tl = tl
-    this.time = time
+    this.time = this.convertTime(time)
+  }
+
+  /**
+   * 受け取った持ち越し秒数から引き算する秒数を算出
+   * @param time 持ち越し秒数
+   * @return 引き算する秒数
+   */
+  private convertTime(time: Option<string>): Option<number> {
+    // 秒数がない場合はnullを返す
+    if (!time) return null
+
+    // :がある場合とない場合に分ける
+    if (/:/.test(time)) {
+      const [p, q] = time.split(':').map(Number)
+      return 90 - (p * 60 + q)
+    } else {
+      return 90 - Number(time)
+    }
   }
 
   /**
@@ -136,7 +154,7 @@ class generate {
    */
   toCodeBlock(): this {
     if (!/\`\`\`/.test(this.tl)) {
-      this.tl = `\`\`\`` + this.tl + `\`\`\``
+      this.tl = `\`\`\`\n` + this.tl + `\`\`\`\n`
     }
     return this
   }
