@@ -2,7 +2,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as dateTable from '../../io/dateTable'
 import * as current from '../../io/current'
-import {Member} from '../../io/type'
+import {Current, Member} from '../../io/type'
 
 /**
  * 凸状況に報告をする
@@ -40,8 +40,14 @@ const createMessage = async (members: Member[]): Promise<string> => {
   // 現在の状況を取得
   const state = await current.Fetch()
 
-  // 残り凸数を計算する
+  // 残り凸数を計算
   const remaining = remainingConvexNumber(members)
+
+  // 現在の段階を数字で取得
+  const stage = getStageNumber(state)
+
+  // 次の段階までの残り凸数を計算
+  const after = lapsToTheNextStage(state)
 
   // 全員の凸状況を見て振り分ける
   const 未凸  = userSorting(members, 0, 0)
@@ -54,6 +60,7 @@ const createMessage = async (members: Member[]): Promise<string> => {
 
   return [
     `\`${time}\` ${date.num} 凸状況一覧`,
+    `\`${stage}\`段階目 残り\`${after}\`周`,
     `\`${state.lap}\`周目 \`${state.boss}\` \`${remaining}\``,
     '```',
     `未凸: ${未凸}\n`,
@@ -88,6 +95,42 @@ const remainingConvexNumber = (members: Member[]): string => {
   // 残り持ち越し数を計算
   const over = members.map(s => Number(s.over)).reduce((a, b) => a + b)
   return `${remaining}/${members.length * 3}(${over})`
+}
+
+/**
+ * 現在の段階の数字を取得
+ * @param state 現在の状態
+ * @return 段階の数字
+ */
+const getStageNumber = (state: Current): number => {
+  const table = [
+    {num: 1, stage: 'first'},
+    {num: 2, stage: 'second'},
+    {num: 3, stage: 'third'},
+    {num: 4, stage: 'fourth'},
+    {num: 5, stage: 'fifth'},
+  ]
+  // 現在と同じ周回数を取得
+  return table.find(v => v.stage === state.stage)?.num ?? 0
+}
+
+/**
+ * 次の段階までの周回数を計算する
+ * @param state 現在の状態
+ * @return 必要な周回数
+ */
+const lapsToTheNextStage = (state: Current): number | string => {
+  const table = [
+    {lap: 4, stage: 'first'},
+    {lap: 11, stage: 'second'},
+    {lap: 35, stage: 'third'},
+    {lap: 45, stage: 'fourth'},
+    {lap: 0, stage: 'fifth'},
+  ]
+  // 現在と同じ周回数を取得
+  const t = table.find(v => v.stage === state.stage) ?? {lap: 0}
+  // 周回数の計算をする
+  return t.lap ? t.lap - Number(state.lap) : '-'
 }
 
 /**
