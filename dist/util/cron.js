@@ -133,15 +133,16 @@ var notifyDailyMission = function (expression) {
 };
 var limitTimeDisplay = function (expression) {
     cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
-        var members, channel;
+        var members, date, channel;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4, status.Fetch()];
                 case 1:
                     members = _a.sent();
                     limitTime.Display(members);
+                    date = "" + String(new Date().getHours()).padStart(2, '0');
                     channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
-                    channel.send('活動限界時間を更新したわ');
+                    channel.send(date + "\u6642\u306E\u6D3B\u52D5\u9650\u754C\u6642\u9593\u3092\u66F4\u65B0\u3057\u305F\u308F");
                     console.log('Periodic update of activity time limit display');
                     return [2];
             }
