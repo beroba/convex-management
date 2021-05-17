@@ -99,6 +99,7 @@ var Generate = (function () {
     Generate.prototype.bracketSpaceAdjustment = function () {
         this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')');
         this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ');
+        this.tl = this.tl.replace(/^ \(/g, '(');
         return this;
     };
     Generate.prototype.timeParser = function () {

@@ -107,9 +107,12 @@ const limitTimeDisplay = (expression: string) => {
     // 活動限界時間の表示を更新
     limitTime.Display(members)
 
+    // 現在の時刻を取得
+    const date = `${String(new Date().getHours()).padStart(2, '0')}`
+
     // bot-notifyに通知をする
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-    channel.send('活動限界時間を更新したわ')
+    channel.send(`${date}時の活動限界時間を更新したわ`)
 
     console.log('Periodic update of activity time limit display')
   })
