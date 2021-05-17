@@ -60,55 +60,50 @@ var moji_1 = __importDefault(require("moji"));
 var TL = function (tl, time, msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
-        content = new generate(tl, time)
+        content = new Generate(tl, time)
             .zenkakuToHankaku()
             .bracketSpaceAdjustment()
             .timeParser()
             .toCodeBlock()
             .alignVertically()
             .removeSomeSecond()
+            .carryOverCalc()
             .toString();
         msg.reply(content);
         return [2];
     });
 }); };
 exports.TL = TL;
-var generate = (function () {
-    function generate(tl, time) {
+var Generate = (function () {
+    function Generate(tl, time) {
         this.tl = tl;
         this.time = this.convertTime(time);
-        console.log(this.time);
     }
-    generate.prototype.convertTime = function (time) {
+    Generate.prototype.convertTime = function (time) {
         if (!time)
             return null;
+        var t;
         if (/:/.test(time)) {
             var _a = __read(time.split(':').map(Number), 2), p = _a[0], q = _a[1];
-            return 90 - (p * 60 + q);
+            t = 90 - (p * 60 + q);
         }
         else {
-            return 90 - Number(time);
+            t = 90 - Number(time);
         }
+        return t <= 0 ? null : t >= 91 ? 90 : t;
     };
-    generate.prototype.zenkakuToHankaku = function () {
+    Generate.prototype.zenkakuToHankaku = function () {
         this.tl = moji_1["default"](this.tl).convert('ZE', 'HE').convert('ZS', 'HS').toString();
         return this;
     };
-    generate.prototype.bracketSpaceAdjustment = function () {
+    Generate.prototype.bracketSpaceAdjustment = function () {
         this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')');
         this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ');
         return this;
     };
-    generate.prototype.timeParser = function () {
+    Generate.prototype.timeParser = function () {
         this.tl = this.tl.replace(/\./g, ':');
         var tl = this.tl.split('');
-        var countUpToChar = function (tl, i) {
-            for (; i < tl.length; i++) {
-                if (!/\d/.test(tl[i]))
-                    break;
-            }
-            return i;
-        };
         for (var i = 0; i < tl.length; i++) {
             if (!/\d/.test(tl[i]))
                 continue;
@@ -120,7 +115,7 @@ var generate = (function () {
                         i += 3;
                         continue;
                     }
-                    i = countUpToChar(tl, i + 4);
+                    i = this.countUpToChar(tl, i + 4);
                 }
                 else {
                     i += 2;
@@ -134,7 +129,7 @@ var generate = (function () {
                     continue;
                 }
                 if (/\d/.test(tl[i + 3])) {
-                    i = countUpToChar(tl, i + 3);
+                    i = this.countUpToChar(tl, i + 3);
                 }
                 else {
                     if (/0|1/.test(tl[i])) {
@@ -150,13 +145,20 @@ var generate = (function () {
         this.tl = tl.join('');
         return this;
     };
-    generate.prototype.toCodeBlock = function () {
+    Generate.prototype.countUpToChar = function (tl, i) {
+        for (; i < tl.length; i++) {
+            if (!/\d/.test(tl[i]))
+                break;
+        }
+        return i;
+    };
+    Generate.prototype.toCodeBlock = function () {
         if (!/\`\`\`/.test(this.tl)) {
-            this.tl = "```\n" + this.tl + "```\n";
+            this.tl = "```\n" + this.tl + "```";
         }
         return this;
     };
-    generate.prototype.alignVertically = function () {
+    Generate.prototype.alignVertically = function () {
         this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ');
         this.tl = this.tl
             .split('\n')
@@ -172,7 +174,7 @@ var generate = (function () {
             .join('\n');
         return this;
     };
-    generate.prototype.removeSomeSecond = function () {
+    Generate.prototype.removeSomeSecond = function () {
         this.tl = this.tl
             .split('\n')
             .map(function (l, i, arr) {
@@ -185,8 +187,46 @@ var generate = (function () {
             .join('\n');
         return this;
     };
-    generate.prototype.toString = function () {
+    Generate.prototype.carryOverCalc = function () {
+        var _a;
+        if (!this.time)
+            return this;
+        var time = this.time;
+        var list = (_a = this.tl.match(/\d:\d\d/g)) === null || _a === void 0 ? void 0 : _a.map(function (v) {
+            var _a = __read(v.split(':').map(Number), 2), p = _a[0], q = _a[1];
+            var t = p * 60 + q - time;
+            return ((t / 60) | 0) + ":" + ((t % 60) + '').padStart(2, '0');
+        });
+        if (!list)
+            return this;
+        var times = this.order(list);
+        this.tl = this.tl
+            .replace(/\d:\d\d/g, '１')
+            .split('')
+            .map(function (tl) { return (/１/.test(tl) ? times.pop() : tl); })
+            .join('');
+        var tl = this.tl.split('\n');
+        var i = tl.findIndex(function (v) { return /0:00|0:-/.test(v); });
+        if (i === -1)
+            return this;
+        this.tl = tl.slice(0, i).join('\n') + '```';
+        return this;
+    };
+    Generate.prototype.order = function (list) {
+        var Order = (function () {
+            function Order(list) {
+                this.list = list;
+                this.count = 0;
+            }
+            Order.prototype.pop = function () {
+                return this.list[this.count++];
+            };
+            return Order;
+        }());
+        return new Order(list);
+    };
+    Generate.prototype.toString = function () {
         return this.tl;
     };
-    return generate;
+    return Generate;
 }());
