@@ -245,13 +245,13 @@ class Generate {
     // 1行づつ分解
     const tl = this.tl.split('\n')
 
-    // 0以下の秒数の場所を取得
-    const i = tl.findIndex(v => /0:00|0:-/.test(v))
+    // 0未満の秒数の場所を取得
+    const i = tl.findIndex(v => /0:-/.test(v))
 
-    // 0以下の秒数がなければ終了
+    // 0未満の秒数がなければ終了
     if (i === -1) return this
 
-    // 0以下の秒数より後のTLを省いて結合
+    // 0未満の秒数より後のTLを省いて結合
     this.tl = tl.slice(0, i).join('\n') + '```'
     // */
 

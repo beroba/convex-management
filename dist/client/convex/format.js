@@ -208,7 +208,7 @@ var Generate = (function () {
             .map(function (tl) { return (/１/.test(tl) ? times.pop() : tl); })
             .join('');
         var tl = this.tl.split('\n');
-        var i = tl.findIndex(function (v) { return /0:00|0:-/.test(v); });
+        var i = tl.findIndex(function (v) { return /0:-/.test(v); });
         if (i === -1)
             return this;
         this.tl = tl.slice(0, i).join('\n') + '```';
