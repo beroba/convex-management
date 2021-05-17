@@ -77,6 +77,7 @@ class Generate {
   bracketSpaceAdjustment(): this {
     this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')')
     this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ')
+    this.tl = this.tl.replace(/^ \(/g, '(')
     return this
   }
 
