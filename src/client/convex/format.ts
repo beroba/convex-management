@@ -132,6 +132,8 @@ class Generate {
           i += 2
         }
       } else {
+        // 先頭でない場合は次へ
+        if (!/\n/.test(tl[i - 1])) continue
         // N→0:0N
         tl[i] = `0:0${tl[i]}`
       }

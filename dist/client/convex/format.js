@@ -139,6 +139,8 @@ var Generate = (function () {
                 }
             }
             else {
+                if (!/\n/.test(tl[i - 1]))
+                    continue;
                 tl[i] = "0:0" + tl[i];
             }
         }

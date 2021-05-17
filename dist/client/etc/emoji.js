@@ -78,6 +78,7 @@ var React = function (msg) { return __awaiter(void 0, void 0, void 0, function (
         otukareReact(msg);
         yoroshikuReact(msg);
         chuukaReact(msg);
+        shirohaReact(msg);
         return [2];
     });
 }); };
@@ -94,9 +95,7 @@ var yuiKusanoReact = function (msg) {
     console.log('React Yui Kusano');
 };
 var mazarashiReact = function (msg) {
-    var match = msg.content
-        .replace(/ま.{1,3}らし|厚着|冷凍|解凍|玉子|オクトー|722547140487938181/g, 'だめらし')
-        .match(/だめらし/);
+    var match = msg.content.replace(/ま.{1,3}らし|厚着|冷凍|解凍/g, 'だめらし').match(/だめらし/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.MAZARASHI);
@@ -104,7 +103,7 @@ var mazarashiReact = function (msg) {
 };
 var usamaruReact = function (msg) {
     var match = msg.content
-        .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ..|..ギガス$|ｷﾞｶﾞ|793515921128816670/g, 'うさまる')
+        .replace(/^うさ.{2,4}$|^.{2,4}まる$|兎丸|レジギガス|^レジ.{2,5}$|^.{2,5}ギガス$|ｷﾞｶﾞ|793515921128816670/g, 'うさまる')
         .match(/うさまる/);
     if (!match)
         return;
@@ -133,7 +132,7 @@ var pantiesReact = function (msg) {
     console.log('React Panties');
 };
 var ringorouReact = function (msg) {
-    var match = msg.content.replace(/んご|ンゴ|辻野|あかり|ﾝｺﾞ|林檎|あっぷる|アップル|apple/gi, 'んご').match(/んご/);
+    var match = msg.content.replace(/辻野|あかり|林檎|あっぷる|アップル/gi, 'んご').match(/んご/);
     if (!match)
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.RINGOROU);
@@ -180,6 +179,13 @@ var chuukaReact = function (msg) {
         return;
     msg.react(const_settings_1["default"].EMOJI_ID.CHUUKA);
     console.log('React chuuka');
+};
+var shirohaReact = function (msg) {
+    var match = msg.content.match(/川崎/);
+    if (!match)
+        return;
+    msg.react(const_settings_1["default"].EMOJI_ID.SHIROHA);
+    console.log('React shiroha');
 };
 var Send = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content;

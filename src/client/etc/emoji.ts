@@ -49,6 +49,9 @@ export const React = async (msg: Discord.Message) => {
 
   // 中華の絵文字を押す
   chuukaReact(msg)
+
+  // しろはの絵文字を押す
+  shirohaReact(msg)
 }
 
 /**
@@ -79,9 +82,7 @@ const yuiKusanoReact = (msg: Discord.Message) => {
  */
 const mazarashiReact = (msg: Discord.Message) => {
   // まざらしっぽい文字が含まれているか確認
-  const match = msg.content
-    .replace(/ま.{1,3}らし|厚着|冷凍|解凍|玉子|オクトー|722547140487938181/g, 'だめらし')
-    .match(/だめらし/)
+  const match = msg.content.replace(/ま.{1,3}らし|厚着|冷凍|解凍/g, 'だめらし').match(/だめらし/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -99,7 +100,10 @@ const mazarashiReact = (msg: Discord.Message) => {
 const usamaruReact = (msg: Discord.Message) => {
   // うさまるっぽい文字が含まれているか確認
   const match = msg.content
-    .replace(/^うさ..|..まる$|兎丸|レジギガス|^レジ..|..ギガス$|ｷﾞｶﾞ|793515921128816670/g, 'うさまる')
+    .replace(
+      /^うさ.{2,4}$|^.{2,4}まる$|兎丸|レジギガス|^レジ.{2,5}$|^.{2,5}ギガス$|ｷﾞｶﾞ|793515921128816670/g,
+      'うさまる'
+    )
     .match(/うさまる/)
 
   // 含まれていない場合は終了
@@ -168,7 +172,7 @@ const pantiesReact = (msg: Discord.Message) => {
  */
 const ringorouReact = (msg: Discord.Message) => {
   // りんごろうっぽい文字が含まれているか確認
-  const match = msg.content.replace(/んご|ンゴ|辻野|あかり|ﾝｺﾞ|林檎|あっぷる|アップル|apple/gi, 'んご').match(/んご/)
+  const match = msg.content.replace(/辻野|あかり|林檎|あっぷる|アップル/gi, 'んご').match(/んご/)
 
   // 含まれていない場合は終了
   if (!match) return
@@ -279,6 +283,23 @@ const chuukaReact = (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.CHUUKA)
 
   console.log('React chuuka')
+}
+
+/**
+ * 送信されたメッセージに川崎が含まれていた場合、しろはの絵文字をつける
+ * @param msg DiscordからのMessage
+ */
+const shirohaReact = (msg: Discord.Message) => {
+  // 川崎の文字が含まれているか確認
+  const match = msg.content.match(/川崎/)
+
+  // 含まれていない場合は終了
+  if (!match) return
+
+  // しろはの絵文字をつける
+  msg.react(Settings.EMOJI_ID.SHIROHA)
+
+  console.log('React shiroha')
 }
 
 /**
