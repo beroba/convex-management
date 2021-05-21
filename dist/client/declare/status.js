@@ -110,9 +110,9 @@ var Update = function (state) { return __awaiter(void 0, void 0, void 0, functio
 exports.Update = Update;
 var React = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var content, state;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 if ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.user.bot)
                     return [2];
@@ -123,23 +123,26 @@ var React = function (msg) { return __awaiter(void 0, void 0, void 0, function (
                 if (!/@\d/.test(content)) return [3, 2];
                 return [4, exports.RemainingHPChange(content)];
             case 1:
-                _b.sent();
+                _c.sent();
                 msg["delete"]();
                 return [2, 'Remaining HP change'];
             case 2: return [4, msg.react(const_settings_1["default"].EMOJI_ID.TOOSHI)];
             case 3:
-                _b.sent();
+                _c.sent();
                 return [4, msg.react(const_settings_1["default"].EMOJI_ID.MOCHIKOSHI)];
             case 4:
-                _b.sent();
+                _c.sent();
                 return [4, msg.react(const_settings_1["default"].EMOJI_ID.TAIKI)];
             case 5:
-                _b.sent();
+                _c.sent();
                 console.log('Set declare reactions');
                 return [4, current.Fetch()];
             case 6:
-                state = _b.sent();
+                state = _c.sent();
                 exports.Update(state);
+                return [4, ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.remove(const_settings_1["default"].ROLE_ID.AWAY_IN))];
+            case 7:
+                _c.sent();
                 return [2, 'Calculate the HP'];
         }
     });

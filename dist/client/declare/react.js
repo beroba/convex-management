@@ -67,8 +67,9 @@ var declaration = __importStar(require("./declaration"));
 var declare = __importStar(require("./status"));
 var ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, void 0, function () {
     var member, state;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 if (user.bot)
                     return [2];
@@ -82,17 +83,18 @@ var ConvexAdd = function (react, user) { return __awaiter(void 0, void 0, void 0
                 }
                 return [4, status.FetchMember(user.id)];
             case 1:
-                member = _a.sent();
+                member = _c.sent();
                 if (!member) {
                     react.users.remove(user);
                     return [2];
                 }
                 return [4, current.Fetch()];
             case 2:
-                state = _a.sent();
+                state = _c.sent();
                 return [4, declaration.SetUser(state)];
             case 3:
-                _a.sent();
+                _c.sent();
+                (_b = (_a = react.message.guild) === null || _a === void 0 ? void 0 : _a.members.cache.map(function (m) { return m; }).find(function (m) { return m.id === user.id; })) === null || _b === void 0 ? void 0 : _b.roles.remove(const_settings_1["default"].ROLE_ID.AWAY_IN);
                 return [2, 'Addition of convex declaration'];
         }
     });

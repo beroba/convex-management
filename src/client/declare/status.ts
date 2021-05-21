@@ -67,6 +67,9 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
   // 現在の状態を更新
   Update(state)
 
+  // 離席中ロールを削除
+  await msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+
   return 'Calculate the HP'
 }
 
@@ -160,7 +163,9 @@ export const UserMessageAllDelete = async (user: Discord.User) => {
 
   // 凸宣言完了者のメッセージを全て削除
   await Promise.all(
-    (await channel.messages.fetch())
+    (
+      await channel.messages.fetch()
+    )
       .map(m => m)
       .filter(m => m.author.id === user.id)
       .map(m => m.delete())
