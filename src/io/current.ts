@@ -27,7 +27,7 @@ export const UpdateLapAndBoss = async (lap: string, alpha: string): Promise<Opti
   if (!boss) return
   state.boss = boss
 
-  state.hp = Settings.STAGE_HP[state.stage][alpha]
+  state.hp = Settings.STAGE[state.stage].HP[alpha]
 
   // キャルステータスを更新する
   await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
@@ -43,16 +43,16 @@ export const UpdateLapAndBoss = async (lap: string, alpha: string): Promise<Opti
 const getStageName = (lap: string): string => {
   const l = Number(lap)
   switch (true) {
-    case l < 4:
-      return 'first'
-    case l < 11:
-      return 'second'
-    case l < 35:
-      return 'third'
-    case l < 45:
-      return 'fourth'
+    case l < Settings.STAGE.SECOND.LAP.first():
+      return 'FIRST'
+    case l < Settings.STAGE.THIRD.LAP.first():
+      return 'SECOND'
+    case l < Settings.STAGE.FOURTH.LAP.first():
+      return 'THIRD'
+    case l < Settings.STAGE.FIFTH.LAP.first():
+      return 'FOURTH'
     default:
-      return 'fifth'
+      return 'FIFTH'
   }
 }
 
