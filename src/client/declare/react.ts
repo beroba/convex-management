@@ -45,6 +45,12 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   // 凸宣言を設定する
   await declaration.SetUser(state)
 
+  // 離席中ロールを削除
+  react.message.guild?.members.cache
+    .map(m => m)
+    .find(m => m.id === user.id)
+    ?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+
   return 'Addition of convex declaration'
 }
 
@@ -102,7 +108,9 @@ export const ConvexDone = async (user: Discord.User) => {
 
   // 凸宣言完了者のメッセージを全て削除
   await Promise.all(
-    (await channel.messages.fetch())
+    (
+      await channel.messages.fetch()
+    )
       .map(m => m)
       .filter(m => m.author.id === user.id)
       .map(m => m.delete())

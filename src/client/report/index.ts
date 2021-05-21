@@ -92,6 +92,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 活動限界時間の表示を更新
   limitTime.Display(members)
 
+  // 離席中ロールを削除
+  await msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+
   return 'Update status'
 }
 

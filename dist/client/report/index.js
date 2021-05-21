@@ -89,9 +89,9 @@ var react = __importStar(require("../declare/react"));
 var cancel = __importStar(require("../plan/delete"));
 var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var member_1, state, content, _a, members, member;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 if ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.user.bot)
                     return [2];
@@ -99,7 +99,7 @@ var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function 
                     return [2];
                 return [4, status.FetchMember(msg.author.id)];
             case 1:
-                member_1 = _c.sent();
+                member_1 = _d.sent();
                 if (!member_1) {
                     msg.reply('クランメンバーじゃないわ');
                     return [2, 'Not a clan member'];
@@ -110,12 +110,12 @@ var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function 
                 }
                 return [4, current.Fetch()];
             case 2:
-                state = _c.sent();
+                state = _d.sent();
                 content = util.Format(msg.content);
                 if (!/^k|kill/i.test(content)) return [3, 4];
                 return [4, declare.UserMessageAllDelete(msg.author)];
             case 3:
-                _c.sent();
+                _d.sent();
                 lapAndBoss.Next();
                 return [3, 5];
             case 4:
@@ -123,17 +123,17 @@ var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function 
                 if (/@\d/.test(content)) {
                     declare.RemainingHPChange(content);
                 }
-                _c.label = 5;
+                _d.label = 5;
             case 5:
                 overDelete(msg);
                 return [4, update.Status(msg)];
             case 6:
-                _a = __read.apply(void 0, [_c.sent(), 2]), members = _a[0], member = _a[1];
+                _a = __read.apply(void 0, [_d.sent(), 2]), members = _a[0], member = _a[1];
                 if (!member)
                     return [2];
                 return [4, util.Sleep(100)];
             case 7:
-                _c.sent();
+                _d.sent();
                 status.ReflectOnSheet(member);
                 if (!/;/i.test(content)) {
                     if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
@@ -145,6 +145,9 @@ var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function 
                 }
                 situation.Report(members);
                 limitTime.Display(members);
+                return [4, ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.remove(const_settings_1["default"].ROLE_ID.AWAY_IN))];
+            case 8:
+                _d.sent();
                 return [2, 'Update status'];
         }
     });

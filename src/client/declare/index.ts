@@ -58,6 +58,7 @@ const messageDelete = async () => {
   // #凸宣言-ボス状況のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
+  // prettier-ignore
   // キャル以外のメッセージを全てを削除
   const list = await Promise.all(
     (await channel.messages.fetch())

@@ -39,7 +39,7 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   // #id送信チャンネルでなければ終了
   if (msg.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_SEND) return
 
-  // idスクショ送信のロールを削除する
+  // idスクショ送信のロールを削除
   await msg.member?.roles.remove(Settings.ROLE_ID.PLAYER_ID_SEND)
 
   // 画像のURLを取得

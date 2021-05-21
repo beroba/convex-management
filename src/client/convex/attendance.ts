@@ -35,7 +35,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.SHUSEKI) return
 
-  // 離席中ロールを削除する
+  // 離席中ロールを削除
   react.message.guild?.members.cache
     .map(m => m)
     .find(m => m.id === user.id)
@@ -84,7 +84,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.RISEKI) return
 
-  // 離席中ロールを付与する
+  // 離席中ロールを付与
   react.message.guild?.members.cache
     .map(m => m)
     .find(m => m.id === user.id)
