@@ -44,7 +44,7 @@ const createMessage = async (members: Member[]): Promise<string> => {
   const remaining = remainingConvexNumber(members)
 
   // 現在の段階を数字で取得
-  const stage = getStageNumber(state)
+  const stage = Settings.STAGE[state.stage].NUMBER
 
   // 次の段階までの残り凸数を計算
   const after = lapsToTheNextStage(state)
@@ -98,39 +98,23 @@ const remainingConvexNumber = (members: Member[]): string => {
 }
 
 /**
- * 現在の段階の数字を取得
- * @param state 現在の状態
- * @return 段階の数字
- */
-const getStageNumber = (state: Current): number => {
-  const table = [
-    {num: 1, stage: 'first'},
-    {num: 2, stage: 'second'},
-    {num: 3, stage: 'third'},
-    {num: 4, stage: 'fourth'},
-    {num: 5, stage: 'fifth'},
-  ]
-  // 現在と同じ周回数を取得
-  return table.find(v => v.stage === state.stage)?.num ?? 0
-}
-
-/**
  * 次の段階までの周回数を計算する
  * @param state 現在の状態
  * @return 必要な周回数
  */
 const lapsToTheNextStage = (state: Current): number | string => {
-  const table = [
-    {lap: 4, stage: 'first'},
-    {lap: 11, stage: 'second'},
-    {lap: 35, stage: 'third'},
-    {lap: 45, stage: 'fourth'},
-    {lap: 0, stage: 'fifth'},
-  ]
-  // 現在と同じ周回数を取得
-  const t = table.find(v => v.stage === state.stage) ?? {lap: 0}
-  // 周回数の計算をする
-  return t.lap ? t.lap - Number(state.lap) : '-'
+  switch (true) {
+    case state.lap <= Settings.STAGE.FIRST.LAP.last():
+      return Settings.STAGE.FIRST.LAP.last() - Number(state.lap) + 1
+    case state.lap <= Settings.STAGE.SECOND.LAP.last():
+      return Settings.STAGE.SECOND.LAP.last() - Number(state.lap) + 1
+    case state.lap <= Settings.STAGE.THIRD.LAP.last():
+      return Settings.STAGE.THIRD.LAP.last() - Number(state.lap) + 1
+    case state.lap <= Settings.STAGE.FOURTH.LAP.last():
+      return Settings.STAGE.FOURTH.LAP.last() - Number(state.lap) + 1
+    default:
+      return '-'
+  }
 }
 
 /**

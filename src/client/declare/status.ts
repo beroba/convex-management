@@ -11,7 +11,7 @@ import {Current} from '../../io/type'
  */
 export const Update = async (state: Current) => {
   // 現在のボスのHPを取得
-  const maxHP = Settings.STAGE_HP[state.stage][state.alpha]
+  const maxHP = Settings.STAGE[state.stage].HP[state.alpha]
 
   // #凸宣言-ボス状況のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)

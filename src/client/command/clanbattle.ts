@@ -182,9 +182,11 @@ const bossNextController = async (_command: string, _content: string, _msg: Disc
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
+  situation.Report(members)
 
-  // 凸状況に報告
-  await situation.Report(members)
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
 }
 
 /**
@@ -199,9 +201,11 @@ const bossPreviousController = async (_command: string, _content: string, _msg: 
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
+  situation.Report(members)
 
-  // 凸状況に報告
-  await situation.Report(members)
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
 }
 
 /**
@@ -222,7 +226,7 @@ const bossController = async (_command: string, _content: string, _msg: Discord.
   const alpha = util.Format(args).replace(/\s|\d/gi, '')
 
   // 書式が違う場合は終了
-  if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ')
+  if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
   if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
 
   // 任意のボスへ移動させる
@@ -230,9 +234,11 @@ const bossController = async (_command: string, _content: string, _msg: Discord.
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()
+  situation.Report(members)
 
-  // 凸状況に報告
-  await situation.Report(members)
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
 }
 
 /**

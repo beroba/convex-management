@@ -98,7 +98,7 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
 
   // ボス名とHPを取得
   const name = await bossTable.TakeName(alpha)
-  const hp = Settings.STAGE_HP[stage][alpha]
+  const hp = Settings.STAGE[stage].HP[alpha]
 
   // レイアウトを調整して返す
   return `${name} \`${hp}\`\n\`\`\`\n${/^\s*$/.test(text) ? ' ' : text}\n\`\`\``
