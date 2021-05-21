@@ -80,6 +80,7 @@ var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
 var status = __importStar(require("../../io/status"));
 var update = __importStar(require("./update"));
+var etc = __importStar(require("../convex/etc"));
 var lapAndBoss = __importStar(require("../convex/lapAndBoss"));
 var limitTime = __importStar(require("../convex/limitTime"));
 var over = __importStar(require("../convex/over"));
@@ -136,17 +137,18 @@ var Convex = function (msg) { return __awaiter(void 0, void 0, void 0, function 
                 _d.sent();
                 status.ReflectOnSheet(member);
                 if (!/;/i.test(content)) {
-                    if ((member === null || member === void 0 ? void 0 : member.end) === '1') {
-                        cancel.AllRemove(msg.author.id);
-                    }
-                    else {
-                        cancel.Remove(state.alpha, msg.author.id);
-                    }
+                    cancel.Remove(state.alpha, msg.author.id);
                 }
+                if (!member.end) return [3, 9];
+                return [4, etc.RemoveBossRole(msg.member)];
+            case 8:
+                _d.sent();
+                _d.label = 9;
+            case 9:
                 situation.Report(members);
                 limitTime.Display(members);
                 return [4, ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.remove(const_settings_1["default"].ROLE_ID.AWAY_IN))];
-            case 8:
+            case 10:
                 _d.sent();
                 return [2, 'Update status'];
         }

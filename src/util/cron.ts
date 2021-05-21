@@ -2,8 +2,11 @@ import * as cron from 'node-cron'
 import Settings from 'const-settings'
 import * as util from '../util'
 import * as dateTable from '../io/dateTable'
+import * as schedule from '../io/schedule'
 import * as status from '../io/status'
+import * as etc from '../client/convex/etc'
 import * as limitTime from '../client/convex/limitTime'
+import * as plan from '../client/plan/delete'
 
 // prettier-ignore
 /**
@@ -11,6 +14,7 @@ import * as limitTime from '../client/convex/limitTime'
  */
 export const CronOperation = () => {
   setRemainConvex('0 10 5 * * *')    // 05:10
+  resetAllPlan('0 50 4 * * *')    // 04:50
   removeTaskillRoll('0 0 5 * * *')   // 05:00
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
@@ -18,7 +22,7 @@ export const CronOperation = () => {
 }
 
 /**
- * クラバトがある日に、クランメンバー全員に凸残ロールを付与するクーロンする
+ * クラバトがある日に、クランメンバー全員に凸残ロールを付与するクーロンを作成する
  * @param expression クーロン式
  */
 const setRemainConvex = (expression: string) => {
@@ -45,7 +49,36 @@ const setRemainConvex = (expression: string) => {
 }
 
 /**
- * 全員のタスキルロールを外すクーロンを作成
+ * 凸予定を全て削除するクーロンを作成する
+ * @param expression クーロン式
+ */
+const resetAllPlan = (expression: string) => {
+  cron.schedule(expression, async () => {
+    // 凸予定を全て削除
+    await schedule.AllDelete()
+
+    // 凸予定のメッセージを全て削除
+    await plan.MsgAllRemove()
+
+    // べろばあのクランメンバー一覧を取得
+    const clanMembers = util
+      .GetGuild()
+      ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+      ?.members.map(m => m)
+
+    // クランメンバーのボスロールを全て削除
+    clanMembers?.forEach(m => etc.RemoveBossRole(m))
+
+    // bot-notifyに通知をする
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+    channel.send('全ての凸予定を削除したわ')
+
+    console.log('reset all plan')
+  })
+}
+
+/**
+ * 全員のタスキルロールを外すクーロンを作成する
  * @param expression クーロン式
  */
 const removeTaskillRoll = (expression: string) => {
@@ -65,7 +98,7 @@ const removeTaskillRoll = (expression: string) => {
 }
 
 /**
- * メンバー全員の凸状況をリセットするクーロンを作成
+ * メンバー全員の凸状況をリセットするクーロンを作成する
  * @param expression クーロン式
  */
 const resetConvex = (expression: string) => {

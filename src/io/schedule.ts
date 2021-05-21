@@ -64,6 +64,18 @@ export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
 }
 
 /**
+ * 全ての凸予定を削除する
+ * @param id 削除したい凸予定のid
+ */
+export const AllDelete = async () => {
+  await Promise.all(
+    util
+      .range(Settings.CAL_STATUS_ID.PLANS.length)
+      .map(async i => await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS[i], []))
+  )
+}
+
+/**
  * 渡されたidの凸予定のメッセージを編集する
  * @param text 変更するテキスト
  * @param id 変更したいの凸予定のid

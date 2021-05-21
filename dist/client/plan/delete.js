@@ -54,17 +54,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -85,7 +74,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.AllRemove = exports.Remove = exports.Delete = exports.Already = void 0;
+exports.MsgAllRemove = exports.Remove = exports.Delete = exports.Already = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var current = __importStar(require("../../io/current"));
@@ -161,59 +150,6 @@ var Remove = function (alpha, id) { return __awaiter(void 0, void 0, void 0, fun
     });
 }); };
 exports.Remove = Remove;
-var AllRemove = function (id) { return __awaiter(void 0, void 0, void 0, function () {
-    var channel, msgs, list, list_1, list_1_1, m, e_1_1, plans;
-    var e_1, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
-                return [4, channel.messages.fetch()];
-            case 1:
-                msgs = _b.sent();
-                list = msgs.map(function (v) { return v; }).filter(function (m) { return m.author.id === id; });
-                _b.label = 2;
-            case 2:
-                _b.trys.push([2, 7, 8, 9]);
-                list_1 = __values(list), list_1_1 = list_1.next();
-                _b.label = 3;
-            case 3:
-                if (!!list_1_1.done) return [3, 6];
-                m = list_1_1.value;
-                m["delete"]();
-                return [4, util.Sleep(3000)];
-            case 4:
-                _b.sent();
-                _b.label = 5;
-            case 5:
-                list_1_1 = list_1.next();
-                return [3, 3];
-            case 6: return [3, 9];
-            case 7:
-                e_1_1 = _b.sent();
-                e_1 = { error: e_1_1 };
-                return [3, 9];
-            case 8:
-                try {
-                    if (list_1_1 && !list_1_1.done && (_a = list_1["return"])) _a.call(list_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-                return [7];
-            case 9: return [4, schedule.Fetch()];
-            case 10:
-                plans = _b.sent();
-                Promise.all(plans.filter(function (p) { return p.playerID === id; }).map(function (p) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, schedule.Delete(p.senderID)];
-                        case 1: return [2, _a.sent()];
-                    }
-                }); }); }));
-                console.log('Delete all convex schedules');
-                return [2];
-        }
-    });
-}); };
-exports.AllRemove = AllRemove;
 var planDelete = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, plans, plan;
     return __generator(this, function (_b) {
@@ -270,3 +206,17 @@ var unroleBoss = function (plans, plan, msg) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
+var MsgAllRemove = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var channel;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.CONVEX_RESERVATE);
+                return [4, channel.bulkDelete(100)];
+            case 1:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.MsgAllRemove = MsgAllRemove;

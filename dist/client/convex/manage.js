@@ -62,6 +62,7 @@ exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../../util"));
 var status = __importStar(require("../../io/status"));
+var etc = __importStar(require("./etc"));
 var limitTime = __importStar(require("./limitTime"));
 var situation = __importStar(require("./situation"));
 var Update = function (state, msg) { return __awaiter(void 0, void 0, void 0, function () {
@@ -114,9 +115,14 @@ var convexEndProcess = function (member, user, msg) { return __awaiter(void 0, v
                 return [4, util.MemberFromId(user.id)];
             case 1:
                 guildMember = _a.sent();
-                guildMember.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX);
-                return [4, status.Fetch()];
+                return [4, guildMember.roles.remove(const_settings_1["default"].ROLE_ID.REMAIN_CONVEX)];
             case 2:
+                _a.sent();
+                return [4, etc.RemoveBossRole(guildMember)];
+            case 3:
+                _a.sent();
+                return [4, status.Fetch()];
+            case 4:
                 members = _a.sent();
                 n = members.filter(function (s) { return s.end === '1'; }).length + 1;
                 msg.reply("3\u51F8\u76EE \u7D42\u4E86\n`" + n + "`\u4EBA\u76EE\u306E3\u51F8\u7D42\u4E86\u3088\uFF01");

@@ -56,7 +56,7 @@ export const AddTaskKillRoll = async (msg: Discord.Message) => {
 /**
  * 凸残ロールを全て外す
  */
-export const RemoveRole = async () => {
+export const RemoveConvexRoles = async () => {
   // べろばあのクランメンバー一覧を取得
   const clanMembers =
     util
@@ -66,6 +66,18 @@ export const RemoveRole = async () => {
 
   // クランメンバーの凸残ロールを全て外す
   await Promise.all(clanMembers.map(async m => await m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)))
+}
+
+/**
+ * 指定されたメンバーのボスロールを全て削除する
+ * @param member ロールを削除したメンバー
+ */
+export const RemoveBossRole = async (member: Option<Discord.GuildMember>) => {
+  await member?.roles.remove(Settings.BOSS_ROLE_ID.a)
+  await member?.roles.remove(Settings.BOSS_ROLE_ID.b)
+  await member?.roles.remove(Settings.BOSS_ROLE_ID.c)
+  await member?.roles.remove(Settings.BOSS_ROLE_ID.d)
+  await member?.roles.remove(Settings.BOSS_ROLE_ID.e)
 }
 
 /**

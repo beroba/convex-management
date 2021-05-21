@@ -58,7 +58,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.UpdateSisters = exports.UpdateMembers = exports.RemoveRole = exports.AddTaskKillRoll = exports.SimultConvexCalc = void 0;
+exports.UpdateSisters = exports.UpdateMembers = exports.RemoveBossRole = exports.RemoveConvexRoles = exports.AddTaskKillRoll = exports.SimultConvexCalc = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var alphabet_to_number_1 = require("alphabet-to-number");
 var status = __importStar(require("../../io/status"));
@@ -93,7 +93,7 @@ var AddTaskKillRoll = function (msg) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.AddTaskKillRoll = AddTaskKillRoll;
-var RemoveRole = function () { return __awaiter(void 0, void 0, void 0, function () {
+var RemoveConvexRoles = function () { return __awaiter(void 0, void 0, void 0, function () {
     var clanMembers;
     var _a, _b, _c;
     return __generator(this, function (_d) {
@@ -113,7 +113,30 @@ var RemoveRole = function () { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); };
-exports.RemoveRole = RemoveRole;
+exports.RemoveConvexRoles = RemoveConvexRoles;
+var RemoveBossRole = function (member) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(const_settings_1["default"].BOSS_ROLE_ID.a))];
+            case 1:
+                _a.sent();
+                return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(const_settings_1["default"].BOSS_ROLE_ID.b))];
+            case 2:
+                _a.sent();
+                return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(const_settings_1["default"].BOSS_ROLE_ID.c))];
+            case 3:
+                _a.sent();
+                return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(const_settings_1["default"].BOSS_ROLE_ID.d))];
+            case 4:
+                _a.sent();
+                return [4, (member === null || member === void 0 ? void 0 : member.roles.remove(const_settings_1["default"].BOSS_ROLE_ID.e))];
+            case 5:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.RemoveBossRole = RemoveBossRole;
 var UpdateMembers = function (msg) { return __awaiter(void 0, void 0, void 0, function () {
     var users;
     var _a, _b;

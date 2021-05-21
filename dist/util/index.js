@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.GetTextChannel = exports.GetMembersFromUser = exports.GetUserName = exports.MemberFromId = exports.IsRole = exports.IsChannel = exports.GetCalInfo = exports.GetGuild = exports.Omit = exports.Sleep = exports.Format = void 0;
+exports.GetTextChannel = exports.GetMembersFromUser = exports.GetUserName = exports.MemberFromId = exports.IsRole = exports.IsChannel = exports.GetCalInfo = exports.GetGuild = exports.Omit = exports.range = exports.Sleep = exports.Format = void 0;
 var moji_1 = __importDefault(require("moji"));
 var throw_env_1 = __importDefault(require("throw-env"));
 var const_settings_1 = __importDefault(require("const-settings"));
@@ -56,6 +56,18 @@ var Sleep = function (ms) {
     return new Promise(function (res) { return setTimeout(res, ms); });
 };
 exports.Sleep = Sleep;
+var range = function (start, stop, step) {
+    if (step === void 0) { step = 1; }
+    if (stop === undefined) {
+        stop = start;
+        start = 0;
+    }
+    var n = [];
+    for (var i = start; (stop - i) * step > 0; i += step)
+        n.push(i);
+    return n;
+};
+exports.range = range;
 var Omit = function (v) {
     return !/^,+$/.test(v.toString());
 };

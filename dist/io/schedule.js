@@ -69,7 +69,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.FetchBoss = exports.Fetch = exports.Edit = exports.Delete = exports.Add = exports.Update = void 0;
+exports.FetchBoss = exports.Fetch = exports.Edit = exports.AllDelete = exports.Delete = exports.Add = exports.Update = void 0;
 var const_settings_1 = __importDefault(require("const-settings"));
 var pieces_each_1 = __importDefault(require("pieces-each"));
 var util = __importStar(require("../util"));
@@ -133,6 +133,24 @@ var Delete = function (id) { return __awaiter(void 0, void 0, void 0, function (
     });
 }); };
 exports.Delete = Delete;
+var AllDelete = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, Promise.all(util
+                    .range(const_settings_1["default"].CAL_STATUS_ID.PLANS.length)
+                    .map(function (i) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4, io.UpdateArray(const_settings_1["default"].CAL_STATUS_ID.PLANS[i], [])];
+                        case 1: return [2, _a.sent()];
+                    }
+                }); }); }))];
+            case 1:
+                _a.sent();
+                return [2];
+        }
+    });
+}); };
+exports.AllDelete = AllDelete;
 var Edit = function (text, id) { return __awaiter(void 0, void 0, void 0, function () {
     var plans;
     return __generator(this, function (_a) {

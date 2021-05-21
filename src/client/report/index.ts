@@ -5,6 +5,7 @@ import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as update from './update'
+import * as etc from '../convex/etc'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as limitTime from '../convex/limitTime'
 import * as over from '../convex/over'
@@ -78,12 +79,12 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(content)) {
-    // 3凸終了していたら全ての凸予定を削除、そうでない場合は現在のボスの凸予定を削除
-    if (member?.end === '1') {
-      cancel.AllRemove(msg.author.id)
-    } else {
-      cancel.Remove(state.alpha, msg.author.id)
-    }
+    cancel.Remove(state.alpha, msg.author.id)
+  }
+
+  // 3凸終了している場合
+  if (member.end) {
+    await etc.RemoveBossRole(msg.member)
   }
 
   // #凸状況に報告

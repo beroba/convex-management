@@ -229,7 +229,7 @@ var setBossController = function (_command, _content, _msg) { return __awaiter(v
 }); };
 var removeRoleController = function (_command, _content, _msg) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        etc.RemoveRole();
+        etc.RemoveConvexRoles();
         _msg.reply('凸残ロール全て外したわよ！');
         return [2];
     });

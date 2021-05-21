@@ -63,10 +63,14 @@ var cron = __importStar(require("node-cron"));
 var const_settings_1 = __importDefault(require("const-settings"));
 var util = __importStar(require("../util"));
 var dateTable = __importStar(require("../io/dateTable"));
+var schedule = __importStar(require("../io/schedule"));
 var status = __importStar(require("../io/status"));
+var etc = __importStar(require("../client/convex/etc"));
 var limitTime = __importStar(require("../client/convex/limitTime"));
+var plan = __importStar(require("../client/plan/delete"));
 var CronOperation = function () {
     setRemainConvex('0 10 5 * * *');
+    resetAllPlan('0 50 4 * * *');
     removeTaskillRoll('0 0 5 * * *');
     resetConvex('0 0 5 * * *');
     notifyDailyMission('0 30 4 * * *');
@@ -90,6 +94,29 @@ var setRemainConvex = function (expression) {
                     channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
                     channel.send('クランメンバーに凸残ロールを付与したわ');
                     console.log('Add convex role');
+                    return [2];
+            }
+        });
+    }); });
+};
+var resetAllPlan = function (expression) {
+    cron.schedule(expression, function () { return __awaiter(void 0, void 0, void 0, function () {
+        var clanMembers, channel;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4, schedule.AllDelete()];
+                case 1:
+                    _c.sent();
+                    return [4, plan.MsgAllRemove()];
+                case 2:
+                    _c.sent();
+                    clanMembers = (_b = (_a = util
+                        .GetGuild()) === null || _a === void 0 ? void 0 : _a.roles.cache.get(const_settings_1["default"].ROLE_ID.CLAN_MEMBERS)) === null || _b === void 0 ? void 0 : _b.members.map(function (m) { return m; });
+                    clanMembers === null || clanMembers === void 0 ? void 0 : clanMembers.forEach(function (m) { return etc.RemoveBossRole(m); });
+                    channel = util.GetTextChannel(const_settings_1["default"].CHANNEL_ID.BOT_NOTIFY);
+                    channel.send('全ての凸予定を削除したわ');
+                    console.log('reset all plan');
                     return [2];
             }
         });
