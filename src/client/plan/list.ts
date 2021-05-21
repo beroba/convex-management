@@ -78,16 +78,23 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
     plans
       .filter(p => p.alpha === alpha)
       .map(async p => {
+        const m = await status.FetchMember(p.playerID)
+        // 3凸済みなら表示しない
+        if (m?.end) return ''
+
         const member = await util.MemberFromId(p.playerID)
         const bool = util.IsRole(member, Settings.ROLE_ID.AWAY_IN)
-        const m = await status.FetchMember(p.playerID)
+
+        // 改行を潰して、連続した空白を1つにする
+        const text = p.msg.replace(/\r?\n/g, '').replace(/\s/g, ' ')
 
         return `${p.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}${
           m?.limit !== '' ? `, ${m?.limit}時` : ''
-        }]${bool ? '(離席中)' : ''} ${p.msg}`
+        }]${bool ? '(離席中)' : ''} ${text}`
       })
   )
-  const text = [...new Set(p)].filter(m => m !== '').join('\n')
+  // 値の重複、空の値を潰す
+  const text = [...new Set(p)].filter(v => v).join('\n')
 
   // ボス名とHPを取得
   const name = await bossTable.TakeName(alpha)

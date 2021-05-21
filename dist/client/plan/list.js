@@ -158,23 +158,26 @@ var CreatePlanText = function (alpha, stage, plans) { return __awaiter(void 0, v
             case 0: return [4, Promise.all(plans
                     .filter(function (p) { return p.alpha === alpha; })
                     .map(function (p) { return __awaiter(void 0, void 0, void 0, function () {
-                    var member, bool, m;
+                    var m, member, bool, text;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, util.MemberFromId(p.playerID)];
+                            case 0: return [4, status.FetchMember(p.playerID)];
                             case 1:
+                                m = _a.sent();
+                                if (m === null || m === void 0 ? void 0 : m.end)
+                                    return [2, ''];
+                                return [4, util.MemberFromId(p.playerID)];
+                            case 2:
                                 member = _a.sent();
                                 bool = util.IsRole(member, const_settings_1["default"].ROLE_ID.AWAY_IN);
-                                return [4, status.FetchMember(p.playerID)];
-                            case 2:
-                                m = _a.sent();
-                                return [2, p.name + "[" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + ((m === null || m === void 0 ? void 0 : m.limit) !== '' ? ", " + (m === null || m === void 0 ? void 0 : m.limit) + "\u6642" : '') + "]" + (bool ? '(離席中)' : '') + " " + p.msg];
+                                text = p.msg.replace(/\r?\n/g, '').replace(/\s/g, ' ');
+                                return [2, p.name + "[" + ((m === null || m === void 0 ? void 0 : m.convex) ? m === null || m === void 0 ? void 0 : m.convex : '0') + ((m === null || m === void 0 ? void 0 : m.over) ? '+' : '') + ((m === null || m === void 0 ? void 0 : m.limit) !== '' ? ", " + (m === null || m === void 0 ? void 0 : m.limit) + "\u6642" : '') + "]" + (bool ? '(離席中)' : '') + " " + text];
                         }
                     });
                 }); }))];
             case 1:
                 p = _a.sent();
-                text = __spreadArray([], __read(new Set(p))).filter(function (m) { return m !== ''; }).join('\n');
+                text = __spreadArray([], __read(new Set(p))).filter(function (v) { return v; }).join('\n');
                 return [4, bossTable.TakeName(alpha)];
             case 2:
                 name = _a.sent();
