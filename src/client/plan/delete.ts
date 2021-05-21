@@ -88,31 +88,6 @@ export const Remove = async (alpha: string, id: string) => {
 }
 
 /**
- * 引数で渡されたユーザーidの凸予定を全て完了する
- * @param id ユーザーid
- */
-export const AllRemove = async (id: string) => {
-  // 凸予定の全メッセージを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
-  const msgs = await channel.messages.fetch()
-
-  // 凸予定の中からユーザーidの物だけに選別
-  const list = msgs.map(v => v).filter(m => m.author.id === id)
-
-  // 3秒起きに削除を実行
-  for (const m of list) {
-    m.delete()
-    await util.Sleep(3000)
-  }
-
-  // 残ってる凸予定を削除
-  const plans = await schedule.Fetch()
-  Promise.all(plans.filter(p => p.playerID === id).map(async p => await schedule.Delete(p.senderID)))
-
-  console.log('Delete all convex schedules')
-}
-
-/**
  * 凸予定を削除する
  * @param msg DiscordからのMessage
  * @return 凸予定一覧
@@ -164,4 +139,15 @@ const unroleBoss = async (plans: Plan[], plan: Plan, msg: Discord.Message) => {
 
   // ボス番号のロールを削除
   await msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
+}
+
+/**
+ * 凸予定のメッセージを全て削除する
+ */
+export const MsgAllRemove = async () => {
+  // 凸予定のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
+
+  // メッセージを全て削除(100件)
+  await channel.bulkDelete(100)
 }

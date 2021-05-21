@@ -173,7 +173,7 @@ const setBossController = async (_command: string, _content: string, _msg: Disco
  */
 const removeRoleController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 凸残ロールを全て外す
-  etc.RemoveRole()
+  etc.RemoveConvexRoles()
 
   _msg.reply('凸残ロール全て外したわよ！')
 }

@@ -27,6 +27,23 @@ export const Sleep = (ms: number): Promise<unknown> => {
 }
 
 /**
+ * 指定された範囲の数字配列を作る
+ * @param start 開始位置
+ * @param stop 終了位置
+ * @param step 刻む数
+ * @returns 数字配列
+ */
+export const range = (start: number, stop?: number, step: number = 1): number[] => {
+  if (stop === undefined) {
+    stop = start
+    start = 0
+  }
+  const n = []
+  for (let i = start; (stop - i) * step > 0; i += step) n.push(i)
+  return n
+}
+
+/**
  * 空の配列を省く
  * @param v 配列
  * @return 真偽値
