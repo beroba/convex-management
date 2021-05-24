@@ -295,6 +295,7 @@ COMMAND_CHANNEL:
     - 進行-連携
     - くらばと-vc用
     - おためしキャルちゃん
+    - 🔔情報共有🔔
     - bot-test
   # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
