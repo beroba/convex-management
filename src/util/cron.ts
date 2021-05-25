@@ -6,7 +6,9 @@ import * as schedule from '../io/schedule'
 import * as status from '../io/status'
 import * as etc from '../client/convex/etc'
 import * as limitTime from '../client/convex/limitTime'
+import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
+import * as list from '../client/plan/list'
 
 // prettier-ignore
 /**
@@ -69,6 +71,10 @@ const resetAllPlan = (expression: string) => {
     // クランメンバーのボスロールを全て削除
     clanMembers?.forEach(m => etc.RemoveBossRole(m))
 
+    // 凸予定一覧を取得
+    const plans = await schedule.Fetch()
+    await list.SituationEdit(plans)
+
     // bot-notifyに通知をする
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
     channel.send('全ての凸予定を削除したわ')
@@ -106,6 +112,10 @@ const resetConvex = (expression: string) => {
     // 全員の凸状況をリセット
     await status.ResetConvex()
     await status.ResetConvexOnSheet()
+
+    // メンバー全員の状態を取得
+    const members = await status.Fetch()
+    situation.Report(members)
 
     // bot-notifyに通知をする
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
