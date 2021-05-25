@@ -8,11 +8,13 @@ import Option from 'type-of-option'
  * @param tl 整形させるTL
  * @param time 持ち越し秒数
  * @param msg DiscordからのMessage
+ * @param flag extendのフォーマットにするかの真偽値
  */
-export const TL = async (tl: string, time: Option<string>, msg: Discord.Message) => {
+export const TL = async (tl: string, time: Option<string>, msg: Discord.Message, flag = false) => {
   // TLの整形をする
-  const content = new Generate(tl, time) // 元になるクラスを生成
+  const content = new Generate(tl, time, flag) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
+    .extendFormat() // smicle好みに変更する
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .timeParser() // 時間のパースをする
     .toCodeBlock() // コードブロックにする
@@ -27,15 +29,18 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message)
 class Generate {
   tl: string
   time: Option<number>
+  flag: boolean
 
   /**
    * TLを整形させるクラス
    * @param tl 整形させるTL
    * @param time 持ち越し秒数
+   * @param flag extendのフォーマットにするかの真偽値
    */
-  constructor(tl: string, time: Option<string>) {
+  constructor(tl: string, time: Option<string>, flag: boolean) {
     this.tl = tl
     this.time = this.convertTime(time)
+    this.flag = flag
   }
 
   /**
@@ -160,6 +165,32 @@ class Generate {
   }
 
   /**
+   * smicle好みに変換する
+   * @returns this
+   */
+  extendFormat(): this {
+    // キャルbotの管理者じゃない場合は終了
+    if (!this.flag) return this
+
+    this.tl = this.tl
+      .replace(/=/g, '')
+      .replace(/-/g, '―')
+      .replace(/オート/g, '(オート)')
+      .replace(/傘/g, 'ニュネカ')
+      .replace(/ミスミ/g, '水カス')
+      .replace(/ミレン/g, '水サレ')
+      .replace(/ラビリスタ/g, 'ラビ')
+      .replace(/ヨン/g, 'プヨリ')
+      .replace(/6コロ/g, 'コッコロ')
+      .replace(/ガイ/g, 'ヘオイ')
+      .replace(/セスコ/g, 'ヘオイ')
+      .replace(/にゃる/g, 'ニャル')
+      .replace(/タコ/g, 'ニュペコ')
+
+    return this
+  }
+
+  /**
    * コードブロックじゃない場合はコードブロックにする
    * @return this
    */
@@ -175,9 +206,10 @@ class Generate {
    * @return this
    */
   alignVertically(): this {
-    // スペースを1つにする
-    this.tl = this.tl.replace(/\u200B/g, '').replace(/ +/g, ' ')
     this.tl = this.tl
+      .replace(/\u200B/g, '') // ゼロ幅スペースを潰す
+      .replace(/ +/g, ' ') // スペースを1つにする
+      .replace(/→/g, '\n ') // 矢印を改行にする
       .split('\n') // 1行づつ分解
       // 行頭の秒数の後ろにスペースを入れる
       .map(l => {

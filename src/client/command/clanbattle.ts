@@ -24,6 +24,11 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
   if (!util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)) return
 
   switch (true) {
+    case /cb tle/i.test(content): {
+      await tleController('/cb tle', content, msg)
+      return 'TL shaping'
+    }
+
     case /cb tl/i.test(content): {
       await tlController('/cb tl', content, msg)
       return 'TL shaping'
@@ -94,6 +99,43 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Show help'
     }
   }
+}
+
+/**
+ * `/cb tle`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const tleController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  /**
+   * 引数からtimeを作成する、作成できない場合はnullを返す
+   * @param args 受け取った引数
+   * @returns time
+   */
+  const toTime = (args: string): Option<string> => {
+    // `.|;`を`:`に置き換える
+    const time = args.replace(/\.|;/g, ':')
+
+    // 引数の書式が正しい書式か確認
+    const isNaN = Number.isNaN(Number(time.replace(':', '')))
+
+    return isNaN ? null : time
+  }
+
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // TL部分の生成
+  const tl = _msg.content.split('\n').slice(1).join('\n')
+
+  if (!tl) return _msg.reply('TLがないわ')
+
+  // timeを作成
+  const time = args && toTime(args)
+
+  // TLの整形をする
+  await format.TL(tl, time, _msg, true)
 }
 
 /**
