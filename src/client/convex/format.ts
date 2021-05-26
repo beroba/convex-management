@@ -104,8 +104,8 @@ class Generate {
       .replace(/タコ/g, 'ニュペコ')
       .replace(/ぷり/g, 'プリ')
       .replace(/プイ/g, 'プリユイ')
-      .replace(/サレン ?(サマー)/g, '水サレ')
-      .replace(/コッコロ ?(プリンセス)/g, 'プリコロ')
+      .replace(/サレン ?\(サマー\)/g, '水サレ')
+      .replace(/コッコロ ?\(プリンセス\)/g, 'プリコロ')
 
     return this
   }
