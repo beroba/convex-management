@@ -76,6 +76,41 @@ class Generate {
   }
 
   /**
+   * smicle好みに変換する
+   * @returns this
+   */
+  extendFormat(): this {
+    // キャルbotの管理者じゃない場合は終了
+    if (!this.flag) return this
+
+    this.tl = this.tl
+      .replace(/=/g, '')
+      .replace(/-/g, '―')
+      .replace(/オート/g, '(オート)')
+      .replace(/\(\(/g, '(')
+      .replace(/\)\)/g, ')')
+      .replace(/傘/g, 'ニュネカ')
+      .replace(/ミスミ/g, '水カス')
+      .replace(/ミレン/g, '水サレ')
+      .replace(/ミコト/g, '水マコ')
+      .replace(/ハロウカ/g, 'ハロキョ')
+      .replace(/ビスタ/g, 'ラビ')
+      .replace(/ラビリスタ/g, 'ラビ')
+      .replace(/ヨン/g, 'プヨリ')
+      .replace(/6コロ/g, 'コッコロ')
+      .replace(/ガイ/g, 'ヘオイ')
+      .replace(/セスコ/g, 'プリコロ')
+      .replace(/にゃる/g, 'ニャル')
+      .replace(/タコ/g, 'ニュペコ')
+      .replace(/ぷり/g, 'プリ')
+      .replace(/プイ/g, 'プリユイ')
+      .replace(/サレン ?(サマー)/g, '水サレ')
+      .replace(/コッコロ ?(プリンセス)/g, 'プリコロ')
+
+    return this
+  }
+
+  /**
    * 括弧の前後スペースを調整する
    * @return this
    */
@@ -162,32 +197,6 @@ class Generate {
       if (!/\d/.test(tl[i])) break
     }
     return i
-  }
-
-  /**
-   * smicle好みに変換する
-   * @returns this
-   */
-  extendFormat(): this {
-    // キャルbotの管理者じゃない場合は終了
-    if (!this.flag) return this
-
-    this.tl = this.tl
-      .replace(/=/g, '')
-      .replace(/-/g, '―')
-      .replace(/オート/g, '(オート)')
-      .replace(/傘/g, 'ニュネカ')
-      .replace(/ミスミ/g, '水カス')
-      .replace(/ミレン/g, '水サレ')
-      .replace(/ラビリスタ/g, 'ラビ')
-      .replace(/ヨン/g, 'プヨリ')
-      .replace(/6コロ/g, 'コッコロ')
-      .replace(/ガイ/g, 'ヘオイ')
-      .replace(/セスコ/g, 'ヘオイ')
-      .replace(/にゃる/g, 'ニャル')
-      .replace(/タコ/g, 'ニュペコ')
-
-    return this
   }
 
   /**
