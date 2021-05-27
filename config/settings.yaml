@@ -261,7 +261,7 @@ STAGE:
       e: '2600'
   FIFTH:
     NUMBER: 5
-    LAP: [41, 0]
+    LAP: [41]
     HP:
       a: '8500'
       b: '9000'
@@ -297,6 +297,7 @@ COMMAND_CHANNEL:
     - おためしキャルちゃん
     - 🔔情報共有🔔
     - bot-test
+    - tlを修正するﾈｺﾁｬﾝ
   # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
     - 凸予定
