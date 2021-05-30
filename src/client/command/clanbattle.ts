@@ -39,26 +39,6 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Change of convex management'
     }
 
-    case /cb boss now/.test(content): {
-      await bossNowController('/cb boss now', content, msg)
-      return 'Show current boss'
-    }
-
-    case /cb boss next/.test(content): {
-      await bossNextController('/cb boss next', content, msg)
-      return 'Advance to next lap and boss'
-    }
-
-    case /cb boss back/.test(content): {
-      await bossPreviousController('/cb boss back', content, msg)
-      return 'Advance to previous lap and boss'
-    }
-
-    case /cb boss previous/.test(content): {
-      await bossPreviousController('/cb boss previous', content, msg)
-      return 'Advance to previous lap and boss'
-    }
-
     case /cb boss/.test(content): {
       await bossController('/cb boss', content, msg)
       return 'Change laps and boss'
@@ -202,55 +182,6 @@ const convexController = async (_command: string, _content: string, _msg: Discor
 }
 
 /**
- * `/cb boss now`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const bossNowController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // #進行に現在の周回数とボスを報告
-  await lapAndBoss.ProgressReport()
-}
-
-/**
- * `/cb boss next`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const bossNextController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 次のボスに進める
-  await lapAndBoss.Next()
-
-  // メンバー全員の状態を取得
-  const members = await status.Fetch()
-  situation.Report(members)
-
-  // 凸予定一覧を取得
-  const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
-}
-
-/**
- * `/cb boss previous`, `/cb boss previous`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const bossPreviousController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 前のボスに戻す
-  await lapAndBoss.Previous()
-
-  // メンバー全員の状態を取得
-  const members = await status.Fetch()
-  situation.Report(members)
-
-  // 凸予定一覧を取得
-  const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
-}
-
-/**
  * `/cb boss`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
@@ -269,10 +200,14 @@ const bossController = async (_command: string, _content: string, _msg: Discord.
 
   // 書式が違う場合は終了
   if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
-  if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
 
   // 任意のボスへ移動させる
-  await lapAndBoss.Update(lap, alpha)
+  await lapAndBoss.UpdateLap(lap)
+
+  if (/[a-e]/i.test(alpha)) {
+    // 任意のボスへ移動させる
+    await lapAndBoss.SubjugateBoss(alpha)
+  }
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()

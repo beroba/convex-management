@@ -1,89 +1,72 @@
 import Settings from 'const-settings'
-import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as declare from '../declare'
+import {Current, Alpha} from '../../io/type'
 
 /**
- * 現在の周回数とボスを変更する
+ * 現在の周回数を変更する
  * @param lap 周回数
  */
-export const Update = async (lap: string, alpha: string) => {
+export const UpdateLap = async (lap: string) => {
+  // 現在の状況を取得
+  let state = await current.Fetch()
+
   // 現在の状況を更新
-  const newState = await current.UpdateLapAndBoss(lap, alpha)
+  state = await current.UpdateLap(state, lap)
   await util.Sleep(100)
 
-  // 凸宣言のボスを変更
-  declare.ChangeBoss(newState)
-
-  // 進行に現在のボスと周回数を報告
-  ProgressReport()
+  // #進行に報告
+  await StageReport(state)
 
   // 現在の状況をスプレッドシートに反映
   current.ReflectOnSheet()
 }
 
 /**
- * 現在の周回数とボスを次に進める
+ * ボスの討伐状況を変更する
+ * @param alpha 討伐するボス番号
  */
-export const Next = async () => {
+export const SubjugateBoss = async (alpha: string) => {
   // 現在の状況を取得
-  const state = await current.Fetch()
+  let state = await current.Fetch()
 
-  // 次の周回数とボスへ進める
-  const lap = String(Number(state.lap) + (state.alpha === 'e' ? 1 : 0))
-  const alpha = NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1)
+  // 複数ボスの場合が指定されていた場合の為に分割する
+  alpha.split('').map(async alp => {
+    // HPを取得
+    const hp: number = Settings.STAGE[state.stage].HP[alp]
 
-  // 現在の状況を更新
-  const newState = await current.UpdateLapAndBoss(lap, alpha)
-  await util.Sleep(100)
+    // 現在のボス状況を更新
+    state = await current.UpdateBoss(state, alp, hp)
+    await util.Sleep(100)
 
-  // 凸宣言のボスを変更
-  declare.ChangeBoss(newState)
+    // 凸宣言のボスを変更
+    declare.ChangeBoss(state)
 
-  // 進行に現在のボスと周回数を報告
-  ProgressReport()
+    // #進行に報告
+    await SubjugateReport(state, alp)
+  })
 
   // 現在の状況をスプレッドシートに反映
   current.ReflectOnSheet()
 }
 
 /**
- * 現在の周回数とボスを前に戻す
+ * #進行に現在の周回数を報告
+ * @param state 現在の状況
  */
-export const Previous = async () => {
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  // 次の周回数とボスへ進める
-  const lap = String(Number(state.lap) - (state.alpha === 'a' ? 1 : 0))
-  const alpha = NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1)
-
-  // 現在の状況を更新
-  const newState = await current.UpdateLapAndBoss(lap, alpha)
-  await util.Sleep(100)
-
-  // 凸宣言のボスを変更
-  declare.ChangeBoss(newState)
-
-  // 進行に現在のボスと周回数を報告
-  ProgressReport()
-
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet()
-}
-
-/**
- * #進行に現在の周回数とボスを報告
- */
-export const ProgressReport = async () => {
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  // ボスのロールを取得
-  const role = Settings.BOSS_ROLE_ID[state.alpha]
-
+export const StageReport = async (state: Current) => {
   // 進行に報告
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
+  channel.send(`<@&${Settings.ROLE_ID.PLAN_CONVEX}> \`${state.lap}\`周目`)
+}
+
+/**
+ * #進行に討伐したボスを報告
+ * @param state 現在の状況
+ */
+export const SubjugateReport = async (state: Current, alpha: string) => {
+  // 進行に報告
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+  await channel.send(`\`${state.lap}\`周目 \`${state[alpha as Alpha].name}\` 討伐`)
 }

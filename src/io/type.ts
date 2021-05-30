@@ -1,4 +1,9 @@
 /**
+ * [a-e]の型
+ */
+export type Alpha = 'a' | 'b' | 'c' | 'd' | 'e'
+
+/**
  * クラバトのボステーブル
  */
 export type BossTable = {

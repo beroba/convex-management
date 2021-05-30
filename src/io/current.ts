@@ -1,25 +1,17 @@
 import Settings from 'const-settings'
-import Option from 'type-of-option'
 import {AtoA} from 'alphabet-to-number'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as bossTable from './bossTable'
-import {Current, CurrentBoss} from './type'
-
-/**
- * [a-e]の型
- */
-type Alpha = 'a' | 'b' | 'c' | 'd' | 'e'
+import {Current, CurrentBoss, Alpha} from './type'
 
 /**
  * 現在の状況の段階と周回数を設定する
+ * @param state 現在の状況
  * @param lap 周回数
  * @param alpha ボス番号
  */
-export const UpdateLap = async (lap: string): Promise<Option<Current>> => {
-  // 現在の状況を取得
-  const state: Current = await Fetch()
-
+export const UpdateLap = async (state: Current, lap: string): Promise<Current> => {
   // 値を更新
   state.lap = lap
   state.stage = getStageName(lap)
@@ -53,14 +45,12 @@ const getStageName = (lap: string): string => {
 
 /**
  * 現在のボス状況を設定する
+ * @param state 現在の状況
  * @param alpha ボス番号
  * @param hp 残りHP
  * @return 現在の状況
  */
-export const UpdateBoss = async (alpha: string, hp: number): Promise<Current> => {
-  // 現在の状況を取得
-  const state: Current = await Fetch()
-
+export const UpdateBoss = async (state: Current, alpha: string, hp: number): Promise<Current> => {
   // ボス番号(英語)からボス番号(数字)とボス名を取得
   const num = (await bossTable.TakeNum(alpha)) ?? ''
   const name = (await bossTable.TakeName(alpha)) ?? ''
@@ -131,6 +121,9 @@ export const ReflectOnSheet = async () => {
  * スプレッドの現在の状況をキャルに反映させる
  */
 export const ReflectOnCal = async () => {
+  // 現在の状況を取得
+  const state = await Fetch()
+
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
@@ -140,14 +133,14 @@ export const ReflectOnCal = async () => {
 
   // 周回数を更新
   const lap = (await sheet.getCell(lap_cell)).getValue()
-  await UpdateLap(lap)
+  await UpdateLap(state, lap)
 
   // 現在のボスを更新
   await Promise.all(
     hp_cell.map(async (cell: string, i: number) => {
       const alpha = AtoA('a', i) as Alpha
       const hp = (await sheet.getCell(cell)).getValue()
-      await UpdateBoss(alpha, hp)
+      await UpdateBoss(state, alpha, hp)
     })
   )
 }
