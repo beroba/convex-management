@@ -269,6 +269,42 @@ STAGE:
       d: '10000'
       e: '11000'
 
+# 凸宣言のチャンネルとメッセージ
+CONVEX_DECLARE:
+  a:
+    CHANNEL:
+    STATUS:
+    PLAN:
+    DECLARE:
+  b:
+    CHANNEL:
+    STATUS:
+    PLAN:
+    DECLARE:
+  c:
+    CHANNEL:
+    STATUS:
+    PLAN:
+    DECLARE:
+  d:
+    CHANNEL:
+    STATUS:
+    PLAN:
+    DECLARE:
+  e:
+    CHANNEL:
+    STATUS:
+    PLAN:
+    DECLARE:
+
+# 各ボスの凸状況
+CONVEX_SITUATION:
+  a:
+  b:
+  c:
+  d:
+  e:
+
 # 凸宣言のメッセージID
 CONVEX_DECLARE_ID:
   STATUS: '826330501853216819'

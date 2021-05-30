@@ -17,15 +17,25 @@ export type DateTable = {
 }
 
 /**
+ * 現在のボス状況
+ * @type num: string
+ * @type alpha: string
+ * @type name: string
+ * @type hp: number
+ */
+export type CurrentBoss = BossTable & {hp: number}
+
+/**
  * 現在の状況
  */
 export type Current = {
   stage: string
   lap: string
-  boss: string
-  num: string
-  alpha: string
-  hp: string
+  a: CurrentBoss
+  b: CurrentBoss
+  c: CurrentBoss
+  d: CurrentBoss
+  e: CurrentBoss
 }
 
 /**
@@ -35,6 +45,7 @@ export type User = {
   name: string
   id: string
   limit: string
+  declare: string
 }
 
 /**
@@ -52,6 +63,7 @@ export type Status = {
  * @type name: string
  * @type id: string
  * @type limit: string
+ * @type declare: string
  * @type convex: string
  * @type over: string
  * @type end: string
