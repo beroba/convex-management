@@ -48,6 +48,7 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     name: u.name,
     id: u.id,
     limit: '',
+    declare: '',
     convex: '',
     over: '',
     end: '',
@@ -72,6 +73,7 @@ export const ResetConvex = async () => {
     name: s.name,
     id: s.id,
     limit: s.limit,
+    declare: '',
     convex: '',
     over: '',
     end: '',
@@ -182,6 +184,7 @@ export const ReflectOnCal = async () => {
     name: users[i].name,
     id: users[i].id,
     limit: users[i].limit.replace('時', ''),
+    declare: users[i].declare,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -230,14 +233,22 @@ export const ResetConvexOnSheet = async () => {
  * @return ユーザー一覧
  */
 export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
+  // メンバー全体の状態を取得
+  const members = await Fetch()
+
   const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
   return PiecesEach(cells, 3)
     .filter(util.Omit)
-    .map(u => ({
-      name: u[0],
-      id: u[1],
-      limit: u[2],
-    }))
+    .map(u => {
+      const id = u[1]
+      const member = members.find(m => m.id === id)
+      return {
+        name: u[0],
+        id: id,
+        limit: u[2],
+        declare: member?.declare ?? '',
+      }
+    })
 }
 
 /**

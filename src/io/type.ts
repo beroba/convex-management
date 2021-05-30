@@ -22,8 +22,12 @@ export type DateTable = {
  * @type alpha: string
  * @type name: string
  * @type hp: number
+ * @type subjugate: boolean
  */
-export type CurrentBoss = BossTable & {hp: number}
+export type CurrentBoss = BossTable & {
+  hp: number
+  subjugate: boolean
+}
 
 /**
  * 現在の状況

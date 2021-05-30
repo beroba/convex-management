@@ -92,6 +92,7 @@ export const UpdateMembers = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -115,6 +116,7 @@ export const UpdateSisters = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
