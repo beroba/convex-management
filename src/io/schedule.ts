@@ -46,7 +46,7 @@ export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
 
   // 一致する凸予定がない場合は終了
   const plan = plans.find(p => p.senderID === id)
-  if (!plan) return [plans, null]
+  if (!plan) return [plans, plan]
 
   // 凸予定一覧から渡されたidの凸予定を取り除く
   plans = plans.filter(p => p.senderID !== id)
@@ -82,7 +82,7 @@ export const AllDelete = async () => {
  * @return 編集した凸予定一覧
  */
 export const Edit = async (text: string, id: string): Promise<Plan[]> => {
-  // 凸予定一覧を取得s
+  // 凸予定一覧を取得
   let plans = await Fetch()
 
   // 凸予定一覧から渡されたidの凸予定を取り除く

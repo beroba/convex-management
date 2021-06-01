@@ -3,28 +3,35 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import {Current} from '../../io/type'
+import {Current, AtoE} from '../../io/type'
 
 /**
  * ボスの状態を変更する
+ * @param alpha ボス番号
  * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
  */
-export const Update = async (state: Current) => {
-  // 現在のボスのHPを取得
-  const maxHP = Settings.STAGE[state.stage].HP[state.alpha]
+export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
+  // 現在の状況を取得
+  state ??= await current.Fetch()
 
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
-  const status = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.STATUS)
+  // 凸宣言のチャンネルを取得
+  channel ??= util.GetTextChannel(Settings.CONVEX_DECLARE[alpha].CHANNEL)
+
+  // 現在のボスのHPを取得
+  const maxHP = Settings.STAGE[state.stage].HP[alpha]
+
+  // ボスの状態のメッセージを取得
+  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE[alpha].STATUS)
 
   // 表示するテキストを作成
   const text = [
-    `\`${state.lap}\`週目 \`${state.boss}\` \`${state.hp}/${maxHP}\``,
-    `予想残りHP \`${await expectRemainingHP(state)}\``,
+    `\`${state.lap}\`週目 \`${state[alpha].name}\` \`${state[alpha].hp}/${maxHP}\``,
+    `予想残りHP \`${await expectRemainingHP(state[alpha].hp, channel)}\``,
   ].join('\n')
 
   // メッセージを編集
-  await status.edit(text)
+  await msg.edit(text)
 }
 
 /**
@@ -90,13 +97,11 @@ export const RemainingHPChange = async (content: string) => {
 
 /**
  * 予想残りHPを計算する
- * @param state 現在の状況
+ * @param HP 現在のHP
+ * @param channel 凸宣言のチャンネル
  * @return 計算した残りHP
  */
-const expectRemainingHP = async (state: Current): Promise<number> => {
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
-
+const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Promise<number> => {
   // 全員のダメージ報告からダメージをリストにして取り出す
   const list = (await channel.messages.fetch())
     .map(m => m)
@@ -124,9 +129,11 @@ const expectRemainingHP = async (state: Current): Promise<number> => {
 
   // ダメージがある場合は合計値、ない場合は0を代入
   let damage = list.length ? list.reduce((a, b) => a + b) : 0
+  // リストにダメージがある場合は合計値、ない場合は0を代入
+  // const damage = list.length && list.reduce((a, b) => a + b)
 
   // 残りHPを計算
-  const hp = Number(state.hp) - damage
+  const hp = HP - damage
 
   // 0以下なら0にする
   return hp >= 0 ? hp : 0

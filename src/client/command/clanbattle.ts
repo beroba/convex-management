@@ -11,6 +11,7 @@ import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
+import * as declare from '../declare'
 import * as list from '../plan/list'
 
 /**
@@ -231,14 +232,20 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   // 引数が無い場合は終了
   if (!args) return _msg.reply('削除する凸予定のidを指定しないと消せないわ')
 
-  // メンションからユーザーidだけを取り除く
+  // 引数からユーザーidだけを取り除く
   const id = util.Format(args).replace(/[^0-9]/g, '')
 
   // 凸予定を削除する
-  const [plans] = await schedule.Delete(id)
+  const [plans, plan] = await schedule.Delete(id)
+
+  // 指定したidの凸予定がなかった場合
+  if (!plan) return _msg.reply(`${id}の凸予定はなかったわ`)
 
   // 凸予定一覧を取得
   await list.SituationEdit(plans)
+
+  // 凸宣言の凸予定を更新
+  await declare.SetPlanList(plan.alpha)
 
   _msg.reply('凸予定を削除したわ')
 }

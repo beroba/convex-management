@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js'
-import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
-import {Current} from '../../io/type'
+import {Current, AtoE} from '../../io/type'
 import * as list from '../plan/list'
 import * as declaration from './declaration'
 import * as status from './status'
@@ -11,53 +11,74 @@ import * as status from './status'
 /**
  * 凸宣言のボスを変更する
  * @param state 現在の状態
+ * @param alpha ボス番号
  */
-export const ChangeBoss = async (state: Option<Current>) => {
-  if (!state) return
+export const RevivalBoss = async (state: Current, alpha: AtoE) => {
+  // #凸宣言-ボス状況のチャンネルを取得
+  const channel = util.GetTextChannel(Settings.CONVEX_DECLARE[alpha].CHANNEL)
 
   // ボスの状態を更新
-  status.Update(state)
+  status.Update(alpha, state, channel)
 
   // 凸予定一覧を更新
-  SetPlanList(state)
+  SetPlanList(alpha, state, channel)
 
   // 凸宣言のリアクションを全て外す
-  await declaration.ResetReact()
+  await resetReact(alpha, channel)
 
   // 凸宣言をリセット
-  declaration.SetUser(state)
+  declaration.SetUser(alpha, channel)
 
   // メッセージを削除
-  messageDelete()
+  messageDelete(channel)
 }
 
 /**
  * 凸予定一覧を更新する
+ * @param alpha ボス番号
  * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
  */
-export const SetPlanList = async (state: Current) => {
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+export const SetPlanList = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
+  // 現在の状況を取得
+  state ??= await current.Fetch()
+
+  // 凸宣言のチャンネルを取得
+  channel ??= util.GetTextChannel(Settings.CONVEX_DECLARE[alpha].CHANNEL)
 
   // 凸予定のメッセージを取得
-  const plan = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.PLAN)
+  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.PLAN)
 
   // 凸予定一覧を取得
   const plans = await schedule.Fetch()
-  const text = await list.CreatePlanText(state.alpha, state.stage, plans)
+  const text = await list.CreatePlanText(alpha, state.stage, plans)
 
   // 凸予定一覧を更新
   // 1行目を取り除く
-  plan.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
+  msg.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
 }
 
 /**
- * 凸宣言-ボス状況のメッセージを削除する
+ * 凸宣言に付いているリアクションを全て外す
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
  */
-const messageDelete = async () => {
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
+  // 凸宣言のメッセージを取得
+  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE[alpha].DECLARE)
 
+  // 凸宣言のリアクションを全て外す
+  await msg.reactions.removeAll()
+
+  // 凸宣言のリアクションを付ける
+  await msg.react(Settings.EMOJI_ID.TOTU)
+}
+
+/**
+ * 凸宣言のメッセージを削除する
+ * @param channel 凸宣言のチャンネル
+ */
+const messageDelete = async (channel: Discord.TextChannel) => {
   // prettier-ignore
   // キャル以外のメッセージを全てを削除
   const list = await Promise.all(

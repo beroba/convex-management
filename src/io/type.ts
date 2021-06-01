@@ -1,14 +1,14 @@
 /**
  * [a-e]の型
  */
-export type Alpha = 'a' | 'b' | 'c' | 'd' | 'e'
+export type AtoE = 'a' | 'b' | 'c' | 'd' | 'e'
 
 /**
  * クラバトのボステーブル
  */
 export type BossTable = {
   num: string
-  alpha: string
+  alpha: AtoE
   name: string
 }
 
@@ -24,7 +24,7 @@ export type DateTable = {
 /**
  * 現在のボス状況
  * @type num: string
- * @type alpha: string
+ * @type alpha: AtoE
  * @type name: string
  * @type hp: number
  * @type subjugate: boolean
@@ -90,7 +90,7 @@ export type Plan = {
   name: string
   playerID: string
   num: string
-  alpha: string
+  alpha: AtoE
   boss: string
   msg: string
 }
