@@ -3,19 +3,19 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
-import {Current, AtoE} from '../../io/type'
+import {AtoE, Current} from '../../io/type'
 import * as list from '../plan/list'
 import * as declaration from './declaration'
 import * as status from './status'
 
 /**
  * 凸宣言のボスを変更する
- * @param state 現在の状態
  * @param alpha ボス番号
+ * @param state 現在の状態
  */
-export const RevivalBoss = async (state: Current, alpha: AtoE) => {
+export const RevivalBoss = async (alpha: AtoE, state: Current) => {
   // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CONVEX_DECLARE[alpha].CHANNEL)
+  const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
   // ボスの状態を更新
   status.Update(alpha, state, channel)
@@ -44,10 +44,10 @@ export const SetPlanList = async (alpha: AtoE, state?: Current, channel?: Discor
   state ??= await current.Fetch()
 
   // 凸宣言のチャンネルを取得
-  channel ??= util.GetTextChannel(Settings.CONVEX_DECLARE[alpha].CHANNEL)
+  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
   // 凸予定のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.PLAN)
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
 
   // 凸予定一覧を取得
   const plans = await schedule.Fetch()
@@ -65,7 +65,7 @@ export const SetPlanList = async (alpha: AtoE, state?: Current, channel?: Discor
  */
 const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
   // 凸宣言のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE[alpha].DECLARE)
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
   // 凸宣言のリアクションを全て外す
   await msg.reactions.removeAll()

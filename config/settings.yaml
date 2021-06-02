@@ -271,30 +271,33 @@ STAGE:
       d: 10000
       e: 11000
 
-# 凸宣言のチャンネルとメッセージ
-CONVEX_DECLARE:
+# 凸宣言のチャンネルID
+DECLARE_CHANNEL_ID:
   a:
-    CHANNEL:
+  b:
+  c:
+  d:
+  e:
+
+# 凸宣言のメッセージID
+DECLARE_MESSAGE_ID:
+  a:
     STATUS:
     PLAN:
     DECLARE:
   b:
-    CHANNEL:
     STATUS:
     PLAN:
     DECLARE:
   c:
-    CHANNEL:
     STATUS:
     PLAN:
     DECLARE:
   d:
-    CHANNEL:
     STATUS:
     PLAN:
     DECLARE:
   e:
-    CHANNEL:
     STATUS:
     PLAN:
     DECLARE:

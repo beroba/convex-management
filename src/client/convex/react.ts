@@ -11,7 +11,7 @@ export const SetDeclare = async () => {
   // 凸宣言のメッセージを取得
   const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
 
-  // 本戦、保険の絵文字を付ける
+  // 凸の絵文字を付ける
   await declare.react(Settings.EMOJI_ID.TOTU)
 }
 

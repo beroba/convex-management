@@ -3,7 +3,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {Plan, AtoE} from '../../io/type'
+import {AtoE, Plan} from '../../io/type'
 
 /**
  * 絵文字の名前とユーザー一覧
@@ -19,10 +19,10 @@ type Emoji = {
  */
 export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
   // 凸宣言のチャンネルを取得
-  channel ??= util.GetTextChannel(Settings.CONVEX_DECLARE[alpha].CHANNEL)
+  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
   // 凸宣言のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE[alpha].DECLARE)
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
   // 凸宣言に付いているリアクションをキャッシュ
   await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))

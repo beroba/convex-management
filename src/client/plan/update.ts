@@ -5,7 +5,7 @@ import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {Plan, AtoE} from '../../io/type'
+import {AtoE, Plan} from '../../io/type'
 
 /**
  * 凸予定を更新する

@@ -2,7 +2,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as declare from '../declare'
-import {Current, AtoE} from '../../io/type'
+import {AtoE, Current} from '../../io/type'
 
 /**
  * 現在の周回数を変更する
@@ -39,14 +39,14 @@ export const SubjugateBoss = async (alpha: string) => {
     const hp: number = Settings.STAGE[state.stage].HP[a]
 
     // 現在のボス状況を更新
-    state = await current.UpdateBoss(state, a, hp)
+    state = await current.UpdateBoss(a, state, hp)
     await util.Sleep(100)
 
     // 凸宣言のボスを変更
-    declare.RevivalBoss(state, a)
+    declare.RevivalBoss(a, state)
 
     // #進行に報告
-    await SubjugateReport(state, a)
+    await SubjugateReport(a, state)
   })
 
   // 現在の状況をスプレッドシートに反映
@@ -65,9 +65,10 @@ export const StageReport = async (state: Current) => {
 
 /**
  * #進行に討伐したボスを報告
+ * @param alpha ボス番号
  * @param state 現在の状況
  */
-export const SubjugateReport = async (state: Current, alpha: AtoE) => {
+export const SubjugateReport = async (alpha: AtoE, state: Current) => {
   // 進行に報告
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   await channel.send(`\`${state.lap}\`周目 \`${state[alpha].name}\` 討伐`)
