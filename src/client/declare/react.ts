@@ -44,9 +44,33 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
     return
   }
 
-  // 凸宣言状態に変更
-  member.declare = alpha
-  await status.UpdateMember(member)
+  // 既に凸宣言している場合は前の凸宣言を消す
+  if (member.declare) {
+    // 凸宣言のチャンネルを取得
+    const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[member.declare])
+
+    // 凸宣言のメッセージを取得
+    const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[member.declare].DECLARE)
+
+    // 凸宣言のリアクションをキャッシュ
+    await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
+
+    // 他の凸宣言を削除
+    await Promise.all(msg.reactions.cache.map(async r => r.users.remove(user)))
+
+    // 他の凸宣言を削除する分遅らせる
+    await util.Sleep(500)
+
+    // 凸宣言状態を変更
+    member.declare = alpha
+    await status.UpdateMember(member)
+  } else {
+    // 他の凸宣言がない場合はSleepしない
+
+    // 凸宣言状態を変更
+    member.declare = alpha
+    await status.UpdateMember(member)
+  }
 
   // 凸宣言を設定
   await declaration.SetUser(alpha)
@@ -87,6 +111,19 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
     react.users.remove(user)
     return
   }
+
+  // メンバーの状態を取得
+  const member = await status.FetchMember(user.id)
+  // クランメンバーでない場合は終了
+  if (!member) {
+    // リアクションを外す
+    react.users.remove(user)
+    return
+  }
+
+  // 凸宣言状態を変更
+  member.declare = ''
+  await status.UpdateMember(member)
 
   // 凸宣言を設定
   await declaration.SetUser(alpha)

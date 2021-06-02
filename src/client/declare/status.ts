@@ -99,6 +99,9 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state: Cur
 
   // 状態を変更
   await Update(alpha, state)
+
+  // 現在の状況をスプレッドシートに反映
+  current.ReflectOnSheet(state)
 }
 
 /**

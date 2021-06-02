@@ -63,7 +63,7 @@ export const UpdateBoss = async (alpha: AtoE, state: Current, hp: number): Promi
     num: num,
     name: name,
     hp: hp,
-    subjugate: !!hp,
+    subjugate: !hp,
   } as CurrentBoss
 
   // キャルステータスを更新する
@@ -80,11 +80,9 @@ export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CA
 
 /**
  * スプレッドシートに現在の状況を反映させる
+ * @param
  */
-export const ReflectOnSheet = async () => {
-  // 現在の状況を取得
-  const state: Current = await Fetch()
-
+export const ReflectOnSheet = async (state: Current) => {
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
@@ -99,7 +97,7 @@ export const ReflectOnSheet = async () => {
 
   // 討伐状況を更新
   await Promise.all(
-    subjugate.map(async (c: string, i: number) => {
+    subjugate.split(',').map(async (c: string, i: number) => {
       const alpha = AtoA('a', i) as AtoE
       const subjugate_cell = await sheet.getCell(c)
       subjugate_cell.setValue(state[alpha].subjugate)
@@ -108,7 +106,7 @@ export const ReflectOnSheet = async () => {
 
   // HPを更新
   await Promise.all(
-    hp.map(async (c: string, i: number) => {
+    hp.split(',').map(async (c: string, i: number) => {
       const alpha = AtoA('a', i) as AtoE
       const hp_cell = await sheet.getCell(c)
       hp_cell.setValue(state[alpha].hp)

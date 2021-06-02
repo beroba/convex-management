@@ -25,7 +25,7 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
   // 凸宣言に付いているリアクションをキャッシュ
-  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
+  await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
   await util.Sleep(100)
 
   // リアクションしている人一覧を取得する

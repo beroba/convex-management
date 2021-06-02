@@ -93,7 +93,7 @@ export const Fetch = async () => {
       // 凸宣言に付いているリアクションをキャッシュ
       await Promise.all(
         msgs.map(async msg => Promise.all(
-          msg.reactions.cache.map(async r => await r.users.fetch())
+          msg.reactions.cache.map(async r =>  r.users.fetch())
         ))
       )
     })
@@ -107,6 +107,6 @@ export const Fetch = async () => {
   const latter = await activityTime.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
 
   // メッセージに付いているリアクションをキャッシュ
-  await Promise.all(first.reactions.cache.map(async r => await r.users.fetch()))
-  await Promise.all(latter.reactions.cache.map(async r => await r.users.fetch()))
+  await Promise.all(first.reactions.cache.map(async r => r.users.fetch()))
+  await Promise.all(latter.reactions.cache.map(async r => r.users.fetch()))
 }

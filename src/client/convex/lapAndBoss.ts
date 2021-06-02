@@ -20,7 +20,7 @@ export const UpdateLap = async (lap: string) => {
   await StageReport(state)
 
   // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet()
+  current.ReflectOnSheet(state)
 }
 
 /**
@@ -32,25 +32,25 @@ export const SubjugateBoss = async (alpha: string) => {
   let state = await current.Fetch()
 
   // 複数ボスの場合が指定されていた場合の為に分割する
-  alpha.split('').map(async alp => {
-    const a = alp as AtoE
+  await Promise.all(
+    alpha.split('').map(async alp => {
+      const a = alp as AtoE
 
-    // HPを取得
-    const hp: number = Settings.STAGE[state.stage].HP[a]
+      // HPを取得
+      const hp: number = Settings.STAGE[state.stage].HP[a]
 
-    // 現在のボス状況を更新
-    state = await current.UpdateBoss(a, state, hp)
-    await util.Sleep(100)
+      // 現在のボス状況を更新
+      state = await current.UpdateBoss(a, state, hp)
+      await util.Sleep(100)
 
-    // 凸宣言のボスを変更
-    declare.RevivalBoss(a, state)
+      // 凸宣言のボスを変更
+      await declare.RevivalBoss(a, state)
 
-    // #進行に報告
-    await SubjugateReport(a, state)
-  })
-
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet()
+      // #進行に報告
+      await SubjugateReport(a, state)
+    })
+    // 現在の状況をスプレッドシートに反映
+  ).then(() => current.ReflectOnSheet(state))
 }
 
 /**
