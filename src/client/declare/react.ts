@@ -18,9 +18,9 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   if (user.bot) return
 
   // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === react.message.channel.id
-  ) as Option<AtoE>
+  const alpha = 'abcde'
+    .split('')
+    .find(key => Settings.DECLARE_CHANNEL_ID[key] === react.message.channel.id) as Option<AtoE>
 
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
