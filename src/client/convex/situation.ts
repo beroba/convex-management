@@ -61,7 +61,7 @@ const createMessage = async (members: Member[]): Promise<string> => {
   return [
     `\`${time}\` ${date.num} 凸状況一覧`,
     `\`${stage}\`段階目 残り\`${after}\`周`,
-    `\`${state.lap}\`周目 \`${state.boss}\` \`${remaining}\``,
+    `\`${state.lap}\`周目 \`${remaining}\``,
     '```',
     `未凸: ${未凸}\n`,
     `持越: ${持越1}`,

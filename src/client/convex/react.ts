@@ -5,6 +5,7 @@ import * as util from '../../util'
  * #凸宣言-ボス状況の絵文字を設定する
  */
 export const SetDeclare = async () => {
+  return
   // チャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 
@@ -77,6 +78,7 @@ export const SetActivityTime = async () => {
  * 特定のリアクションを先にキャッシュする
  */
 export const Fetch = async () => {
+  return
   // #凸宣言-ボス状況のチャンネルを取得
   const declare = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
 

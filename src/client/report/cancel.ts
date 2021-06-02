@@ -4,7 +4,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
-import * as lapAndBoss from '../convex/lapAndBoss'
+// import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 
 /**
@@ -160,5 +160,5 @@ const killConfirm = (msg: Discord.Message) => {
   if (!/^k|kill/i.test(content)) return
 
   // 前のボスに戻す
-  lapAndBoss.Previous()
+  // lapAndBoss.Previous()
 }

@@ -6,6 +6,7 @@ import * as command from './'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
+import {AtoE} from '../../io/type'
 import * as etc from '../convex/etc'
 import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
@@ -263,10 +264,10 @@ const planController = async (_command: string, _content: string, _msg: Discord.
   // 引数にボス番号があるか確認
   if (/^[a-e]$/i.test(args)) {
     // ボス番号の凸予定一覧を表示
-    list.Output(args)
+    list.Output(args as AtoE)
   } else if (/^[1-5]$/i.test(args)) {
     // ボス番号の凸予定一覧を表示
-    list.Output(NtoA(args))
+    list.Output(NtoA(args) as AtoE)
   } else {
     // 凸予定一覧を全て表示
     list.AllOutput()
