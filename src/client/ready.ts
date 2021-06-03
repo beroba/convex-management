@@ -2,6 +2,7 @@ import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
 import * as react from './convex/react'
+// import * as lapAndBoss from './convex/lapAndBoss'
 
 /**
  * キャルが起動した際に通知を送る

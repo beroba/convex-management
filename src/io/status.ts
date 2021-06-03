@@ -85,6 +85,29 @@ export const ResetConvex = async () => {
 }
 
 /**
+ * メンバー全員の凸宣言をリセットする
+ */
+export const ResetDeclare = async () => {
+  // メンバー全体の状態を取得
+  let members = await Fetch()
+
+  // 全員の凸状況をリセット
+  members = members.map(s => ({
+    name: s.name,
+    id: s.id,
+    limit: s.limit,
+    declare: '',
+    convex: s.convex,
+    over: s.over,
+    end: s.end,
+    history: s.history,
+  }))
+
+  // キャルステータスを更新
+  await Update(members)
+}
+
+/**
  * キャルステータスからメンバーの状態を取得
  * @return メンバーの状態
  */

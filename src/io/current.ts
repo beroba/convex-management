@@ -44,12 +44,12 @@ const getStageName = (lap: string): string => {
 
 /**
  * 現在のボス状況を設定する
+ * @param hp 残りHP
  * @param alpha ボス番号
  * @param state 現在の状況
- * @param hp 残りHP
  * @return 現在の状況
  */
-export const UpdateBoss = async (alpha: AtoE, state: Current, hp: number): Promise<Current> => {
+export const UpdateBoss = async (hp: number, alpha: AtoE, state: Current): Promise<Current> => {
   // ボス番号(英語)からボス番号(数字)とボス名を取得
   const num = (await bossTable.TakeNum(alpha)) ?? ''
   const name = (await bossTable.TakeName(alpha)) ?? ''
@@ -137,7 +137,7 @@ export const ReflectOnCal = async () => {
     hp_cell.map(async (cell: string, i: number) => {
       const alpha = AtoA('a', i) as AtoE
       const hp = (await sheet.getCell(cell)).getValue()
-      await UpdateBoss(alpha, state, hp)
+      await UpdateBoss(hp, alpha, state)
     })
   )
 }

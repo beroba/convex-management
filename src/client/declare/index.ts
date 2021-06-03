@@ -9,7 +9,7 @@ import * as declaration from './declaration'
 import * as status from './status'
 
 /**
- * 凸宣言のボスを変更する
+ * 凸宣言のボスを復活させる
  * @param alpha ボス番号
  * @param state 現在の状態
  */
@@ -81,41 +81,10 @@ const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
 const messageDelete = async (channel: Discord.TextChannel) => {
   // prettier-ignore
   // キャル以外のメッセージを全てを削除
-  const list = await Promise.all(
+  await Promise.all(
     (await channel.messages.fetch())
       .map(m => m)
       .filter(m => !m.author.bot)
-      .map(m => m.delete())
+      .map(async m => m.delete())
   )
-
-  // 済が付いていないメッセージのユーザー一覧のリストを作成
-  const users = list
-    .filter(m => !m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
-    .map(m => m.author)
-
-  // 削除したメッセージがない場合は終了
-  if (!users.length) return
-
-  // 開放通知を行う
-  releaseNotice(users)
-}
-
-/**
- * #進行-連携に開放通知を行う
- * @param users メンションを行うユーザー一覧
- */
-const releaseNotice = (users: Discord.User[]) => {
-  // 重複を省いたメンション一覧を作成する
-  const mentions = users
-    .filter((n, i, e) => e.indexOf(n) == i)
-    .map(u => `<@!${u.id}>`)
-    .join(' ')
-
-  // #進行-連携のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-
-  // メンションを行う
-  channel.send(`${mentions} ボスが討伐されたから通して大丈夫よ！`)
-
-  console.log('Release notice')
 }

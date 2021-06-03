@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import {AtoE, Current, Member} from '../../io/type'
+import * as lapAndBoss from '../convex/lapAndBoss'
 
 /**
  * ボスの状態を変更する
@@ -92,16 +93,22 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 export const RemainingHPChange = async (content: string, alpha: AtoE, state: Current) => {
   // 変更先のHPを取り出す
-  const hp = content.replace(/^.*@/g, '').trim().replace(/\s.*$/g, '')
+  const hp = content
+    .replace(/^.*@/g, '')
+    .trim()
+    .replace(/\s.*$/g, '')
+    .match(/\d*/)
+    ?.map(e => e)
+    .first()
+
+  // 数字がない又は値がない場合は終了
+  if (hp === '' || hp === undefined) return
 
   // HPの変更
-  state = await current.UpdateBoss(alpha, state, Number(hp))
+  state = await lapAndBoss.UpdateBoss(Number(hp), alpha, state)
 
   // 状態を変更
   await Update(alpha, state)
-
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet(state)
 }
 
 /**
