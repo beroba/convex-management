@@ -105,13 +105,13 @@ const remainingConvexNumber = (members: Member[]): string => {
 const lapsToTheNextStage = (state: Current): number | string => {
   switch (true) {
     case state.lap <= Settings.STAGE.FIRST.LAP.last():
-      return Settings.STAGE.FIRST.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.FIRST.LAP.last() - state.lap + 1
     case state.lap <= Settings.STAGE.SECOND.LAP.last():
-      return Settings.STAGE.SECOND.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.SECOND.LAP.last() - state.lap + 1
     case state.lap <= Settings.STAGE.THIRD.LAP.last():
-      return Settings.STAGE.THIRD.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.THIRD.LAP.last() - state.lap + 1
     case state.lap <= Settings.STAGE.FOURTH.LAP.last():
-      return Settings.STAGE.FOURTH.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.FOURTH.LAP.last() - state.lap + 1
     default:
       return '-'
   }

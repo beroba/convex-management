@@ -16,6 +16,7 @@ type Emoji = {
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
  * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
  */
 export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
   // 凸宣言のチャンネルを取得

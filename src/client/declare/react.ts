@@ -208,7 +208,7 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${msg.content}の確定をお願いするわ！`)
+  channel.send(`<@!${msg.author.id}> ${msg.content} 確定！`)
 
   return 'Confirm notice'
 }
@@ -257,7 +257,7 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${msg.content}で持ち越しお願いするわ！`)
+  channel.send(`<@!${msg.author.id}> ${msg.content} 持ち越し！`)
 
   return 'Carry over notice'
 }
@@ -306,7 +306,7 @@ export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.U
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${msg.content}は待機でお願いするわ！`)
+  channel.send(`<@!${msg.author.id}> ${msg.content} 待機！`)
 
   return 'Carry over notice'
 }

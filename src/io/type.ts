@@ -39,7 +39,7 @@ export type CurrentBoss = BossTable & {
  */
 export type Current = {
   stage: string
-  lap: string
+  lap: number
   a: CurrentBoss
   b: CurrentBoss
   c: CurrentBoss

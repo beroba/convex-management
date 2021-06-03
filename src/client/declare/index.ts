@@ -4,6 +4,7 @@ import * as util from '../../util'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import {AtoE, Current} from '../../io/type'
+import * as lapAndBoss from '../convex/lapAndBoss'
 import * as list from '../plan/list'
 import * as declaration from './declaration'
 import * as status from './status'
@@ -30,7 +31,7 @@ export const RevivalBoss = async (alpha: AtoE, state: Current) => {
   declaration.SetUser(alpha, channel)
 
   // メッセージを削除
-  messageDelete(channel)
+  messageDelete(alpha, channel)
 }
 
 /**
@@ -76,15 +77,21 @@ const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
 
 /**
  * 凸宣言のメッセージを削除する
+ * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
  */
-const messageDelete = async (channel: Discord.TextChannel) => {
-  // prettier-ignore
-  // キャル以外のメッセージを全てを削除
+const messageDelete = async (alpha: AtoE, channel: Discord.TextChannel) => {
+  // メッセージを全て取得
+  const msgs = await channel.messages.fetch()
+
+  // キャル以外のメッセージを全て削除
   await Promise.all(
-    (await channel.messages.fetch())
+    msgs
       .map(m => m)
       .filter(m => !m.author.bot)
       .map(async m => m.delete())
   )
+
+  // 討伐のメッセージを削除
+  lapAndBoss.SubjugateDelete(alpha, channel)
 }

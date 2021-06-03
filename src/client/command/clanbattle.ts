@@ -203,7 +203,7 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
   if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
 
   // 任意の周回数へ移動させる
-  await lapAndBoss.UpdateLap(lap)
+  await lapAndBoss.UpdateLap(Number(lap))
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()

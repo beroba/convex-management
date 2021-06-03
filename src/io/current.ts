@@ -9,8 +9,9 @@ import {AtoE, Current, CurrentBoss} from './type'
  * 現在の状況の段階と周回数を設定する
  * @param state 現在の状況
  * @param lap 周回数
+ * @return 現在の状況
  */
-export const UpdateLap = async (state: Current, lap: string): Promise<Current> => {
+export const UpdateLap = async (state: Current, lap: number): Promise<Current> => {
   // 値を更新
   state.lap = lap
   state.stage = getStageName(lap)
@@ -26,16 +27,15 @@ export const UpdateLap = async (state: Current, lap: string): Promise<Current> =
  * @param lap 周回数
  * @return 段階名
  */
-const getStageName = (lap: string): string => {
-  const l = Number(lap)
+const getStageName = (lap: number): string => {
   switch (true) {
-    case l < Settings.STAGE.SECOND.LAP.first():
+    case lap < Settings.STAGE.SECOND.LAP.first():
       return 'FIRST'
-    case l < Settings.STAGE.THIRD.LAP.first():
+    case lap < Settings.STAGE.THIRD.LAP.first():
       return 'SECOND'
-    case l < Settings.STAGE.FOURTH.LAP.first():
+    case lap < Settings.STAGE.FOURTH.LAP.first():
       return 'THIRD'
-    case l < Settings.STAGE.FIFTH.LAP.first():
+    case lap < Settings.STAGE.FIFTH.LAP.first():
       return 'FOURTH'
     default:
       return 'FIFTH'
@@ -80,7 +80,7 @@ export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CA
 
 /**
  * スプレッドシートに現在の状況を反映させる
- * @param
+ * @param state 現在の状況
  */
 export const ReflectOnSheet = async (state: Current) => {
   // 情報のシートを取得
@@ -130,7 +130,7 @@ export const ReflectOnCal = async () => {
 
   // 周回数を更新
   const lap = (await sheet.getCell(lap_cell)).getValue()
-  await UpdateLap(state, lap)
+  await UpdateLap(state, Number(lap))
 
   // 現在のボスを更新
   await Promise.all(
