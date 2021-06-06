@@ -5,7 +5,6 @@ import * as util from '../../util'
 import * as status from '../../io/status'
 import {AtoE} from '../../io/type'
 import * as declaration from './declaration'
-import * as declare from './status'
 
 /**
  * リアクションを追加した際に凸宣言を更新する
@@ -157,9 +156,6 @@ export const ConvexDone = async (alpha: AtoE, user: Discord.User) => {
       .filter(m => m.author.id === user.id)
       .map(async m => await m.delete())
   )
-
-  // 現在の状態を更新
-  declare.Update(alpha, undefined, channel)
 
   console.log('Completion of convex declaration')
 }

@@ -6,8 +6,6 @@ import * as current from '../../io/current'
 import * as status from '../../io/status'
 import {AtoE} from '../../io/type'
 import * as update from './update'
-import * as etc from '../convex/etc'
-// import * as lapAndBoss from '../convex/lapAndBoss'
 import * as limitTime from '../convex/limitTime'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
@@ -54,32 +52,41 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // ボス更新前の状態を取得
   const state = await current.Fetch()
 
+  // 既にボスが討伐されてりる場合は終了
+  if (state[alpha].subjugate) {
+    msg.reply(`${state[alpha].name}はもう討伐されてるわ`)
+    return 'The boss has already been subdued'
+  }
+
   // 全角を半角に変換
-  const content = util.Format(msg.content)
+  let content = util.Format(msg.content)
 
-  // ボスを倒したか確認k
-  if (/^k|kill/i.test(content)) {
-    // 凸報告者の凸宣言に書いてあるメッセージを全て削除
-    await declare.UserMessageAllDelete(member)
+  // 凸宣言を完了
+  await react.ConvexDone(alpha, msg.author)
 
-    // 次のボスへ進める
-    // lapAndBoss.Next()
-  } else {
-    // 凸宣言を完了
-    react.ConvexDone(alpha, msg.author)
-
+  // ボスを倒したか確認
+  if (/^k|kill|きっl/i.test(content)) {
+    // ボスのHPを0にする
+    declare.RemainingHPChange('@0', alpha, state)
+  } else if (/@\d/.test(content)) {
     // @が入っている場合はHPの変更をする
-    if (/@\d/.test(content)) {
-      declare.RemainingHPChange(content, alpha, state)
-    }
+    declare.RemainingHPChange(content, alpha, state)
+  }
+
+  // @0が入力された場合は、killを追加する
+  if (/@0/.test(content)) {
+    content = 'kill' + content
   }
 
   // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
-  overDelete(msg)
+  // overDelete(msg)
+
+  // 凸報告者の凸宣言に書いてあるメッセージを全て削除
+  await declare.UserMessageAllDelete(member)
 
   {
     // 凸状況を更新
-    const [members, member] = await update.Status(msg)
+    const [members, member] = await update.Status(msg, content)
     if (!member) return
     await util.Sleep(100)
 
@@ -93,7 +100,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
     // 3凸終了している場合
     if (member.end) {
-      await etc.RemoveBossRole(msg.member)
+      await msg.member?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)
     }
 
     // #凸状況に報告
@@ -113,7 +120,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  * 持ち越しがある場合、持ち越し状況のメッセージを全て削除する
  * @param msg DiscordからのMessage
  */
-const overDelete = async (msg: Discord.Message) => {
+export const overDelete = async (msg: Discord.Message) => {
   // 持ち越しがなければ終了
   const member = await status.FetchMember(msg.author.id)
   if (member?.over !== '1') return

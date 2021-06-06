@@ -1,6 +1,5 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
-import * as util from '../../util'
 import Settings from 'const-settings'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
@@ -8,9 +7,10 @@ import {Member} from '../../io/type'
 /**
  * 凸報告に入力された情報から凸状況の更新をする
  * @param msg DiscordからのMessage
+ * @param content 凸宣言のメッセージ
  * @return メンバー一覧とメンバーの状態
  */
-export const Status = async (msg: Discord.Message): Promise<[Member[], Option<Member>]> => {
+export const Status = async (msg: Discord.Message, content: string): Promise<[Member[], Option<Member>]> => {
   // メンバーの状態を取得
   let member = await status.FetchMember(msg.author.id)
   if (!member) return [[], null]
@@ -19,7 +19,6 @@ export const Status = async (msg: Discord.Message): Promise<[Member[], Option<Me
   member = await saveHistory(member)
 
   // 凸数と持ち越しの状態を更新する
-  const content = util.Format(msg.content)
   member = await statusUpdate(member, content)
 
   // 凸報告に取消の絵文字をつける
@@ -61,7 +60,7 @@ const statusUpdate = async (member: Member, content: string): Promise<Member> =>
   const countUp = (convex: string): string => String(Number(convex) + 1)
 
   // ボスを倒した場合はtrue、倒していない場合はfalse
-  if (/^k|kill/i.test(content)) {
+  if (/^k|kill|きっl/i.test(content)) {
     if (member.over === '1') {
       member.over = ''
     } else {

@@ -134,12 +134,12 @@ const calMsgDel = async (id: string) => {
  * @param msg DiscordからのMessage
  */
 const unroleBoss = async (plans: Plan[], plan: Plan, msg: Discord.Message) => {
-  // 他に同じボスの凸予定がある場合は終了
-  const find = plans.filter(p => p.alpha === plan.alpha).find(p => p.playerID === plan.playerID)
+  // 凸予定がまだある場合は終了
+  const find = plans.find(p => p.playerID === plan.playerID)
   if (find) return
 
-  // ボス番号のロールを削除
-  await msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
+  // 凸予定のロールを削除
+  await msg.member?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)
 }
 
 /**

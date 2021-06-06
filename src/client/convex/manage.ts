@@ -3,7 +3,6 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
-import * as etc from './etc'
 import * as limitTime from './limitTime'
 import * as situation from './situation'
 
@@ -61,7 +60,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   // ロールを削除
   const guildMember = await util.MemberFromId(user.id)
   await guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
-  await etc.RemoveBossRole(guildMember)
+  await guildMember.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)
 
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
