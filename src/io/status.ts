@@ -48,6 +48,7 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     name: u.name,
     id: u.id,
     limit: '',
+    declare: '',
     convex: '',
     over: '',
     end: '',
@@ -72,10 +73,34 @@ export const ResetConvex = async () => {
     name: s.name,
     id: s.id,
     limit: s.limit,
+    declare: '',
     convex: '',
     over: '',
     end: '',
     history: '',
+  }))
+
+  // キャルステータスを更新
+  await Update(members)
+}
+
+/**
+ * メンバー全員の凸宣言をリセットする
+ */
+export const ResetDeclare = async () => {
+  // メンバー全体の状態を取得
+  let members = await Fetch()
+
+  // 全員の凸状況をリセット
+  members = members.map(s => ({
+    name: s.name,
+    id: s.id,
+    limit: s.limit,
+    declare: '',
+    convex: s.convex,
+    over: s.over,
+    end: s.end,
+    history: s.history,
   }))
 
   // キャルステータスを更新
@@ -109,24 +134,25 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 
 /**
  * スプレッドシートにメンバーの凸状況を反映させる
- * @param 更新したいメンバー
+ * @param member 更新したいメンバー
  */
 export const ReflectOnSheet = async (member: Member) => {
+  // 情報のシートを取得
+  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
   // 凸状況と活動限界時間を更新する
-  reflectOnConvex(member)
-  reflectOnLimit(member)
+  reflectOnConvex(member, info)
+  reflectOnLimit(member, info)
 }
 
 /**
  * メンバーの凸状況を反映させる
- * @param 更新したいメンバー
+ * @param member 更新したいメンバー
+ * @param info 情報のシート
  */
-const reflectOnConvex = async (member: Member) => {
+const reflectOnConvex = async (member: Member, info: any) => {
   // 凸状況のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // 情報のシートを取得
-  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得
   const users = await FetchUserFromSheet(info)
@@ -146,21 +172,19 @@ const reflectOnConvex = async (member: Member) => {
 
 /**
  * メンバーの活動限界時間を反映させる
- * @param 更新したいメンバー
+ * @param member 更新したいメンバー
+ * @param info 情報のシート
  */
-const reflectOnLimit = async (member: Member) => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
+const reflectOnLimit = async (member: Member, info: any) => {
   // スプレッドシートからユーザー一覧を取得
-  const users = await FetchUserFromSheet(sheet)
+  const users = await FetchUserFromSheet(info)
 
   // 行と列を取得
   const col = Settings.INFORMATION_SHEET.LIMIT_COLUMN
   const row = users.map(u => u.id).indexOf(member.id) + 3
 
   // 活動限界時間を更新する
-  const cell = await sheet.getCell(`${col}${row}`)
+  const cell = await info.getCell(`${col}${row}`)
   await cell.setValue(member.limit)
 }
 
@@ -182,6 +206,7 @@ export const ReflectOnCal = async () => {
     name: users[i].name,
     id: users[i].id,
     limit: users[i].limit.replace('時', ''),
+    declare: users[i].declare,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -230,14 +255,22 @@ export const ResetConvexOnSheet = async () => {
  * @return ユーザー一覧
  */
 export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
+  // メンバー全体の状態を取得
+  const members = await Fetch()
+
   const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
   return PiecesEach(cells, 3)
     .filter(util.Omit)
-    .map(u => ({
-      name: u[0],
-      id: u[1],
-      limit: u[2],
-    }))
+    .map(u => {
+      const id = u[1]
+      const member = members.find(m => m.id === id)
+      return {
+        name: u[0],
+        id: id,
+        limit: u[2],
+        declare: member?.declare ?? '',
+      }
+    })
 }
 
 /**

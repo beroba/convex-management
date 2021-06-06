@@ -61,7 +61,7 @@ const createMessage = async (members: Member[]): Promise<string> => {
   return [
     `\`${time}\` ${date.num} 凸状況一覧`,
     `\`${stage}\`段階目 残り\`${after}\`周`,
-    `\`${state.lap}\`周目 \`${state.boss}\` \`${remaining}\``,
+    `\`${state.lap}\`周目 \`${remaining}\``,
     '```',
     `未凸: ${未凸}\n`,
     `持越: ${持越1}`,
@@ -105,13 +105,13 @@ const remainingConvexNumber = (members: Member[]): string => {
 const lapsToTheNextStage = (state: Current): number | string => {
   switch (true) {
     case state.lap <= Settings.STAGE.FIRST.LAP.last():
-      return Settings.STAGE.FIRST.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.FIRST.LAP.last() - state.lap + 1
     case state.lap <= Settings.STAGE.SECOND.LAP.last():
-      return Settings.STAGE.SECOND.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.SECOND.LAP.last() - state.lap + 1
     case state.lap <= Settings.STAGE.THIRD.LAP.last():
-      return Settings.STAGE.THIRD.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.THIRD.LAP.last() - state.lap + 1
     case state.lap <= Settings.STAGE.FOURTH.LAP.last():
-      return Settings.STAGE.FOURTH.LAP.last() - Number(state.lap) + 1
+      return Settings.STAGE.FOURTH.LAP.last() - state.lap + 1
     default:
       return '-'
   }

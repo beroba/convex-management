@@ -4,7 +4,6 @@ import * as util from '../util'
 import * as dateTable from '../io/dateTable'
 import * as schedule from '../io/schedule'
 import * as status from '../io/status'
-import * as etc from '../client/convex/etc'
 import * as limitTime from '../client/convex/limitTime'
 import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
@@ -69,7 +68,9 @@ const resetAllPlan = (expression: string) => {
       ?.members.map(m => m)
 
     // クランメンバーのボスロールを全て削除
-    clanMembers?.forEach(m => etc.RemoveBossRole(m))
+    if (clanMembers) {
+      await Promise.all(clanMembers.map(async m => m?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)))
+    }
 
     // 凸予定一覧を取得
     const plans = await schedule.Fetch()

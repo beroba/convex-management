@@ -205,7 +205,7 @@ export const ReflectOnSheet = async () => {
     const msg = await channel.messages.fetch(day)
 
     // リアクションを全てキャッシュ
-    await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
+    await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
 
     // 各リアクションをしているユーザーのリストを取得
     const list = await Promise.all(

@@ -1,9 +1,14 @@
 /**
+ * [a-e]の型
+ */
+export type AtoE = 'a' | 'b' | 'c' | 'd' | 'e'
+
+/**
  * クラバトのボステーブル
  */
 export type BossTable = {
   num: string
-  alpha: string
+  alpha: AtoE
   name: string
 }
 
@@ -17,15 +22,29 @@ export type DateTable = {
 }
 
 /**
+ * 現在のボス状況
+ * @type num: string
+ * @type alpha: AtoE
+ * @type name: string
+ * @type hp: number
+ * @type subjugate: boolean
+ */
+export type CurrentBoss = BossTable & {
+  hp: number
+  subjugate: boolean
+}
+
+/**
  * 現在の状況
  */
 export type Current = {
   stage: string
-  lap: string
-  boss: string
-  num: string
-  alpha: string
-  hp: string
+  lap: number
+  a: CurrentBoss
+  b: CurrentBoss
+  c: CurrentBoss
+  d: CurrentBoss
+  e: CurrentBoss
 }
 
 /**
@@ -35,6 +54,7 @@ export type User = {
   name: string
   id: string
   limit: string
+  declare: string
 }
 
 /**
@@ -52,6 +72,7 @@ export type Status = {
  * @type name: string
  * @type id: string
  * @type limit: string
+ * @type declare: string
  * @type convex: string
  * @type over: string
  * @type end: string
@@ -69,7 +90,7 @@ export type Plan = {
   name: string
   playerID: string
   num: string
-  alpha: string
+  alpha: AtoE
   boss: string
   msg: string
 }

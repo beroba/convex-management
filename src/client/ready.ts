@@ -15,7 +15,7 @@ export const Ready = async () => {
   react.Fetch()
 
   // const msg = await channel.send('名前の変更をしたわ')
-  // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('キャル(プリンセス)')
+  // msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname('14歳キャルちゃん')
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

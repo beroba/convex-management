@@ -69,18 +69,6 @@ export const RemoveConvexRoles = async () => {
 }
 
 /**
- * 指定されたメンバーのボスロールを全て削除する
- * @param member ロールを削除したメンバー
- */
-export const RemoveBossRole = async (member: Option<Discord.GuildMember>) => {
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.a)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.b)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.c)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.d)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.e)
-}
-
-/**
  * スプレッドシートのメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
@@ -92,6 +80,7 @@ export const UpdateMembers = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -115,6 +104,7 @@ export const UpdateSisters = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 

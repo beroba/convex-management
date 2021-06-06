@@ -5,14 +5,18 @@ import * as util from '../../util'
  * #凸宣言-ボス状況の絵文字を設定する
  */
 export const SetDeclare = async () => {
-  // チャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+  await Promise.all(
+    'abcde'.split('').map(async alpha => {
+      // チャンネルを取得
+      const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  // 凸宣言のメッセージを取得
-  const declare = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+      // 凸宣言のメッセージを取得
+      const declare = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
-  // 本戦、保険の絵文字を付ける
-  await declare.react(Settings.EMOJI_ID.TOTU)
+      // 凸の絵文字を付ける
+      await declare.react(Settings.EMOJI_ID.TOTU)
+    })
+  )
 }
 
 /**
@@ -77,14 +81,23 @@ export const SetActivityTime = async () => {
  * 特定のリアクションを先にキャッシュする
  */
 export const Fetch = async () => {
-  // #凸宣言-ボス状況のチャンネルを取得
-  const declare = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+  await Promise.all(
+    'abcde'.split('').map(async alpha => {
+      // 凸宣言のチャンネルを取得
+      const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  // 凸宣言のメッセージを取得
-  const msgs = await declare.messages.fetch()
+      // 凸宣言のメッセージを取得
+      const msgs = await channel.messages.fetch()
 
-  // 凸宣言に付いているリアクションをキャッシュ
-  await Promise.all(msgs.map(async msg => Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))))
+      // prettier-ignore
+      // 凸宣言に付いているリアクションをキャッシュ
+      await Promise.all(
+        msgs.map(async msg => Promise.all(
+          msg.reactions.cache.map(async r =>  r.users.fetch())
+        ))
+      )
+    })
+  )
 
   // #活動時間のチャンネルを取得
   const activityTime = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
@@ -94,6 +107,6 @@ export const Fetch = async () => {
   const latter = await activityTime.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
 
   // メッセージに付いているリアクションをキャッシュ
-  await Promise.all(first.reactions.cache.map(async r => await r.users.fetch()))
-  await Promise.all(latter.reactions.cache.map(async r => await r.users.fetch()))
+  await Promise.all(first.reactions.cache.map(async r => r.users.fetch()))
+  await Promise.all(latter.reactions.cache.map(async r => r.users.fetch()))
 }
