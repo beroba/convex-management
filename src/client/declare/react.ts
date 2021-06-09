@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
-import {AtoE} from '../../io/type'
+import {AtoE, Member} from '../../io/type'
 import * as declaration from './declaration'
 
 /**
@@ -59,6 +59,9 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
     member.carry = false
   }
 
+  // メンバー全体の状態
+  let members: Member[]
+
   // 既に凸宣言している場合は前の凸宣言を消す
   if (member.declare) {
     // 凸宣言のチャンネルを取得
@@ -83,20 +86,16 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
 
     // 他の凸宣言を削除する分遅らせる
     await util.Sleep(500)
-
-    // 凸宣言状態を変更
-    member.declare = alpha
-    await status.UpdateMember(member)
-  } else {
-    // 他の凸宣言がない場合はSleepしない
-
-    // 凸宣言状態を変更
-    member.declare = alpha
-    await status.UpdateMember(member)
   }
 
+  // 凸宣言状態を変更
+  member.declare = alpha
+  members = await status.UpdateMember(member)
+  await util.Sleep(100)
+
   // 凸宣言を設定
-  await declaration.SetUser(alpha)
+  const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+  await declaration.SetUser(alpha, channel, members)
 
   // 離席中ロールを削除
   react.message.guild?.members.cache
@@ -148,10 +147,12 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   member.declare = ''
   // 持越凸状態を解除
   member.carry = false
-  await status.UpdateMember(member)
+  const members = await status.UpdateMember(member)
+  await util.Sleep(100)
 
   // 凸宣言を設定
-  await declaration.SetUser(alpha)
+  const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+  await declaration.SetUser(alpha, channel, members)
 
   return 'Deletion of convex declaration'
 }
