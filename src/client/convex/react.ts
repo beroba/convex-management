@@ -15,6 +15,9 @@ export const SetDeclare = async () => {
 
       // 凸の絵文字を付ける
       await declare.react(Settings.EMOJI_ID.TOTU)
+
+      // 持越の絵文字を付ける
+      await declare.react(Settings.EMOJI_ID.MOCHIKOSHI)
     })
   )
 }
