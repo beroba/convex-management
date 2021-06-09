@@ -14,8 +14,8 @@ import * as limitTime from '../client/convex/limitTime'
  * @param members メンバー一覧
  */
 export const Update = async (members: Member[]) => {
-  // 15個ずつに分割
-  PiecesEach(members, 15).forEach(async (m, i) => {
+  // 10個ずつに分割
+  PiecesEach(members, 10).forEach(async (m, i) => {
     // キャルステータスを更新
     await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[i], m)
   })
@@ -50,6 +50,7 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     limit: '',
     declare: '',
     convex: '',
+    carry: false,
     over: '',
     end: '',
     history: '',
@@ -74,6 +75,7 @@ export const ResetConvex = async () => {
     id: s.id,
     limit: s.limit,
     declare: '',
+    carry: false,
     convex: '',
     over: '',
     end: '',
@@ -97,6 +99,7 @@ export const ResetDeclare = async () => {
     id: s.id,
     limit: s.limit,
     declare: '',
+    carry: false,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -115,8 +118,9 @@ export const Fetch = async (): Promise<Member[]> => {
   // メンバーの状態を全て取得
   const m1 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[0])
   const m2 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[1])
+  const m3 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[2])
   // 結合して返す
-  return m1.concat(m2)
+  return m1.concat(m2).concat(m3)
 }
 
 /**
@@ -207,6 +211,7 @@ export const ReflectOnCal = async () => {
     id: users[i].id,
     limit: users[i].limit.replace('時', ''),
     declare: users[i].declare,
+    carry: users[i].carry,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -269,6 +274,7 @@ export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
         id: id,
         limit: u[2],
         declare: member?.declare ?? '',
+        carry: false,
       }
     })
 }

@@ -48,6 +48,21 @@ export type Current = {
 }
 
 /**
+ * 凸予定の情報
+ */
+export type Plan = {
+  done: string
+  senderID: string
+  calID: string
+  name: string
+  playerID: string
+  num: string
+  alpha: AtoE
+  boss: string
+  msg: string
+}
+
+/**
  * ユーザー情報
  */
 export type User = {
@@ -55,6 +70,7 @@ export type User = {
   id: string
   limit: string
   declare: string
+  carry: boolean
 }
 
 /**
@@ -74,23 +90,9 @@ export type Status = {
  * @type limit: string
  * @type declare: string
  * @type convex: string
+ * @type carry: boolean
  * @type over: string
  * @type end: string
  * @type history: string
  */
 export type Member = User & Status
-
-/**
- * 凸予定の情報
- */
-export type Plan = {
-  done: string
-  senderID: string
-  calID: string
-  name: string
-  playerID: string
-  num: string
-  alpha: AtoE
-  boss: string
-  msg: string
-}

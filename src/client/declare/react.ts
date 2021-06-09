@@ -51,6 +51,12 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
       react.users.remove(user)
       return
     }
+
+    // 持越凸状態に変更
+    member.carry = true
+  } else {
+    // 持越凸状態を解除
+    member.carry = false
   }
 
   // 既に凸宣言している場合は前の凸宣言を消す
@@ -140,6 +146,8 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
 
   // 凸宣言状態を変更
   member.declare = ''
+  // 持越凸状態を解除
+  member.carry = false
   await status.UpdateMember(member)
 
   // 凸宣言を設定
