@@ -73,6 +73,7 @@ const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
 
   // 凸宣言のリアクションを付ける
   await msg.react(Settings.EMOJI_ID.TOTU)
+  await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
 }
 
 /**

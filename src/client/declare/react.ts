@@ -27,8 +27,8 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   // 凸宣言のメッセージでなければ終了
   if (react.message.id !== Settings.DECLARE_MESSAGE_ID[alpha].DECLARE) return
 
-  // 凸以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.TOTU) {
+  // 凸と持越以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.TOTU, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) {
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -43,6 +43,16 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
     return
   }
 
+  // 持越のリアクションが押された際の処理
+  if (Settings.EMOJI_ID.MOCHIKOSHI === react.emoji.id) {
+    // 持ち越しがなければ終了
+    if (!member.over) {
+      // リアクションを外す
+      react.users.remove(user)
+      return
+    }
+  }
+
   // 既に凸宣言している場合は前の凸宣言を消す
   if (member.declare) {
     // 凸宣言のチャンネルを取得
@@ -55,7 +65,15 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
     await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
 
     // 他の凸宣言を削除
-    await Promise.all(msg.reactions.cache.map(async r => r.users.remove(user)))
+    await Promise.all(
+      msg.reactions.cache.map(async r => {
+        // 同じ凸宣言を押した際、押した絵文字消さないようにする
+        if (alpha === member.declare) {
+          if (r.emoji.id === react.emoji.id) return
+        }
+        await r.users.remove(user)
+      })
+    )
 
     // 他の凸宣言を削除する分遅らせる
     await util.Sleep(500)
@@ -104,8 +122,8 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   // 凸宣言のメッセージでなければ終了
   if (react.message.id !== Settings.DECLARE_MESSAGE_ID[alpha].DECLARE) return
 
-  // 凸以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.TOTU) {
+  // 凸と持越以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.TOTU, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) {
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -178,6 +196,9 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
 
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
+
   // 通し以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.TOOSHI) {
     // 持越と待機の絵文字は外さずに終了
@@ -226,6 +247,9 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
+
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
   // 持越以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) {
@@ -276,6 +300,9 @@ export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.U
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
 
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
+
   // 待機以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.TAIKI) {
     // 通しと持越の絵文字は外さずに終了
@@ -324,6 +351,9 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
 
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
+
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
   // 確認と持越と待機以外の絵文字の場合は終了
   if (

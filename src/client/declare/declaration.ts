@@ -36,7 +36,9 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
   const plans = await schedule.FetchBoss(alpha)
 
   // 凸宣言者一覧を作成
-  const list = await createDeclareList(plans, emoji)
+  const totu = await createDeclareList(plans, emoji, 'totu')
+  const mochikoshi = await createDeclareList(plans, emoji, 'mochikoshi')
+  const list = totu.concat(mochikoshi)
 
   // 凸宣言のメッセージを作成
   const text = [
@@ -54,13 +56,14 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
  * 凸宣言一覧のリストを作成する
  * @param plans 凸予定一覧
  * @param emoji 絵文字のリスト
+ * @param name 絵文字の名前
  * @return 作成したリスト
  */
-const createDeclareList = async (plans: Plan[], emoji: Emoji[]): Promise<string[]> => {
+const createDeclareList = async (plans: Plan[], emoji: Emoji[], name: string): Promise<string[]> => {
   const convex = (
     await Promise.all(
       emoji
-        .filter(e => e.name === 'totu')
+        .filter(e => e.name === name)
         .first()
         .users.map(async u => await status.FetchMember(u.id))
     )
