@@ -203,7 +203,8 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
 
 /**
  * 渡されたユーザーのメッセージを全て削除する
- * @param user 削除したいメッセージのユーザー
+ * @param member 削除したいメンバーの状態
+ * @param channel 凸宣言のチャンネル
  */
 export const UserMessageAllDelete = async (member: Member, channel?: Discord.TextChannel) => {
   // 凸宣言中でなければ終了

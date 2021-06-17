@@ -6,15 +6,16 @@ import {Member} from '../../io/type'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
+ * @param member メンバーの状態
  * @param msg DiscordからのMessage
  * @param content 凸宣言のメッセージ
  * @return メンバー一覧とメンバーの状態
  */
-export const Status = async (msg: Discord.Message, content: string): Promise<[Member[], Option<Member>]> => {
-  // メンバーの状態を取得
-  let member = await status.FetchMember(msg.author.id)
-  if (!member) return [[], null]
-
+export const Status = async (
+  member: Member,
+  msg: Discord.Message,
+  content: string
+): Promise<[Member[], Option<Member>]> => {
   // 現在の凸状況を履歴に残す
   member = await saveHistory(member)
 
@@ -27,7 +28,7 @@ export const Status = async (msg: Discord.Message, content: string): Promise<[Me
   // 3凸終了者の場合は凸終了の処理、していない場合は現在の凸状況を報告
   const end = await isThreeConvex(member)
   if (end) {
-    member = await convexEndProcess(member, msg)
+    member = await ConvexEndProcess(member, msg)
   } else {
     // 凸状況を報告する
     await msg.reply(`${member.convex}凸目 ${member.over ? '持ち越し' : '終了'}`)
@@ -45,7 +46,7 @@ export const Status = async (msg: Discord.Message, content: string): Promise<[Me
  */
 const saveHistory = async (member: Member): Promise<Member> => {
   // 現在の凸状況を履歴に残す
-  member.history = `${member.convex}${member.over ? '+' : ''}`
+  member.history = `${member.convex}${'+'.repeat(Number(member.over))}`
   return member
 }
 
@@ -56,24 +57,22 @@ const saveHistory = async (member: Member): Promise<Member> => {
  * @return 更新したメンバー
  */
 const statusUpdate = async (member: Member, content: string): Promise<Member> => {
-  // 凸数を増やす
-  const countUp = (convex: string): string => String(Number(convex) + 1)
-
-  // ボスを倒した場合はtrue、倒していない場合はfalse
-  if (/^k|kill|きっl/i.test(content)) {
-    if (member.over === '1') {
-      member.over = ''
-    } else {
-      member.convex = countUp(member.convex)
-      member.over = '1'
-    }
+  if (member.carry) {
+    // 持ち越しの場合は持ち越しを1つ減らす
+    member.over = String(Number(member.over) - 1)
+    member.over = member.over === '0' ? '' : member.over
   } else {
-    if (member.over === '1') {
-      member.over = ''
-    } else {
-      member.convex = countUp(member.convex)
+    // ボスを倒していたら持ち越しを1つ増やす
+    if (/^k|kill|きっl/i.test(content)) {
+      member.over = String(Number(member.over) + 1)
     }
+    // 凸宣言を1つ増やす
+    member.convex = String(Number(member.convex) + 1)
   }
+
+  // 凸宣言と持ち越し状態を解除
+  member.declare = ''
+  member.carry = false
 
   return member
 }
@@ -87,8 +86,8 @@ const isThreeConvex = async (member: Member): Promise<boolean> => {
   // 3凸目じゃなければfalse
   if (member.convex !== '3') return false
 
-  // 持ち越し状態があればfalse
-  if (member.over === '1') return false
+  // 持ち越し状態であればfalse
+  if (member.over !== '') return false
 
   // 3凸目で持ち越しがなければ3凸終了者なのでtrue
   return true
@@ -100,7 +99,7 @@ const isThreeConvex = async (member: Member): Promise<boolean> => {
  * @param msg DiscordからのMessage
  * @return 更新したメンバー
  */
-const convexEndProcess = async (member: Member, msg: Discord.Message): Promise<Member> => {
+export const ConvexEndProcess = async (member: Member, msg: Discord.Message): Promise<Member> => {
   // 3凸終了のフラグを立てる
   member.end = '1'
 
