@@ -4,7 +4,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import {AtoE} from '../../io/type'
+import {AtoE, Member} from '../../io/type'
 import * as update from './update'
 import * as limitTime from '../convex/limitTime'
 import * as over from '../convex/over'
@@ -38,6 +38,12 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (member.end === '1') {
     msg.reply('もう3凸してるわ')
     return '3 Convex is finished'
+  }
+
+  // 持ち越しがないのに持越凸しようとした場合は終了
+  if (member.carry && !/[1-3]/.test(member.over)) {
+    msg.reply('持ち越しがないのに持越凸になってるわ')
+    return 'Not carry over'
   }
 
   // 凸宣言しているボスの番号を取得
@@ -79,7 +85,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
-  // overDelete(msg)
+  await overDelete(msg, member)
 
   // 凸報告者の凸宣言に書いてあるメッセージを全て削除
   await declare.UserMessageAllDelete(member)
@@ -117,14 +123,23 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 持ち越しがある場合、持ち越し状況のメッセージを全て削除する
+ * 持ち越しが1つの場合、持ち越し状況のメッセージを全て削除する
+ * 持ち越しが2-3つの場合、#進行-連携に#持ち越し状況を整理するように催促する
  * @param msg DiscordからのMessage
  */
-export const overDelete = async (msg: Discord.Message) => {
-  // 持ち越しがなければ終了
-  const member = await status.FetchMember(msg.author.id)
-  if (member?.over !== '1') return
+export const overDelete = async (msg: Discord.Message, member: Member) => {
+  // 持越凸でない場合は終了
+  if (!member.carry) return
 
-  // 持ち越しを持っている人のメッセージを削除
-  over.AllDelete(msg.member)
+  // 持ち越しが1つ、2-3つの場合で処理を分ける
+  if (/1/.test(member.over)) {
+    // 持ち越しを持っている人のメッセージを削除
+    await over.AllDelete(msg.member)
+  } else if (/[2-3]/.test(member.over)) {
+    // #進行-連携のチャンネルを取得
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+    // #進行-連携に#持ち越し状況を整理するように催促する
+    await channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
+  }
 }
