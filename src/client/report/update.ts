@@ -31,7 +31,7 @@ export const Status = async (
     member = await ConvexEndProcess(member, msg)
   } else {
     // 凸状況を報告する
-    await msg.reply(`${member.convex}凸目 ${member.over ? '持ち越し' : '終了'}`)
+    await msg.reply(`${member.convex}凸目、持越${Number(member.over)}つ`)
   }
 
   // ステータスを更新
