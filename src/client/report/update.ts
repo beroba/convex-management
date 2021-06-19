@@ -109,7 +109,7 @@ export const ConvexEndProcess = async (member: Member, msg: Discord.Message): Pr
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
   const n = members.filter(s => s.end === '1').length + 1
-  await msg.reply(`3凸目 終了\n\`${n}\`人目の3凸終了よ！`)
+  await msg.reply(`3凸目、持越0つ\n\`${n}\`人目の3凸終了よ！`)
 
   return member
 }

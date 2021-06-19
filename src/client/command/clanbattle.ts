@@ -177,7 +177,7 @@ const convexController = async (_command: string, _content: string, _msg: Discor
     .trim()
 
   // 凸状況の書式がおかしい場合は終了
-  if (!/^(0|[1-3]\+?)$/.test(state)) return _msg.reply('凸状況の書式が違うわ')
+  if (!/^(0|1\+{0,1}|2\+{0,2}|3\+{0,3})$/.test(state)) return _msg.reply('凸状況の書式が違うわ')
 
   // 凸状況を更新する
   await manage.Update(state, _msg)
