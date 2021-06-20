@@ -89,9 +89,9 @@ export type Status = {
  * @type id: string
  * @type limit: string
  * @type declare: string
- * @type convex: string
  * @type carry: boolean
- * @type over: string
+ * @type convex: number
+ * @type over: number
  * @type end: string
  * @type history: string
  */
