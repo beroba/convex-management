@@ -19,7 +19,7 @@ export const Status = async (
   // 現在の凸状況を履歴に残す
   member = await saveHistory(member)
 
-  // 凸数と持ち越しの状態を更新する
+  // 凸数と持越の状態を更新する
   member = await statusUpdate(member, content)
 
   // 凸報告に取消の絵文字をつける
@@ -51,18 +51,18 @@ const saveHistory = async (member: Member): Promise<Member> => {
 }
 
 /**
- * 凸数と持ち越しの状態を変更し返す
+ * 凸数と持越の状態を変更し返す
  * @param member 更新するメンバー
  * @param content 凸報告の内容
  * @return 更新したメンバー
  */
 const statusUpdate = async (member: Member, content: string): Promise<Member> => {
   if (member.carry) {
-    // 持ち越しの場合は持ち越しを1つ減らす
+    // 持越の場合は持越を1つ減らす
     member.over = String(Number(member.over) - 1)
     member.over = member.over === '0' ? '' : member.over
   } else {
-    // ボスを倒していたら持ち越しを1つ増やす
+    // ボスを倒していたら持越を1つ増やす
     if (/^k|kill|きっl/i.test(content)) {
       member.over = String(Number(member.over) + 1)
     }
@@ -70,7 +70,7 @@ const statusUpdate = async (member: Member, content: string): Promise<Member> =>
     member.convex = String(Number(member.convex) + 1)
   }
 
-  // 凸宣言と持ち越し状態を解除
+  // 凸宣言と持越状態を解除
   member.declare = ''
   member.carry = false
 
@@ -79,17 +79,17 @@ const statusUpdate = async (member: Member, content: string): Promise<Member> =>
 
 /**
  * 3凸終了しているかの真偽値を返す
- * @param 凸数と持ち越し
+ * @param 凸数と持越
  * @return 3凸しているかの真偽値
  */
 const isThreeConvex = async (member: Member): Promise<boolean> => {
   // 3凸目じゃなければfalse
   if (member.convex !== '3') return false
 
-  // 持ち越し状態であればfalse
+  // 持越状態であればfalse
   if (member.over !== '') return false
 
-  // 3凸目で持ち越しがなければ3凸終了者なのでtrue
+  // 3凸目で持越がなければ3凸終了者なのでtrue
   return true
 }
 

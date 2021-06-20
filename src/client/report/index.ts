@@ -47,9 +47,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 3凸終了済みの場合は終了
   if (result) return '3 Convex is finished'
 
-  // 持ち越しがないのに持越凸しようとした場合は終了
+  // 持越がないのに持越凸しようとした場合は終了
   if (member.carry && !/[1-3]/.test(member.over)) {
-    msg.reply('持ち越しがないのに持越凸になってるわ')
+    msg.reply('持越がないのに持越凸になってるわ')
     return 'Not carry over'
   }
 
@@ -91,7 +91,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     content = 'kill' + content
   }
 
-  // 持ち越しがある場合、持ち越し状況のメッセージを全て削除
+  // 持越がある場合、持越状況のメッセージを全て削除
   await overDelete(member, msg)
 
   // 凸報告者の凸宣言に書いてあるメッセージを全て削除
@@ -132,7 +132,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 3凸目で持ち越しがない場合は凸を終了状態に変更する。
+ * 3凸目で持越がない場合は凸を終了状態に変更する。
  * そうでない場合は持越凸状態にする
  * @param member メンバーの状態
  * @param msg DiscordからのMessage
@@ -159,8 +159,8 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
 }
 
 /**
- * 持ち越しが1つの場合、持ち越し状況のメッセージを全て削除する
- * 持ち越しが2-3つの場合、#進行-連携に#持ち越し状況を整理するように催促する
+ * 持越が1つの場合、持越状況のメッセージを全て削除する
+ * 持越が2-3つの場合、#進行-連携に#持越状況を整理するように催促する
  * @param member メンバーの状態
  * @param msg DiscordからのMessage
  */
@@ -168,15 +168,15 @@ const overDelete = async (member: Member, msg: Discord.Message) => {
   // 持越凸でない場合は終了
   if (!member.carry) return
 
-  // 持ち越しが1つ、2-3つの場合で処理を分ける
+  // 持越が1つ、2-3つの場合で処理を分ける
   if (/1/.test(member.over)) {
-    // 持ち越しを持っている人のメッセージを削除
+    // 持越を持っている人のメッセージを削除
     await over.AllDelete(msg.member)
   } else if (/[2-3]/.test(member.over)) {
     // #進行-連携のチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
-    // #進行-連携に#持ち越し状況を整理するように催促する
+    // #進行-連携に#持越状況を整理するように催促する
     await channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
   }
 }

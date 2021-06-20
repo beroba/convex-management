@@ -45,7 +45,7 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
 
   // 持越のリアクションが押された際の処理
   if (Settings.EMOJI_ID.MOCHIKOSHI === react.emoji.id) {
-    // 持ち越しがなければ終了
+    // 持越がなければ終了
     if (!member.over) {
       // リアクションを外す
       react.users.remove(user)
@@ -286,7 +286,7 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${util.Format(msg.content)} 持ち越し！`)
+  channel.send(`<@!${msg.author.id}> ${util.Format(msg.content)} 持越！`)
 
   return 'Carry over notice'
 }

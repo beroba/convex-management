@@ -81,7 +81,7 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
         const text = p.msg.replace(/\r?\n/g, '').replace(/\s/g, ' ')
 
         const convex = m?.convex ? m?.convex : '0'
-        const over = m?.over ? '+' : ''
+        const over = '+'.repeat(Number(m?.over))
         const limit = m?.limit !== '' ? `, ${m?.limit}時` : ''
 
         return `${p.name}[${convex}${over}${limit}]${awayIn} ${text}`

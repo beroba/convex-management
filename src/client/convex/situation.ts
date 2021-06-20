@@ -24,7 +24,6 @@ export const Report = async (members: Member[]) => {
   console.log('Report convex situation')
 }
 
-// prettier-ignore
 /**
  * 凸状況のテキストを作成する
  * @param members メンバー一覧
@@ -41,36 +40,43 @@ const createMessage = async (members: Member[]): Promise<string> => {
   const state = await current.Fetch()
 
   // 残り凸数を計算
-  const remaining = remainingConvexNumber(members)
+  const 残り凸数 = remainingConvexNumber(members)
 
   // 現在の段階を数字で取得
   const stage = Settings.STAGE[state.stage].NUMBER
 
-  // 次の段階までの残り凸数を計算
-  const after = lapsToTheNextStage(state)
+  // 次の段階までの凸数を計算
+  const 次の段階までの凸数 = lapsToTheNextStage(state)
 
-  // 全員の凸状況を見て振り分ける
-  const 未凸  = userSorting(members, 0, 0)
-  const 持越1 = userSorting(members, 1, 1)
-  const 凸1   = userSorting(members, 1, 0)
-  const 持越2 = userSorting(members, 2, 1)
-  const 凸2   = userSorting(members, 2, 0)
-  const 持越3 = userSorting(members, 3, 1)
-  const 凸3   = userSorting(members, 3, 0)
+  // 全員の凸状況を見て残り凸数で振り分ける
+  const 未凸 = userSorting(members, 0)
+  const 凸1 = userSorting(members, 1)
+  const 凸2 = userSorting(members, 2)
+  const 凸3 = userSorting(members, 3, '1-3')
+  const 完凸済 = userSorting(members, 3, 0)
+
+  // 全員の凸状況を見て持越数で振り分ける
+  const 持越3 = userSorting(members, undefined, 3)
+  const 持越2 = userSorting(members, undefined, 2)
+  const 持越1 = userSorting(members, undefined, 1)
 
   return [
     `\`${time}\` ${date.num} 凸状況一覧`,
-    `\`${stage}\`段階目 残り\`${after}\`周`,
-    `\`${state.lap}\`周目 \`${remaining}\``,
+    `\`${stage}\`段階目 残り\`${次の段階までの凸数}\`周`,
+    `\`${state.lap}\`周目 \`${残り凸数}\``,
     '```',
-    `未凸: ${未凸}\n`,
-    `持越: ${持越1}`,
-    `1凸 : ${凸1}\n`,
-    `持越: ${持越2}`,
-    `2凸 : ${凸2}\n`,
-    `持越: ${持越3}`,
-    `3凸 : ${凸3}\n`,
-    '```'
+    `未凸: ${未凸}`,
+    `1凸目: ${凸1}`,
+    `2凸目: ${凸2}`,
+    `3凸目: ${凸3}`,
+    `完凸済: ${完凸済}`,
+    '```',
+    '持越状況',
+    '```',
+    `3つ: ${持越3}`,
+    `2つ: ${持越2}`,
+    `1つ: ${持越1}`,
+    '```',
   ].join('\n')
 }
 
@@ -92,7 +98,7 @@ const getCurrentDate = (): string => {
 const remainingConvexNumber = (members: Member[]): string => {
   // 残り凸数を計算
   const remaining = members.map(s => 3 - Number(s.convex) + Number(s.over)).reduce((a, b) => a + b)
-  // 残り持ち越し数を計算
+  // 残り持越数を計算
   const over = members.map(s => Number(s.over)).reduce((a, b) => a + b)
   return `${remaining}/${members.length * 3}(${over})`
 }
@@ -118,15 +124,23 @@ const lapsToTheNextStage = (state: Current): number | string => {
 }
 
 /**
- * 引数で渡された凸数と持ち越しのメンバーを取得
+ * 引数で渡された凸数と持越のメンバーを取得
  * @param members メンバー全員の状態
  * @param convex 凸数
- * @param over 持ち越し状況
+ * @param over 持越状況
  * @return 取得したメンバー一覧
  */
-const userSorting = (members: Member[], convex: number, over: number): string =>
-  members
-    .filter(l => Number(l.convex) === convex)
-    .filter(l => Number(l.over) === over)
-    .map(l => l.name)
-    .join(', ')
+const userSorting = (members: Member[], convex?: number, over?: number | '1-3'): string => {
+  // 凸数で絞る
+  if (convex !== undefined) {
+    members = members.filter(l => Number(l.convex) === convex)
+  }
+
+  // 持越で絞る
+  if (over !== undefined) {
+    members = over === '1-3' ? members.filter(l => Number(l.over) !== 0) : members.filter(l => Number(l.over) === over)
+  }
+
+  // リストから名前を`, `で繋げて返す
+  return members.map(l => l.name).join(', ')
+}

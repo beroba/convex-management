@@ -4,9 +4,9 @@ import Option from 'type-of-option'
 
 /**
  * TLを正しい書式に整形させる、
- * timeが指定されていた場合は、その持ち越し秒数にする
+ * timeが指定されていた場合は、その持越秒数にする
  * @param tl 整形させるTL
- * @param time 持ち越し秒数
+ * @param time 持越秒数
  * @param msg DiscordからのMessage
  * @param flag extendのフォーマットにするかの真偽値
  */
@@ -20,7 +20,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
     .toCodeBlock() // コードブロックにする
     .alignVertically() // TLの縦を合わせる
     .removeSomeSecond() // 先頭が同じ秒数なら消す
-    .carryOverCalc() // 持ち越し計算をする
+    .carryOverCalc() // 持越計算をする
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -34,7 +34,7 @@ class Generate {
   /**
    * TLを整形させるクラス
    * @param tl 整形させるTL
-   * @param time 持ち越し秒数
+   * @param time 持越秒数
    * @param flag extendのフォーマットにするかの真偽値
    */
   constructor(tl: string, time: Option<string>, flag: boolean) {
@@ -44,8 +44,8 @@ class Generate {
   }
 
   /**
-   * 受け取った持ち越し秒数から引き算する秒数を算出
-   * @param time 持ち越し秒数
+   * 受け取った持越秒数から引き算する秒数を算出
+   * @param time 持越秒数
    * @return 引き算する秒数
    */
   private convertTime(time: Option<string>): Option<number> {
@@ -263,19 +263,19 @@ class Generate {
   }
 
   /**
-   * 持ち越し計算をする
+   * 持越計算をする
    * @return this
    */
   carryOverCalc(): this {
-    // 持ち越し秒数を指定されていない場合は終了
+    // 持越秒数を指定されていない場合は終了
     if (!this.time) return this
     const time = this.time
 
-    // TLの秒数を持ち越し時間の分引いたリストを作る
+    // TLの秒数を持越時間の分引いたリストを作る
     const list = this.tl.match(/\d:\d\d/g)?.map(v => {
       // :で区切った両端をpとqに代入
       const [p, q] = v.split(':').map(Number)
-      // 現在の秒数-持ち越し秒数を計算
+      // 現在の秒数-持越秒数を計算
       const t = p * 60 + q - time
       // N:NNの形に戻す
       return `${(t / 60) | 0}:${((t % 60) + '').padStart(2, '0')}`

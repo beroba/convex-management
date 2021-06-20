@@ -165,7 +165,7 @@ const reflectOnConvex = async (member: Member, info: any) => {
   const col = (await dateTable.TakeDate()).col
   const row = users.map(u => u.id).indexOf(member.id) + 3
 
-  // 凸数、持ち越し、3凸終了、履歴を更新する
+  // 凸数、持越、3凸終了、履歴を更新する
   await Promise.all(
     [member.convex, member.over, member.end, member.history].map(async (v, i) => {
       const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
@@ -243,7 +243,7 @@ export const ResetConvexOnSheet = async () => {
     state.map(async (_, j) => {
       // 行を取得
       const row = j + 3
-      // 凸数、持ち越し、3凸終了、履歴をリセットする
+      // 凸数、持越、3凸終了、履歴をリセットする
       await Promise.all(
         Array(4).fill('').map(async (v, i) => {
           const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
