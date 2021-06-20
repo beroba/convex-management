@@ -31,7 +31,7 @@ export const Status = async (
     member = await ConvexEndProcess(member, msg)
   } else {
     // 凸状況を報告する
-    await msg.reply(`${member.convex}凸目、持越${Number(member.over)}つ`)
+    await msg.reply(`残凸数: ${member.convex}、持越数: ${Number(member.over)}`)
   }
 
   // ステータスを更新
@@ -59,15 +59,14 @@ const saveHistory = async (member: Member): Promise<Member> => {
 const statusUpdate = async (member: Member, content: string): Promise<Member> => {
   if (member.carry) {
     // 持越の場合は持越を1つ減らす
-    member.over = String(Number(member.over) - 1)
-    member.over = member.over === '0' ? '' : member.over
+    member.over = member.over - 1
   } else {
     // ボスを倒していたら持越を1つ増やす
     if (/^k|kill|きっl/i.test(content)) {
-      member.over = String(Number(member.over) + 1)
+      member.over = member.over + 1
     }
-    // 凸宣言を1つ増やす
-    member.convex = String(Number(member.convex) + 1)
+    // 凸宣言を1つ減らす
+    member.convex = member.convex - 1
   }
 
   // 凸宣言と持越状態を解除
@@ -83,11 +82,11 @@ const statusUpdate = async (member: Member, content: string): Promise<Member> =>
  * @return 3凸しているかの真偽値
  */
 const isThreeConvex = async (member: Member): Promise<boolean> => {
-  // 3凸目じゃなければfalse
-  if (member.convex !== '3') return false
+  // 残凸数が0でなければfalse
+  if (member.convex !== 0) return false
 
   // 持越状態であればfalse
-  if (member.over !== '') return false
+  if (member.over !== 0) return false
 
   // 3凸目で持越がなければ3凸終了者なのでtrue
   return true
@@ -109,7 +108,7 @@ export const ConvexEndProcess = async (member: Member, msg: Discord.Message): Pr
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
   const n = members.filter(s => s.end === '1').length + 1
-  await msg.reply(`3凸目、持越0つ\n\`${n}\`人目の3凸終了よ！`)
+  await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
   return member
 }

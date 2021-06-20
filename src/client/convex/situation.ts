@@ -49,11 +49,11 @@ const createMessage = async (members: Member[]): Promise<string> => {
   const 次の段階までの凸数 = lapsToTheNextStage(state)
 
   // 全員の凸状況を見て残り凸数で振り分ける
-  const 未凸 = userSorting(members, 0)
-  const 凸1 = userSorting(members, 1)
-  const 凸2 = userSorting(members, 2)
-  const 凸3 = userSorting(members, 3, '1-3')
-  const 完凸済 = userSorting(members, 3, 0)
+  const 残凸3 = userSorting(members, 3)
+  const 残凸2 = userSorting(members, 2)
+  const 残凸1 = userSorting(members, 1)
+  const 残凸0 = userSorting(members, 0, '1-3')
+  const 完凸済 = userSorting(members, 0, 0)
 
   // 全員の凸状況を見て持越数で振り分ける
   const 持越3 = userSorting(members, undefined, 3)
@@ -65,10 +65,10 @@ const createMessage = async (members: Member[]): Promise<string> => {
     `\`${stage}\`段階目 残り\`${次の段階までの凸数}\`周`,
     `\`${state.lap}\`周目 \`${残り凸数}\``,
     '```',
-    `未凸: ${未凸}`,
-    `1凸目: ${凸1}`,
-    `2凸目: ${凸2}`,
-    `3凸目: ${凸3}`,
+    `残凸3: ${残凸3}`,
+    `残凸2: ${残凸2}`,
+    `残凸1: ${残凸1}`,
+    `残凸0: ${残凸0}`,
     `完凸済: ${完凸済}`,
     '```',
     '持越状況',

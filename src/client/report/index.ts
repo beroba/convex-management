@@ -13,6 +13,7 @@ import * as declare from '../declare'
 import * as declareStatus from '../declare/status'
 import * as react from '../declare/react'
 import * as cancel from '../plan/delete'
+import * as list from '../plan/list'
 
 /**
  * 凸報告の管理を行う
@@ -48,7 +49,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (result) return '3 Convex is finished'
 
   // 持越がないのに持越凸しようとした場合は終了
-  if (member.carry && !/[1-3]/.test(member.over)) {
+  if (member.carry && !/[1-3]/.test(String(member.over))) {
     msg.reply('持越がないのに持越凸になってるわ')
     return 'Not carry over'
   }
@@ -116,8 +117,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     await msg.member?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)
   }
 
-  // #凸状況に報告
+  // #凸状況を更新
   situation.Report(members)
+  list.SituationEdit()
 
   // 凸宣言の状況を更新
   declare.SetPlanList(alpha, state)
@@ -140,10 +142,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  */
 const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise<[boolean, Member]> => {
   // 3凸目でない場合は終了
-  if (member.convex !== '3') return [false, member]
+  if (member.convex !== 0) return [false, member]
 
   // 既に凸が終わっていた場合
-  if (member.over === '') {
+  if (member.over === 0) {
     member = await update.ConvexEndProcess(member, msg)
 
     // 凸状況をスプレッドシートに反映
@@ -169,10 +171,10 @@ const overDelete = async (member: Member, msg: Discord.Message) => {
   if (!member.carry) return
 
   // 持越が1つ、2-3つの場合で処理を分ける
-  if (/1/.test(member.over)) {
+  if (member.over === 1) {
     // 持越を持っている人のメッセージを削除
     await over.AllDelete(msg.member)
-  } else if (/[2-3]/.test(member.over)) {
+  } else if (/[2-3]/.test(String(member.over))) {
     // #進行-連携のチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 

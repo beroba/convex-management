@@ -49,9 +49,9 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     id: u.id,
     limit: '',
     declare: '',
-    convex: '',
     carry: false,
-    over: '',
+    convex: 3,
+    over: 0,
     end: '',
     history: '',
   }))
@@ -76,8 +76,8 @@ export const ResetConvex = async () => {
     limit: s.limit,
     declare: '',
     carry: false,
-    convex: '',
-    over: '',
+    convex: 3,
+    over: 0,
     end: '',
     history: '',
   }))
@@ -293,8 +293,8 @@ const fetchStatusFromSheet = async (users: User[], sheet: any): Promise<Status[]
   return PiecesEach(cells, 4)
     .slice(0, users.length)
     .map(s => ({
-      convex: s[0],
-      over: s[1],
+      convex: Number(s[0]),
+      over: Number(s[1]),
       end: s[2],
       history: s[3],
     }))

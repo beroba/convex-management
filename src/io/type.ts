@@ -77,8 +77,8 @@ export type User = {
  * 凸管理状況
  */
 export type Status = {
-  convex: string
-  over: string
+  convex: number
+  over: number
   end: string
   history: string
 }

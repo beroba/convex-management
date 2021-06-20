@@ -94,7 +94,7 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
   }
 
   // 凸報告に凸状況を報告
-  const convex = member.convex ? `${member.convex}凸目、持越${Number(member.over)}つ` : '未凸'
+  const convex = `残凸数: ${member.convex}、持越数: ${Number(member.over)}`
   msg.reply(`取消を行ったわよ\n${convex}`)
 
   // ステータスを更新
@@ -122,8 +122,8 @@ const confirmCancelTwice = (member: Member): boolean => {
  * @return 更新したメンバー
  */
 const rollback = (member: Member): Member => {
-  member.convex = member.history[0] === '0' ? '' : member.history[0]
-  member.over = member.history.match(/\+/g) ? `${member.history.match(/\+/g)?.length}` : ''
+  member.convex = Number(member.history[0])
+  member.over = member.history.match(/\+/g) ? Number(member.history.match(/\+/g)?.length) : 0
   return member
 }
 
