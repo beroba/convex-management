@@ -1,6 +1,9 @@
 import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
+import Settings from 'const-settings'
+import * as util from '../../util'
+import {TLFormat} from '../../io/type'
 
 /**
  * TLを正しい書式に整形させる、
@@ -11,11 +14,12 @@ import Option from 'type-of-option'
  * @param flag extendのフォーマットにするかの真偽値
  */
 export const TL = async (tl: string, time: Option<string>, msg: Discord.Message, flag = false) => {
+  // prettier-ignore
   // TLの整形をする
-  const content = new Generate(tl, time, flag) // 元になるクラスを生成
+  const content = (await new Generate(tl, time, flag) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
-    .extendFormat() // smicle好みに変更する
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
+    .extendFormat()) // smicle好みにTLを修正する
     .timeParser() // 時間のパースをする
     .toCodeBlock() // コードブロックにする
     .alignVertically() // TLの縦を合わせる
@@ -76,46 +80,58 @@ class Generate {
   }
 
   /**
-   * smicle好みに変換する
+   * smicle好みにTLを修正する
    * @returns this
    */
-  extendFormat(): this {
+  async extendFormat(): Promise<this> {
     // キャルbotの管理者じゃない場合は終了
     if (!this.flag) return this
 
+    // バトル開始、バトル終了の行を取り除く
+    this.tl = this.tl
+      .split('\n')
+      .filter(l => !/バトル開始|バトル終了/.test(l))
+      .join('\n')
+
+    // 共通の部分を修正
     this.tl = this.tl
       .replace(/=/g, '')
       .replace(/-/g, '―')
       .replace(/オート/g, '(オート)')
       .replace(/\( ?\(/g, '(')
       .replace(/\) ?\)/g, ')')
-      .replace(/傘/g, 'ニュネカ')
-      .replace(/ミスミ/g, '水カス')
-      .replace(/ミレン/g, '水サレ')
-      .replace(/ミコト/g, '水マコ')
-      .replace(/水カスミ/g, '水カス')
-      .replace(/水サレン/g, '水サレ')
-      .replace(/水マコト/g, '水マコ')
-      .replace(/ハロウカ/g, 'ハロキョ')
-      .replace(/ビスタ/g, 'ラビ')
-      .replace(/ラビリスタ/g, 'ラビ')
-      .replace(/ヨン/g, 'プヨリ')
-      .replace(/6コロ/g, 'コッコロ')
-      .replace(/ガイ/g, 'ヘオイ')
-      .replace(/セスコ/g, 'プリコロ')
-      .replace(/にゃる/g, 'ニャル')
-      .replace(/タコ/g, 'ニュペコ')
-      .replace(/編入?アオイ?/g, 'ヘオイ')
-      .replace(/ぷり/g, 'プリ')
-      .replace(/プイ/g, 'プリユイ')
-      .replace(/プリヒヨリ/g, 'プヨリ')
-      .replace(/ttリ/gi, 'イノベル')
-      .replace(/タノリ/g, 'イノベル')
-      .replace(/サレン ?\(サマー\)/g, '水サレ')
-      .replace(/コッコロ ?\(プリンセス\)/g, 'プリコロ')
-      .replace(/キャル ?\(ニューイヤー\)/g, 'ニャル')
+
+    // TL修正用のリストを作成
+    const list = await this.fetchTextToModify()
+    // リストを元に修正
+    list.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'ig'), l.after)))
 
     return this
+  }
+
+  /**
+   * #tl修正の名前変更一覧からTL修正用のリストを作成
+   * @returns TL修正用のリスト
+   */
+  async fetchTextToModify(): Promise<TLFormat[]> {
+    // TL修正で使うチャンネルを取得
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
+
+    // 修正用のリストを取得
+    const list = await Promise.all(
+      (Settings.TL_FORMAT_MESSAGES as string[]).map(async t => {
+        const msg = await channel.messages.fetch(t)
+        return msg.content.replace(/\`\`\`\n?/g, '')
+      })
+    )
+
+    return list
+      .join('\n') // 複数のリストを結合
+      .split('\n') // 改行で分割
+      .filter(l => l) // 空の行を取り除く
+      .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
+      .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
+      .map(l => ({before: l[0], after: l[1]})) // TLFormatの形に変更
   }
 
   /**

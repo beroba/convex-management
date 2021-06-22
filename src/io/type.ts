@@ -1,3 +1,5 @@
+import * as Discord from 'discord.js'
+
 /**
  * クラバトのボステーブル
  */
@@ -72,4 +74,20 @@ export type Plan = {
   alpha: string
   boss: string
   msg: string
+}
+
+/**
+ * 絵文字の名前とユーザー一覧
+ */
+export type Emoji = {
+  name: string
+  users: Discord.User[]
+}
+
+/**
+ * TL修正用の前後
+ */
+export type TLFormat = {
+  before: string
+  after: string
 }

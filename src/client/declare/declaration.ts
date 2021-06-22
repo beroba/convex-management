@@ -1,17 +1,8 @@
-import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {Current, Plan} from '../../io/type'
-
-/**
- * 絵文字の名前とユーザー一覧
- */
-type Emoji = {
-  name: string
-  users: Discord.User[]
-}
+import {Current, Plan, Emoji} from '../../io/type'
 
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
