@@ -4,7 +4,6 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
-import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 
 /**
@@ -36,7 +35,7 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   if (!member) return
 
   // 凸状況を元に戻す
-  const members = await statusRestore(react.message)
+  const members = await statusRestore(react.message, member)
   // 失敗したら終了
   if (!members) return
 
@@ -64,7 +63,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!member) return
 
   // 凸状況を元に戻す
-  const members = await statusRestore(msg)
+  const members = await statusRestore(msg, member)
   // 失敗したら終了
   if (!members) return
 
@@ -76,15 +75,11 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 
 /**
  * 凸状況を元に戻す
- * @param msg DiscordからのMessage
+ * @param member 変更するメンバーの状態
  * @param user リアクションしたユーザー
  * @return メンバー一覧
  */
-const statusRestore = async (msg: Discord.Message): Promise<Option<Member[]>> => {
-  // メンバーの状態を取得
-  let member = await status.FetchMember(msg.author.id)
-  if (!member) return
-
+const statusRestore = async (msg: Discord.Message, member: Member): Promise<Option<Member[]>> => {
   // 2回キャンセルしてないか確認
   const result = confirmCancelTwice(member)
   // キャンセルしていた場合は終了
@@ -99,11 +94,8 @@ const statusRestore = async (msg: Discord.Message): Promise<Option<Member[]>> =>
   }
 
   // 凸報告に凸状況を報告
-  const convex = member.convex ? `${member.convex}凸目 ${member.over ? '持ち越し' : '終了'}` : '未凸'
+  const convex = `残凸数: ${member.convex}、持越数: ${Number(member.over)}`
   msg.reply(`取消を行ったわよ\n${convex}`)
-
-  // ボス倒していたかを判別
-  killConfirm(msg)
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
@@ -121,7 +113,7 @@ const statusRestore = async (msg: Discord.Message): Promise<Option<Member[]>> =>
  * @return 2回キャンセルしていたかの真偽値
  */
 const confirmCancelTwice = (member: Member): boolean => {
-  return `${member.convex}${member.over ? '+' : ''}` === member.history
+  return `${member.convex}${'+'.repeat(Number(member.over))}` === member.history
 }
 
 /**
@@ -130,8 +122,8 @@ const confirmCancelTwice = (member: Member): boolean => {
  * @return 更新したメンバー
  */
 const rollback = (member: Member): Member => {
-  member.convex = member.history[0] ? member.history[0] : ''
-  member.over = member.history.length === 2 ? '1' : ''
+  member.convex = Number(member.history[0])
+  member.over = member.history.match(/\+/g) ? Number(member.history.match(/\+/g)?.length) : 0
   return member
 }
 
@@ -148,17 +140,4 @@ const endConfirm = (member: Member, msg: Discord.Message): Member => {
   msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   return member
-}
-
-/**
- * ボスを倒していた場合、前のボスに戻す
- * @param msg DiscordからのMessage
- */
-const killConfirm = (msg: Discord.Message) => {
-  const content = util.Format(msg.content)
-  // ボスを倒していなければ終了
-  if (!/^k|kill/i.test(content)) return
-
-  // 前のボスに戻す
-  lapAndBoss.Previous()
 }

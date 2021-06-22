@@ -14,8 +14,8 @@ import * as limitTime from '../client/convex/limitTime'
  * @param members メンバー一覧
  */
 export const Update = async (members: Member[]) => {
-  // 15個ずつに分割
-  PiecesEach(members, 15).forEach(async (m, i) => {
+  // 10個ずつに分割
+  PiecesEach(members, 10).forEach(async (m, i) => {
     // キャルステータスを更新
     await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[i], m)
   })
@@ -48,8 +48,10 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     name: u.name,
     id: u.id,
     limit: '',
-    convex: '',
-    over: '',
+    declare: '',
+    carry: false,
+    convex: 3,
+    over: 0,
     end: '',
     history: '',
   }))
@@ -72,10 +74,36 @@ export const ResetConvex = async () => {
     name: s.name,
     id: s.id,
     limit: s.limit,
-    convex: '',
-    over: '',
+    declare: '',
+    carry: false,
+    convex: 3,
+    over: 0,
     end: '',
     history: '',
+  }))
+
+  // キャルステータスを更新
+  await Update(members)
+}
+
+/**
+ * メンバー全員の凸宣言をリセットする
+ */
+export const ResetDeclare = async () => {
+  // メンバー全体の状態を取得
+  let members = await Fetch()
+
+  // 全員の凸状況をリセット
+  members = members.map(s => ({
+    name: s.name,
+    id: s.id,
+    limit: s.limit,
+    declare: '',
+    carry: false,
+    convex: s.convex,
+    over: s.over,
+    end: s.end,
+    history: s.history,
   }))
 
   // キャルステータスを更新
@@ -90,8 +118,9 @@ export const Fetch = async (): Promise<Member[]> => {
   // メンバーの状態を全て取得
   const m1 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[0])
   const m2 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[1])
+  const m3 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[2])
   // 結合して返す
-  return m1.concat(m2)
+  return m1.concat(m2).concat(m3)
 }
 
 /**
@@ -109,24 +138,25 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 
 /**
  * スプレッドシートにメンバーの凸状況を反映させる
- * @param 更新したいメンバー
+ * @param member 更新したいメンバー
  */
 export const ReflectOnSheet = async (member: Member) => {
+  // 情報のシートを取得
+  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
   // 凸状況と活動限界時間を更新する
-  reflectOnConvex(member)
-  reflectOnLimit(member)
+  reflectOnConvex(member, info)
+  reflectOnLimit(member, info)
 }
 
 /**
  * メンバーの凸状況を反映させる
- * @param 更新したいメンバー
+ * @param member 更新したいメンバー
+ * @param info 情報のシート
  */
-const reflectOnConvex = async (member: Member) => {
+const reflectOnConvex = async (member: Member, info: any) => {
   // 凸状況のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // 情報のシートを取得
-  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得
   const users = await FetchUserFromSheet(info)
@@ -135,7 +165,7 @@ const reflectOnConvex = async (member: Member) => {
   const col = (await dateTable.TakeDate()).col
   const row = users.map(u => u.id).indexOf(member.id) + 3
 
-  // 凸数、持ち越し、3凸終了、履歴を更新する
+  // 凸数、持越、3凸終了、履歴を更新する
   await Promise.all(
     [member.convex, member.over, member.end, member.history].map(async (v, i) => {
       const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
@@ -146,21 +176,19 @@ const reflectOnConvex = async (member: Member) => {
 
 /**
  * メンバーの活動限界時間を反映させる
- * @param 更新したいメンバー
+ * @param member 更新したいメンバー
+ * @param info 情報のシート
  */
-const reflectOnLimit = async (member: Member) => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
+const reflectOnLimit = async (member: Member, info: any) => {
   // スプレッドシートからユーザー一覧を取得
-  const users = await FetchUserFromSheet(sheet)
+  const users = await FetchUserFromSheet(info)
 
   // 行と列を取得
   const col = Settings.INFORMATION_SHEET.LIMIT_COLUMN
   const row = users.map(u => u.id).indexOf(member.id) + 3
 
   // 活動限界時間を更新する
-  const cell = await sheet.getCell(`${col}${row}`)
+  const cell = await info.getCell(`${col}${row}`)
   await cell.setValue(member.limit)
 }
 
@@ -182,6 +210,8 @@ export const ReflectOnCal = async () => {
     name: users[i].name,
     id: users[i].id,
     limit: users[i].limit.replace('時', ''),
+    declare: users[i].declare,
+    carry: users[i].carry,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -213,7 +243,7 @@ export const ResetConvexOnSheet = async () => {
     state.map(async (_, j) => {
       // 行を取得
       const row = j + 3
-      // 凸数、持ち越し、3凸終了、履歴をリセットする
+      // 凸数、持越、3凸終了、履歴をリセットする
       await Promise.all(
         Array(4).fill('').map(async (v, i) => {
           const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
@@ -230,14 +260,23 @@ export const ResetConvexOnSheet = async () => {
  * @return ユーザー一覧
  */
 export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
+  // メンバー全体の状態を取得
+  const members = await Fetch()
+
   const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
   return PiecesEach(cells, 3)
     .filter(util.Omit)
-    .map(u => ({
-      name: u[0],
-      id: u[1],
-      limit: u[2],
-    }))
+    .map(u => {
+      const id = u[1]
+      const member = members.find(m => m.id === id)
+      return {
+        name: u[0],
+        id: id,
+        limit: u[2],
+        declare: member?.declare ?? '',
+        carry: false,
+      }
+    })
 }
 
 /**
@@ -254,8 +293,8 @@ const fetchStatusFromSheet = async (users: User[], sheet: any): Promise<Status[]
   return PiecesEach(cells, 4)
     .slice(0, users.length)
     .map(s => ({
-      convex: s[0],
-      over: s[1],
+      convex: Number(s[0]),
+      over: Number(s[1]),
       end: s[2],
       history: s[3],
     }))

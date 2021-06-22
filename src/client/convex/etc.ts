@@ -8,24 +8,24 @@ import {User} from '../../io/type'
 import * as util from '../../util'
 
 /**
- * 同時凸の持ち越し計算を行う
+ * 同時凸の持越計算を行う
  * @param HP ボスのHP
  * @param A 1人目のダメージ
  * @param B 2人目のダメージ
  * @param msg DiscordからのMessage
  */
 export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.Message) => {
-  // 持ち越し秒数を計算
+  // 持越秒数を計算
   const a = overCalc(HP, A, B)
   const b = overCalc(HP, B, A)
 
   // 計算結果を出力
-  msg.reply(`\`\`\`A ${a}s\nB ${b}s\`\`\`ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！`)
+  msg.reply(`\`\`\`A ${a}s\nB ${b}s\`\`\`ダメージの高い方を先に通した方が持越時間が長くなるわよ！`)
 }
 
 /**
- * 持ち越しの計算をする
- * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
+ * 持越の計算をする
+ * 計算式: 持越時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
  * @param HP ボスのHP
  * @param a AのHP
  * @param b BのHP
@@ -69,18 +69,6 @@ export const RemoveConvexRoles = async () => {
 }
 
 /**
- * 指定されたメンバーのボスロールを全て削除する
- * @param member ロールを削除したメンバー
- */
-export const RemoveBossRole = async (member: Option<Discord.GuildMember>) => {
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.a)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.b)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.c)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.d)
-  await member?.roles.remove(Settings.BOSS_ROLE_ID.e)
-}
-
-/**
  * スプレッドシートのメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
@@ -92,6 +80,8 @@ export const UpdateMembers = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
+      carry: false,
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -115,6 +105,8 @@ export const UpdateSisters = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
+      carry: false,
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 

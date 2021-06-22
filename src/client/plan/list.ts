@@ -4,14 +4,13 @@ import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {Plan} from '../../io/type'
-import * as declare from '../declare'
+import {AtoE, Plan} from '../../io/type'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力
  * @param num ボス番号
  */
-export const Output = async (alpha: string) => {
+export const Output = async (alpha: AtoE) => {
   // 現在の状況を取得
   const state = await current.Fetch()
 
@@ -45,7 +44,10 @@ export const AllOutput = async () => {
  * #凸状況の凸予定を編集
  * @param plans 凸予定一覧
  */
-export const SituationEdit = async (plans: Plan[]) => {
+export const SituationEdit = async (plans?: Plan[]) => {
+  // 凸予定一覧を取得
+  plans ??= await schedule.Fetch()
+
   // 凸予定一覧のテキストを作成
   const text = await createAllPlanText(plans)
 
@@ -53,14 +55,6 @@ export const SituationEdit = async (plans: Plan[]) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
   const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
   msg.edit(text)
-
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  await util.Sleep(500)
-
-  // 凸宣言を設定する
-  await declare.SetPlanList(state)
 
   console.log('Edit the convex schedule of the convex situation')
 }
@@ -72,7 +66,7 @@ export const SituationEdit = async (plans: Plan[]) => {
  * @param plans 凸予定一覧
  * @return 作成したテキスト
  */
-export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]): Promise<string> => {
+export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]): Promise<string> => {
   // 凸予定一覧から名前とメッセージだけにしたテキストを作成
   const p = await Promise.all(
     plans
@@ -82,15 +76,18 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
         // 3凸済みなら表示しない
         if (m?.end) return ''
 
+        // 離席状態か確認
         const member = await util.MemberFromId(p.playerID)
-        const bool = util.IsRole(member, Settings.ROLE_ID.AWAY_IN)
+        const awayIn = util.IsRole(member, Settings.ROLE_ID.AWAY_IN) ? '(離席中)' : ''
 
         // 改行を潰して、連続した空白を1つにする
         const text = p.msg.replace(/\r?\n/g, '').replace(/\s/g, ' ')
 
-        return `${p.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}${
-          m?.limit !== '' ? `, ${m?.limit}時` : ''
-        }]${bool ? '(離席中)' : ''} ${text}`
+        const convex = m?.convex
+        const over = '+'.repeat(Number(m?.over))
+        const limit = m?.limit !== '' ? `, ${m?.limit}時` : ''
+
+        return `${p.name}[${convex}${over}${limit}]${awayIn} ${text}`
       })
   )
   // 値の重複、空の値を潰す
@@ -112,14 +109,13 @@ export const CreatePlanText = async (alpha: string, stage: string, plans: Plan[]
 const createAllPlanText = async (plans: Plan[]): Promise<string> => {
   // 現在の状況を取得
   const state = await current.Fetch()
-  const stage = state.stage
 
   // 全ボスの凸予定一覧のテキストを作成
-  const a = await CreatePlanText('a', stage, plans)
-  const b = await CreatePlanText('b', stage, plans)
-  const c = await CreatePlanText('c', stage, plans)
-  const d = await CreatePlanText('d', stage, plans)
-  const e = await CreatePlanText('e', stage, plans)
+  const a = await CreatePlanText('a', state.stage, plans)
+  const b = await CreatePlanText('b', state.stage, plans)
+  const c = await CreatePlanText('c', state.stage, plans)
+  const d = await CreatePlanText('d', state.stage, plans)
+  const e = await CreatePlanText('e', state.stage, plans)
 
   // 1つにまとめて返す
   return [a, b, c, d, e].join('\n')
