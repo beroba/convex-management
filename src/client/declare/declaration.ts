@@ -1,3 +1,4 @@
+import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
