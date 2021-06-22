@@ -313,7 +313,6 @@ class Generate {
       .map(tl => (/１/.test(tl) ? times.pop() : tl)) // １を秒数に置き換える
       .join('') // 全ての行を結合
 
-    // /*
     // 1行づつ分解
     const tl = this.tl.split('\n')
 
@@ -325,7 +324,9 @@ class Generate {
 
     // 0未満の秒数より後のTLを省いて結合
     this.tl = tl.slice(0, i).join('\n') + '```'
-    // */
+
+    // `0:-`を全て削除
+    this.tl = this.tl.replace(/0:-/g, '')
 
     return this
   }
