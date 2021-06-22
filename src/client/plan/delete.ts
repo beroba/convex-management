@@ -7,6 +7,7 @@ import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
 import * as list from './list'
 import * as declaration from '../declare/declaration'
+import * as etc from '../convex/etc'
 
 /**
  * 凸予定の自分のメッセージに完了の絵文字をつけたら削除する
@@ -142,9 +143,39 @@ const unroleBoss = async (plans: Plan[], plan: Plan, msg: Discord.Message) => {
 }
 
 /**
+ * 凸予定を全て削除する
+ */
+export const DeleteAll = async () => {
+  // 凸予定を全て削除
+  await schedule.AllDelete()
+
+  // 凸予定のメッセージを全て削除
+  await msgAllRemove()
+
+  // べろばあのクランメンバー一覧を取得
+  const clanMembers = util
+    .GetGuild()
+    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+    ?.members.map(m => m)
+
+  // クランメンバーのボスロールを全て削除
+  clanMembers?.forEach(m => etc.RemoveBossRole(m))
+
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
+
+  // bot-notifyに通知をする
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+  channel.send('全ての凸予定を削除したわ')
+
+  console.log('reset all plan')
+}
+
+/**
  * 凸予定のメッセージを全て削除する
  */
-export const MsgAllRemove = async () => {
+const msgAllRemove = async () => {
   // 凸予定のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
 
