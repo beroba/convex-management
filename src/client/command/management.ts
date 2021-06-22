@@ -12,6 +12,7 @@ import * as activityTime from '../convex/activityTime'
 import * as etc from '../convex/etc'
 import * as react from '../convex/react'
 import * as situation from '../convex/situation'
+import * as plan from '../plan/delete'
 
 /**
  * 運営管理者用のコマンド
@@ -76,6 +77,11 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     case /cb manage reflect activity time/.test(content): {
       await reflectActivityTimeController('/cb manage reflect activity time', content, msg)
       return 'Reflect activity time on the sheet'
+    }
+
+    case /cb manage delete all plan/.test(content): {
+      await deleteAllPlanController('/cb manage delete all plan', content, msg)
+      return 'All delete plan'
     }
   }
 }
@@ -237,4 +243,17 @@ const reflectActivityTimeController = async (_command: string, _content: string,
   await activityTime.ReflectOnSheet()
 
   _msg.reply('凸管理用の絵文字を設定したわよ！')
+}
+
+/**
+ * `/cb manage delete all plan`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const deleteAllPlanController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 凸予定を全て削除
+  await plan.DeleteAll()
+
+  _msg.reply('凸予定を全て削除したわよ！')
 }
