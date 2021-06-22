@@ -126,7 +126,7 @@ const limitTimeDisplay = (expression: string) => {
     limitTime.Display(members)
 
     // 現在の時刻を取得
-    const date = `${String(new Date().getHours()).padStart(2, '0')}`
+    const date = String(new Date().getHours())
 
     // bot-notifyに通知をする
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
