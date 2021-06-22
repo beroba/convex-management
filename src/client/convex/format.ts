@@ -317,8 +317,8 @@ class Generate {
     // 1行づつ分解
     const tl = this.tl.split('\n')
 
-    // 0未満の秒数の場所を取得
-    const i = tl.findIndex(v => /0:-/.test(v))
+    // 行頭が0:00未満の場所を取得
+    const i = tl.findIndex(v => /^0:-/.test(v))
 
     // 0未満の秒数がなければ終了
     if (i === -1) return this
