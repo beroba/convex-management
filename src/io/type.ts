@@ -96,3 +96,11 @@ export type Status = {
  * @type history: string
  */
 export type Member = User & Status
+
+/**
+ * TL修正用の前後
+ */
+export type TLFormat = {
+  before: string
+  after: string
+}
