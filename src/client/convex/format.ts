@@ -143,6 +143,12 @@ class Generate {
       // 数字以外は次へ
       if (!/\d/.test(tl[i])) continue
 
+      if (/:/.test(tl[i + 2])) {
+        // NN:NNなので先頭のNを消す
+        tl[i] = ''
+        continue
+      }
+
       if (/:/.test(tl[i + 1])) {
         // :の次が数字でないなら次へ
         if (!/\d/.test(tl[i + 2])) continue
