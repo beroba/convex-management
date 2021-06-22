@@ -160,7 +160,9 @@ export const DeleteAll = async () => {
     ?.members.map(m => m)
 
   // クランメンバーのボスロールを全て削除
-  clanMembers?.forEach(m => etc.RemoveBossRole(m))
+  if (clanMembers) {
+    await Promise.all(clanMembers.map(async m => m?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)))
+  }
 
   // 凸予定一覧を取得
   const plans = await schedule.Fetch()
