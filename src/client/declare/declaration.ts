@@ -1,36 +1,41 @@
+import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {Current, Plan, Emoji} from '../../io/type'
+import {AtoE, Member, Plan} from '../../io/type'
 
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
  * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
+ * @param members メンバー全体の状態
  */
-export const SetUser = async (state: Current) => {
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
+export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, members?: Member[]) => {
+  // 凸宣言のチャンネルを取得
+  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+
+  // メンバー全体の状態を取得
+  members ??= await status.Fetch()
 
   // 凸宣言のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
-  // 凸宣言に付いているリアクションをキャッシュ
-  await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
-
-  // リアクションしている人一覧を取得する
-  const emoji: Emoji[] = msg.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
   // 削除したボスの凸予定一覧を取得
-  const plans = await schedule.FetchBoss(state.alpha)
+  const plans = await schedule.FetchBoss(alpha)
 
   // 凸宣言者一覧を作成
-  const list = await createDeclareList(plans, emoji)
+  const totu = await createDeclareList(members, plans, alpha, false)
+  const mochikoshi = await createDeclareList(members, plans, alpha, true)
 
   // 凸宣言のメッセージを作成
   const text = [
     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
     '```',
-    `${list.join('\n')}${list.length ? '' : ' '}`,
+    '――――凸宣言――――',
+    `${totu.join('\n')}${totu.length ? '\n' : ''}`,
+    '――――持越凸――――',
+    `${mochikoshi.join('\n')}`,
     '```',
   ].join('\n')
 
@@ -40,41 +45,23 @@ export const SetUser = async (state: Current) => {
 
 /**
  * 凸宣言一覧のリストを作成する
+ * @param members メンバー全体の状態
  * @param plans 凸予定一覧
- * @param emoji 絵文字のリスト
+ * @param alpha ボス番号
+ * @param carry 持越凸か判断するフラグ
  * @return 作成したリスト
  */
-const createDeclareList = async (plans: Plan[], emoji: Emoji[]): Promise<string[]> => {
-  // prettier-ignore
-  const convex = (await Promise.all(
-    emoji.filter(e => e.name === 'totu')
-      .first()
-      .users
-      .map(u => status.FetchMember(u.id)))
-    ).filter(m => m)
+const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, carry: boolean): Promise<string[]> => {
+  const convex = members.filter(m => m.declare === alpha).filter(m => m.carry === carry)
 
   // テキストを作成
   return convex.map(m => {
     const p = plans.find(p => p.playerID === m?.id)
-    return `${m?.name}[${m?.convex ? m?.convex : '0'}${m?.over ? '+' : ''}${m?.limit !== '' ? `, ${m?.limit}時` : ''}]${
-      p ? ` ${p.msg}` : ''
-    }`
+
+    const convex = m?.convex
+    const over = '+'.repeat(Number(m?.over))
+    const limit = m?.limit !== '' ? `, ${m?.limit}時` : ''
+
+    return `${m?.name}[${convex}${over}${limit}]${p ? ` ${p.msg}` : ''}`
   })
-}
-
-/**
- * 凸宣言に付いているリアクションを全て外す
- */
-export const ResetReact = async () => {
-  // #凸宣言-ボス状況のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_DECLARE)
-
-  // 凸宣言のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.CONVEX_DECLARE_ID.DECLARE)
-
-  // 凸宣言のリアクションを全て外す
-  await msg.reactions.removeAll()
-
-  // 本戦と保険のリアクションを付ける
-  await msg.react(Settings.EMOJI_ID.TOTU)
 }

@@ -2,10 +2,10 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
 import * as list from './list'
+import * as declare from '../declare'
 import * as declaration from '../declare/declaration'
 import * as etc from '../convex/etc'
 
@@ -51,16 +51,17 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.member?.user.bot) return
 
   // 凸予定を削除
-  const plans = await planDelete(msg)
+  const [plans, plan] = await planDelete(msg)
+  if (!plan) return
 
   // 凸状況を更新
   await list.SituationEdit(plans)
 
-  // 現在の状態を取得
-  const state = await current.Fetch()
+  // 凸宣言の凸予定を更新
+  await declare.SetPlanList(plan.alpha)
 
-  // 凸宣言をリセット
-  declaration.SetUser(state)
+  // 凸宣言を更新
+  declaration.SetUser(plan.alpha)
 
   return 'Delete completed message'
 }
@@ -93,10 +94,10 @@ export const Remove = async (alpha: string, id: string) => {
  * @param msg DiscordからのMessage
  * @return 凸予定一覧
  */
-const planDelete = async (msg: Discord.Message): Promise<Plan[]> => {
+const planDelete = async (msg: Discord.Message): Promise<[Plan[], Option<Plan>]> => {
   // 凸予定の完了を付ける
   const [plans, plan] = await schedule.Delete(msg.id)
-  if (!plan) return plans
+  if (!plan) return [plans, plan]
   await util.Sleep(100)
 
   // メッセージを削除
@@ -105,7 +106,7 @@ const planDelete = async (msg: Discord.Message): Promise<Plan[]> => {
   // ボスのロールを外す
   await unroleBoss(plans, plan, msg)
 
-  return plans
+  return [plans, plan]
 }
 
 /**
@@ -134,12 +135,12 @@ const calMsgDel = async (id: string) => {
  * @param msg DiscordからのMessage
  */
 const unroleBoss = async (plans: Plan[], plan: Plan, msg: Discord.Message) => {
-  // 他に同じボスの凸予定がある場合は終了
-  const find = plans.filter(p => p.alpha === plan.alpha).find(p => p.playerID === plan.playerID)
+  // 凸予定がまだある場合は終了
+  const find = plans.find(p => p.playerID === plan.playerID)
   if (find) return
 
-  // ボス番号のロールを削除
-  await msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
+  // 凸予定のロールを削除
+  await msg.member?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)
 }
 
 /**

@@ -38,11 +38,11 @@ export const Message = async (msg: Discord.Message) => {
     comment = await plan.Convex(msg)
     if (comment) return console.log(comment)
 
-    // 持ち越し状況に絵文字をつける
+    // 持越状況に絵文字をつける
     comment = over.React(msg)
     if (comment) return console.log(comment)
 
-    // 持ち越し凸先に絵文字をつける
+    // 持越凸先に絵文字をつける
     comment = sister.React(msg)
     if (comment) return console.log(comment)
 
