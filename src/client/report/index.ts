@@ -64,7 +64,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // ボス更新前の状態を取得
-  const state = await current.Fetch()
+  let state = await current.Fetch()
 
   // 既にボスが討伐されてりる場合は終了
   if (state[alpha].subjugate) {
@@ -81,10 +81,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // ボスを倒したか確認
   if (/^k|kill|きっl/i.test(content)) {
     // ボスのHPを0にする
-    declareStatus.RemainingHPChange('@0', alpha, state)
+    state = await declareStatus.RemainingHPChange('@0', alpha, state)
   } else if (/@\d/.test(content)) {
     // @が入っている場合はHPの変更をする
-    declareStatus.RemainingHPChange(content, alpha, state)
+    state = await declareStatus.RemainingHPChange(content, alpha, state)
   }
 
   // @0が入力された場合は、killを追加する
@@ -118,7 +118,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // #凸状況を更新
-  situation.Report(members)
+  situation.Report(members, state)
   list.SituationEdit()
 
   // 凸宣言の状況を更新

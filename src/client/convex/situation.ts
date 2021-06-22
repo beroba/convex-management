@@ -2,15 +2,23 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as dateTable from '../../io/dateTable'
 import * as current from '../../io/current'
+import * as status from '../../io/status'
 import {Current, Member} from '../../io/type'
 
 /**
  * 凸状況に報告をする
  * @param members メンバー一覧
+ * @param state 現在の状況
  */
-export const Report = async (members: Member[]) => {
+export const Report = async (members?: Member[], state?: Current) => {
+  // メンバー全体の状態を取得
+  members ??= await status.Fetch()
+
+  // 現在の状況を取得
+  state ??= await current.Fetch()
+
   // #凸状況のテキストを作成
-  const text = await createMessage(members)
+  const text = await createMessage(members, state)
 
   // #凸状況を更新
   const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
@@ -27,26 +35,24 @@ export const Report = async (members: Member[]) => {
 /**
  * 凸状況のテキストを作成する
  * @param members メンバー一覧
+ * @param state 現在の状況
  * @return 作成したテキスト
  */
-const createMessage = async (members: Member[]): Promise<string> => {
+const createMessage = async (members: Member[], state: Current): Promise<string> => {
   // 現在の日付と時刻を取得
   const time = getCurrentDate()
 
   // クラバトの日数を取得
   const date = await dateTable.TakeDate()
 
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
   // 残り凸数を計算
-  const 残り凸数 = remainingConvexNumber(members)
+  const remainingConvex = remainingConvexNumber(members)
 
   // 現在の段階を数字で取得
   const stage = Settings.STAGE[state.stage].NUMBER
 
   // 次の段階までの凸数を計算
-  const 次の段階までの凸数 = lapsToTheNextStage(state)
+  const nextStage = lapsToTheNextStage(state)
 
   // 全員の凸状況を見て残り凸数で振り分ける
   const 残凸3 = userSorting(members, 3)
@@ -62,8 +68,8 @@ const createMessage = async (members: Member[]): Promise<string> => {
 
   return [
     `\`${time}\` ${date.num} 凸状況一覧`,
-    `\`${stage}\`段階目 残り\`${次の段階までの凸数}\`周`,
-    `\`${state.lap}\`周目 \`${残り凸数}\``,
+    `\`${stage}\`段階目 残り\`${nextStage}\`周`,
+    `\`${state.lap}\`周目 \`${remainingConvex}\``,
     '```',
     `残凸3: ${残凸3}`,
     `残凸2: ${残凸2}`,
@@ -144,3 +150,13 @@ const userSorting = (members: Member[], convex?: number, over?: number | '1-3'):
   // リストから名前を`, `で繋げて返す
   return members.map(l => l.name).join(', ')
 }
+
+// /**
+//  * ボス状況のテキストを作成する
+//  * @param members メンバー一覧
+//  * @param state 現在の状況
+//  * @return 作成したテキスト
+//  */
+// const bossMessage = async (members: Member[], state: Current): Promise<string> => {
+//   return [].join('\n')
+// }
