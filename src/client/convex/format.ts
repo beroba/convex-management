@@ -156,6 +156,24 @@ class Generate {
     const tl = this.tl.split('')
 
     for (let i = 0; i < tl.length; i++) {
+      // 星の場合は数字の先まで飛ばす
+      if (/★/.test(tl[i])) {
+        i = this.countUpToChar(tl, i + 1)
+        continue
+      }
+
+      // Lvの場合は数字の先まで飛ばす
+      if (/Lv/i.test(tl[i] + tl[i + 1])) {
+        i = this.countUpToChar(tl, i + 2)
+        continue
+      }
+
+      // RANKの場合は数字の先まで飛ばす
+      if (/RANK/i.test(tl[i] + tl[i + 1] + tl[i + 2] + tl[i + 3])) {
+        i = this.countUpToChar(tl, i + 4)
+        continue
+      }
+
       // 数字以外は次へ
       if (!/\d/.test(tl[i])) continue
 
