@@ -116,14 +116,10 @@ class Generate {
   async fetchTextToModify(): Promise<TLFormat[]> {
     // TL修正で使うチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
+    const msgs = (await channel.messages.fetch()).map(m => m)
 
     // 修正用のリストを取得
-    const list = await Promise.all(
-      (Settings.TL_FORMAT_MESSAGES as string[]).map(async t => {
-        const msg = await channel.messages.fetch(t)
-        return msg.content.replace(/\`\`\`\n?/g, '')
-      })
-    )
+    const list = await Promise.all(msgs.map(m => m.content.replace(/\`\`\`\n?/g, '')))
 
     return list
       .join('\n') // 複数のリストを結合
