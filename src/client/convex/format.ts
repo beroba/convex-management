@@ -87,19 +87,20 @@ class Generate {
     // キャルbotの管理者じゃない場合は終了
     if (!this.flag) return this
 
-    // バトル開始、バトル終了の行を取り除く
+    // バトル開始の行を取り除く
     this.tl = this.tl
       .split('\n')
-      .filter(l => !/バトル開始|バトル終了/.test(l))
+      .filter(l => !/バトル開始/.test(l))
       .join('\n')
 
     // 共通の部分を修正
     this.tl = this.tl
       .replace(/=/g, '')
-      .replace(/-/g, '―')
+      .replace(/-/g, '')
       .replace(/オート/g, '(オート)')
       .replace(/\( ?\(/g, '(')
       .replace(/\) ?\)/g, ')')
+      .replace(/\s討伐/, ' バトル終了')
 
     // TL修正用のリストを作成
     const list = await this.fetchTextToModify()
@@ -116,14 +117,10 @@ class Generate {
   async fetchTextToModify(): Promise<TLFormat[]> {
     // TL修正で使うチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
+    const msgs = (await channel.messages.fetch()).map(m => m)
 
     // 修正用のリストを取得
-    const list = await Promise.all(
-      (Settings.TL_FORMAT_MESSAGES as string[]).map(async t => {
-        const msg = await channel.messages.fetch(t)
-        return msg.content.replace(/\`\`\`\n?/g, '')
-      })
-    )
+    const list = await Promise.all(msgs.map(m => m.content.replace(/\`\`\`\n?/g, '')))
 
     return list
       .join('\n') // 複数のリストを結合
@@ -266,7 +263,10 @@ class Generate {
     this.tl = this.tl
       .replace(/\u200B/g, '') // ゼロ幅スペースを潰す
       .replace(/ +/g, ' ') // スペースを1つにする
+      .replace(/\n\s*┗/g, ' ') // 改行後の┗を改行ごと消す
+      .replace(/\n\s*→/g, '\n ') // 改行後のスペース矢印を消す
       .replace(/→/g, '\n ') // 矢印を改行にする
+      .replace(/ +/g, ' ') // スペースを1つにする
       .split('\n') // 1行づつ分解
       // 行頭の秒数の後ろにスペースを入れる
       .map(l => {
