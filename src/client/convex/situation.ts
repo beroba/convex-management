@@ -3,7 +3,7 @@ import * as util from '../../util'
 import * as dateTable from '../../io/dateTable'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import {Current, Member} from '../../io/type'
+import {AtoE, Current, Member} from '../../io/type'
 
 /**
  * 凸状況に報告をする
@@ -17,13 +17,24 @@ export const Report = async (members?: Member[], state?: Current) => {
   // 現在の状況を取得
   state ??= await current.Fetch()
 
-  // #凸状況のテキストを作成
+  // 凸状況のテキストを作成
   const text = await createMessage(members, state)
 
+  // ボス状況を更新
+  const boss = await bossMessage(members, state)
+
   // #凸状況を更新
-  const situation = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const msg = await situation.messages.fetch(Settings.CONVEX_MESSAGE_ID.SITUATION)
-  msg.edit(text)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  {
+    // 凸状況を更新
+    const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.SITUATION)
+    msg.edit(text)
+  }
+  {
+    // ボス状況を更新
+    const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.BOSS)
+    msg.edit(boss)
+  }
 
   // #凸状況履歴に報告
   const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
@@ -77,7 +88,6 @@ const createMessage = async (members: Member[], state: Current): Promise<string>
     `残凸0: ${残凸0}`,
     `完凸済: ${完凸済}`,
     '```',
-    '持越状況',
     '```',
     `持越3: ${持越3}`,
     `持越2: ${持越2}`,
@@ -151,12 +161,32 @@ const userSorting = (members: Member[], convex?: number, over?: number | '1-3'):
   return members.map(l => l.name).join(', ')
 }
 
-// /**
-//  * ボス状況のテキストを作成する
-//  * @param members メンバー一覧
-//  * @param state 現在の状況
-//  * @return 作成したテキスト
-//  */
-// const bossMessage = async (members: Member[], state: Current): Promise<string> => {
-//   return [].join('\n')
-// }
+/**
+ * ボス状況のテキストを作成する
+ * @param members メンバー一覧
+ * @param state 現在の状況
+ * @return 作成したテキスト
+ */
+const bossMessage = async (members: Member[], state: Current): Promise<string> => {
+  return 'abcde'
+    .split('')
+    .map((a, i) => {
+      // 凸宣言者一覧を取得
+      const declares = members.filter(m => m.declare === a).map(m => m.name)
+
+      // ボスの状況を取得
+      const boss = state[a as AtoE]
+
+      // ボスのHPを取得
+      const hp = Settings.STAGE[state.stage].HP[a]
+
+      // prettier-ignore
+      return [
+        `${i + 1}ボス \`${boss.name}\` \`${boss.hp}/${hp}\``,
+        '```',
+        `${declares.length ? declares.join(', ') : ' '}`,
+        '```',
+      ].join('\n')
+    })
+    .join('\n')
+}
