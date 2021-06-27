@@ -44,7 +44,10 @@ export const AllOutput = async () => {
  * #凸状況の凸予定を編集
  * @param plans 凸予定一覧
  */
-export const SituationEdit = async (plans: Plan[]) => {
+export const SituationEdit = async (plans?: Plan[]) => {
+  // 凸予定一覧を取得
+  plans ??= await schedule.Fetch()
+
   // 凸予定一覧のテキストを作成
   const text = await createAllPlanText(plans)
 
@@ -80,8 +83,8 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
         // 改行を潰して、連続した空白を1つにする
         const text = p.msg.replace(/\r?\n/g, '').replace(/\s/g, ' ')
 
-        const convex = m?.convex ? m?.convex : '0'
-        const over = m?.over ? '+' : ''
+        const convex = m?.convex
+        const over = '+'.repeat(Number(m?.over))
         const limit = m?.limit !== '' ? `, ${m?.limit}時` : ''
 
         return `${p.name}[${convex}${over}${limit}]${awayIn} ${text}`

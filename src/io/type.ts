@@ -48,39 +48,6 @@ export type Current = {
 }
 
 /**
- * ユーザー情報
- */
-export type User = {
-  name: string
-  id: string
-  limit: string
-  declare: string
-}
-
-/**
- * 凸管理状況
- */
-export type Status = {
-  convex: string
-  over: string
-  end: string
-  history: string
-}
-
-/**
- * メンバーの状態
- * @type name: string
- * @type id: string
- * @type limit: string
- * @type declare: string
- * @type convex: string
- * @type over: string
- * @type end: string
- * @type history: string
- */
-export type Member = User & Status
-
-/**
  * 凸予定の情報
  */
 export type Plan = {
@@ -93,4 +60,47 @@ export type Plan = {
   alpha: AtoE
   boss: string
   msg: string
+}
+
+/**
+ * ユーザー情報
+ */
+export type User = {
+  name: string
+  id: string
+  limit: string
+  declare: string
+  carry: boolean
+}
+
+/**
+ * 凸管理状況
+ */
+export type Status = {
+  convex: number
+  over: number
+  end: string
+  history: string
+}
+
+/**
+ * メンバーの状態
+ * @type name: string
+ * @type id: string
+ * @type limit: string
+ * @type declare: string
+ * @type carry: boolean
+ * @type convex: number
+ * @type over: number
+ * @type end: string
+ * @type history: string
+ */
+export type Member = User & Status
+
+/**
+ * TL修正用の前後
+ */
+export type TLFormat = {
+  before: string
+  after: string
 }

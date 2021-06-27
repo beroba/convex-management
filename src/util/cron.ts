@@ -2,12 +2,10 @@ import * as cron from 'node-cron'
 import Settings from 'const-settings'
 import * as util from '../util'
 import * as dateTable from '../io/dateTable'
-import * as schedule from '../io/schedule'
 import * as status from '../io/status'
 import * as limitTime from '../client/convex/limitTime'
 import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
-import * as list from '../client/plan/list'
 
 // prettier-ignore
 /**
@@ -54,33 +52,9 @@ const setRemainConvex = (expression: string) => {
  * @param expression クーロン式
  */
 const resetAllPlan = (expression: string) => {
-  cron.schedule(expression, async () => {
+  cron.schedule(expression, () => {
     // 凸予定を全て削除
-    await schedule.AllDelete()
-
-    // 凸予定のメッセージを全て削除
-    await plan.MsgAllRemove()
-
-    // べろばあのクランメンバー一覧を取得
-    const clanMembers = util
-      .GetGuild()
-      ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-      ?.members.map(m => m)
-
-    // クランメンバーのボスロールを全て削除
-    if (clanMembers) {
-      await Promise.all(clanMembers.map(async m => m?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)))
-    }
-
-    // 凸予定一覧を取得
-    const plans = await schedule.Fetch()
-    await list.SituationEdit(plans)
-
-    // bot-notifyに通知をする
-    const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-    channel.send('全ての凸予定を削除したわ')
-
-    console.log('reset all plan')
+    plan.DeleteAll()
   })
 }
 
@@ -152,7 +126,7 @@ const limitTimeDisplay = (expression: string) => {
     limitTime.Display(members)
 
     // 現在の時刻を取得
-    const date = `${String(new Date().getHours()).padStart(2, '0')}`
+    const date = String(new Date().getHours())
 
     // bot-notifyに通知をする
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)

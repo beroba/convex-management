@@ -1,26 +1,30 @@
 import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
+import Settings from 'const-settings'
+import * as util from '../../util'
+import {TLFormat} from '../../io/type'
 
 /**
  * TLを正しい書式に整形させる、
- * timeが指定されていた場合は、その持ち越し秒数にする
+ * timeが指定されていた場合は、その持越秒数にする
  * @param tl 整形させるTL
- * @param time 持ち越し秒数
+ * @param time 持越秒数
  * @param msg DiscordからのMessage
  * @param flag extendのフォーマットにするかの真偽値
  */
 export const TL = async (tl: string, time: Option<string>, msg: Discord.Message, flag = false) => {
+  // prettier-ignore
   // TLの整形をする
-  const content = new Generate(tl, time, flag) // 元になるクラスを生成
+  const content = (await new Generate(tl, time, flag) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
-    .extendFormat() // smicle好みに変更する
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
+    .extendFormat()) // smicle好みにTLを修正する
     .timeParser() // 時間のパースをする
     .toCodeBlock() // コードブロックにする
     .alignVertically() // TLの縦を合わせる
     .removeSomeSecond() // 先頭が同じ秒数なら消す
-    .carryOverCalc() // 持ち越し計算をする
+    .carryOverCalc() // 持越計算をする
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -34,7 +38,7 @@ class Generate {
   /**
    * TLを整形させるクラス
    * @param tl 整形させるTL
-   * @param time 持ち越し秒数
+   * @param time 持越秒数
    * @param flag extendのフォーマットにするかの真偽値
    */
   constructor(tl: string, time: Option<string>, flag: boolean) {
@@ -44,8 +48,8 @@ class Generate {
   }
 
   /**
-   * 受け取った持ち越し秒数から引き算する秒数を算出
-   * @param time 持ち越し秒数
+   * 受け取った持越秒数から引き算する秒数を算出
+   * @param time 持越秒数
    * @return 引き算する秒数
    */
   private convertTime(time: Option<string>): Option<number> {
@@ -76,46 +80,55 @@ class Generate {
   }
 
   /**
-   * smicle好みに変換する
+   * smicle好みにTLを修正する
    * @returns this
    */
-  extendFormat(): this {
+  async extendFormat(): Promise<this> {
     // キャルbotの管理者じゃない場合は終了
     if (!this.flag) return this
 
+    // バトル開始の行を取り除く
+    this.tl = this.tl
+      .split('\n')
+      .filter(l => !/バトル開始/.test(l))
+      .join('\n')
+
+    // 共通の部分を修正
     this.tl = this.tl
       .replace(/=/g, '')
-      .replace(/-/g, '―')
+      .replace(/-/g, '')
       .replace(/オート/g, '(オート)')
       .replace(/\( ?\(/g, '(')
       .replace(/\) ?\)/g, ')')
-      .replace(/傘/g, 'ニュネカ')
-      .replace(/ミスミ/g, '水カス')
-      .replace(/ミレン/g, '水サレ')
-      .replace(/ミコト/g, '水マコ')
-      .replace(/水カスミ/g, '水カス')
-      .replace(/水サレン/g, '水サレ')
-      .replace(/水マコト/g, '水マコ')
-      .replace(/ハロウカ/g, 'ハロキョ')
-      .replace(/ビスタ/g, 'ラビ')
-      .replace(/ラビリスタ/g, 'ラビ')
-      .replace(/ヨン/g, 'プヨリ')
-      .replace(/6コロ/g, 'コッコロ')
-      .replace(/ガイ/g, 'ヘオイ')
-      .replace(/セスコ/g, 'プリコロ')
-      .replace(/にゃる/g, 'ニャル')
-      .replace(/タコ/g, 'ニュペコ')
-      .replace(/編入?アオイ?/g, 'ヘオイ')
-      .replace(/ぷり/g, 'プリ')
-      .replace(/プイ/g, 'プリユイ')
-      .replace(/プリヒヨリ/g, 'プヨリ')
-      .replace(/ttリ/gi, 'イノベル')
-      .replace(/タノリ/g, 'イノベル')
-      .replace(/サレン ?\(サマー\)/g, '水サレ')
-      .replace(/コッコロ ?\(プリンセス\)/g, 'プリコロ')
-      .replace(/キャル ?\(ニューイヤー\)/g, 'ニャル')
+      .replace(/\s討伐/, ' バトル終了')
+
+    // TL修正用のリストを作成
+    const list = await this.fetchTextToModify()
+    // リストを元に修正
+    list.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'ig'), l.after)))
 
     return this
+  }
+
+  /**
+   * #tl修正の名前変更一覧からTL修正用のリストを作成
+   * @returns TL修正用のリスト
+   */
+  async fetchTextToModify(): Promise<TLFormat[]> {
+    // TL修正で使うチャンネルを取得
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
+    const msgs = (await channel.messages.fetch()).map(m => m)
+
+    // 修正用のリストを取得
+    const list = await Promise.all(msgs.map(m => m.content.replace(/\`\`\`\n?/g, '')))
+
+    return list
+      .join('\n') // 複数のリストを結合
+      .split('\n') // 改行で分割
+      .filter(l => l) // 空の行を取り除く
+      .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
+      .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
+      .map(l => ({before: l[0], after: l[1]})) // TLFormatの形に変更
   }
 
   /**
@@ -140,8 +153,32 @@ class Generate {
     const tl = this.tl.split('')
 
     for (let i = 0; i < tl.length; i++) {
+      // 星の場合は数字の先まで飛ばす
+      if (/★/.test(tl[i])) {
+        i = this.countUpToChar(tl, i + 1)
+        continue
+      }
+
+      // Lvの場合は数字の先まで飛ばす
+      if (/Lv/i.test(tl[i] + tl[i + 1])) {
+        i = this.countUpToChar(tl, i + 2)
+        continue
+      }
+
+      // RANKの場合は数字の先まで飛ばす
+      if (/RANK/i.test(tl[i] + tl[i + 1] + tl[i + 2] + tl[i + 3])) {
+        i = this.countUpToChar(tl, i + 4)
+        continue
+      }
+
       // 数字以外は次へ
       if (!/\d/.test(tl[i])) continue
+
+      if (/:/.test(tl[i + 2])) {
+        // NN:NNなので先頭のNを消す
+        tl[i] = ''
+        continue
+      }
 
       if (/:/.test(tl[i + 1])) {
         // :の次が数字でないなら次へ
@@ -226,7 +263,10 @@ class Generate {
     this.tl = this.tl
       .replace(/\u200B/g, '') // ゼロ幅スペースを潰す
       .replace(/ +/g, ' ') // スペースを1つにする
+      .replace(/\n\s*┗/g, ' ') // 改行後の┗を改行ごと消す
+      .replace(/\n\s*→/g, '\n ') // 改行後のスペース矢印を消す
       .replace(/→/g, '\n ') // 矢印を改行にする
+      .replace(/ +/g, ' ') // スペースを1つにする
       .split('\n') // 1行づつ分解
       // 行頭の秒数の後ろにスペースを入れる
       .map(l => {
@@ -263,19 +303,19 @@ class Generate {
   }
 
   /**
-   * 持ち越し計算をする
+   * 持越計算をする
    * @return this
    */
   carryOverCalc(): this {
-    // 持ち越し秒数を指定されていない場合は終了
+    // 持越秒数を指定されていない場合は終了
     if (!this.time) return this
     const time = this.time
 
-    // TLの秒数を持ち越し時間の分引いたリストを作る
+    // TLの秒数を持越時間の分引いたリストを作る
     const list = this.tl.match(/\d:\d\d/g)?.map(v => {
       // :で区切った両端をpとqに代入
       const [p, q] = v.split(':').map(Number)
-      // 現在の秒数-持ち越し秒数を計算
+      // 現在の秒数-持越秒数を計算
       const t = p * 60 + q - time
       // N:NNの形に戻す
       return `${(t / 60) | 0}:${((t % 60) + '').padStart(2, '0')}`
@@ -291,19 +331,20 @@ class Generate {
       .map(tl => (/１/.test(tl) ? times.pop() : tl)) // １を秒数に置き換える
       .join('') // 全ての行を結合
 
-    // /*
     // 1行づつ分解
     const tl = this.tl.split('\n')
 
-    // 0未満の秒数の場所を取得
-    const i = tl.findIndex(v => /0:-/.test(v))
+    // 行頭が0:00未満の場所を取得
+    const i = tl.findIndex(v => /^0:-/.test(v))
 
     // 0未満の秒数がなければ終了
     if (i === -1) return this
 
     // 0未満の秒数より後のTLを省いて結合
     this.tl = tl.slice(0, i).join('\n') + '```'
-    // */
+
+    // `0:-`を全て削除
+    this.tl = this.tl.replace(/0:-/g, '')
 
     return this
   }

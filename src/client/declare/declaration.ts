@@ -3,46 +3,39 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {AtoE, Plan} from '../../io/type'
-
-/**
- * 絵文字の名前とユーザー一覧
- */
-type Emoji = {
-  name: string
-  users: Discord.User[]
-}
+import {AtoE, Member, Plan} from '../../io/type'
 
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル
+ * @param members メンバー全体の状態
  */
-export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
+export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, members?: Member[]) => {
   // 凸宣言のチャンネルを取得
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
+  // メンバー全体の状態を取得
+  members ??= await status.Fetch()
+
   // 凸宣言のメッセージを取得
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
-
-  // 凸宣言に付いているリアクションをキャッシュ
-  await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
-  await util.Sleep(100)
-
-  // リアクションしている人一覧を取得する
-  const emoji: Emoji[] = msg.reactions.cache.map(r => ({name: r.emoji.name, users: r.users.cache.map(u => u)}))
 
   // 削除したボスの凸予定一覧を取得
   const plans = await schedule.FetchBoss(alpha)
 
   // 凸宣言者一覧を作成
-  const list = await createDeclareList(plans, emoji)
+  const totu = await createDeclareList(members, plans, alpha, false)
+  const mochikoshi = await createDeclareList(members, plans, alpha, true)
 
   // 凸宣言のメッセージを作成
   const text = [
     '凸宣言 `[現在の凸数(+は持越), 活動限界時間]`',
     '```',
-    `${list.join('\n')}${list.length ? '' : ' '}`,
+    '――――凸宣言――――',
+    `${totu.join('\n')}${totu.length ? '\n' : ''}`,
+    '――――持越凸――――',
+    `${mochikoshi.join('\n')}`,
     '```',
   ].join('\n')
 
@@ -52,27 +45,23 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel) => {
 
 /**
  * 凸宣言一覧のリストを作成する
+ * @param members メンバー全体の状態
  * @param plans 凸予定一覧
- * @param emoji 絵文字のリスト
+ * @param alpha ボス番号
+ * @param carry 持越凸か判断するフラグ
  * @return 作成したリスト
  */
-const createDeclareList = async (plans: Plan[], emoji: Emoji[]): Promise<string[]> => {
-  const convex = (
-    await Promise.all(
-      emoji
-        .filter(e => e.name === 'totu')
-        .first()
-        .users.map(async u => await status.FetchMember(u.id))
-    )
-  ).filter(m => m)
+const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, carry: boolean): Promise<string[]> => {
+  const convex = members.filter(m => m.declare === alpha).filter(m => m.carry === carry)
 
   // テキストを作成
   return convex.map(m => {
     const p = plans.find(p => p.playerID === m?.id)
 
-    const convex = m?.convex ? m?.convex : '0'
-    const over = m?.over ? '+' : ''
+    const convex = m?.convex
+    const over = '+'.repeat(Number(m?.over))
     const limit = m?.limit !== '' ? `, ${m?.limit}時` : ''
+
     return `${m?.name}[${convex}${over}${limit}]${p ? ` ${p.msg}` : ''}`
   })
 }

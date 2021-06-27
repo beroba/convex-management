@@ -90,8 +90,11 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
 /**
  * ボスの残りHPを更新する
  * @param content 変更先HPのメッセージ
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @return 変更後の状態
  */
-export const RemainingHPChange = async (content: string, alpha: AtoE, state: Current) => {
+export const RemainingHPChange = async (content: string, alpha: AtoE, state: Current): Promise<Current> => {
   // 変更先のHPを取り出す
   const hp = content
     .replace(/^.*@/g, '')
@@ -102,13 +105,15 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state: Cur
     .first()
 
   // 数字がない又は値がない場合は終了
-  if (hp === '' || hp === undefined) return
+  if (hp === '' || hp === undefined) return {} as Current
 
   // HPの変更
   state = await lapAndBoss.UpdateBoss(Number(hp), alpha, state)
 
   // 状態を変更
   await Update(alpha, state)
+
+  return state
 }
 
 /**
@@ -203,7 +208,8 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
 
 /**
  * 渡されたユーザーのメッセージを全て削除する
- * @param user 削除したいメッセージのユーザー
+ * @param member 削除したいメンバーの状態
+ * @param channel 凸宣言のチャンネル
  */
 export const UserMessageAllDelete = async (member: Member, channel?: Discord.TextChannel) => {
   // 凸宣言中でなければ終了

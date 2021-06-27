@@ -14,8 +14,8 @@ import * as limitTime from '../client/convex/limitTime'
  * @param members メンバー一覧
  */
 export const Update = async (members: Member[]) => {
-  // 15個ずつに分割
-  PiecesEach(members, 15).forEach(async (m, i) => {
+  // 10個ずつに分割
+  PiecesEach(members, 10).forEach(async (m, i) => {
     // キャルステータスを更新
     await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[i], m)
   })
@@ -49,8 +49,9 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     id: u.id,
     limit: '',
     declare: '',
-    convex: '',
-    over: '',
+    carry: false,
+    convex: 3,
+    over: 0,
     end: '',
     history: '',
   }))
@@ -74,8 +75,9 @@ export const ResetConvex = async () => {
     id: s.id,
     limit: s.limit,
     declare: '',
-    convex: '',
-    over: '',
+    carry: false,
+    convex: 3,
+    over: 0,
     end: '',
     history: '',
   }))
@@ -97,6 +99,7 @@ export const ResetDeclare = async () => {
     id: s.id,
     limit: s.limit,
     declare: '',
+    carry: false,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -115,8 +118,9 @@ export const Fetch = async (): Promise<Member[]> => {
   // メンバーの状態を全て取得
   const m1 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[0])
   const m2 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[1])
+  const m3 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[2])
   // 結合して返す
-  return m1.concat(m2)
+  return m1.concat(m2).concat(m3)
 }
 
 /**
@@ -161,7 +165,7 @@ const reflectOnConvex = async (member: Member, info: any) => {
   const col = (await dateTable.TakeDate()).col
   const row = users.map(u => u.id).indexOf(member.id) + 3
 
-  // 凸数、持ち越し、3凸終了、履歴を更新する
+  // 凸数、持越、3凸終了、履歴を更新する
   await Promise.all(
     [member.convex, member.over, member.end, member.history].map(async (v, i) => {
       const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
@@ -207,6 +211,7 @@ export const ReflectOnCal = async () => {
     id: users[i].id,
     limit: users[i].limit.replace('時', ''),
     declare: users[i].declare,
+    carry: users[i].carry,
     convex: s.convex,
     over: s.over,
     end: s.end,
@@ -238,7 +243,7 @@ export const ResetConvexOnSheet = async () => {
     state.map(async (_, j) => {
       // 行を取得
       const row = j + 3
-      // 凸数、持ち越し、3凸終了、履歴をリセットする
+      // 凸数、持越、3凸終了、履歴をリセットする
       await Promise.all(
         Array(4).fill('').map(async (v, i) => {
           const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
@@ -269,6 +274,7 @@ export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
         id: id,
         limit: u[2],
         declare: member?.declare ?? '',
+        carry: false,
       }
     })
 }
@@ -287,8 +293,8 @@ const fetchStatusFromSheet = async (users: User[], sheet: any): Promise<Status[]
   return PiecesEach(cells, 4)
     .slice(0, users.length)
     .map(s => ({
-      convex: s[0],
-      over: s[1],
+      convex: Number(s[0]),
+      over: Number(s[1]),
       end: s[2],
       history: s[3],
     }))

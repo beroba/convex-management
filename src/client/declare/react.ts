@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
-import {AtoE} from '../../io/type'
+import {AtoE, Member} from '../../io/type'
 import * as declaration from './declaration'
 
 /**
@@ -27,8 +27,8 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   // 凸宣言のメッセージでなければ終了
   if (react.message.id !== Settings.DECLARE_MESSAGE_ID[alpha].DECLARE) return
 
-  // 凸以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.TOTU) {
+  // 凸と持越以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.TOTU, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) {
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -43,6 +43,25 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
     return
   }
 
+  // 持越のリアクションが押された際の処理
+  if (Settings.EMOJI_ID.MOCHIKOSHI === react.emoji.id) {
+    // 持越がなければ終了
+    if (!member.over) {
+      // リアクションを外す
+      react.users.remove(user)
+      return
+    }
+
+    // 持越凸状態に変更
+    member.carry = true
+  } else {
+    // 持越凸状態を解除
+    member.carry = false
+  }
+
+  // メンバー全体の状態
+  let members: Member[]
+
   // 既に凸宣言している場合は前の凸宣言を消す
   if (member.declare) {
     // 凸宣言のチャンネルを取得
@@ -55,24 +74,28 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
     await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
 
     // 他の凸宣言を削除
-    await Promise.all(msg.reactions.cache.map(async r => r.users.remove(user)))
+    await Promise.all(
+      msg.reactions.cache.map(async r => {
+        // 同じ凸宣言を押した際、押した絵文字消さないようにする
+        if (alpha === member.declare) {
+          if (r.emoji.id === react.emoji.id) return
+        }
+        await r.users.remove(user)
+      })
+    )
 
     // 他の凸宣言を削除する分遅らせる
     await util.Sleep(500)
-
-    // 凸宣言状態を変更
-    member.declare = alpha
-    await status.UpdateMember(member)
-  } else {
-    // 他の凸宣言がない場合はSleepしない
-
-    // 凸宣言状態を変更
-    member.declare = alpha
-    await status.UpdateMember(member)
   }
 
+  // 凸宣言状態を変更
+  member.declare = alpha
+  members = await status.UpdateMember(member)
+  await util.Sleep(100)
+
   // 凸宣言を設定
-  await declaration.SetUser(alpha)
+  const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+  await declaration.SetUser(alpha, channel, members)
 
   // 離席中ロールを削除
   react.message.guild?.members.cache
@@ -104,8 +127,8 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   // 凸宣言のメッセージでなければ終了
   if (react.message.id !== Settings.DECLARE_MESSAGE_ID[alpha].DECLARE) return
 
-  // 凸以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.TOTU) {
+  // 凸と持越以外の絵文字の場合は終了
+  if (![Settings.EMOJI_ID.TOTU, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) {
     // 関係のないリアクションを外す
     react.users.remove(user)
     return
@@ -122,10 +145,14 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
 
   // 凸宣言状態を変更
   member.declare = ''
-  await status.UpdateMember(member)
+  // 持越凸状態を解除
+  member.carry = false
+  const members = await status.UpdateMember(member)
+  await util.Sleep(100)
 
   // 凸宣言を設定
-  await declaration.SetUser(alpha)
+  const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+  await declaration.SetUser(alpha, channel, members)
 
   return 'Deletion of convex declaration'
 }
@@ -178,6 +205,9 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
 
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
+
   // 通し以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.TOOSHI) {
     // 持越と待機の絵文字は外さずに終了
@@ -204,7 +234,7 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${msg.content} 確定！`)
+  channel.send(`<@!${msg.author.id}> ${util.Format(msg.content)} 確定！`)
 
   return 'Confirm notice'
 }
@@ -226,6 +256,9 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
+
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
   // 持越以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) {
@@ -253,7 +286,7 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${msg.content} 持ち越し！`)
+  channel.send(`<@!${msg.author.id}> ${util.Format(msg.content)} 持越！`)
 
   return 'Carry over notice'
 }
@@ -275,6 +308,9 @@ export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
+
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
   // 待機以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.TAIKI) {
@@ -302,7 +338,7 @@ export const WaitNotice = async (react: Discord.MessageReaction, user: Discord.U
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   // メンションを行う
-  channel.send(`<@!${msg.author.id}> ${msg.content} 待機！`)
+  channel.send(`<@!${msg.author.id}> ${util.Format(msg.content)} 待機！`)
 
   return 'Carry over notice'
 }
@@ -324,6 +360,9 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
 
   // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
+
+  // 凸宣言の持越にはリアクションは終了
+  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
   // 確認と持越と待機以外の絵文字の場合は終了
   if (

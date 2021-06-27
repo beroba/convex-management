@@ -61,7 +61,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   // botのリアクションは実行しない
   if (user.bot) return
 
-  // #持ち越し凸先でなければ終了
+  // #持越凸先でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
 
   // メンバーの状態を取得
