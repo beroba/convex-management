@@ -113,9 +113,9 @@ const getCurrentDate = (): string => {
  */
 const remainingConvexNumber = (members: Member[]): string => {
   // 残り凸数を計算
-  const remaining = members.map(s => 3 - Number(s.convex) + Number(s.over)).reduce((a, b) => a + b)
+  const remaining = members.map(s => s.convex + s.over).reduce((a, b) => a + b)
   // 残り持越数を計算
-  const over = members.map(s => Number(s.over)).reduce((a, b) => a + b)
+  const over = members.map(s => s.over).reduce((a, b) => a + b)
   return `${remaining}/${members.length * 3}(${over})`
 }
 

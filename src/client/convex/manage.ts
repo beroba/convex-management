@@ -97,7 +97,7 @@ const updateProcess = async (
   guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 凸状況を報告する
-  msg.reply(`${member.convex}凸目、持越${Number(member.over)}つ`)
+  msg.reply(`残凸数: ${member.convex}、持越数: ${Number(member.over)}`)
 
   return member
 }
