@@ -52,8 +52,8 @@ export const SituationEdit = async (plans?: Plan[]) => {
   const text = await createAllPlanText(plans)
 
   // 凸状況を更新
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.PLAN)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_LIST_RESERVATE)
+  const msg = await channel.messages.fetch(Settings.PLAN_MESSAGE_ID.PLAN)
   msg.edit(text)
 
   console.log('Edit the convex schedule of the convex situation')

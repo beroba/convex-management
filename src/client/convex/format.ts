@@ -228,6 +228,9 @@ class Generate {
     // 全ての文字を結合
     this.tl = tl.join('')
 
+    // 秒を消す
+    this.tl = this.tl.replace(/秒/g, '')
+
     return this
   }
 
