@@ -5,6 +5,7 @@ import * as util from '../../util'
 import * as status from '../../io/status'
 import {AtoE, Member} from '../../io/type'
 import * as declaration from './declaration'
+import * as situation from '../convex/situation'
 
 /**
  * リアクションを追加した際に凸宣言を更新する
@@ -97,6 +98,9 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await declaration.SetUser(alpha, channel, members)
 
+  // 凸状況を更新
+  situation.Report(members)
+
   // 離席中ロールを削除
   react.message.guild?.members.cache
     .map(m => m)
@@ -153,6 +157,9 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
   // 凸宣言を設定
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await declaration.SetUser(alpha, channel, members)
+
+  // 凸状況を更新
+  situation.Report(members)
 
   return 'Deletion of convex declaration'
 }
