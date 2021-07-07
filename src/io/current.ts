@@ -54,8 +54,12 @@ export const UpdateBoss = async (hp: number, alpha: AtoE, state: Current): Promi
   const num = (await bossTable.TakeNum(alpha)) ?? ''
   const name = (await bossTable.TakeName(alpha)) ?? ''
 
-  // HPが0以下の場合0にする
+  // HPが0以下の場合、0にする
   hp = hp < 0 ? 0 : hp
+
+  // HPが最大以上の場合、最大にする
+  const max = Settings.STAGE[state.stage].HP[alpha]
+  hp = hp > max ? max : hp
 
   // ボス状況を更新
   state[alpha] = {

@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import {AtoE, Current, Member} from '../../io/type'
+import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
 
 /**
@@ -105,7 +105,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state: Cur
     .first()
 
   // 数字がない又は値がない場合は終了
-  if (hp === '' || hp === undefined) return {} as Current
+  if (hp === '' || hp === undefined) return <Current>{}
 
   // HPの変更
   state = await lapAndBoss.UpdateBoss(Number(hp), alpha, state)
@@ -204,26 +204,4 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
   Update(alpha)
 
   return 'Calculate the HP Edit'
-}
-
-/**
- * 渡されたユーザーのメッセージを全て削除する
- * @param member 削除したいメンバーの状態
- * @param channel 凸宣言のチャンネル
- */
-export const UserMessageAllDelete = async (member: Member, channel?: Discord.TextChannel) => {
-  // 凸宣言中でなければ終了
-  if (!member.declare) return
-
-  // 凸宣言のチャンネルを取得
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[member.declare])
-
-  // prettier-ignore
-  // 凸宣言完了者のメッセージを全て削除
-  await Promise.all(
-    (await channel.messages.fetch())
-      .map(m => m)
-      .filter(m => m.author.id === member.id)
-      .map(async m => await m.delete())
-  )
 }

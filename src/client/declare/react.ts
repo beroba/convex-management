@@ -177,19 +177,16 @@ export const ConvexDone = async (alpha: AtoE, user: Discord.User) => {
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
   // ユーザーのリアクションを全て外す
-  await Promise.all(msg.reactions.cache.map(async r => await r.users.remove(user)))
+  msg.reactions.cache.map(r => r.users.remove(user))
 
   // 凸宣言を設定
-  await declaration.SetUser(alpha, channel)
+  declaration.SetUser(alpha, channel)
 
-  // prettier-ignore
   // 凸宣言完了者のメッセージを全て削除
-  await Promise.all(
-    (await channel.messages.fetch())
-      .map(m => m)
-      .filter(m => m.author.id === user.id)
-      .map(async m => await m.delete())
-  )
+  ;(await channel.messages.fetch())
+    .map(m => m)
+    .filter(m => m.author.id === user.id)
+    .map(m => m.delete())
 
   console.log('Completion of convex declaration')
 }
