@@ -63,10 +63,18 @@ export const UpdateJson = async <T>(id: string, json: T) => {
   const text = [
     '```json',
     JSON.stringify(json)
-      .replace(/{/g, '\n{\n  ')
-      .replace(/}/g, '\n}\n')
+      .replace(/^{/g, '\n{\n  ')
+      .replace(/}$/g, '\n}\n')
       .replace(/:/g, ': ')
-      .replace(/,/g, ',\n  '),
+      .replace(/,/g, ',\n  ')
+      .replace(/: {/g, ': {\n')
+      .replace(/},/g, '\n  },')
+      .replace(/\n"/g, '\n  "')
+      .replace(/}\n}/g, '\n  }\n}')
+      .replace(/"al/g, '  "al')
+      .replace(/"n/g, '  "n')
+      .replace(/"hp/g, '  "hp')
+      .replace(/"su/g, '  "su'),
     '```',
   ].join('\n')
 

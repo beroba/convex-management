@@ -5,18 +5,20 @@ import Settings from 'const-settings'
  * キャルbotの管理者にヤバイわよ！のロールを付与
  * @param member 変更後のmember情報
  */
-export const GuildMemberUpdate = (member: Discord.GuildMember | Discord.PartialGuildMember) => {
-  // キャルbotの管理者じゃない場合は終了
-  if (member.user?.id !== Settings.ADMIN_ID) return
-
+export const GuildMemberUpdate = async (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+  // ヤバイわよ！のロールを取得
   const yabaiwayo = member.guild.roles.cache.get(Settings.ROLE_ID.YABAIWAYO)
   if (!yabaiwayo) return
 
-  // ヤバイわよ！の権限を管理者にする
+  // ヤバイわよ！の設定を変更する
   yabaiwayo.setPermissions(['ADMINISTRATOR'])
+  yabaiwayo.setColor('#33D5AC')
 
-  // キャルbot管理者にヤバイわよ！ロールを付与する
-  member.roles.add(Settings.ROLE_ID.YABAIWAYO)
-
-  console.log('Permission for bot admin')
+  if (member.id === Settings.ADMIN_ID) {
+    // キャルbotの管理者の場合、ヤバイわよ！ロールを付与する
+    member.roles.add(Settings.ROLE_ID.YABAIWAYO)
+  } else {
+    // キャルbotの管理者ではない場合、ヤバイわよ！ロールを削除する
+    await member.roles.remove(Settings.ROLE_ID.YABAIWAYO)
+  }
 }

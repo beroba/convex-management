@@ -4,7 +4,7 @@ import Option from 'type-of-option'
 import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
-import {BossTable} from './type'
+import {AtoE, BossTable} from './type'
 
 /**
  * ボステーブルを設定する
@@ -19,7 +19,7 @@ export const Update = async () => {
     .filter(util.Omit)
     .map(v => ({
       num: v[0],
-      alpha: v[1],
+      alpha: v[1] as AtoE,
       name: v[2],
     }))
 

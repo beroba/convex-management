@@ -61,7 +61,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   // botのリアクションは実行しない
   if (user.bot) return
 
-  // #持ち越し凸先でなければ終了
+  // #持越凸先でなければ終了
   if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
 
   // メンバーの状態を取得
@@ -181,8 +181,6 @@ const changeValueOfSheetUsers = async (
     const cell = await sheet.getCell(`${col1}${col2}${row}`)
     await cell.setValue(value)
 
-    console.log(id)
-
     await util.Sleep(100)
   }
 }
@@ -205,7 +203,7 @@ export const ReflectOnSheet = async () => {
     const msg = await channel.messages.fetch(day)
 
     // リアクションを全てキャッシュ
-    await Promise.all(msg.reactions.cache.map(async r => await r.users.fetch()))
+    await Promise.all(msg.reactions.cache.map(async r => r.users.fetch()))
 
     // 各リアクションをしているユーザーのリストを取得
     const list = await Promise.all(

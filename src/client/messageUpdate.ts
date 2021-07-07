@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
+import * as declare from './declare/status'
 import * as edit from './plan/edit'
 
 /**
@@ -12,6 +13,10 @@ export const MessageUpdate = async (msg: Discord.Message | Discord.PartialMessag
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
   let comment: Option<string>
+
+  // 凸宣言のメッセージ編集を行う
+  comment = await declare.Edit(msg as Discord.Message)
+  if (comment) return console.log(comment)
 
   // 凸報告を取り消しを行う
   comment = await edit.Message(msg as Discord.Message)

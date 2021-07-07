@@ -17,7 +17,7 @@ export const MessageDelete = async (msg: Discord.Message | Discord.PartialMessag
   let comment: Option<string>
 
   // 凸宣言のメッセージ削除を行う
-  comment = await declare.MessageDelete(msg as Discord.Message)
+  comment = await declare.Delete(msg as Discord.Message)
   if (comment) return console.log(comment)
 
   // 凸報告を取り消しを行う

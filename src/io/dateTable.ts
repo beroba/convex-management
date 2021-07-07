@@ -39,7 +39,7 @@ export const Update = async (args: Option<string>) => {
  */
 const setDate = async (args: string, sheet: any) => {
   // 開始日から順番に日付の配列を作成
-  const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${Number(args.split('/').last()) + i}`)
+  const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${args.split('/').last().to_n() + i}`)
 
   await Promise.all(
     // 日付を更新

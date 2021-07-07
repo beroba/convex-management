@@ -77,7 +77,7 @@ const update = async (id: string) => {
   Display(members)
 
   // 活動限界時間をスプレッドシートに反映
-  status.ReflectOnSheet(member)
+  status.ReflectOnLimit(member)
 }
 
 /**

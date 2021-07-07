@@ -38,7 +38,7 @@
         "src/client/convex/react.ts",
         "src/client/convex/sister.ts",
         "src/client/convex/situation.ts",
-        "src/client/declare/declaration.ts",
+        "src/client/declare/list.ts",
         "src/client/declare/index.ts",
         "src/client/declare/react.ts",
         "src/client/declare/status.ts",

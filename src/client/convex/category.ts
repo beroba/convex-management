@@ -109,6 +109,6 @@ const createChannelName = async (month: number): Promise<string[]> => {
     `45-${c}`,
     `45-${d}`,
     `45-${e}`,
-    `${month}月-持ち越し編成`,
+    `${month}月-持越編成`,
   ]
 }

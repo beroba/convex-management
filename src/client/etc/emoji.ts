@@ -356,6 +356,10 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   // 他人TLの絵文字を送信する
   content = msg.content.replace(/他人tl|tl奪取/i, '他人TL')
   if (content === '他人TL') return taninEmoji(msg)
+
+  // saitouの絵文字を送信する
+  content = msg.content
+  if (content === 'saitou') return saitouEmoji(msg)
 }
 
 /**
@@ -510,4 +514,18 @@ const taninEmoji = async (msg: Discord.Message) => {
   setTimeout(() => msg.delete(), 100)
 
   return `${util.GetUserName(msg.member)} Send TaninTL Emoji`
+}
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、saitouの絵文字を送信する
+ * @param msg DiscordからのMessage
+ */
+const saitouEmoji = async (msg: Discord.Message) => {
+  // べろばあのアニメーション絵文字を送信
+  await msg.channel.send(Settings.EMOJI_FULL_ID.SAITOU)
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return `${util.GetUserName(msg.member)} Send saitou Emoji`
 }
