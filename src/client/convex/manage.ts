@@ -91,6 +91,8 @@ const updateProcess = async (
   member.convex = state[0].to_n()
   member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
   member.end = ''
+  member.declare = ''
+  member.carry = !!member.over
 
   // 凸残ロールを付与
   const guildMember = await util.MemberFromId(user.id)
