@@ -4,7 +4,7 @@ import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as declare from '../declare'
-import {AtoE, Current, Member} from '../../io/type'
+import {AtoE, Current} from '../../io/type'
 
 /**
  * 現在の周回数を変更する
@@ -34,9 +34,6 @@ export const UpdateLap = async (lap: number, state?: Current): Promise<Current> 
     // #進行に報告
     await stageReport(st)
 
-    // 現在の状況をスプレッドシートに反映
-    current.ReflectOnSheet(st)
-
     return st
   })
 
@@ -63,9 +60,6 @@ export const UpdateBoss = async (hp: number, alpha: AtoE, state?: Current): Prom
     // 討伐通知を送信
     await subjugateReport(alpha, st)
 
-    // 開放通知を送信
-    await releaseNotice(alpha)
-
     // 討伐メッセージを送信
     await subjugateSend(alpha)
   } else {
@@ -74,13 +68,10 @@ export const UpdateBoss = async (hp: number, alpha: AtoE, state?: Current): Prom
   }
 
   // 全てのボスが討伐済みの場合
-  if ('abcde'.split('').every(a => st[a as AtoE].subjugate)) {
+  if ('abcde'.split('').every(a => st[<AtoE>a].subjugate)) {
     // 周回数を1つ進める
     UpdateLap(st.lap + 1)
   }
-
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet(st)
 
   return st
 }
@@ -105,33 +96,6 @@ const subjugateReport = async (alpha: AtoE, state: Current) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
   await channel.send(`\`${state.lap}\`周目 \`${state[alpha].name}\` 討伐`)
-}
-
-/**
- * #進行-連携に開放通知を行う
- * @param alpha ボス番号
- * @param member クランメンバー一覧
- */
-const releaseNotice = async (alpha: AtoE, member?: Member[]) => {
-  // メンバー全員の状態を取得
-  member ??= await status.Fetch()
-
-  // 凸宣言中のメンバー一覧を取得
-  const declares = member.filter(m => m.declare === alpha)
-
-  // 居ない場合は終了
-  if (!declares.length) return
-
-  // メンション一覧を作る
-  const mentions = declares.map(m => `<@!${m.id}>`).join(' ')
-
-  // #進行-連携のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-
-  // 開放通知を行う
-  channel.send(`${mentions} 開放！`)
-
-  console.log('Release notice')
 }
 
 /**

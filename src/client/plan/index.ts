@@ -5,8 +5,7 @@ import * as util from '../../util'
 import * as status from '../../io/status'
 import * as list from './list'
 import * as update from './update'
-import * as declare from '../declare'
-import * as declaration from '../declare/declaration'
+import * as declare from '../declare/list'
 
 /**
  * 凸予定を行う
@@ -49,10 +48,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   await list.SituationEdit(plans)
 
   // 凸宣言の凸予定を更新
-  await declare.SetPlanList(plan.alpha)
+  await declare.SetPlan(plan.alpha)
 
   // 凸宣言をリセット
-  declaration.SetUser(plan.alpha)
+  declare.SetUser(plan.alpha)
 
   return 'Make a convex reservation'
 }

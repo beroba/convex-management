@@ -5,8 +5,7 @@ import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
 import * as list from './list'
-import * as declare from '../declare'
-import * as declaration from '../declare/declaration'
+import * as declare from '../declare/list'
 
 /**
  * 凸予定の自分のメッセージに完了の絵文字をつけたら削除する
@@ -57,10 +56,10 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   await list.SituationEdit(plans)
 
   // 凸宣言の凸予定を更新
-  await declare.SetPlanList(plan.alpha)
+  await declare.SetPlan(plan.alpha)
 
   // 凸宣言を更新
-  declaration.SetUser(plan.alpha)
+  declare.SetUser(plan.alpha)
 
   return 'Delete completed message'
 }

@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import {AtoE, Current, Member} from '../../io/type'
+import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
 
 /**
@@ -36,65 +36,16 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
 }
 
 /**
- * HPの計算とリアクションを付ける
- * @param msg DiscordからのMessage
- * @return 凸予定の実行結果
- */
-export const React = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
-
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
-  ) as Option<AtoE>
-
-  // ボス番号がなければ凸宣言のチャンネルでないので終了
-  if (!alpha) return
-
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  // 全角を半角に変換
-  let content = util.Format(msg.content)
-  // @とsが両方ある場合は@を消す
-  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
-
-  // @が入っている場合はHPの変更をする
-  if (/@\d/.test(content)) {
-    // HPの変更
-    await RemainingHPChange(content, alpha, state)
-
-    // メッセージの削除
-    msg.delete()
-
-    return 'Remaining HP change'
-  }
-
-  // 通しと持越と待機の絵文字を付ける
-  await msg.react(Settings.EMOJI_ID.TOOSHI)
-  await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
-  await msg.react(Settings.EMOJI_ID.TAIKI)
-
-  console.log('Set declare reactions')
-
-  // 現在の状態を更新
-  Update(alpha, state)
-
-  // 離席中ロールを削除
-  await msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
-
-  return 'Calculate the HP React'
-}
-
-/**
  * ボスの残りHPを更新する
  * @param content 変更先HPのメッセージ
  * @param alpha ボス番号
  * @param state 現在の状況
  * @return 変更後の状態
  */
-export const RemainingHPChange = async (content: string, alpha: AtoE, state: Current): Promise<Current> => {
+export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Current): Promise<Current> => {
+  // 現在の状況を取得
+  state ??= await current.Fetch()
+
   // 変更先のHPを取り出す
   const hp = content
     .replace(/^.*@/g, '')
@@ -105,10 +56,10 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state: Cur
     .first()
 
   // 数字がない又は値がない場合は終了
-  if (hp === '' || hp === undefined) return {} as Current
+  if (hp === '' || hp === undefined) return <Current>{}
 
   // HPの変更
-  state = await lapAndBoss.UpdateBoss(Number(hp), alpha, state)
+  state = await lapAndBoss.UpdateBoss(hp.to_n(), alpha, state)
 
   // 状態を変更
   await Update(alpha, state)
@@ -148,10 +99,8 @@ const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Prom
     .map(Number)
     .map(n => (Number.isNaN(n) ? 0 : n)) // NaNが混ざってたら0に変換
 
-  // ダメージがある場合は合計値、ない場合は0を代入
-  let damage = list.length ? list.reduce((a, b) => a + b) : 0
   // リストにダメージがある場合は合計値、ない場合は0を代入
-  // const damage = list.length && list.reduce((a, b) => a + b)
+  const damage = list.length && list.reduce((a, b) => a + b)
 
   // 残りHPを計算
   const hp = HP - damage
@@ -204,26 +153,4 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
   Update(alpha)
 
   return 'Calculate the HP Edit'
-}
-
-/**
- * 渡されたユーザーのメッセージを全て削除する
- * @param member 削除したいメンバーの状態
- * @param channel 凸宣言のチャンネル
- */
-export const UserMessageAllDelete = async (member: Member, channel?: Discord.TextChannel) => {
-  // 凸宣言中でなければ終了
-  if (!member.declare) return
-
-  // 凸宣言のチャンネルを取得
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[member.declare])
-
-  // prettier-ignore
-  // 凸宣言完了者のメッセージを全て削除
-  await Promise.all(
-    (await channel.messages.fetch())
-      .map(m => m)
-      .filter(m => m.author.id === member.id)
-      .map(async m => await m.delete())
-  )
 }

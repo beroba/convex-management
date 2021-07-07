@@ -181,8 +181,6 @@ const changeValueOfSheetUsers = async (
     const cell = await sheet.getCell(`${col1}${col2}${row}`)
     await cell.setValue(value)
 
-    console.log(id)
-
     await util.Sleep(100)
   }
 }

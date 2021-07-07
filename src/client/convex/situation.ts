@@ -149,12 +149,12 @@ const lapsToTheNextStage = (state: Current): number | string => {
 const userSorting = (members: Member[], convex?: number, over?: number | '1-3'): string => {
   // 凸数で絞る
   if (convex !== undefined) {
-    members = members.filter(l => Number(l.convex) === convex)
+    members = members.filter(l => l.convex === convex)
   }
 
   // 持越で絞る
   if (over !== undefined) {
-    members = over === '1-3' ? members.filter(l => Number(l.over) !== 0) : members.filter(l => Number(l.over) === over)
+    members = over === '1-3' ? members.filter(l => l.over !== 0) : members.filter(l => l.over === over)
   }
 
   // リストから名前を`, `で繋げて返す
