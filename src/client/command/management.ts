@@ -3,15 +3,12 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as command from './'
 import * as util from '../../util'
-import * as current from '../../io/current'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
-import * as status from '../../io/status'
 import * as category from '../convex/category'
 import * as activityTime from '../convex/activityTime'
 import * as etc from '../convex/etc'
 import * as react from '../convex/react'
-import * as situation from '../convex/situation'
 import * as plan from '../plan/delete'
 
 /**
@@ -29,11 +26,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
   if (!isRole) return
 
   switch (true) {
-    case /cb manage reflect/.test(content): {
-      await reflectController('/cb manage reflect', content, msg)
-      return 'Reflect spreadsheet values ​​in Cal'
-    }
-
     case /cb manage create category/.test(content): {
       await createCategoryController('/cb manage create category', content, msg)
       return 'Create ClanBattle category'
@@ -84,27 +76,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'All delete plan'
     }
   }
-}
-
-/**
- * `/cb manage reflect`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const reflectController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // スプレッドシートの値を反映
-  await current.ReflectOnCal()
-  await util.Sleep(100)
-  await status.ReflectOnCal()
-  await util.Sleep(100)
-
-  // メンバー全員の状態を取得
-  const members = await status.Fetch()
-  // 凸状況に報告
-  situation.Report(members)
-
-  _msg.reply('スプレッドシートの値をキャルに反映させたわよ！')
 }
 
 /**
@@ -242,7 +213,7 @@ const reflectActivityTimeController = async (_command: string, _content: string,
   // スプレッドシートに反映
   await activityTime.ReflectOnSheet()
 
-  _msg.reply('凸管理用の絵文字を設定したわよ！')
+  _msg.reply('活動時間を設定したわよ！')
 }
 
 /**

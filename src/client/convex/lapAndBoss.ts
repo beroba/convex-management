@@ -34,9 +34,6 @@ export const UpdateLap = async (lap: number, state?: Current): Promise<Current> 
     // #進行に報告
     await stageReport(st)
 
-    // 現在の状況をスプレッドシートに反映
-    current.ReflectOnSheet(st)
-
     return st
   })
 

@@ -101,9 +101,6 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
   const members = await status.UpdateMember(member)
   await util.Sleep(100)
 
-  // 凸状況をスプレッドシートに反映
-  status.ReflectOnSheet(member)
-
   return members
 }
 

@@ -84,9 +84,11 @@ export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CA
 
 /**
  * スプレッドシートに現在の状況を反映させる
- * @param state 現在の状況
  */
-export const ReflectOnSheet = async (state: Current) => {
+export const ReflectOnSheet = async () => {
+  // 現在の状況を取得
+  const state = await Fetch()
+
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
@@ -114,34 +116,6 @@ export const ReflectOnSheet = async (state: Current) => {
       const alpha = AtoA('a', i) as AtoE
       const hp_cell = await sheet.getCell(c)
       hp_cell.setValue(state[alpha].hp)
-    })
-  )
-}
-
-/**
- * スプレッドの現在の状況をキャルに反映させる
- */
-export const ReflectOnCal = async () => {
-  // 現在の状況を取得
-  const state = await Fetch()
-
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 周回数、討伐状況、HPの番地を取得
-  const lap_cell = Settings.INFORMATION_SHEET.LAP_CELL
-  const hp_cell = Settings.INFORMATION_SHEET.HP_CELLS
-
-  // 周回数を更新
-  const lap = (await sheet.getCell(lap_cell)).getValue()
-  await UpdateLap(state, lap.to_n())
-
-  // 現在のボスを更新
-  await Promise.all(
-    hp_cell.map(async (cell: string, i: number) => {
-      const alpha = AtoA('a', i) as AtoE
-      const hp = (await sheet.getCell(cell)).getValue()
-      await UpdateBoss(hp, alpha, state)
     })
   )
 }

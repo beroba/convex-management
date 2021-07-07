@@ -6,8 +6,7 @@ import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as dateTable from './dateTable'
-import {User, Status, Member} from './type'
-import * as limitTime from '../client/convex/limitTime'
+import {User, Member} from './type'
 
 /**
  * キャルステータスのメンバーの状態を更新する
@@ -138,48 +137,45 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 
 /**
  * スプレッドシートにメンバーの凸状況を反映させる
- * @param member 更新したいメンバー
  */
-export const ReflectOnSheet = async (member: Member) => {
+export const ReflectOnSheet = async () => {
+  // メンバー全体の状態を取得
+  const members = await Fetch()
+
   // 情報のシートを取得
   const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
-  // 凸状況と活動限界時間を更新する
-  reflectOnConvex(member, info)
-  reflectOnLimit(member, info)
-}
-
-/**
- * メンバーの凸状況を反映させる
- * @param member 更新したいメンバー
- * @param info 情報のシート
- */
-const reflectOnConvex = async (member: Member, info: any) => {
   // 凸状況のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得
   const users = await FetchUserFromSheet(info)
 
-  // 行と列を取得
+  // 列を取得
   const col = (await dateTable.TakeDate()).col
-  const row = users.map(u => u.id).indexOf(member.id) + 3
 
-  // 凸数、持越、3凸終了、履歴を更新する
-  await Promise.all(
-    [member.convex, member.over, member.end, member.history].map(async (v, i) => {
-      const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
+  for (const m of members) {
+    // 行を取得
+    const row = users.map(u => u.id).indexOf(m.id) + 3
+
+    // 凸数、持越、3凸終了、履歴を更新する
+    let i = 0
+    for (const v of [m.convex, m.over, m.end, m.history]) {
+      const cell = await sheet.getCell(`${AtoA(col, i++)}${row}`)
       await cell.setValue(v)
-    })
-  )
+      await util.Sleep(100)
+    }
+  }
 }
 
 /**
  * メンバーの活動限界時間を反映させる
  * @param member 更新したいメンバー
- * @param info 情報のシート
  */
-const reflectOnLimit = async (member: Member, info: any) => {
+export const ReflectOnLimit = async (member: Member) => {
+  // 情報のシートを取得
+  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
   // スプレッドシートからユーザー一覧を取得
   const users = await FetchUserFromSheet(info)
 
@@ -190,39 +186,6 @@ const reflectOnLimit = async (member: Member, info: any) => {
   // 活動限界時間を更新する
   const cell = await info.getCell(`${col}${row}`)
   await cell.setValue(member.limit)
-}
-
-/**
- * スプレッドシートの凸状況をキャルに反映させる
- */
-export const ReflectOnCal = async () => {
-  // 凸状況のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // スプレッドシートからユーザー一覧を取得
-  const users = await FetchUserFromSheet(sheet)
-
-  // スプレッドシートから凸状況一覧を取得
-  const status = await fetchStatusFromSheet(users, sheet)
-
-  // usersとstatusをmergeしてmembersを作る
-  const members: Member[] = status.map((s, i) => ({
-    name: users[i].name,
-    id: users[i].id,
-    limit: users[i].limit.replace('時', ''),
-    declare: users[i].declare,
-    carry: users[i].carry,
-    convex: s.convex,
-    over: s.over,
-    end: s.end,
-    history: s.history,
-  }))
-
-  // キャルステータスを更新する
-  await Update(members)
-
-  // 活動限界時間の表示を更新
-  limitTime.Display(members)
 }
 
 /**
@@ -238,20 +201,17 @@ export const ResetConvexOnSheet = async () => {
   // 列を取得
   const col = (await dateTable.TakeDate()).col
 
-  // prettier-ignore
-  await Promise.all(
-    state.map(async (_, j) => {
-      // 行を取得
-      const row = j + 3
-      // 凸数、持越、3凸終了、履歴をリセットする
-      await Promise.all(
-        Array(4).fill('').map(async (v, i) => {
-          const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
-          await cell.setValue(v)
-        })
-      )
-    })
-  )
+  for (const j of util.range(state.length)) {
+    // 行を取得
+    const row = j + 3
+
+    // 凸数、持越、3凸終了、履歴をリセットする
+    for (const i of util.range(4)) {
+      const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
+      await cell.setValue(i ? '' : '3')
+      await util.Sleep(100)
+    }
+  }
 }
 
 /**
@@ -277,25 +237,4 @@ export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
         carry: false,
       }
     })
-}
-
-/**
- * 凸状況のシートからユーザーの分だけ凸状況を取得する
- * @param users ユーザー一覧
- * @param sheet 凸状況のシート
- * @return 凸状況一覧
- */
-const fetchStatusFromSheet = async (users: User[], sheet: any): Promise<Status[]> => {
-  // 今日の日付から列を取得
-  const col = (await dateTable.TakeDate()).col
-
-  const cells = await spreadsheet.GetCells(sheet, `${col}3:${AtoA(col, 3)}32`)
-  return PiecesEach(cells, 4)
-    .slice(0, users.length)
-    .map(s => ({
-      convex: s[0].to_n(),
-      over: s[1].to_n(),
-      end: s[2],
-      history: s[3],
-    }))
 }

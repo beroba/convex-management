@@ -3,6 +3,7 @@ import Settings from 'const-settings'
 import * as util from '../util'
 import * as dateTable from '../io/dateTable'
 import * as status from '../io/status'
+import * as current from '../io/current'
 import * as limitTime from '../client/convex/limitTime'
 import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
@@ -13,11 +14,11 @@ import * as plan from '../client/plan/delete'
  */
 export const CronOperation = () => {
   setRemainConvex('0 10 5 * * *')    // 05:10
-  resetAllPlan('0 50 4 * * *')    // 04:50
+  resetAllPlan('0 50 4 * * *')       // 04:50
   removeTaskillRoll('0 0 5 * * *')   // 05:00
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
-  limitTimeDisplay('0 1 */1 * * *')  // 1時間起き
+  limitTimeDisplay('0 0 */1 * * *')  // 1時間起き
 }
 
 /**
@@ -55,6 +56,10 @@ const resetAllPlan = (expression: string) => {
   cron.schedule(expression, () => {
     // 凸予定を全て削除
     plan.DeleteAll()
+
+    // スプレッドシートに値を反映
+    status.ReflectOnSheet()
+    current.ReflectOnSheet()
   })
 }
 
@@ -133,5 +138,9 @@ const limitTimeDisplay = (expression: string) => {
     channel.send(`${date}時の活動限界時間を更新したわ`)
 
     console.log('Periodic update of activity time limit display')
+
+    // スプレッドシートに値を反映
+    status.ReflectOnSheet()
+    current.ReflectOnSheet()
   })
 }
