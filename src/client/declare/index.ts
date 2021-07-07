@@ -1,13 +1,75 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import * as current from '../../io/current'
-import * as schedule from '../../io/schedule'
 import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
-import * as list from '../plan/list'
-import * as declaration from './list'
+import * as list from './list'
 import * as status from './status'
+import * as react from './react'
+
+/**
+ * 凸宣言の管理を行う
+ * @param msg DiscordからのMessage
+ * @return 凸管理の実行結果
+ */
+export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
+  // botのメッセージは実行しない
+  if (msg.member?.user.bot) return
+
+  // チャンネルのボス番号を取得
+  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
+    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
+  ) as Option<AtoE>
+
+  // ボス番号がなければ凸宣言のチャンネルでないので終了
+  if (!alpha) return
+
+  // 離席中ロールを削除
+  msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+
+  // 全角を半角に変換
+  let content = util.Format(msg.content)
+  // @とsが両方ある場合は@を消す
+  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
+
+  // killの場合はHPを0にする
+  if (content === 'kill') {
+    content = '@0'
+  }
+
+  // @が入っている場合はHPの変更をする
+  if (/@\d/.test(content)) {
+    // ボスのHP変更
+    await status.RemainingHPChange(content, alpha)
+
+    // メッセージの削除
+    msg.delete()
+
+    return 'Remaining HP change'
+  }
+
+  // 凸宣言の開放通知をする
+  if (content === '開放') {
+    // 開放通知
+    await react.DeclareNotice(alpha, msg)
+
+    // メッセージの削除
+    msg.delete()
+
+    return 'Release notice'
+  }
+
+  // 通しと持越と開放の絵文字を付ける
+  msg.react(Settings.EMOJI_ID.TOOSHI)
+  msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
+  msg.react(Settings.EMOJI_ID.KAIHOU)
+
+  // 予想残りHPの更新
+  await status.Update(alpha)
+
+  return 'Calculate the HP React'
+}
 
 /**
  * 凸宣言のボスを復活させる
@@ -22,41 +84,16 @@ export const RevivalBoss = async (alpha: AtoE, state: Current) => {
   status.Update(alpha, state, channel)
 
   // 凸予定一覧を更新
-  SetPlanList(alpha, state, channel)
+  list.SetPlan(alpha, state, channel)
 
   // 凸宣言のリアクションを全て外す
   await resetReact(alpha, channel)
 
   // 凸宣言をリセット
-  declaration.SetUser(alpha, channel)
+  list.SetUser(alpha, channel)
 
   // メッセージを削除
   messageDelete(alpha, channel)
-}
-
-/**
- * 凸予定一覧を更新する
- * @param alpha ボス番号
- * @param state 現在の状況
- * @param channel 凸宣言のチャンネル
- */
-export const SetPlanList = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  // 現在の状況を取得
-  state ??= await current.Fetch()
-
-  // 凸宣言のチャンネルを取得
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-  // 凸予定のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
-
-  // 凸予定一覧を取得
-  const plans = await schedule.Fetch()
-  const text = await list.CreatePlanText(alpha, state.stage, plans)
-
-  // 凸予定一覧を更新
-  // 1行目を取り除く
-  msg.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
 }
 
 /**

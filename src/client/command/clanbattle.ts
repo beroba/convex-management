@@ -12,7 +12,7 @@ import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as situation from '../convex/situation'
-import * as declare from '../declare'
+import * as declare from '../declare/list'
 import * as list from '../plan/list'
 
 /**
@@ -245,7 +245,7 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   await list.SituationEdit(plans)
 
   // 凸宣言の凸予定を更新
-  await declare.SetPlanList(plan.alpha)
+  await declare.SetPlan(plan.alpha)
 
   _msg.reply('凸予定を削除したわ')
 }

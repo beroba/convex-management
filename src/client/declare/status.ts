@@ -3,7 +3,6 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
-import * as status from '../../io/status'
 import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
 
@@ -37,65 +36,16 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
 }
 
 /**
- * HPの計算とリアクションを付ける
- * @param msg DiscordからのMessage
- * @return 凸予定の実行結果
- */
-export const React = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
-
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
-  ) as Option<AtoE>
-
-  // ボス番号がなければ凸宣言のチャンネルでないので終了
-  if (!alpha) return
-
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  // 全角を半角に変換
-  let content = util.Format(msg.content)
-  // @とsが両方ある場合は@を消す
-  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
-
-  // @が入っている場合はHPの変更をする
-  if (/@\d/.test(content)) {
-    // HPの変更
-    await RemainingHPChange(content, alpha, state)
-
-    // メッセージの削除
-    msg.delete()
-
-    return 'Remaining HP change'
-  }
-
-  // 通しと持越と開放の絵文字を付ける
-  await msg.react(Settings.EMOJI_ID.TOOSHI)
-  await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
-  await msg.react(Settings.EMOJI_ID.KAIHOU)
-
-  console.log('Set declare reactions')
-
-  // 現在の状態を更新
-  Update(alpha, state)
-
-  // 離席中ロールを削除
-  await msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
-
-  return 'Calculate the HP React'
-}
-
-/**
  * ボスの残りHPを更新する
  * @param content 変更先HPのメッセージ
  * @param alpha ボス番号
  * @param state 現在の状況
  * @return 変更後の状態
  */
-export const RemainingHPChange = async (content: string, alpha: AtoE, state: Current): Promise<Current> => {
+export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Current): Promise<Current> => {
+  // 現在の状況を取得
+  state ??= await current.Fetch()
+
   // 変更先のHPを取り出す
   const hp = content
     .replace(/^.*@/g, '')
@@ -149,10 +99,8 @@ const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Prom
     .map(Number)
     .map(n => (Number.isNaN(n) ? 0 : n)) // NaNが混ざってたら0に変換
 
-  // ダメージがある場合は合計値、ない場合は0を代入
-  let damage = list.length ? list.reduce((a, b) => a + b) : 0
   // リストにダメージがある場合は合計値、ない場合は0を代入
-  // const damage = list.length && list.reduce((a, b) => a + b)
+  const damage = list.length && list.reduce((a, b) => a + b)
 
   // 残りHPを計算
   const hp = HP - damage
@@ -205,28 +153,4 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
   Update(alpha)
 
   return 'Calculate the HP Edit'
-}
-
-/**
- * 凸宣言チャンネルで開放通知を行う
- * @param alpha ボス番号
- * @param channel 凸宣言のチャンネル
- */
-const penNotice = async (alpha: AtoE, channel: Discord.TextChannel) => {
-  // メンバー全員の状態を取得
-  const member = await status.Fetch()
-
-  // 凸宣言中のメンバー一覧を取得
-  const declares = member.filter(m => m.declare === alpha)
-
-  // 居ない場合は終了
-  if (!declares.length) return
-
-  // メンション一覧を作る
-  const mentions = declares.map(m => `<@!${m.id}>`).join(' ')
-
-  // 開放通知を行う
-  channel.send(`${mentions} 開放！`)
-
-  console.log('Release notice')
 }

@@ -6,7 +6,7 @@ import * as report from './report'
 import * as plan from './plan'
 import * as over from './convex/over'
 import * as sister from './convex/sister'
-import * as declare from './declare/status'
+import * as declare from './declare'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
 import * as emoji from './etc/emoji'
@@ -26,8 +26,8 @@ export const Message = async (msg: Discord.Message) => {
     // 特定のメッセージに絵文字を付ける
     emoji.React(msg)
 
-    // HPの計算とリアクションを付ける
-    comment = await declare.React(msg)
+    // 凸宣言の処理を行う
+    comment = await declare.Convex(msg)
     if (comment) return console.log(comment)
 
     // 凸報告の処理を行う

@@ -9,7 +9,7 @@ import * as update from './update'
 import * as limitTime from '../convex/limitTime'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
-import * as declare from '../declare'
+import * as declare from '../declare/list'
 import * as declareStatus from '../declare/status'
 import * as react from '../declare/react'
 import * as cancel from '../plan/delete'
@@ -102,7 +102,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   react.ConvexDone(alpha, msg.author)
 
   // 凸宣言の予定を更新
-  declare.SetPlanList(alpha, state)
+  declare.SetPlan(alpha, state)
 
   // 持越がある場合、持越状況のメッセージを全て削除
   overDelete(oldMember, msg)

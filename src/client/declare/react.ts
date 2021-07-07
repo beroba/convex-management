@@ -4,7 +4,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import {AtoE, Member} from '../../io/type'
-import * as declaration from './list'
+import * as list from './list'
 import * as situation from '../convex/situation'
 
 /**
@@ -72,7 +72,7 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
 
   // 凸宣言を設定
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-  await declaration.SetUser(alpha, channel, members)
+  await list.SetUser(alpha, channel, members)
 
   // 凸状況を更新
   situation.Report(members)
@@ -152,7 +152,7 @@ export const ConvexRemove = async (react: Discord.MessageReaction, user: Discord
 
   // 凸宣言を設定
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-  await declaration.SetUser(alpha, channel, members)
+  await list.SetUser(alpha, channel, members)
 
   // 凸状況を更新
   situation.Report(members)
@@ -176,7 +176,7 @@ export const ConvexDone = async (alpha: AtoE, user: Discord.User) => {
   msg.reactions.cache.map(r => r.users.remove(user))
 
   // 凸宣言を設定
-  declaration.SetUser(alpha, channel)
+  list.SetUser(alpha, channel)
 
   // 凸宣言完了者のメッセージを全て削除
   ;(await channel.messages.fetch())
@@ -383,6 +383,32 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
 
   // 済を削除
   sumi?.remove()
+}
+
+/**
+ * 凸宣言している人全員へ開放通知を行う
+ * @param alpha ボス番号
+ * @param msg DiscordからのMessage
+ */
+export const DeclareNotice = async (alpha: AtoE, msg: Discord.Message) => {
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+
+  // 凸宣言中のメンバー一覧を取得
+  const declares = members.filter(m => m.declare === alpha)
+
+  // 居ない場合は終了
+  if (!declares.length) return
+
+  // メンション一覧を作る
+  const mentions = declares.map(m => `<@!${m.id}>`).join(' ')
+
+  // メンションで通知する
+  const m = await msg.reply(`${mentions} 開放！`)
+  await util.Sleep(100)
+
+  // 通知を消す
+  m.delete()
 }
 
 /**

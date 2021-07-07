@@ -6,8 +6,7 @@ import * as util from '../../util'
 import * as schedule from '../../io/schedule'
 import {AtoE} from '../../io/type'
 import * as list from './list'
-import * as declare from '../declare'
-import * as declaration from '../declare/list'
+import * as declare from '../declare/list'
 
 /**
  * 凸予定のメッセージ更新に合わせてスプレッドシートの値も更新する
@@ -38,10 +37,10 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   await list.SituationEdit(plans)
 
   // 凸宣言の凸予定を更新
-  await declare.SetPlanList(alpha)
+  await declare.SetPlan(alpha)
 
   // 凸宣言を更新
-  declaration.SetUser(alpha)
+  declare.SetUser(alpha)
 
   return 'Edit appointment message'
 }

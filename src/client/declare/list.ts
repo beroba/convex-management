@@ -1,9 +1,11 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {AtoE, Member, Plan} from '../../io/type'
+import {AtoE, Current, Member, Plan} from '../../io/type'
+import * as plan from '../plan/list'
 
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
@@ -64,4 +66,29 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, 
 
     return `${m.name}[${convex}${over}${limit}]${p ? ` ${p.msg}` : ''}`
   })
+}
+
+/**
+ * 凸予定一覧を更新する
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
+ */
+export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
+  // 現在の状況を取得
+  state ??= await current.Fetch()
+
+  // 凸宣言のチャンネルを取得
+  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+
+  // 凸予定のメッセージを取得
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
+
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  const text = await plan.CreatePlanText(alpha, state.stage, plans)
+
+  // 凸予定一覧を更新
+  // 1行目を取り除く
+  msg.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
 }

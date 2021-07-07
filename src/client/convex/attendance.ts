@@ -5,9 +5,8 @@ import * as util from '../../util'
 import * as status from '../../io/status'
 import * as schedule from '../../io/schedule'
 import {AtoE} from '../../io/type'
+import * as declare from '../declare/list'
 import * as list from '../plan/list'
-import * as declare from '../declare'
-import * as declaration from '../declare/list'
 
 /**
  * 出欠のメッセージに出席のリアクションを付けたら離席中ロールを外す
@@ -55,9 +54,9 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   await Promise.all(
     'abcde'.split('').map(async a => {
       // 凸宣言の凸予定を更新
-      await declare.SetPlanList(a as AtoE)
+      await declare.SetPlan(a as AtoE)
       // 凸宣言を更新
-      await declaration.SetUser(a as AtoE)
+      await declare.SetUser(a as AtoE)
     })
   )
 
@@ -109,9 +108,9 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   await Promise.all(
     'abcde'.split('').map(async a => {
       // 凸宣言の凸予定を更新
-      await declare.SetPlanList(a as AtoE)
+      await declare.SetPlan(a as AtoE)
       // 凸宣言を更新
-      await declaration.SetUser(a as AtoE)
+      await declare.SetUser(a as AtoE)
     })
   )
 
