@@ -108,7 +108,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state: Cur
   if (hp === '' || hp === undefined) return <Current>{}
 
   // HPの変更
-  state = await lapAndBoss.UpdateBoss(Number(hp), alpha, state)
+  state = await lapAndBoss.UpdateBoss(hp.to_n(), alpha, state)
 
   // 状態を変更
   await Update(alpha, state)

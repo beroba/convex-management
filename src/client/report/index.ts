@@ -49,7 +49,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (result) return '3 Convex is finished'
 
   // 持越がないのに持越凸しようとした場合は終了
-  if (oldMember.carry && !/[1-3]/.test(String(oldMember.over))) {
+  if (oldMember.carry && !/[1-3]/.test(oldMember.over.to_s())) {
     msg.reply('持越がないのに持越凸になってるわ')
     return 'Not carry over'
   }
@@ -155,7 +155,7 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
  * @param member メンバーの状態
  * @param msg DiscordからのMessage
  */
-const overDelete = async (member: Member, msg: Discord.Message) => {
+const overDelete = (member: Member, msg: Discord.Message) => {
   // 持越凸でない場合は終了
   if (!member.carry) return
 
@@ -163,7 +163,7 @@ const overDelete = async (member: Member, msg: Discord.Message) => {
   if (member.over === 1) {
     // 持越を持っている人のメッセージを削除
     over.AllDelete(msg.member)
-  } else if (/[2-3]/.test(String(member.over))) {
+  } else if (/[2-3]/.test(member.over.to_s())) {
     // #進行-連携のチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 

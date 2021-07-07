@@ -88,8 +88,8 @@ const updateProcess = async (
   msg: Discord.Message
 ): Promise<Member> => {
   // 凸状況を変更
-  member.convex = Number(state[0])
-  member.over = state.match(/\+/g) ? Number(state.match(/\+/g)?.length) : 0
+  member.convex = state[0].to_n()
+  member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
   member.end = ''
 
   // 凸残ロールを付与
@@ -97,7 +97,7 @@ const updateProcess = async (
   guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 凸状況を報告する
-  msg.reply(`残凸数: ${member.convex}、持越数: ${Number(member.over)}`)
+  msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
 
   return member
 }

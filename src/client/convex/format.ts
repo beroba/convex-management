@@ -63,7 +63,7 @@ class Generate {
       const [p, q] = time.split(':').map(Number)
       t = 90 - (p * 60 + q)
     } else {
-      t = 90 - Number(time)
+      t = 90 - time.to_n()
     }
 
     // 0以下ならnull、91以上なら90にする

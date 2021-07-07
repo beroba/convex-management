@@ -58,10 +58,10 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, 
   return convex.map(m => {
     const p = plans.find(p => p.playerID === m?.id)
 
-    const convex = m?.convex
-    const over = '+'.repeat(Number(m?.over))
-    const limit = m?.limit !== '' ? `, ${m?.limit}時` : ''
+    const convex = m.convex
+    const over = '+'.repeat(m.over)
+    const limit = m.limit !== '' ? `, ${m.limit}時` : ''
 
-    return `${m?.name}[${convex}${over}${limit}]${p ? ` ${p.msg}` : ''}`
+    return `${m.name}[${convex}${over}${limit}]${p ? ` ${p.msg}` : ''}`
   })
 }

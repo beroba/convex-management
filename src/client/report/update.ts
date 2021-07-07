@@ -42,7 +42,7 @@ export const Status = async (
     const members = await status.UpdateMember(member)
 
     // 残りの凸状況を報告する
-    await msg.reply(`残凸数: ${member.convex}、持越数: ${Number(member.over)}`)
+    await msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
 
     return [members, member]
   }
@@ -55,7 +55,7 @@ export const Status = async (
  */
 const saveHistory = (member: Member): Member => {
   // 現在の凸状況を履歴に残す
-  member.history = `${member.convex}${'+'.repeat(Number(member.over))}`
+  member.history = `${member.convex}${'+'.repeat(member.over)}`
   return member
 }
 

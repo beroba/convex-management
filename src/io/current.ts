@@ -134,7 +134,7 @@ export const ReflectOnCal = async () => {
 
   // 周回数を更新
   const lap = (await sheet.getCell(lap_cell)).getValue()
-  await UpdateLap(state, Number(lap))
+  await UpdateLap(state, lap.to_n())
 
   // 現在のボスを更新
   await Promise.all(

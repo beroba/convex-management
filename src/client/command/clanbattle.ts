@@ -36,6 +36,11 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'TL shaping'
     }
 
+    case /cb cv/.test(content): {
+      await convexController('/cb cv', content, msg)
+      return 'Change of convex management'
+    }
+
     case /cb convex/.test(content): {
       await convexController('/cb convex', content, msg)
       return 'Change of convex management'
@@ -100,7 +105,7 @@ const tleController = async (_command: string, _content: string, _msg: Discord.M
     const time = args.replace(/\.|;/g, ':')
 
     // 引数の書式が正しい書式か確認
-    const isNaN = Number.isNaN(Number(time.replace(':', '')))
+    const isNaN = Number.isNaN(time.replace(':', '').to_n())
 
     return isNaN ? null : time
   }
@@ -137,7 +142,7 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
     const time = args.replace(/\.|;/g, ':')
 
     // 引数の書式が正しい書式か確認
-    const isNaN = Number.isNaN(Number(time.replace(':', '')))
+    const isNaN = Number.isNaN(time.replace(':', '').to_n())
 
     return isNaN ? null : time
   }
@@ -203,7 +208,7 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
   if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
 
   // 任意の周回数へ移動させる
-  await lapAndBoss.UpdateLap(Number(lap))
+  await lapAndBoss.UpdateLap(lap.to_n())
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()

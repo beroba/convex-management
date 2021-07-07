@@ -293,8 +293,8 @@ const fetchStatusFromSheet = async (users: User[], sheet: any): Promise<Status[]
   return PiecesEach(cells, 4)
     .slice(0, users.length)
     .map(s => ({
-      convex: Number(s[0]),
-      over: Number(s[1]),
+      convex: s[0].to_n(),
+      over: s[1].to_n(),
       end: s[2],
       history: s[3],
     }))
