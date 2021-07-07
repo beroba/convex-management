@@ -28,21 +28,25 @@ export const Status = async (
     member.end = '1'
 
     // ステータスを更新
-    const members = await status.UpdateMember(member)
+    const members = await status.UpdateMember(member).then(members => {
+      // 何人目の3凸終了者なのかを報告する
+      const n = members.filter(s => s.end === '1').length + 1
+      msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
-    // 何人目の3凸終了者なのかを報告する
-    const n = members.filter(s => s.end === '1').length + 1
-    await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
+      return members
+    })
 
     return [members, member]
   } else {
     // 3凸終了していない場合の処理
 
     // ステータスを更新
-    const members = await status.UpdateMember(member)
+    const members = await status.UpdateMember(member).then(members => {
+      // 残りの凸状況を報告する
+      msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
 
-    // 残りの凸状況を報告する
-    await msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
+      return members
+    })
 
     return [members, member]
   }
