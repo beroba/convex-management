@@ -6,7 +6,7 @@ import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
 import * as list from './list'
 import * as declare from '../declare'
-import * as declaration from '../declare/declaration'
+import * as declaration from '../declare/list'
 
 /**
  * 凸予定の自分のメッセージに完了の絵文字をつけたら削除する

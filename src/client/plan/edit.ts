@@ -7,7 +7,7 @@ import * as schedule from '../../io/schedule'
 import {AtoE} from '../../io/type'
 import * as list from './list'
 import * as declare from '../declare'
-import * as declaration from '../declare/declaration'
+import * as declaration from '../declare/list'
 
 /**
  * 凸予定のメッセージ更新に合わせてスプレッドシートの値も更新する

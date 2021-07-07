@@ -6,7 +6,7 @@ import * as status from '../../io/status'
 import * as list from './list'
 import * as update from './update'
 import * as declare from '../declare'
-import * as declaration from '../declare/declaration'
+import * as declaration from '../declare/list'
 
 /**
  * 凸予定を行う

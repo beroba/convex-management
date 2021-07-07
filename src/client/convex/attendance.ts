@@ -7,7 +7,7 @@ import * as schedule from '../../io/schedule'
 import {AtoE} from '../../io/type'
 import * as list from '../plan/list'
 import * as declare from '../declare'
-import * as declaration from '../declare/declaration'
+import * as declaration from '../declare/list'
 
 /**
  * 出欠のメッセージに出席のリアクションを付けたら離席中ロールを外す

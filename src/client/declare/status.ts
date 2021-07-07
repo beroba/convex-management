@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
+import * as status from '../../io/status'
 import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
 
@@ -71,10 +72,10 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Remaining HP change'
   }
 
-  // 通しと持越と待機の絵文字を付ける
+  // 通しと持越と開放の絵文字を付ける
   await msg.react(Settings.EMOJI_ID.TOOSHI)
   await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
-  await msg.react(Settings.EMOJI_ID.TAIKI)
+  await msg.react(Settings.EMOJI_ID.KAIHOU)
 
   console.log('Set declare reactions')
 
@@ -204,4 +205,28 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
   Update(alpha)
 
   return 'Calculate the HP Edit'
+}
+
+/**
+ * 凸宣言チャンネルで開放通知を行う
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+const penNotice = async (alpha: AtoE, channel: Discord.TextChannel) => {
+  // メンバー全員の状態を取得
+  const member = await status.Fetch()
+
+  // 凸宣言中のメンバー一覧を取得
+  const declares = member.filter(m => m.declare === alpha)
+
+  // 居ない場合は終了
+  if (!declares.length) return
+
+  // メンション一覧を作る
+  const mentions = declares.map(m => `<@!${m.id}>`).join(' ')
+
+  // 開放通知を行う
+  channel.send(`${mentions} 開放！`)
+
+  console.log('Release notice')
 }

@@ -6,7 +6,7 @@ import * as schedule from '../../io/schedule'
 import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as list from '../plan/list'
-import * as declaration from './declaration'
+import * as declaration from './list'
 import * as status from './status'
 
 /**
