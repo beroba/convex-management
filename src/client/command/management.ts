@@ -75,6 +75,11 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       await deleteAllPlanController('/cb manage delete all plan', content, msg)
       return 'All delete plan'
     }
+
+    case /cb manage set name/.test(content): {
+      await setNameController('/cb manage set name', content, msg)
+      return 'All delete plan'
+    }
   }
 }
 
@@ -227,4 +232,29 @@ const deleteAllPlanController = async (_command: string, _content: string, _msg:
   await plan.DeleteAll()
 
   _msg.reply('凸予定を全て削除したわよ！')
+}
+
+/**
+ * `/cb manage set name`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setNameController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('更新したいプレイヤーと名前を指定しなさい')
+
+  // 変更先の名前を取得
+  const name = util
+    .Format(args)
+    .replace(/<.+>/, '') // プレイヤーIDを省く
+    .trim()
+
+  // 名前を設定する
+  await etc.SetName(name, _msg)
+
+  _msg.reply('名前を更新したわよ！')
 }

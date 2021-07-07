@@ -6,6 +6,7 @@ import * as status from '../../io/status'
 import * as spreadsheet from '../../util/spreadsheet'
 import {User} from '../../io/type'
 import * as util from '../../util'
+import * as situation from './situation'
 
 /**
  * 同時凸の持越計算を行う
@@ -140,4 +141,34 @@ const fetchNameAndID = async (users: Option<User[]>, name: string) => {
       id_cell.setValue(m.id)
     })
   )
+}
+
+/**
+ * botが認識している名前を変更する
+ * @param msg DiscordからのMessage
+ */
+export const SetName = async (name: string, msg: Discord.Message) => {
+  // 凸状況を更新するユーザーを取得する
+  const user = msg.mentions.users.first()
+  if (!user) {
+    msg.reply('メンションで誰の名前を変更したいか指定しなさい')
+    return
+  }
+
+  // メンバーの状態を取得
+  let member = await status.FetchMember(user.id)
+  if (!member) {
+    msg.reply('その人はクランメンバーじゃないわ')
+    return
+  }
+
+  // 名前を更新
+  member.name = name
+
+  // ステータスを更新
+  const members = await status.UpdateMember(member)
+  await util.Sleep(100)
+
+  // 凸状況に報告
+  situation.Report(members)
 }
