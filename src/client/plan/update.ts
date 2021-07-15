@@ -49,7 +49,6 @@ const createPlan = async (msg: Discord.Message): Promise<Plan> => {
   const member = await status.FetchMember(msg.author.id)
 
   return {
-    done: '',
     senderID: msg.id,
     calID: '',
     name: member?.name ?? '',

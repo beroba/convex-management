@@ -51,7 +51,7 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     carry: false,
     convex: 3,
     over: 0,
-    end: '',
+    end: false,
     history: '',
   }))
 
@@ -77,7 +77,7 @@ export const ResetConvex = async () => {
     carry: false,
     convex: 3,
     over: 0,
-    end: '',
+    end: false,
     history: '',
   }))
 

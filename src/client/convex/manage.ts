@@ -52,7 +52,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   // 凸状況を変更
   member.convex = 0
   member.over = 0
-  member.end = '1'
+  member.end = true
 
   // ロールを削除
   const guildMember = await util.MemberFromId(user.id)
@@ -61,7 +61,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
 
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
-  const n = members.filter(s => s.end === '1').length + 1
+  const n = members.filter(s => s.end).length + 1
   msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
   // 活動限界時間の表示を更新
@@ -87,7 +87,7 @@ const updateProcess = async (
   // 凸状況を変更
   member.convex = state[0].to_n()
   member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
-  member.end = ''
+  member.end = false
   member.declare = ''
   member.carry = false
 

@@ -37,7 +37,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 3凸していた場合は終了
-  if (oldMember.end === '1') {
+  if (oldMember.end) {
     msg.reply('もう3凸してるわ')
     return '3 Convex is finished'
   }
@@ -132,12 +132,12 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
 
   // 既に凸が終わっていた場合
   if (member.over === 0) {
-    member.end = '1'
+    member.end = true
     // ステータスを更新
     const members = await status.UpdateMember(member)
 
     // 何人目の3凸終了者なのかを報告する
-    const n = members.filter(s => s.end === '1').length + 1
+    const n = members.filter(s => s.end).length + 1
     await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
     return [true, member]

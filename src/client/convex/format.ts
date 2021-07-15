@@ -3,7 +3,7 @@ import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import {TLFormat} from '../../io/type'
+import {TLFormat} from '../../util/type'
 
 /**
  * TLを正しい書式に整形させる、

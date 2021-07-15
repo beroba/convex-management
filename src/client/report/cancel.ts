@@ -132,7 +132,7 @@ const rollback = (member: Member): Member => {
  */
 const endConfirm = (member: Member, msg: Discord.Message): Member => {
   // 3凸終了のフラグを折る
-  member.end = ''
+  member.end = false
   // 凸残ロールを付与する
   msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
