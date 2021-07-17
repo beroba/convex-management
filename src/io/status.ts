@@ -9,15 +9,11 @@ import * as dateTable from './dateTable'
 import {User, Member} from './type'
 
 /**
- * キャルステータスのメンバーの状態を更新する
+ * メンバーの状態を更新する
  * @param members メンバー一覧
  */
 export const Update = async (members: Member[]) => {
-  // 10個ずつに分割
-  PiecesEach(members, 10).forEach(async (m, i) => {
-    // キャルステータスを更新
-    await io.UpdateArray(Settings.CAL_STATUS_ID.MEMBERS[i], m)
-  })
+  await io.UpdateArray('members', members)
 }
 
 /**
@@ -113,14 +109,7 @@ export const ResetDeclare = async () => {
  * キャルステータスからメンバーの状態を取得
  * @return メンバーの状態
  */
-export const Fetch = async (): Promise<Member[]> => {
-  // メンバーの状態を全て取得
-  const m1 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[0])
-  const m2 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[1])
-  const m3 = await io.Fetch<Member[]>(Settings.CAL_STATUS_ID.MEMBERS[2])
-  // 結合して返す
-  return m1.concat(m2).concat(m3)
-}
+export const Fetch = async (): Promise<Member[]> => io.Fetch<Member[]>('members')
 
 /**
  * キャルステータスからメンバーの状態を取得

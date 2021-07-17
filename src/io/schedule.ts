@@ -1,7 +1,4 @@
 import Option from 'type-of-option'
-import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import * as util from '../util'
 import * as io from '.'
 import {Plan} from './type'
 
@@ -10,11 +7,7 @@ import {Plan} from './type'
  * @param plans 凸予定一覧
  */
 export const Update = async (plans: Plan[]) => {
-  // 8個ずつに分割
-  PiecesEach(plans, 8).forEach(async (p, i) => {
-    // キャルステータスを更新
-    await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS[i], p)
-  })
+  await io.UpdateArray('plan', plans)
 }
 
 /**
@@ -51,12 +44,6 @@ export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
   // 凸予定一覧から渡されたidの凸予定を取り除く
   plans = plans.filter(p => p.senderID !== id)
 
-  // 1つ先の予定を消すようにする
-  if (plans.length % 8 === 0) {
-    await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS[(plans.length / 8) | 0], [])
-    await util.Sleep(100)
-  }
-
   // キャルステータスを更新
   await Update(plans)
 
@@ -68,11 +55,7 @@ export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
  * @param id 削除したい凸予定のid
  */
 export const AllDelete = async () => {
-  await Promise.all(
-    util
-      .range(Settings.CAL_STATUS_ID.PLANS.length)
-      .map(async i => await io.UpdateArray(Settings.CAL_STATUS_ID.PLANS[i], []))
-  )
+  await io.UpdateArray('plan', [])
 }
 
 /**
@@ -105,23 +88,7 @@ export const Edit = async (text: string, id: string): Promise<Plan[]> => {
  * キャルステータスから凸予定一覧を取得する
  * @return 凸予定一覧
  */
-export const Fetch = async (): Promise<Plan[]> => {
-  let plans: Plan[] = []
-
-  const range = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  for (const i of range) {
-    // 凸予定を取得
-    const p = await io.Fetch<Plan[]>(Settings.CAL_STATUS_ID.PLANS[i])
-
-    // 凸予定を結合
-    plans = plans.concat(p)
-
-    // 8個以下なら終了
-    if (p.length < 8) break
-  }
-
-  return plans
-}
+export const Fetch = async (): Promise<Plan[]> => io.Fetch<Plan[]>('plan')
 
 /**
  * 渡されたボス番号の凸予定一覧を取得する
