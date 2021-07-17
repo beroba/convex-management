@@ -10,12 +10,21 @@ import * as declare from './declare'
 import * as playerID from './etc/playerID'
 import * as send from './etc/send'
 import * as emoji from './etc/emoji'
+import * as queue from '../util/queue'
 
 /**
  * 入力されたメッセージに応じて適切な処理を実行する
  * @param msg DiscordからのMessage
  */
 export const Message = async (msg: Discord.Message) => {
+  queue.Push(message, msg)
+}
+
+/**
+ * 入力されたメッセージに応じて適切な処理を実行する
+ * @param msg DiscordからのMessage
+ */
+const message = async (msg: Discord.Message) => {
   let comment: Option<string>
 
   // クランのサーバーなら実行

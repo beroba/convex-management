@@ -46,6 +46,8 @@ export const UpdateArray = async <T>(id: string, json: T) => {
 
   // メッセージを更新
   await msg.edit(text)
+
+  await util.Sleep(100)
 }
 
 /**
@@ -80,4 +82,6 @@ export const UpdateJson = async <T>(id: string, json: T) => {
 
   // メッセージを更新
   await msg.edit(text)
+
+  await util.Sleep(100)
 }

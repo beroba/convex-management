@@ -4,6 +4,7 @@ import ThrowEnv from 'throw-env'
 import * as declare from './declare/status'
 import * as report from './report/cancel'
 import * as plan from './plan/delete'
+import * as queue from '../util/queue'
 
 /**
  * メッセージ削除のイベントに応じて適切な処理を実行する
@@ -11,6 +12,15 @@ import * as plan from './plan/delete'
  * @param msg DiscordからのMessage
  */
 export const MessageDelete = async (msg: Discord.Message | Discord.PartialMessage) => {
+  queue.Push(messageDelete, msg)
+}
+
+/**
+ * メッセージ削除のイベントに応じて適切な処理を実行する
+ * @param react DiscordからのReaction
+ * @param msg DiscordからのMessage
+ */
+const messageDelete = async (msg: Discord.Message | Discord.PartialMessage) => {
   // クランのサーバーでなければ終了
   if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 

@@ -17,13 +17,3 @@ export type Process = {
   func: any
   args: any[]
 }
-
-/**
- * キューの状態
- * @property stream 処理が実行中かの管理
- * @property process 処理を保存する箇所
- */
-export type Queue = {
-  stream: boolean
-  process: Process[]
-}

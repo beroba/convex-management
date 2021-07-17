@@ -2,12 +2,21 @@ import * as Discord from 'discord.js'
 import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
+import * as queue from '../util/queue'
 
 /**
  * 新規メンバーに方針チャンネルを見るよう催促するメッセージを送信する
  * @param member 新規メンバー
  */
 export const GuildMemberAdd = (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+  queue.Push(guildMemberAdd, member)
+}
+
+/**
+ * 新規メンバーに方針チャンネルを見るよう催促するメッセージを送信する
+ * @param member 新規メンバー
+ */
+const guildMemberAdd = (member: Discord.GuildMember | Discord.PartialGuildMember) => {
   // クランのサーバーでなければ終了
   if (member.guild.id !== ThrowEnv('CLAN_SERVER_ID')) return
 

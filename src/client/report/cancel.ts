@@ -99,7 +99,6 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-  await util.Sleep(100)
 
   return members
 }

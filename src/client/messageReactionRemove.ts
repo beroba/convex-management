@@ -4,6 +4,7 @@ import ThrowEnv from 'throw-env'
 import * as declare from './declare/react'
 import * as activityTime from './convex/activityTime'
 import * as limitTime from './convex/limitTime'
+import * as queue from '../util/queue'
 
 /**
  * リアクションのイベントに応じて適切な処理を実行する
@@ -14,6 +15,15 @@ export const MessageReactionRemove = async (
   react: Discord.MessageReaction,
   user: Discord.User | Discord.PartialUser
 ) => {
+  queue.Push(messageReactionRemove, react, user)
+}
+
+/**
+ * リアクションのイベントに応じて適切な処理を実行する
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ */
+const messageReactionRemove = async (react: Discord.MessageReaction, user: Discord.User | Discord.PartialUser) => {
   // クランのサーバーでなければ終了
   if (react.message.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 

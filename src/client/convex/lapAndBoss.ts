@@ -21,7 +21,6 @@ export const UpdateLap = async (lap: number, state?: Current): Promise<Current> 
 
   // 現在の状況を更新
   let st = await current.UpdateLap(state, lap)
-  await util.Sleep(100)
 
   // 全てのボスを復活させる
   st = await Promise.all(
@@ -53,7 +52,6 @@ export const UpdateBoss = async (hp: number, alpha: AtoE, state?: Current): Prom
 
   // 現在の状況を更新
   let st = await current.UpdateBoss(hp, alpha, state)
-  await util.Sleep(100)
 
   // ボスが討伐されているか確認
   if (st[alpha].subjugate) {

@@ -1,11 +1,20 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
+import * as queue from '../util/queue'
 
 /**
  * キャルbotの管理者にヤバイわよ！のロールを付与
  * @param member 変更後のmember情報
  */
 export const GuildMemberUpdate = async (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+  queue.Push(guildMemberUpdate, member)
+}
+
+/**
+ * キャルbotの管理者にヤバイわよ！のロールを付与
+ * @param member 変更後のmember情報
+ */
+const guildMemberUpdate = async (member: Discord.GuildMember | Discord.PartialGuildMember) => {
   // ヤバイわよ！のロールを取得
   const yabaiwayo = member.guild.roles.cache.get(Settings.ROLE_ID.YABAIWAYO)
   if (!yabaiwayo) return
