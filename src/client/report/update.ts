@@ -25,12 +25,12 @@ export const Status = async (
     // 3凸終了している場合の処理
 
     // 3凸終了のフラグを立てる
-    member.end = '1'
+    member.end = true
 
     // ステータスを更新
     const members = await status.UpdateMember(member).then(members => {
       // 何人目の3凸終了者なのかを報告する
-      const n = members.filter(s => s.end === '1').length + 1
+      const n = members.filter(s => s.end).length + 1
       msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
       return members

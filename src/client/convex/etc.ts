@@ -88,7 +88,6 @@ export const UpdateMembers = async (msg: Discord.Message) => {
 
   // ステータスを更新
   await status.UpdateUsers(users)
-  await util.Sleep(100)
 
   // スプレッドシートに名前とidを保存する
   await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
@@ -167,7 +166,6 @@ export const SetName = async (name: string, msg: Discord.Message) => {
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-  await util.Sleep(100)
 
   // 凸状況に報告
   situation.Report(members)

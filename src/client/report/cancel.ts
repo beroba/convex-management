@@ -99,7 +99,6 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-  await util.Sleep(100)
 
   return members
 }
@@ -132,7 +131,7 @@ const rollback = (member: Member): Member => {
  */
 const endConfirm = (member: Member, msg: Discord.Message): Member => {
   // 3凸終了のフラグを折る
-  member.end = ''
+  member.end = false
   // 凸残ロールを付与する
   msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 

@@ -21,7 +21,6 @@ export const Plans = async (msg: Discord.Message): Promise<[Plan[], Plan]> => {
 
   // 凸予定シートの値を更新
   const plans = await schedule.Add(plan)
-  await util.Sleep(100)
 
   // 完了の絵文字をつける
   await msg.react(Settings.EMOJI_ID.KANRYOU)
@@ -49,7 +48,6 @@ const createPlan = async (msg: Discord.Message): Promise<Plan> => {
   const member = await status.FetchMember(msg.author.id)
 
   return {
-    done: '',
     senderID: msg.id,
     calID: '',
     name: member?.name ?? '',

@@ -35,7 +35,6 @@ export const Update = async (state: string, msg: Discord.Message) => {
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-  await util.Sleep(100)
 
   // 凸状況に報告
   situation.Report(members)
@@ -52,7 +51,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   // 凸状況を変更
   member.convex = 0
   member.over = 0
-  member.end = '1'
+  member.end = true
 
   // ロールを削除
   const guildMember = await util.MemberFromId(user.id)
@@ -61,8 +60,8 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
 
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
-  const n = members.filter(s => s.end === '1').length + 1
-  msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
+  const n = members.filter(s => s.end).length + 1
+  await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
   // 活動限界時間の表示を更新
   limitTime.Display(members)
@@ -87,16 +86,16 @@ const updateProcess = async (
   // 凸状況を変更
   member.convex = state[0].to_n()
   member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
-  member.end = ''
+  member.end = false
   member.declare = ''
   member.carry = false
 
   // 凸残ロールを付与
   const guildMember = await util.MemberFromId(user.id)
-  guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
+  await guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   // 凸状況を報告する
-  msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
+  await msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
 
   return member
 }
