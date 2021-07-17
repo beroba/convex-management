@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/smicle/convex-management#readme",
   "dependencies": {
+    "@types/ioredis": "^4.26.6",
     "@types/moji": "^0.5.0",
     "@types/node-cron": "^2.0.3",
     "@types/ws": "^7.2.5",
@@ -30,6 +31,7 @@
     "discord.js": "github:smicle/discord.js",
     "get-random-values": "^1.2.2",
     "google-spreadsheet-as-promised": "^0.2.12",
+    "ioredis": "^4.27.6",
     "moji": "^0.5.1",
     "node-cron": "^2.0.3",
     "pieces-each": "^1.0.0",

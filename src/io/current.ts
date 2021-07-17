@@ -17,7 +17,7 @@ export const UpdateLap = async (state: Current, lap: number): Promise<Current> =
   state.stage = getStageName(lap)
 
   // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
+  await io.UpdateJson('current', state)
 
   return state
 }
@@ -71,7 +71,7 @@ export const UpdateBoss = async (hp: number, alpha: AtoE, state: Current): Promi
   } as CurrentBoss
 
   // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
+  await io.UpdateJson('current', state)
 
   return state
 }
@@ -80,7 +80,7 @@ export const UpdateBoss = async (hp: number, alpha: AtoE, state: Current): Promi
  * キャルステータスから現在の状況を取得
  * @return 現在の状況
  */
-export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CAL_STATUS_ID.CURRENT)
+export const Fetch = async (): Promise<Current> => io.Fetch<Current>('current')
 
 /**
  * スプレッドシートに現在の状況を反映させる

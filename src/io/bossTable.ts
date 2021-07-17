@@ -24,14 +24,14 @@ export const Update = async () => {
     }))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.BOSS_TABLE, table)
+  await io.UpdateArray('bossTable', table)
 }
 
 /**
  * キャルステータスからボステーブルを取得
  * @return ボステーブル
  */
-export const Fetch = async (): Promise<BossTable[]> => io.Fetch<BossTable[]>(Settings.CAL_STATUS_ID.BOSS_TABLE)
+export const Fetch = async (): Promise<BossTable[]> => io.Fetch<BossTable[]>('bossTable')
 
 /**
  * ボス番号からボス名を取得
