@@ -10,7 +10,6 @@ import * as plan from './plan/delete'
 import * as report from './report/cancel'
 import * as declare from './declare/react'
 import * as playerID from './etc/playerID'
-import * as queue from '../util/queue'
 
 /**
  * リアクションのイベントに応じて適切な処理を実行する
@@ -18,15 +17,6 @@ import * as queue from '../util/queue'
  * @param user リアクションしたユーザー
  */
 export const MessageReactionAdd = async (react: Discord.MessageReaction, user: Discord.User | Discord.PartialUser) => {
-  queue.Push(messageReactionAdd, react, user)
-}
-
-/**
- * リアクションのイベントに応じて適切な処理を実行する
- * @param react DiscordからのReaction
- * @param user リアクションしたユーザー
- */
-const messageReactionAdd = async (react: Discord.MessageReaction, user: Discord.User | Discord.PartialUser) => {
   // クランのサーバーでなければ終了
   if (react.message.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
 
