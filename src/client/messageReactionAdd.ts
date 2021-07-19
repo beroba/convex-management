@@ -34,8 +34,8 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   comment = await declare.OverNotice(react, user as Discord.User)
   if (comment) return console.log(comment)
 
-  // 開放通知を行う
-  comment = await declare.OpenNotice(react, user as Discord.User)
+  // 待機マークつ付ける
+  comment = await declare.StayMark(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // 凸報告を取り消しを行う

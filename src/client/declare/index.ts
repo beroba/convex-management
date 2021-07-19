@@ -2,10 +2,10 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import {AtoE, Current} from '../../io/type'
+import * as member from '../../io/status'
+import {AtoE, Current, Member} from '../../io/type'
 import * as list from './list'
 import * as status from './status'
-import * as react from './react'
 
 /**
  * 凸宣言の管理を行う
@@ -48,21 +48,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Remaining HP change'
   }
 
-  // 凸宣言の開放通知をする
-  if (content === '開放') {
-    // 開放通知
-    await react.DeclareNotice(alpha, msg)
-
-    // メッセージの削除
-    msg.delete()
-
-    return 'Release notice'
-  }
-
-  // 通しと持越と開放の絵文字を付ける
+  // 通しと持越と待機の絵文字を付ける
   msg.react(Settings.EMOJI_ID.TOOSHI)
   msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
-  msg.react(Settings.EMOJI_ID.KAIHOU)
+  msg.react(Settings.EMOJI_ID.TAIKI)
 
   // 予想残りHPの更新
   await status.Update(alpha)
@@ -71,7 +60,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 凸宣言のボスを復活させる
+ * 指定されたボスを次の周へ進める
  * @param alpha ボス番号
  * @param state 現在の状態
  */
@@ -88,8 +77,11 @@ export const NextBoss = async (alpha: AtoE, state: Current) => {
   // 凸宣言のリアクションを全て外す
   await resetReact(alpha, channel)
 
+  // 指定されたボスの凸宣言を全て解除
+  const members = await undeclare(alpha)
+
   // 凸宣言をリセット
-  await list.SetUser(alpha, channel)
+  await list.SetUser(alpha, channel, members)
 
   // メッセージを削除
   await messageDelete(channel)
@@ -110,6 +102,29 @@ const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
   // 凸宣言のリアクションを付ける
   await msg.react(Settings.EMOJI_ID.TOTU)
   await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
+}
+
+/**
+ * 指定されたボスの凸宣言を全て解除する
+ * @param alpha ボス番号
+ * @returns メンバー全体の状態
+ */
+const undeclare = async (alpha: AtoE): Promise<Member[]> => {
+  // メンバー全体の状態を取得
+  let members = await member.Fetch()
+
+  // 凸宣言を全て解除
+  members = members.map(m => {
+    if (m.declare === alpha) {
+      m.declare = ''
+    }
+    return m
+  })
+
+  // メンバーの状態を更新
+  await member.Update(members)
+
+  return members
 }
 
 /**

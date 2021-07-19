@@ -178,6 +178,26 @@ export const ReflectOnLimit = async (member: Member) => {
 }
 
 /**
+ * メンバーの名前を反映させる
+ * @param member 更新したいメンバー
+ */
+export const ReflectOnName = async (member: Member) => {
+  // 情報のシートを取得
+  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  // スプレッドシートからユーザー一覧を取得
+  const users = await FetchUserFromSheet(info)
+
+  // 行と列を取得
+  const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
+  const row = users.map(u => u.id).indexOf(member.id) + 3
+
+  // 活動限界時間を更新する
+  const cell = await info.getCell(`${col}${row}`)
+  await cell.setValue(member.name)
+}
+
+/**
  * スプレッドシートの凸状況をリセットする
  */
 export const ResetConvexOnSheet = async () => {

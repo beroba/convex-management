@@ -2,6 +2,7 @@ import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as declare from '../declare'
+import * as react from '../declare/react'
 import {AtoE, Current} from '../../io/type'
 
 /**
@@ -17,11 +18,11 @@ export const UpdateHP = async (hp: number, alpha: AtoE, state: Current): Promise
 
   // ボスが討伐されているか確認
   if (hp <= 0) {
-    // 次のボスに進める
-    await declare.NextBoss(alpha, state)
-
     // 進行に通知をする
     await progressReport(alpha, state)
+
+    // 次のボスに進める
+    await declare.NextBoss(alpha, state)
   }
 
   return state
@@ -43,11 +44,11 @@ export const UpdateLap = async (lap: number, alpha: AtoE): Promise<Current> => {
   // 現在の状況を更新
   state = await current.Update(hp, alpha, state, lap)
 
-  // 次のボスに進める
-  await declare.NextBoss(alpha, state)
-
   // 討伐通知を送信
   await progressReport(alpha, state)
+
+  // 次のボスに進める
+  await declare.NextBoss(alpha, state)
 
   return state
 }
@@ -61,8 +62,16 @@ const progressReport = async (alpha: AtoE, state: Current) => {
   // ボスのロールを取得
   const role = Settings.BOSS_ROLE_ID[alpha]
 
-  // 進行に報告
+  // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
 
+  // #進行-連携に次のボスを報告
   await channel.send(`<@&${role}>\n\`${state[alpha].lap}\`周目 \`${state[alpha].name}\``)
+
+  // 開放通知のメッセージを取得
+  const text = await react.OpenNotice(alpha)
+  if (!text) return
+
+  // #進行-連携に開放通知を報告
+  await channel.send(text)
 }

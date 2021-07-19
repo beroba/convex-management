@@ -78,7 +78,12 @@ export const Management = async (content: string, msg: Discord.Message): Promise
 
     case /cb manage set name/.test(content): {
       await setNameController('/cb manage set name', content, msg)
-      return 'All delete plan'
+      return 'Set member name'
+    }
+
+    case /cb manage set cal/.test(content): {
+      await setCalController('/cb manage set cal', content, msg)
+      return 'Set cal name'
     }
   }
 }
@@ -257,4 +262,23 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
   await etc.SetName(name, _msg)
 
   _msg.reply('名前を更新したわよ！')
+}
+
+/**
+ * `/cb manage set cal`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setCalController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  // 引数を抽出
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合は終了
+  if (!args) return _msg.reply('更新したいプレイヤーと名前を指定しなさい')
+
+  // 名前を設定する
+  await _msg.guild?.members.cache.get(Settings.CAL_ID)?.setNickname(args)
+
+  _msg.reply('キャルの名前を更新したわよ！')
 }

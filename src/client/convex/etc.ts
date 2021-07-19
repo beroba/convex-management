@@ -179,6 +179,9 @@ export const SetName = async (name: string, msg: Discord.Message) => {
   // ステータスを更新
   const members = await status.UpdateMember(member)
 
+  // メンバーの名前をスプレッドシートに反映させる
+  status.ReflectOnName(member)
+
   // 凸状況に報告
   situation.Report(members)
 }
