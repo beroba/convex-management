@@ -3,8 +3,10 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import * as current from '../../io/current'
+import * as status from '../../io/status'
 import {AtoE, Current} from '../../io/type'
 import * as lapAndBoss from '../convex/lapAndBoss'
+import * as situation from '../convex/situation'
 
 /**
  * ボスの状態を変更する
@@ -27,7 +29,7 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
 
   // 表示するテキストを作成
   const text = [
-    `\`${state.lap}\`週目 \`${state[alpha].name}\` \`${state[alpha].hp}/${maxHP}\``,
+    `\`${state[alpha].lap}\`週目 \`${state[alpha].name}\` \`${state[alpha].hp}/${maxHP}\``,
     `予想残りHP \`${await expectRemainingHP(state[alpha].hp, channel)}\``,
   ].join('\n')
 
@@ -59,10 +61,14 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
   if (hp === '' || hp === undefined) return <Current>{}
 
   // HPの変更
-  state = await lapAndBoss.UpdateBoss(hp.to_n(), alpha, state)
+  state = await lapAndBoss.UpdateHP(hp.to_n(), alpha, state)
 
   // 状態を変更
   await Update(alpha, state)
+
+  // 凸状況を更新
+  const members = await status.Fetch()
+  situation.Report(members)
 
   return state
 }

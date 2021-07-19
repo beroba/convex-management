@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import {AtoN} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as status from '../../io/status'
 import {AtoE, Member} from '../../io/type'
@@ -210,8 +211,8 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
 
   // 通し以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.TOOSHI) {
-    // 持越と開放の絵文字は外さずに終了
-    if ([Settings.EMOJI_ID.MOCHIKOSHI, Settings.EMOJI_ID.KAIHOU].some(id => id === react.emoji.id)) return
+    // 持越と待機の絵文字は外さずに終了
+    if ([Settings.EMOJI_ID.MOCHIKOSHI, Settings.EMOJI_ID.TAIKI].some(id => id === react.emoji.id)) return
 
     // 関係のないリアクションを外す
     react.users.remove(user)
@@ -231,8 +232,8 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   await msg.react(Settings.EMOJI_ID.SUMI)
 
   // メンションで通知する
-  const m = await msg.reply('確定！')
-  await util.Sleep(100)
+  const m = await msg.reply(`${AtoN(alpha)}ボス 確定！`)
+  await util.Sleep(1000)
 
   // 通知を消す
   m.delete()
@@ -263,8 +264,8 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 
   // 持越以外の絵文字の場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.MOCHIKOSHI) {
-    // 通しと開放の絵文字は外さずに終了
-    if ([Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.KAIHOU].some(id => id === react.emoji.id)) return
+    // 通しと待機の絵文字は外さずに終了
+    if ([Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.TAIKI].some(id => id === react.emoji.id)) return
 
     // 関係のないリアクションを外す
     react.users.remove(user)
@@ -284,8 +285,8 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
   await msg.react(Settings.EMOJI_ID.SUMI)
 
   // メンションで通知する
-  const m = await msg.reply('持越！')
-  await util.Sleep(100)
+  const m = await msg.reply(`${AtoN(alpha)}ボス 持越！`)
+  await util.Sleep(1000)
 
   // 通知を消す
   m.delete()
@@ -294,12 +295,12 @@ export const OverNotice = async (react: Discord.MessageReaction, user: Discord.U
 }
 
 /**
- * リアクションを押すことで開放通知を行う
+ * リアクションを押すことで待機マークを付ける
  * @param react DiscordからのReaction
  * @param user リアクションしたユーザー
  * @return 取り消し処理の実行結果
  */
-export const OpenNotice = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+export const StayMark = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
   // botのリアクションは実行しない
   if (user.bot) return
 
@@ -314,8 +315,8 @@ export const OpenNotice = async (react: Discord.MessageReaction, user: Discord.U
   // 凸宣言の持越にはリアクションは終了
   if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
-  // 開放以外の絵文字の場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.KAIHOU) {
+  // 待機以外の絵文字の場合は終了
+  if (react.emoji.id !== Settings.EMOJI_ID.TAIKI) {
     // 通しと持越の絵文字は外さずに終了
     if ([Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.MOCHIKOSHI].some(id => id === react.emoji.id)) return
 
@@ -336,18 +337,11 @@ export const OpenNotice = async (react: Discord.MessageReaction, user: Discord.U
   // 済のリアクションを付ける
   await msg.react(Settings.EMOJI_ID.SUMI)
 
-  // メンションで通知する
-  const m = await msg.reply('開放！')
-  await util.Sleep(100)
-
-  // 通知を消す
-  m.delete()
-
   return 'Carry over notice'
 }
 
 /**
- * 通しか持越か開放のリアクションを外した際に済も外す
+ * リアクションを外した際に済も外す
  * @param react DiscordからのReaction
  * @param user リアクションしたユーザー
  * @return 取り消し処理の実行結果
@@ -367,14 +361,6 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
   // 凸宣言の持越にリアクションした場合は終了
   if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
-  // 確認と持越と開放以外の絵文字の場合は終了
-  if (
-    ![Settings.EMOJI_ID.TOOSHI, Settings.EMOJI_ID.MOCHIKOSHI, Settings.EMOJI_ID.KAIHOU].some(
-      id => id === react.emoji.id
-    )
-  )
-    return
-
   // リアクションからメッセージを取得
   const msg = await fetchMessage(react, alpha)
 
@@ -390,7 +376,7 @@ export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord
  * @param alpha ボス番号
  * @param msg DiscordからのMessage
  */
-export const DeclareNotice = async (alpha: AtoE, msg: Discord.Message) => {
+export const OpenNotice = async (alpha: AtoE): Promise<Option<string>> => {
   // メンバー全員の状態を取得
   const members = await status.Fetch()
 
@@ -403,12 +389,7 @@ export const DeclareNotice = async (alpha: AtoE, msg: Discord.Message) => {
   // メンション一覧を作る
   const mentions = declares.map(m => `<@!${m.id}>`).join(' ')
 
-  // メンションで通知する
-  const m = await msg.reply(`${mentions} 開放！`)
-  await util.Sleep(100)
-
-  // 通知を消す
-  m.delete()
+  return `${mentions} ${AtoN(alpha)}ボス 開放！`
 }
 
 /**

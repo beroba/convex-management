@@ -137,7 +137,7 @@ const changeValueOfSheet = async (value: string, day: number, section: number, i
   const col1 = day !== 1 ? AtoA('A', day - 2) : ''
   const col2 = Settings.ACTIVITY_TIME_SHEET.SEPARATE[section - 1]
 
-  // 凸状況のシートを取得
+  // 凸活動時間のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.ACTIVITY_TIME_SHEET.SHEET_NAME)
 
   // スプレッドシートからユーザー一覧を取得

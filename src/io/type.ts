@@ -33,8 +33,8 @@ export type DateTable = {
  * @property subjugate ボスが討伐されたかの管理
  */
 export type CurrentBoss = BossTable & {
+  lap: number
   hp: number
-  subjugate: boolean
 }
 
 /**

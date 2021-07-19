@@ -4,6 +4,53 @@ import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as bossTable from './bossTable'
 import {AtoE, Current, CurrentBoss} from './type'
+import * as declare from '../client/declare/status'
+
+/**
+ * 現在のボス状況を設定する
+ * @param hp 残りHP
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @param state ボスの周回数
+ * @return 現在の状況
+ */
+export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: number): Promise<Current> => {
+  // ボス番号(英語)からボス番号(数字)とボス名を取得
+  const num = (await bossTable.TakeNum(alpha)) ?? ''
+  const name = (await bossTable.TakeName(alpha)) ?? ''
+
+  // ボスのHPを取得
+  const max = Settings.STAGE[state.stage].HP[alpha]
+
+  // HPが0以下の場合、0にする
+  hp = hp < 0 ? 0 : hp
+
+  // HPが0の場合は次の周に進める
+  lap ??= state[alpha].lap + (hp ? 0 : 1)
+
+  // HPが0の場合は最大にする
+  hp = hp || max
+
+  // HPが最大以上の場合、最大にする
+  hp = hp > max ? max : hp
+
+  // ボス状況を更新
+  state[alpha] = <CurrentBoss>{
+    alpha: alpha,
+    num: num,
+    name: name,
+    lap: lap,
+    hp: hp,
+  }
+
+  // 全体の周回数を更新
+  state = updateLap(state)
+
+  // キャルステータスを更新
+  await io.UpdateJson('current', state)
+
+  return state
+}
 
 /**
  * 現在の状況の段階と周回数を設定する
@@ -11,13 +58,34 @@ import {AtoE, Current, CurrentBoss} from './type'
  * @param lap 周回数
  * @return 現在の状況
  */
-export const UpdateLap = async (state: Current, lap: number): Promise<Current> => {
-  // 値を更新
-  state.lap = lap
-  state.stage = getStageName(lap)
+const updateLap = (state: Current): Current => {
+  // 全てのボスの周回数から1番進んでいない周回数を取得
+  const lap = Math.min(...'abcde'.split('').map(a => state[<AtoE>a].lap))
 
-  // キャルステータスを更新する
-  await io.UpdateJson('current', state)
+  // 全体の周回数よりボスの周回数が進んでいる場合は更新
+  if (state.lap !== lap) {
+    // 周回数を更新
+    state.lap = lap
+  }
+
+  // 周回数から段階を取得
+  const stage = getStageName(lap)
+
+  // 全体の段階とボスの段階が違うは更新
+  if (state.stage !== stage) {
+    // 段階を更新
+    state.stage = stage
+
+    // ボスのHPを更新
+    'abcde'.split('').forEach(a => {
+      // ボスのHPを取得
+      const hp = Settings.STAGE[state.stage].HP[a]
+      state[<AtoE>a].hp = hp
+
+      // 全ボスの凸宣言を更新
+      declare.Update(<AtoE>a, state)
+    })
+  }
 
   return state
 }
@@ -43,40 +111,6 @@ const getStageName = (lap: number): string => {
 }
 
 /**
- * 現在のボス状況を設定する
- * @param hp 残りHP
- * @param alpha ボス番号
- * @param state 現在の状況
- * @return 現在の状況
- */
-export const UpdateBoss = async (hp: number, alpha: AtoE, state: Current): Promise<Current> => {
-  // ボス番号(英語)からボス番号(数字)とボス名を取得
-  const num = (await bossTable.TakeNum(alpha)) ?? ''
-  const name = (await bossTable.TakeName(alpha)) ?? ''
-
-  // HPが0以下の場合、0にする
-  hp = hp < 0 ? 0 : hp
-
-  // HPが最大以上の場合、最大にする
-  const max = Settings.STAGE[state.stage].HP[alpha]
-  hp = hp > max ? max : hp
-
-  // ボス状況を更新
-  state[alpha] = {
-    alpha: alpha,
-    num: num,
-    name: name,
-    hp: hp,
-    subjugate: !hp,
-  } as CurrentBoss
-
-  // キャルステータスを更新する
-  await io.UpdateJson('current', state)
-
-  return state
-}
-
-/**
  * キャルステータスから現在の状況を取得
  * @return 現在の状況
  */
@@ -94,28 +128,28 @@ export const ReflectOnSheet = async () => {
 
   // 周回数、討伐状況、HPの番地を取得
   const lap = Settings.INFORMATION_SHEET.LAP_CELL
-  const subjugate = Settings.INFORMATION_SHEET.SUBJUGATE_CELLS
-  const hp = Settings.INFORMATION_SHEET.HP_CELLS
+  const boss_lap = Settings.INFORMATION_SHEET.LAP_CELLS
+  const boss_hp = Settings.INFORMATION_SHEET.HP_CELLS
 
   // 周回数を更新
   const lap_cell = await sheet.getCell(lap)
   await lap_cell.setValue(state.lap)
 
-  // 討伐状況を更新
+  // ボスの周回数を更新
   await Promise.all(
-    subjugate.split(',').map(async (c: string, i: number) => {
-      const alpha = AtoA('a', i) as AtoE
-      const subjugate_cell = await sheet.getCell(c)
-      subjugate_cell.setValue(state[alpha].subjugate)
+    boss_lap.split(',').map(async (c: string, i: number) => {
+      const alpha = <AtoE>AtoA('a', i)
+      const cell = await sheet.getCell(c)
+      cell.setValue(state[alpha].lap)
     })
   )
 
-  // HPを更新
+  // ボスのHPを更新
   await Promise.all(
-    hp.split(',').map(async (c: string, i: number) => {
-      const alpha = AtoA('a', i) as AtoE
-      const hp_cell = await sheet.getCell(c)
-      hp_cell.setValue(state[alpha].hp)
+    boss_hp.split(',').map(async (c: string, i: number) => {
+      const alpha = <AtoE>AtoA('a', i)
+      const cell = await sheet.getCell(c)
+      cell.setValue(state[alpha].hp)
     })
   )
 }
