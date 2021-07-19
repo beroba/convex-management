@@ -1,36 +1,91 @@
 import Settings from 'const-settings'
-import Option from 'type-of-option'
+import {AtoA} from 'alphabet-to-number'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as bossTable from './bossTable'
-import {Current} from './type'
+import {AtoE, Current, CurrentBoss} from './type'
+import * as declare from '../client/declare/status'
+
+/**
+ * 現在のボス状況を設定する
+ * @param hp 残りHP
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @param state ボスの周回数
+ * @return 現在の状況
+ */
+export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: number): Promise<Current> => {
+  // ボス番号(英語)からボス番号(数字)とボス名を取得
+  const num = (await bossTable.TakeNum(alpha)) ?? ''
+  const name = (await bossTable.TakeName(alpha)) ?? ''
+
+  // ボスのHPを取得
+  const max = Settings.STAGE[state.stage].HP[alpha]
+
+  // HPが0以下の場合、0にする
+  hp = hp < 0 ? 0 : hp
+
+  // HPが0の場合は次の周に進める
+  lap ??= state[alpha].lap + (hp ? 0 : 1)
+
+  // HPが0の場合は最大にする
+  hp = hp || max
+
+  // HPが最大以上の場合、最大にする
+  hp = hp > max ? max : hp
+
+  // ボス状況を更新
+  state[alpha] = <CurrentBoss>{
+    alpha: alpha,
+    num: num,
+    name: name,
+    lap: lap,
+    hp: hp,
+  }
+
+  // 全体の周回数を更新
+  state = updateLap(state)
+
+  // キャルステータスを更新
+  await io.UpdateJson('current', state)
+
+  return state
+}
 
 /**
  * 現在の状況の段階と周回数を設定する
+ * @param state 現在の状況
  * @param lap 周回数
- * @param alpha ボス番号
+ * @return 現在の状況
  */
-export const UpdateLapAndBoss = async (lap: string, alpha: string): Promise<Option<Current>> => {
-  // 現在の状況を取得
-  const state: Current = await Fetch()
+const updateLap = (state: Current): Current => {
+  // 全てのボスの周回数から1番進んでいない周回数を取得
+  const lap = Math.min(...'abcde'.split('').map(a => state[<AtoE>a].lap))
 
-  // 値を更新
-  state.lap = lap
-  state.stage = getStageName(lap)
-  state.alpha = alpha
+  // 全体の周回数よりボスの周回数が進んでいる場合は更新
+  if (state.lap !== lap) {
+    // 周回数を更新
+    state.lap = lap
+  }
 
-  const num = await bossTable.TakeNum(alpha)
-  if (!num) return
-  state.num = num
+  // 周回数から段階を取得
+  const stage = getStageName(lap)
 
-  const boss = await bossTable.TakeName(alpha)
-  if (!boss) return
-  state.boss = boss
+  // 全体の段階とボスの段階が違うは更新
+  if (state.stage !== stage) {
+    // 段階を更新
+    state.stage = stage
 
-  state.hp = Settings.STAGE[state.stage].HP[alpha]
+    // ボスのHPを更新
+    'abcde'.split('').forEach(a => {
+      // ボスのHPを取得
+      const hp = Settings.STAGE[state.stage].HP[a]
+      state[<AtoE>a].hp = hp
 
-  // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
+      // 全ボスの凸宣言を更新
+      declare.Update(<AtoE>a, state)
+    })
+  }
 
   return state
 }
@@ -40,16 +95,15 @@ export const UpdateLapAndBoss = async (lap: string, alpha: string): Promise<Opti
  * @param lap 周回数
  * @return 段階名
  */
-const getStageName = (lap: string): string => {
-  const l = Number(lap)
+const getStageName = (lap: number): string => {
   switch (true) {
-    case l < Settings.STAGE.SECOND.LAP.first():
+    case lap < Settings.STAGE.SECOND.LAP.first():
       return 'FIRST'
-    case l < Settings.STAGE.THIRD.LAP.first():
+    case lap < Settings.STAGE.THIRD.LAP.first():
       return 'SECOND'
-    case l < Settings.STAGE.FOURTH.LAP.first():
+    case lap < Settings.STAGE.FOURTH.LAP.first():
       return 'THIRD'
-    case l < Settings.STAGE.FIFTH.LAP.first():
+    case lap < Settings.STAGE.FIFTH.LAP.first():
       return 'FOURTH'
     default:
       return 'FIFTH'
@@ -57,68 +111,45 @@ const getStageName = (lap: string): string => {
 }
 
 /**
- * 現在の状況のボスhpを設定する
- * @param hp ボスhp
- */
-export const UpdateBossHp = async (hp: string): Promise<Current> => {
-  // 現在の状況を取得
-  const state: Current = await Fetch()
-
-  // 値を更新
-  state.hp = hp
-
-  // キャルステータスを更新する
-  await io.UpdateJson(Settings.CAL_STATUS_ID.CURRENT, state)
-
-  return state
-}
-
-/**
  * キャルステータスから現在の状況を取得
  * @return 現在の状況
  */
-export const Fetch = async (): Promise<Current> => io.Fetch<Current>(Settings.CAL_STATUS_ID.CURRENT)
+export const Fetch = async (): Promise<Current> => io.Fetch<Current>('current')
 
 /**
  * スプレッドシートに現在の状況を反映させる
  */
 export const ReflectOnSheet = async () => {
   // 現在の状況を取得
-  const state: Current = await Fetch()
+  const state = await Fetch()
 
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
-  // 周回数、ボス名、ボス番号の番地を取得
-  const [lap, boss, alpha] = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
+  // 周回数、討伐状況、HPの番地を取得
+  const lap = Settings.INFORMATION_SHEET.LAP_CELL
+  const boss_lap = Settings.INFORMATION_SHEET.LAP_CELLS
+  const boss_hp = Settings.INFORMATION_SHEET.HP_CELLS
 
   // 周回数を更新
   const lap_cell = await sheet.getCell(lap)
-  lap_cell.setValue(state.lap)
+  await lap_cell.setValue(state.lap)
 
-  // ボス名を更新
-  const boss_cell = await sheet.getCell(boss)
-  boss_cell.setValue(state.boss)
+  // ボスの周回数を更新
+  await Promise.all(
+    boss_lap.split(',').map(async (c: string, i: number) => {
+      const alpha = <AtoE>AtoA('a', i)
+      const cell = await sheet.getCell(c)
+      cell.setValue(state[alpha].lap)
+    })
+  )
 
-  // ボス番号を更新
-  const alpha_cell = await sheet.getCell(alpha)
-  alpha_cell.setValue(state.alpha)
-}
-
-/**
- * スプレッドの現在の状況をキャルに反映させる
- */
-export const ReflectOnCal = async () => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 周回数、ボス名、ボス番号の番地を取得
-  const [lap_cell, , alpha_cell] = Settings.INFORMATION_SHEET.CURRENT_CELL.split(',')
-
-  // 周回数を更新
-  const lap = (await sheet.getCell(lap_cell)).getValue()
-  const alpha = (await sheet.getCell(alpha_cell)).getValue()
-
-  // 現在の状況を更新
-  await UpdateLapAndBoss(lap, alpha)
+  // ボスのHPを更新
+  await Promise.all(
+    boss_hp.split(',').map(async (c: string, i: number) => {
+      const alpha = <AtoE>AtoA('a', i)
+      const cell = await sheet.getCell(c)
+      cell.setValue(state[alpha].hp)
+    })
+  )
 }

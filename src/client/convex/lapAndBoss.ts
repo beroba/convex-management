@@ -1,89 +1,77 @@
 import Settings from 'const-settings'
-import {NtoA} from 'alphabet-to-number'
 import * as util from '../../util'
 import * as current from '../../io/current'
 import * as declare from '../declare'
+import * as react from '../declare/react'
+import {AtoE, Current} from '../../io/type'
 
 /**
- * 現在の周回数とボスを変更する
- * @param lap 周回数
+ * ボスのHPを変更する
+ * @param hp 変更先のHP
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @return 現在の状況
  */
-export const Update = async (lap: string, alpha: string) => {
+export const UpdateHP = async (hp: number, alpha: AtoE, state: Current): Promise<Current> => {
   // 現在の状況を更新
-  const newState = await current.UpdateLapAndBoss(lap, alpha)
-  await util.Sleep(100)
+  state = await current.Update(hp, alpha, state)
 
-  // 凸宣言のボスを変更
-  declare.ChangeBoss(newState)
+  // ボスが討伐されているか確認
+  if (hp <= 0) {
+    // 進行に通知をする
+    await progressReport(alpha, state)
 
-  // 進行に現在のボスと周回数を報告
-  ProgressReport()
+    // 次のボスに進める
+    await declare.NextBoss(alpha, state)
+  }
 
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet()
+  return state
 }
 
 /**
- * 現在の周回数とボスを次に進める
+ * ボスの周回数を変更する
+ * @param lap 変更先の周回数
+ * @param alpha ボス番号
+ * @return 現在の状況
  */
-export const Next = async () => {
+export const UpdateLap = async (lap: number, alpha: AtoE): Promise<Current> => {
   // 現在の状況を取得
-  const state = await current.Fetch()
+  let state = await current.Fetch()
 
-  // 次の周回数とボスへ進める
-  const lap = String(Number(state.lap) + (state.alpha === 'e' ? 1 : 0))
-  const alpha = NtoA(state.alpha === 'e' ? 1 : Number(state.num) + 1)
+  // ボスのHPを取得
+  const hp = Settings.STAGE[state.stage].HP[alpha]
 
   // 現在の状況を更新
-  const newState = await current.UpdateLapAndBoss(lap, alpha)
-  await util.Sleep(100)
+  state = await current.Update(hp, alpha, state, lap)
 
-  // 凸宣言のボスを変更
-  declare.ChangeBoss(newState)
+  // 討伐通知を送信
+  await progressReport(alpha, state)
 
-  // 進行に現在のボスと周回数を報告
-  ProgressReport()
+  // 次のボスに進める
+  await declare.NextBoss(alpha, state)
 
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet()
+  return state
 }
 
 /**
- * 現在の周回数とボスを前に戻す
+ * #進行-連携に現在の周回数とボスを報告
+ * @param alpha ボス番号
+ * @param state 現在の状況
  */
-export const Previous = async () => {
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
-  // 次の周回数とボスへ進める
-  const lap = String(Number(state.lap) - (state.alpha === 'a' ? 1 : 0))
-  const alpha = NtoA(state.alpha === 'a' ? 5 : Number(state.num) - 1)
-
-  // 現在の状況を更新
-  const newState = await current.UpdateLapAndBoss(lap, alpha)
-  await util.Sleep(100)
-
-  // 凸宣言のボスを変更
-  declare.ChangeBoss(newState)
-
-  // 進行に現在のボスと周回数を報告
-  ProgressReport()
-
-  // 現在の状況をスプレッドシートに反映
-  current.ReflectOnSheet()
-}
-
-/**
- * #進行に現在の周回数とボスを報告
- */
-export const ProgressReport = async () => {
-  // 現在の状況を取得
-  const state = await current.Fetch()
-
+const progressReport = async (alpha: AtoE, state: Current) => {
   // ボスのロールを取得
-  const role = Settings.BOSS_ROLE_ID[state.alpha]
+  const role = Settings.BOSS_ROLE_ID[alpha]
 
-  // 進行に報告
+  // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-  channel.send(`<@&${role}>\n\`${state.lap}\`周目 \`${state.boss}\``)
+
+  // #進行-連携に次のボスを報告
+  await channel.send(`<@&${role}>\n\`${state[alpha].lap}\`周目 \`${state[alpha].name}\``)
+
+  // 開放通知のメッセージを取得
+  const text = await react.OpenNotice(alpha)
+  if (!text) return
+
+  // #進行-連携に開放通知を報告
+  await channel.send(text)
 }

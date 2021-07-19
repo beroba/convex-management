@@ -34,8 +34,8 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   comment = await declare.OverNotice(react, user as Discord.User)
   if (comment) return console.log(comment)
 
-  // 待機通知を行う
-  comment = await declare.WaitNotice(react, user as Discord.User)
+  // 待機マークつ付ける
+  comment = await declare.StayMark(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // 凸報告を取り消しを行う
@@ -46,11 +46,11 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   comment = await plan.Already(react, user as Discord.User)
   if (comment) return console.log(comment)
 
-  // 持ち越し状況の削除を行う
+  // 持越状況の削除を行う
   comment = await over.Delete(react, user as Discord.User)
   if (comment) return console.log(comment)
 
-  // 持ち越し凸先の削除を行う
+  // 持越凸先の削除を行う
   comment = await sister.Delete(react, user as Discord.User)
   if (comment) return console.log(comment)
 

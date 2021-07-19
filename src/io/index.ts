@@ -1,5 +1,20 @@
-import * as util from '../util'
-import Settings from 'const-settings'
+import * as url from 'url'
+import IORedis from 'ioredis'
+import ThrowEnv from 'throw-env'
+
+// redisの初期設定
+const REDIS_URL = ThrowEnv('REDIS_URL')
+const redis_uri = url.parse(REDIS_URL)
+const redisOptions = REDIS_URL.includes('rediss://')
+  ? {
+      port: Number(redis_uri.port),
+      host: redis_uri.hostname,
+      password: redis_uri.auth?.split(':')[1],
+      db: 0,
+      tls: {rejectUnauthorized: false},
+    }
+  : REDIS_URL
+const redis = new IORedis(<IORedis.RedisOptions>redisOptions)
 
 /**
  * キャルステータスの値を取得する
@@ -7,19 +22,8 @@ import Settings from 'const-settings'
  * @return 取得したjsonの情報
  */
 export const Fetch = async <T>(id: string): Promise<T> => {
-  // 更新したいステータスのidを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-  const msg = await channel.messages.fetch(id)
-
-  // 余計な部分を全て取り除きjsonに変換する
-  const json: T = JSON.parse(
-    msg.content
-      .split('\n')
-      .filter((_, i, l) => !(i === 0 || i === l.length - 1))
-      .map(s => s.trim())
-      .join('')
-  )
-  return json
+  const json = await redis.get(id)
+  return JSON.parse(json ?? '')
 }
 
 /**
@@ -28,24 +32,7 @@ export const Fetch = async <T>(id: string): Promise<T> => {
  * @param json 更新させたいjsonの情報
  */
 export const UpdateArray = async <T>(id: string, json: T) => {
-  // 更新したいステータスのidを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-  const msg = await channel.messages.fetch(id)
-
-  // prettier-ignore
-  // 見やすいように書式を追加するする
-  const text = [
-    '```json',
-    JSON.stringify(json)
-      .replace(/{/g, '\n  {')
-      .replace(/]/g, '\n]')
-      .replace(/:/g, ': ')
-      .replace(/,/g, ', '),
-    '```',
-  ].join('\n')
-
-  // メッセージを更新
-  await msg.edit(text)
+  await redis.set(id, JSON.stringify(json))
 }
 
 /**
@@ -54,22 +41,5 @@ export const UpdateArray = async <T>(id: string, json: T) => {
  * @param json 更新させたいjsonの情報
  */
 export const UpdateJson = async <T>(id: string, json: T) => {
-  // 更新したいステータスのidを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-  const msg = await channel.messages.fetch(id)
-
-  // prettier-ignore
-  // 見やすいように書式を追加するする
-  const text = [
-    '```json',
-    JSON.stringify(json)
-      .replace(/{/g, '\n{\n  ')
-      .replace(/}/g, '\n}\n')
-      .replace(/:/g, ': ')
-      .replace(/,/g, ',\n  '),
-    '```',
-  ].join('\n')
-
-  // メッセージを更新
-  await msg.edit(text)
+  await redis.set(id, JSON.stringify(json))
 }

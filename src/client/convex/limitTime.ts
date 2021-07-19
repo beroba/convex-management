@@ -71,13 +71,12 @@ const update = async (id: string) => {
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-  await util.Sleep(100)
 
   // 活動限界時間の表示を更新
   Display(members)
 
   // 活動限界時間をスプレッドシートに反映
-  status.ReflectOnSheet(member)
+  status.ReflectOnLimit(member)
 }
 
 /**

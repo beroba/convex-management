@@ -49,9 +49,6 @@ export const React = async (msg: Discord.Message) => {
 
   // 中華の絵文字を押す
   chuukaReact(msg)
-
-  // しろはの絵文字を押す
-  shirohaReact(msg)
 }
 
 /**
@@ -286,23 +283,6 @@ const chuukaReact = (msg: Discord.Message) => {
 }
 
 /**
- * 送信されたメッセージに川崎が含まれていた場合、しろはの絵文字をつける
- * @param msg DiscordからのMessage
- */
-const shirohaReact = (msg: Discord.Message) => {
-  // 川崎の文字が含まれているか確認
-  const match = msg.content.match(/川崎/)
-
-  // 含まれていない場合は終了
-  if (!match) return
-
-  // しろはの絵文字をつける
-  msg.react(Settings.EMOJI_ID.SHIROHA)
-
-  console.log('React shiroha')
-}
-
-/**
  * 送信されたメッセージに特定の文字が完全一致していた場合、対応した絵文字を送信する
  * @param msg DiscordからのMessage
  * @return 送信した絵文字の結果
@@ -356,6 +336,10 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
   // 他人TLの絵文字を送信する
   content = msg.content.replace(/他人tl|tl奪取/i, '他人TL')
   if (content === '他人TL') return taninEmoji(msg)
+
+  // saitouの絵文字を送信する
+  content = msg.content
+  if (content === 'saitou') return saitouEmoji(msg)
 }
 
 /**
@@ -510,4 +494,18 @@ const taninEmoji = async (msg: Discord.Message) => {
   setTimeout(() => msg.delete(), 100)
 
   return `${util.GetUserName(msg.member)} Send TaninTL Emoji`
+}
+
+/**
+ * 送信されたメッセージに特定の文字が完全一致していた場合、saitouの絵文字を送信する
+ * @param msg DiscordからのMessage
+ */
+const saitouEmoji = async (msg: Discord.Message) => {
+  // べろばあのアニメーション絵文字を送信
+  await msg.channel.send(Settings.EMOJI_FULL_ID.SAITOU)
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return `${util.GetUserName(msg.member)} Send saitou Emoji`
 }

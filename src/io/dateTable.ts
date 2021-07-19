@@ -29,7 +29,7 @@ export const Update = async (args: Option<string>) => {
     }))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.DAYS_TABLE, table)
+  await io.UpdateArray('dateTable', table)
 }
 
 /**
@@ -39,7 +39,7 @@ export const Update = async (args: Option<string>) => {
  */
 const setDate = async (args: string, sheet: any) => {
   // 開始日から順番に日付の配列を作成
-  const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${Number(args.split('/').last()) + i}`)
+  const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${args.split('/').last().to_n() + i}`)
 
   await Promise.all(
     // 日付を更新
@@ -61,7 +61,7 @@ const parseZero = (d: string) => d.split('/').map(Number).join('/')
  * キャルステータスから日付テーブルを取得
  * @return 日付テーブル
  */
-export const Fetch = async (): Promise<DateTable[]> => io.Fetch<DateTable[]>(Settings.CAL_STATUS_ID.DAYS_TABLE)
+export const Fetch = async (): Promise<DateTable[]> => io.Fetch<DateTable[]>('dateTable')
 
 /**
  * クラバトの日付情報を取得する。

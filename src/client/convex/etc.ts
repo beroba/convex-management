@@ -6,26 +6,27 @@ import * as status from '../../io/status'
 import * as spreadsheet from '../../util/spreadsheet'
 import {User} from '../../io/type'
 import * as util from '../../util'
+import * as situation from './situation'
 
 /**
- * 同時凸の持ち越し計算を行う
+ * 同時凸の持越計算を行う
  * @param HP ボスのHP
  * @param A 1人目のダメージ
  * @param B 2人目のダメージ
  * @param msg DiscordからのMessage
  */
 export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.Message) => {
-  // 持ち越し秒数を計算
+  // 持越秒数を計算
   const a = overCalc(HP, A, B)
   const b = overCalc(HP, B, A)
 
   // 計算結果を出力
-  msg.reply(`\`\`\`A ${a}s\nB ${b}s\`\`\`ダメージの高い方を先に通した方が持ち越し時間が長くなるわよ！`)
+  msg.reply(`\`\`\`A ${a}s\nB ${b}s\`\`\`ダメージの高い方を先に通した方が持越時間が長くなるわよ！`)
 }
 
 /**
- * 持ち越しの計算をする
- * 計算式: 持ち越し時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
+ * 持越の計算をする
+ * 計算式: 持越時間 = 90 - (残りHP * 90 / 与ダメージ - 20)  // 端数切り上げ
  * @param HP ボスのHP
  * @param a AのHP
  * @param b BのHP
@@ -92,12 +93,13 @@ export const UpdateMembers = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
+      carry: false,
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
   // ステータスを更新
   await status.UpdateUsers(users)
-  await util.Sleep(100)
 
   // スプレッドシートに名前とidを保存する
   await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
@@ -115,6 +117,8 @@ export const UpdateSisters = async (msg: Discord.Message) => {
       name: util.GetUserName(m),
       id: m.id,
       limit: '',
+      declare: '',
+      carry: false,
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
 
@@ -148,4 +152,36 @@ const fetchNameAndID = async (users: Option<User[]>, name: string) => {
       id_cell.setValue(m.id)
     })
   )
+}
+
+/**
+ * botが認識している名前を変更する
+ * @param msg DiscordからのMessage
+ */
+export const SetName = async (name: string, msg: Discord.Message) => {
+  // 凸状況を更新するユーザーを取得する
+  const user = msg.mentions.users.first()
+  if (!user) {
+    msg.reply('メンションで誰の名前を変更したいか指定しなさい')
+    return
+  }
+
+  // メンバーの状態を取得
+  let member = await status.FetchMember(user.id)
+  if (!member) {
+    msg.reply('その人はクランメンバーじゃないわ')
+    return
+  }
+
+  // 名前を更新
+  member.name = name
+
+  // ステータスを更新
+  const members = await status.UpdateMember(member)
+
+  // メンバーの名前をスプレッドシートに反映させる
+  status.ReflectOnName(member)
+
+  // 凸状況に報告
+  situation.Report(members)
 }

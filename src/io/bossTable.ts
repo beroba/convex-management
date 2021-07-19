@@ -4,7 +4,7 @@ import Option from 'type-of-option'
 import * as util from '../util'
 import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
-import {BossTable} from './type'
+import {AtoE, BossTable} from './type'
 
 /**
  * ボステーブルを設定する
@@ -19,19 +19,19 @@ export const Update = async () => {
     .filter(util.Omit)
     .map(v => ({
       num: v[0],
-      alpha: v[1],
+      alpha: v[1] as AtoE,
       name: v[2],
     }))
 
   // キャルステータスを更新する
-  await io.UpdateArray(Settings.CAL_STATUS_ID.BOSS_TABLE, table)
+  await io.UpdateArray('bossTable', table)
 }
 
 /**
  * キャルステータスからボステーブルを取得
  * @return ボステーブル
  */
-export const Fetch = async (): Promise<BossTable[]> => io.Fetch<BossTable[]>(Settings.CAL_STATUS_ID.BOSS_TABLE)
+export const Fetch = async (): Promise<BossTable[]> => io.Fetch<BossTable[]>('bossTable')
 
 /**
  * ボス番号からボス名を取得
