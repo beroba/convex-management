@@ -49,9 +49,6 @@ export const React = async (msg: Discord.Message) => {
 
   // 中華の絵文字を押す
   chuukaReact(msg)
-
-  // しろはの絵文字を押す
-  shirohaReact(msg)
 }
 
 /**
@@ -283,23 +280,6 @@ const chuukaReact = (msg: Discord.Message) => {
   msg.react(Settings.EMOJI_ID.CHUUKA)
 
   console.log('React chuuka')
-}
-
-/**
- * 送信されたメッセージに川崎が含まれていた場合、しろはの絵文字をつける
- * @param msg DiscordからのMessage
- */
-const shirohaReact = (msg: Discord.Message) => {
-  // 川崎の文字が含まれているか確認
-  const match = msg.content.match(/川崎/)
-
-  // 含まれていない場合は終了
-  if (!match) return
-
-  // しろはの絵文字をつける
-  msg.react(Settings.EMOJI_ID.SHIROHA)
-
-  console.log('React shiroha')
 }
 
 /**
