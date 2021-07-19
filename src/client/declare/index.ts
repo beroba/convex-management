@@ -3,7 +3,6 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
 import {AtoE, Current} from '../../io/type'
-import * as lapAndBoss from '../convex/lapAndBoss'
 import * as list from './list'
 import * as status from './status'
 import * as react from './react'
@@ -76,24 +75,24 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  * @param alpha ボス番号
  * @param state 現在の状態
  */
-export const RevivalBoss = async (alpha: AtoE, state: Current) => {
+export const NextBoss = async (alpha: AtoE, state: Current) => {
   // #凸宣言-ボス状況のチャンネルを取得
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
   // ボスの状態を更新
-  status.Update(alpha, state, channel)
+  await status.Update(alpha, state, channel)
 
   // 凸予定一覧を更新
-  list.SetPlan(alpha, state, channel)
+  await list.SetPlan(alpha, state, channel)
 
   // 凸宣言のリアクションを全て外す
   await resetReact(alpha, channel)
 
   // 凸宣言をリセット
-  list.SetUser(alpha, channel)
+  await list.SetUser(alpha, channel)
 
   // メッセージを削除
-  messageDelete(alpha, channel)
+  await messageDelete(channel)
 }
 
 /**
@@ -115,10 +114,9 @@ const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
 
 /**
  * 凸宣言のメッセージを削除する
- * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
  */
-const messageDelete = async (alpha: AtoE, channel: Discord.TextChannel) => {
+const messageDelete = async (channel: Discord.TextChannel) => {
   // メッセージを全て取得
   const msgs = await channel.messages.fetch()
 
@@ -129,7 +127,4 @@ const messageDelete = async (alpha: AtoE, channel: Discord.TextChannel) => {
       .filter(m => !m.author.bot)
       .map(async m => m.delete())
   )
-
-  // 討伐のメッセージを削除
-  lapAndBoss.SubjugateDelete(alpha, channel)
 }

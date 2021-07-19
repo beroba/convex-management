@@ -6,6 +6,7 @@ import * as current from '../../io/current'
 import * as status from '../../io/status'
 import {AtoE, Member} from '../../io/type'
 import * as update from './update'
+import * as etc from '../convex/etc'
 import * as limitTime from '../convex/limitTime'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
@@ -183,9 +184,8 @@ const roleDelete = (member: Member, msg: Discord.Message) => {
 
   // 3凸終了済みの場合
   if (member.end) {
-    // 凸残ロールを削除
+    // ロールを削除
     msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
-    // 凸予定ロールを削除
-    msg.member?.roles.remove(Settings.ROLE_ID.PLAN_CONVEX)
+    etc.RemoveBossRole(msg.member)
   }
 }

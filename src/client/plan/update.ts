@@ -25,8 +25,8 @@ export const Plans = async (msg: Discord.Message): Promise<[Plan[], Plan]> => {
   // 完了の絵文字をつける
   await msg.react(Settings.EMOJI_ID.KANRYOU)
 
-  // 凸予定のロールを付与
-  await msg.member?.roles.add(Settings.ROLE_ID.PLAN_CONVEX)
+  // ボス番号のロールを付与
+  await msg.member?.roles.add(Settings.BOSS_ROLE_ID[plan.alpha])
 
   return [plans, plan]
 }

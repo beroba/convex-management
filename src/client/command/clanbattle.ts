@@ -46,9 +46,9 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Change of convex management'
     }
 
-    case /cb lap/.test(content): {
-      await lapController('/cb lap', content, msg)
-      return 'Change lap'
+    case /cb boss/.test(content): {
+      await lapController('/cb boss', content, msg)
+      return 'Change boss'
     }
 
     case /cb delete plan/.test(content): {
@@ -199,16 +199,18 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
   const args = command.ExtractArgument(_command, _content)
 
   // 引数が無い場合は終了
-  if (!args) return _msg.reply('周回数を指定しなさい')
+  if (!args) return _msg.reply('周回数とボス番号を指定しなさい')
 
   // 周回数とボス番号を取得
   const lap = util.Format(args).replace(/\s|[a-e]/gi, '')
+  const alpha = util.Format(args).replace(/\s|\d/gi, '').toLowerCase()
 
   // 書式が違う場合は終了
   if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
+  if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
 
-  // 任意の周回数へ移動させる
-  await lapAndBoss.UpdateLap(lap.to_n())
+  // 任意のボスへ移動させる
+  await lapAndBoss.UpdateLap(lap.to_n(), <AtoE>alpha)
 
   // メンバー全員の状態を取得
   const members = await status.Fetch()

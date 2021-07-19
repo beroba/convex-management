@@ -42,7 +42,7 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
   ].join('\n')
 
   // 凸宣言のメッセージを編集
-  msg.edit(text)
+  await msg.edit(text)
 }
 
 /**
@@ -90,5 +90,5 @@ export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.Te
 
   // 凸予定一覧を更新
   // 1行目を取り除く
-  msg.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
+  await msg.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
 }

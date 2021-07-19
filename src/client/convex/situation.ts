@@ -170,19 +170,19 @@ const userSorting = (members: Member[], convex?: number, over?: number | '1-3'):
 const bossMessage = async (members: Member[], state: Current): Promise<string> => {
   return 'abcde'
     .split('')
-    .map((a, i) => {
+    .map(a => {
       // 凸宣言者一覧を取得
       const declares = members.filter(m => m.declare === a).map(m => m.name)
 
       // ボスの状況を取得
-      const boss = state[a as AtoE]
+      const boss = state[<AtoE>a]
 
       // ボスのHPを取得
       const hp = Settings.STAGE[state.stage].HP[a]
 
       // prettier-ignore
       return [
-        `${i + 1}ボス \`${boss.name}\` \`${boss.hp}/${hp}\``,
+        `\`${boss.lap}\`週目 \`${boss.name}\` \`${boss.hp}/${hp}\``,
         '```',
         `${declares.length ? declares.join(', ') : ' '}`,
         '```',
