@@ -172,7 +172,15 @@ const bossMessage = async (members: Member[], state: Current): Promise<string> =
     .split('')
     .map(a => {
       // 凸宣言者一覧を取得
-      const declares = members.filter(m => m.declare === a).map(m => m.name)
+      const declares = members
+        .filter(m => m.declare === a)
+        .map(m => {
+          const convex = m.convex
+          const over = '+'.repeat(m.over)
+          const limit = m.limit !== '' ? `, ${m.limit}時` : ''
+
+          return `${m.name}[${convex}${over}${limit}]`
+        })
 
       // ボスの状況を取得
       const boss = state[<AtoE>a]
