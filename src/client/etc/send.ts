@@ -254,6 +254,38 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
 }
 
 /**
+ *送信されたメッセージが俺嘘の場合、#さとりんご名言ツイートからツイートをランダムで送信
+ * @param msg DiscordからのMessage
+ * @return ツイートを送信したかの結果
+ */
+export const OreUsoMsg = async (msg: Discord.Message): Promise<Option<string>> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+
+  // 文字が草か確認
+  if (msg.content !== '俺嘘') return
+
+  // さとりんご名言ツイートのメッセージを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
+  const msgs = (await channel.messages.fetch()).map(m => m)
+
+  // ツイートの一覧を取得
+  const list = msgs
+    .join('\n')
+    .match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/g)
+    ?.map(v => v)
+    .filter(v => /twitter\.com/.test(v))
+
+  if (!list) return
+
+  // リストの数に応じて乱数を作る
+  const rand = createRandNumber(list.length)
+  msg.reply(list[rand])
+
+  return 'Send OreUso'
+}
+
+/**
  #肉に画像が送信された際に肉の絵文字を付ける
  * @param msg DiscordからのMessage
  * @return リアクションしたかの結果

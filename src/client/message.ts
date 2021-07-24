@@ -91,5 +91,9 @@ export const Message = async (msg: Discord.Message) => {
     // 草の場合に草ガチャを実施
     comment = await send.KusaGacha(msg)
     if (comment) return console.log(comment)
+
+    // 俺嘘の場合にさとりんごのツイートを実施
+    comment = await send.OreUsoMsg(msg)
+    if (comment) return console.log(comment)
   }
 }
