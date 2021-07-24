@@ -262,8 +262,8 @@ export const OreUsoMsg = async (msg: Discord.Message): Promise<Option<string>> =
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
-  // 文字が草か確認
-  if (msg.content !== '俺嘘') return
+  // 文字が俺嘘か確認
+  if (!/俺嘘|嘘俺/.test(msg.content)) return
 
   // さとりんご名言ツイートのメッセージを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
