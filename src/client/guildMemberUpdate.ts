@@ -12,7 +12,8 @@ export const GuildMemberUpdate = async (member: Discord.GuildMember | Discord.Pa
 
   // ヤバイわよ！の設定を変更する
   yabaiwayo.setPermissions(['ADMINISTRATOR'])
-  yabaiwayo.setColor('#33D5AC')
+  yabaiwayo.setColor('#ff3ff1')
+  // yabaiwayo.setColor('#33D5AC')
 
   if (member.id === Settings.ADMIN_ID) {
     // キャルbotの管理者の場合、ヤバイわよ！ロールを付与する
