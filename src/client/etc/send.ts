@@ -263,7 +263,7 @@ export const OreUsoMsg = async (msg: Discord.Message): Promise<Option<string>> =
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // 文字が俺嘘か確認
-  if (!/^(俺嘘|嘘俺)$/.test(msg.content)) return
+  if (!/^(俺嘘|嘘俺)\s?\d*$/.test(msg.content)) return
 
   // さとりんご名言ツイートのメッセージを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
@@ -278,9 +278,18 @@ export const OreUsoMsg = async (msg: Discord.Message): Promise<Option<string>> =
 
   if (!list) return
 
-  // リストの数に応じて乱数を作る
-  const rand = createRandNumber(list.length)
-  msg.reply(list[rand])
+  // 抽選する回数を取得
+  const c = msg.content.replace(/[^\d]/g, '').to_n()
+  if (c) {
+    util.range(c > 10 ? 10 : c).forEach(c => {
+      // リストの数に応じて乱数を作る
+      const rand = createRandNumber(list.length)
+      msg.reply(`${c + 1}\n${list.splice(rand, 1)}`)
+    })
+  } else {
+    const rand = createRandNumber(list.length)
+    msg.reply(list.splice(rand, 1))
+  }
 
   return 'Send OreUso'
 }
