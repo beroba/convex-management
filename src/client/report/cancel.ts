@@ -97,6 +97,9 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
   const convex = `残凸数: ${member.convex}、持越数: ${member.over}`
   msg.reply(`取消を行ったわよ\n${convex}`)
 
+  // ボス倒していたかを判別
+  // killConfirm(msg)
+
   // ステータスを更新
   const members = await status.UpdateMember(member)
 
@@ -137,3 +140,16 @@ const endConfirm = (member: Member, msg: Discord.Message): Member => {
 
   return member
 }
+
+// /**
+//  * ボスを倒していた場合、前のボスに戻す
+//  * @param msg DiscordからのMessage
+//  */
+// const killConfirm = (msg: Discord.Message) => {
+//   const content = util.Format(msg.content)
+//   // ボスを倒していなければ終了
+//   if (!/^k|kill|きっl/i.test(content)) return
+
+//   // 前のボスに戻す
+//   lapAndBoss.Previous()
+// }
