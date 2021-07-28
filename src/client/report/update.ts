@@ -30,7 +30,7 @@ export const Status = async (
     // ステータスを更新
     const members = await status.UpdateMember(member).then(members => {
       // 何人目の3凸終了者なのかを報告する
-      const n = members.filter(s => s.end).length + 1
+      const n = members.filter(s => s.end).length
       msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
       return members
