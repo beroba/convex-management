@@ -13,7 +13,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
 
   // 漢字でも動くようにする
   const adjustment = msg.content.replace('　', ' ').replace(/お話し|お話/, 'おはなし')
@@ -48,7 +48,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
 
   // urlの場合は終了
   if (/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content)) return
@@ -141,7 +141,7 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
 
   // カンカンカンの文字が含まれているか確認
   if (!msg.content.match(/カンカンカン/)) return
@@ -167,7 +167,7 @@ export const ArenaGaiji = (msg: Discord.Message): Option<string> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 履歴埋めでなければ終了
   if (msg.content.replace(/^(en|us|zh|cn|es|ru|de|it|vi|vn|gb|ja|jp)/i, '').trim() !== '履歴埋め') return
@@ -194,7 +194,7 @@ export const ArenaGaiji = (msg: Discord.Message): Option<string> => {
  */
 export const YabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字にやばいが含まれているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
@@ -215,7 +215,7 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
  */
 export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字がシャイニートモか確認
   if (msg.content !== 'シャイニートモ') return
@@ -236,7 +236,7 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
  */
 export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字が草か確認
   if (!/^草\s?\d*$/.test(msg.content)) return
@@ -270,7 +270,7 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
  */
 export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字が俺嘘か確認
   if (!/^(俺嘘|嘘俺)\s?\d*$/.test(msg.content)) return

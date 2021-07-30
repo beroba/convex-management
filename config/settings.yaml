@@ -341,8 +341,8 @@ COMMAND_CHANNEL:
     - 運営管理用
     - bot-test
 
-# 特定メッセージを入力した際にbotがあれこれするチャンネル
-THIS_AND_THAT_CHANNEL:
+# キャルの主要どうでも良い機能を実行するチャンネル
+MAJOR_THAT_CHANNEL:
   - 雑談
   - 進行-連携
   - 茶室
@@ -358,6 +358,18 @@ THIS_AND_THAT_CHANNEL:
   - おためしキャルちゃん
   - aki
   - ttsチャンネル
+
+# 特定メッセージを入力した際にbotがあれこれするチャンネル
+NETA_THAT_CHANNEL:
+  - 雑談
+  - 茶室
+  - 茶の間
+  - vc用
+  - vc用2
+  - bot-test
+  - しろはの部屋
+  - times_smicle
+  - おためしキャルちゃん
 
 # 絵文字を押さないチャンネル
 NOT_EMOJI_CHANNEL:
