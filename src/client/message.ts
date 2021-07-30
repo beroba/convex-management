@@ -93,7 +93,7 @@ export const Message = async (msg: Discord.Message) => {
     if (comment) return console.log(comment)
 
     // 俺嘘の場合にさとりんごのツイートを実施
-    comment = await send.OreUsoMsg(msg)
+    comment = await send.UsoOreMsg(msg)
     if (comment) return console.log(comment)
   }
 }

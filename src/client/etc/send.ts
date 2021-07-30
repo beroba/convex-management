@@ -239,16 +239,26 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
   // 文字が草か確認
-  if (msg.content !== '草') return
+  if (!/^草\s?\d*$/.test(msg.content)) return
 
   // ガチャの内容を作成
   const items: string[] = Settings.KUSA.map((v: {NAME: string; RATIO: string}) => Array(v.RATIO).fill(v.NAME)).flat()
 
-  // 乱数を生成
-  const rand = createRandNumber(items.length)
-
-  // 草の画像を送信
-  msg.reply(items[rand], {files: [`./assets/kusa/${items[rand]}.png`]})
+  // 抽選する回数を取得
+  const c = msg.content.replace(/[^1-5]/g, '').to_n()
+  if (c) {
+    util.range(c > 5 ? 5 : c).forEach(_ => {
+      // リストの数に応じて乱数を作る
+      const rand = createRandNumber(items.length)
+      // 草の画像を送信
+      msg.reply(`${items[rand]}:heavy_check_mark:`, {files: [`./assets/kusa/${items[rand]}.png`]})
+    })
+  } else {
+    // リストの数に応じて乱数を作る
+    const rand = createRandNumber(items.length)
+    // 草の画像を送信
+    msg.reply(`${items[rand]}:heavy_check_mark:`, {files: [`./assets/kusa/${items[rand]}.png`]})
+  }
 
   return 'Send Kusa Gacha'
 }
@@ -258,7 +268,7 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
  * @param msg DiscordからのMessage
  * @return ツイートを送信したかの結果
  */
-export const OreUsoMsg = async (msg: Discord.Message): Promise<Option<string>> => {
+export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
 
@@ -267,31 +277,59 @@ export const OreUsoMsg = async (msg: Discord.Message): Promise<Option<string>> =
 
   // さとりんご名言ツイートのメッセージを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
-  const msgs = (await channel.messages.fetch()).map(m => m)
+  const msgs: Discord.Message[] = []
+
+  // 取得するメッセージの上限を設定
+  const limit = 500
+  const rounds = limit / 100 + (limit % 100 ? 1 : 0)
+
+  // 取得した最後のメッセージを保存
+  let last_id = ''
+  for (let i = 0; i < rounds; i++) {
+    // オプションの設定
+    const options: Discord.ChannelLogsQueryOptions = {limit: 100}
+    if (last_id.length > 0) {
+      options.before = last_id
+    }
+
+    // メッセージを取得
+    const messages = (await channel.messages.fetch(options)).map(m => m)
+    msgs.push(...messages)
+
+    // 最後のメッセージを更新
+    last_id = messages.last().id
+    // 最後のメッセージが特定のメッセージなら終了
+    if (last_id === Settings.UsoOreLast) break
+  }
 
   // ツイートの一覧を取得
   const list = msgs
-    .join('\n')
-    .match(/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/g)
-    ?.map(v => v)
-    .filter(v => /twitter\.com/.test(v))
+    .map(m => m.embeds)
+    .reduce((pre, current) => {
+      // 配列を1重にする
+      pre.push(...current)
+      return pre
+    }, [])
+    .map(m => `${m.description}\n${m.url}`)
+    .filter(m => /twitter\.com/.test(m))
 
   if (!list) return
 
   // 抽選する回数を取得
-  const c = msg.content.replace(/[^\d]/g, '').to_n()
+  const c = msg.content.replace(/[^1-5]/g, '').to_n()
   if (c) {
-    util.range(c > 10 ? 10 : c).forEach(c => {
+    util.range(c > 5 ? 5 : c).forEach(c => {
       // リストの数に応じて乱数を作る
       const rand = createRandNumber(list.length)
-      msg.reply(`${c + 1}\n${list.splice(rand, 1)}`)
+      msg.reply(`${c + 1}:heavy_check_mark:\n${list.splice(rand, 1).first().split('\n').last()}`)
     })
   } else {
+    // リストの数に応じて乱数を作る
     const rand = createRandNumber(list.length)
     msg.reply(list.splice(rand, 1))
   }
 
-  return 'Send OreUso'
+  return 'Send UsoOre'
 }
 
 /**

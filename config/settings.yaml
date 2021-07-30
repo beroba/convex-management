@@ -390,6 +390,9 @@ KUSA:
   - {NAME: SSR2, RATIO: 2}
   - {NAME: SSR3, RATIO: 2}
 
+# 嘘俺の最後のメッセージ
+UsoOreLast: '851181026067087381'
+
 # クラバトカテゴリーの場所
 CATEGORY:
   POSITION: 7
