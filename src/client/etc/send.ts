@@ -273,7 +273,7 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
   if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字が俺嘘か確認
-  if (!/^(俺嘘|嘘俺)\s?\d*$/.test(msg.content)) return
+  if (!/^(俺嘘|嘘俺)\s?([1-5]|読み?)*$/.test(msg.content)) return
 
   // さとりんご名言ツイートのメッセージを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
@@ -315,6 +315,15 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
 
   if (!list) return
 
+  // 読み?がある場合は読み上げをする
+  if (/読み?/.test(msg.content)) {
+    // リストの数に応じて乱数を作る
+    const rand = createRandNumber(list.length)
+    msg.reply(list.splice(rand, 1))
+
+    return 'Send UsoOre'
+  }
+
   // 抽選する回数を取得
   const c = msg.content.replace(/[^1-5]/g, '').to_n()
   if (c) {
@@ -326,7 +335,7 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
   } else {
     // リストの数に応じて乱数を作る
     const rand = createRandNumber(list.length)
-    msg.reply(list.splice(rand, 1))
+    msg.reply(list.splice(rand, 1).first().split('\n').last())
   }
 
   return 'Send UsoOre'
