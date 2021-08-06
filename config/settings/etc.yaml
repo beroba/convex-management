@@ -1,0 +1,35 @@
+# キャルbotのID
+CAL_ID: '687337133572096021'
+
+# キャルbotの管理者のID
+ADMIN_ID: '420084355105423367'
+
+# 草の確率
+KUSA:
+  - {NAME: R1, RATIO: 8}
+  - {NAME: R2, RATIO: 7}
+  - {NAME: R3, RATIO: 4}
+  - {NAME: R4, RATIO: 8}
+  - {NAME: R5, RATIO: 5}
+  - {NAME: R6, RATIO: 6}
+  - {NAME: R7, RATIO: 8}
+  - {NAME: R8, RATIO: 4}
+  - {NAME: SR1, RATIO: 6}
+  - {NAME: SR2, RATIO: 6}
+  - {NAME: SR3, RATIO: 7}
+  - {NAME: SR4, RATIO: 7}
+  - {NAME: SR5, RATIO: 6}
+  - {NAME: SR6, RATIO: 6}
+  - {NAME: SR7, RATIO: 5}
+  - {NAME: SSR1, RATIO: 3}
+  - {NAME: SSR2, RATIO: 2}
+  - {NAME: SSR3, RATIO: 2}
+
+# 嘘俺の最後のメッセージ
+UsoOreLast: '851181026067087381'
+
+# URL一覧
+URL:
+  YABAIWAYO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/yabaiwayo_small.png
+  SHINYTMO: https://raw.githubusercontent.com/beroba/convex-management/master/assets/ShinyTmo.png
+  SPREADSHEET: https://docs.google.com/spreadsheets/d/11uWCeVC5kWKYAWVJrHRoYz502Wue6qHyDtbNM4UULso
