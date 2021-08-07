@@ -190,7 +190,7 @@ const bossMessage = async (members: Member[], state: Current): Promise<string> =
 
       // prettier-ignore
       return [
-        `\`${boss.lap}\`週目 \`${boss.name}\` \`${boss.hp}/${hp}\``,
+        `\`${boss.lap}\`周目 \`${boss.name}\` \`${boss.hp}/${hp}\``,
         '```',
         `${declares.length ? declares.join(', ') : ' '}`,
         '```',
