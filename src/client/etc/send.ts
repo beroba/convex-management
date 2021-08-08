@@ -196,7 +196,28 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send Yabai Image'
+  return 'Send ShinyTmo Image'
+}
+
+/**
+ * 送信されたメッセージがたすけて！の場合、たすけて！の画像を送信する
+ * @param msg DiscordからのMessage
+ * @return 画像を送信したかの結果
+ */
+export const TasuketeImage = (msg: Discord.Message): Option<string> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
+
+  // 文字がたすけて！か確認
+  if (/^たすけて(!|！)$/.test(msg.content)) return
+
+  // たすけて！の画像を送信
+  msg.channel.send({files: [Settings.URL.TASUKETE]})
+
+  // 元のメッセージは削除
+  setTimeout(() => msg.delete(), 100)
+
+  return 'Send Tasukete Image'
 }
 
 /**
