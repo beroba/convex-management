@@ -24,7 +24,8 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
   await channel.messages.fetch(react.message.id)
 
   // 送信者と同じ人で無ければ終了
-  if (react.message.author.id !== user.id) return
+  const msg = <Discord.Message>react.message
+  if (msg.author.id !== user.id) return
 
   // メッセージを削除する
   react.message.delete()

@@ -406,5 +406,5 @@ const fetchMessage = async (react: Discord.MessageReaction, alpha: AtoE): Promis
   // キャッシュとして読み込む
   await channel.messages.fetch(msg.id)
 
-  return msg
+  return msg as Discord.Message
 }

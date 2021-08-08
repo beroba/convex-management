@@ -26,16 +26,18 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   await channel.messages.fetch(react.message.id)
 
+  const msg = <Discord.Message>react.message
+
   // 送信者と同じ人で無ければ終了
-  if (react.message.author.id !== user.id) return
+  if (msg.author.id !== user.id) return
 
   // メンバーの状態を取得
-  const member = await status.FetchMember(react.message.author.id)
+  const member = await status.FetchMember(msg.author.id)
   // クランメンバーでなければ終了
   if (!member) return
 
   // 凸状況を元に戻す
-  const members = await statusRestore(react.message, member)
+  const members = await statusRestore(msg, member)
   // 失敗したら終了
   if (!members) return
 
