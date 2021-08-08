@@ -203,7 +203,7 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
   if (!match) return
 
   // ヤバイわよ！の画像を送信
-  msg.channel.send({content: '', files: [Settings.URL.YABAIWAYO]})
+  msg.channel.send({files: [Settings.URL.YABAIWAYO]})
 
   return 'Send Yabai Image'
 }
@@ -221,7 +221,7 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   if (msg.content !== 'シャイニートモ') return
 
   // シャイニートモの画像を送信
-  msg.channel.send({content: '', files: [Settings.URL.SHINYTMO]})
+  msg.channel.send({files: [Settings.URL.SHINYTMO]})
 
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
