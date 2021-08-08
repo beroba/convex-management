@@ -92,8 +92,12 @@ export const Message = async (msg: Discord.Message) => {
     comment = await send.KusaGacha(msg)
     if (comment) return console.log(comment)
 
-    // 俺嘘の場合にさとりんごのツイートを実施
-    comment = await send.UsoOreMsg(msg)
+    // 俺嘘の場合にツイートをランダムに送信
+    comment = await send.SendUsoOre(msg)
+    if (comment) return console.log(comment)
+
+    // アザラシの場合にアザラシシーパラダイスのツイートをランダムに送信
+    comment = await send.SendAguhiyori(msg)
     if (comment) return console.log(comment)
   }
 }

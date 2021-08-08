@@ -258,17 +258,65 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
 }
 
 /**
- *送信されたメッセージが俺嘘の場合、#さとりんご名言ツイートからツイートをランダムで送信
+ * 送信されたメッセージが俺嘘の場合、#さとりんご名言ツイートからツイートをランダムで送信
  * @param msg DiscordからのMessage
  * @return ツイートを送信したかの結果
  */
-export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> => {
+export const SendUsoOre = async (msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
   if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字が俺嘘か確認
   if (!/^(俺嘘|嘘俺)\s?([1-5]|読み?)*$/.test(msg.content)) return
 
+  // #さとりんご名言ツイートからTweet一覧を取得する
+  const list = await fetchTweetList()
+  if (!list) return
+
+  // 読み?がある場合は読み上げをする
+  if (/読み?/.test(msg.content)) {
+    // リストの数に応じて乱数を作る
+    const rand = createRandNumber(list.length)
+    msg.reply(list.splice(rand, 1).first())
+
+    return 'Send UsoOre'
+  }
+
+  // Tweetリストから選別して送信
+  sendTweetLottery(list, msg)
+
+  return 'Send UsoOre'
+}
+
+/**
+ * 送信されたメッセージがアザラシの場合、#さとりんご名言ツイートからアザラシシーパラダイスのツイートをランダムで送信
+ * @param msg DiscordからのMessage
+ * @return ツイートを送信したかの結果
+ */
+export const SendAguhiyori = async (msg: Discord.Message): Promise<Option<string>> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
+
+  // 文字が俺嘘か確認
+  if (!/^アザラシ\s?([1-5]|読み?)*$/.test(msg.content)) return
+
+  // #さとりんご名言ツイートからTweet一覧を取得する
+  let list = await fetchTweetList()
+  if (!list) return
+
+  // アザラシシーパラダイスのツイートだけ選別
+  list = list.filter(m => /aguhiyori/.test(m))
+
+  // Tweetリストから選別して送信
+  sendTweetLottery(list, msg)
+
+  return 'Send UsoOre'
+}
+
+/**
+ * #さとりんご名言ツイートからTweet一覧を取得する
+ */
+const fetchTweetList = async () => {
   // さとりんご名言ツイートのメッセージを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
   const msgs: Discord.Message[] = []
@@ -297,7 +345,7 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
   }
 
   // ツイートの一覧を取得
-  const list = msgs
+  return msgs
     .map(m => m.embeds)
     .reduce((pre, current) => {
       // 配列を1重にする
@@ -306,18 +354,14 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
     }, [])
     .map(m => `${m.description}\n${m.url}`)
     .filter(m => /twitter\.com/.test(m))
+}
 
-  if (!list) return
-
-  // 読み?がある場合は読み上げをする
-  if (/読み?/.test(msg.content)) {
-    // リストの数に応じて乱数を作る
-    const rand = createRandNumber(list.length)
-    msg.reply(list.splice(rand, 1).first())
-
-    return 'Send UsoOre'
-  }
-
+/**
+ * Tweetリストから選別して送信する
+ * @param list Tweetのリスト
+ * @param msg DiscordからのMessage
+ */
+const sendTweetLottery = (list: string[], msg: Discord.Message) => {
   // 抽選する回数を取得
   const c = msg.content.replace(/[^1-5]/g, '').to_n()
   if (c) {
@@ -331,8 +375,6 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
     const rand = createRandNumber(list.length)
     msg.reply(list.splice(rand, 1).first().split('\n').last())
   }
-
-  return 'Send UsoOre'
 }
 
 /**
