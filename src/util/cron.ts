@@ -5,6 +5,7 @@ import * as dateTable from '../io/dateTable'
 import * as status from '../io/status'
 import * as current from '../io/current'
 import * as limitTime from '../client/convex/limitTime'
+import * as over from '../client/convex/over'
 import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
 
@@ -56,6 +57,9 @@ const resetAllPlan = (expression: string) => {
   cron.schedule(expression, () => {
     // 凸予定を全て削除
     plan.DeleteAll()
+
+    // 持越を全て削除
+    over.AllDeleteMsg()
 
     // スプレッドシートに値を反映
     status.ReflectOnSheet()

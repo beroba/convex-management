@@ -53,10 +53,6 @@ export const Message = async (msg: Discord.Message) => {
     // メッセージにカンカンカンが含まれている場合の処理
     comment = send.GoodMorning(msg)
     if (comment) return console.log(comment)
-
-    // メッセージが履歴埋めの場合の処理
-    comment = send.ArenaGaiji(msg)
-    if (comment) return console.log(comment)
   }
 
   // メッセージの先頭がおはなしの場合の処理
