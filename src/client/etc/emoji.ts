@@ -237,7 +237,7 @@ const oyasumiReact = (msg: Discord.Message) => {
  */
 const otukareReact = (msg: Discord.Message) => {
   // おつかれの文字が含まれているか確認
-  const match = msg.content.replace(/お疲れ/g, 'おつかれ').match(/おつかれ/)
+  const match = msg.content.replace(/お疲れ|おつです|おつでした|お先に?失礼|お先です/g, 'おつかれ').match(/おつかれ/)
 
   // 含まれていない場合は終了
   if (!match) return
