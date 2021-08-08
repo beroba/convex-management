@@ -84,7 +84,7 @@ export const Message = async (msg: Discord.Message) => {
     comment = send.ShinyTmoImage(msg)
     if (comment) return console.log(comment)
 
-    // たすけて！の場合に画像を送信
+    // 助けて！の場合に画像を送信
     comment = send.TasuketeImage(msg)
     if (comment) return console.log(comment)
 
