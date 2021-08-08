@@ -102,6 +102,12 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     list.SituationEdit()
   }
 
+  // 3凸終了している場合、持越を全て削除
+  if (member_2.end) {
+    // 持越を持っている人のメッセージを削除
+    over.DeleteMsg(msg.member)
+  }
+
   // 凸状況を更新
   situation.Report(members, state)
 
@@ -211,7 +217,7 @@ const overDelete = (member: Member, carry: boolean, msg: Discord.Message) => {
   // 持越が1つ、2-3つの場合で処理を分ける
   if (member.over === 0) {
     // 持越を持っている人のメッセージを削除
-    over.AllDelete(msg.member)
+    over.DeleteMsg(msg.member)
   } else if (/[1-2]/.test(member.over.to_s())) {
     // #進行-連携のチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
