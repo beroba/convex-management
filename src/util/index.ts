@@ -74,10 +74,7 @@ export const GetCalInfo = (): Option<Discord.GuildMember> => {
  * @param channel 比較するチャンネル
  * @return 真偽値
  */
-export const IsChannel = (
-  array: string[],
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
-): boolean => {
+export const IsChannel = (array: string[], channel: Discord.TextBasedChannels): boolean => {
   return array.some((c: string) => c === (channel as Discord.TextChannel).name)
 }
 

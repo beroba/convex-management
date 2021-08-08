@@ -203,7 +203,7 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
   if (!match) return
 
   // ヤバイわよ！の画像を送信
-  msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
+  msg.channel.send({content: '', files: [Settings.URL.YABAIWAYO]})
 
   return 'Send Yabai Image'
 }
@@ -221,7 +221,7 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   if (msg.content !== 'シャイニートモ') return
 
   // シャイニートモの画像を送信
-  msg.channel.send('', {files: [Settings.URL.SHINYTMO]})
+  msg.channel.send({content: '', files: [Settings.URL.SHINYTMO]})
 
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
@@ -251,13 +251,19 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
       // リストの数に応じて乱数を作る
       const rand = createRandNumber(items.length)
       // 草の画像を送信
-      msg.reply(`${items[rand]}:heavy_check_mark:`, {files: [`./assets/kusa/${items[rand]}.png`]})
+      msg.reply({
+        content: `${items[rand]}:heavy_check_mark:`,
+        files: [`./assets/kusa/${items[rand]}.png`],
+      })
     })
   } else {
     // リストの数に応じて乱数を作る
     const rand = createRandNumber(items.length)
     // 草の画像を送信
-    msg.reply(`${items[rand]}:heavy_check_mark:`, {files: [`./assets/kusa/${items[rand]}.png`]})
+    msg.reply({
+      content: `${items[rand]}:heavy_check_mark:`,
+      files: [`./assets/kusa/${items[rand]}.png`],
+    })
   }
 
   return 'Send Kusa Gacha'
@@ -319,7 +325,7 @@ export const UsoOreMsg = async (msg: Discord.Message): Promise<Option<string>> =
   if (/読み?/.test(msg.content)) {
     // リストの数に応じて乱数を作る
     const rand = createRandNumber(list.length)
-    msg.reply(list.splice(rand, 1))
+    msg.reply(list.splice(rand, 1).first())
 
     return 'Send UsoOre'
   }

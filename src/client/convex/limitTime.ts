@@ -97,21 +97,21 @@ const fetchLimit = async (id: string): Promise<string> => {
     first.reactions.cache
       .map(r => r)
       .filter(r => r.users.cache.map(u => u.id).some(u => u === id))
-      .map(r => r.emoji.name.replace('_', ''))
+      .map(r => r.emoji.name?.replace('_', ''))
   )
   // 後半の時間を取得
   const l = await Promise.all(
     latter.reactions.cache
       .map(r => r)
       .filter(r => r.users.cache.map(u => u.id).some(u => u === id))
-      .map(r => r.emoji.name.replace('_', ''))
+      .map(r => r.emoji.name?.replace('_', ''))
   )
 
   // 前半と後半を結合
   const list = f.concat(l)
 
   // 1番後ろの値を取得、なければ空
-  return list.last() !== undefined ? list.last() : ''
+  return list.last() !== undefined ? <string>list.last() : ''
 }
 
 /**

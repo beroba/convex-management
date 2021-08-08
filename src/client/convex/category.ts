@@ -16,12 +16,12 @@ export const Create = async (year: number, month: number, msg: Discord.Message) 
 
   // カテゴリーの作成
   const adoptCategory = await msg.guild?.channels.create(adoptTitle, {
-    type: 'category',
+    type: 'GUILD_CATEGORY',
     position: Settings.CATEGORY.POSITION,
     permissionOverwrites: adoptPermit,
   })
   const draftCategory = await msg.guild?.channels.create(draftTitle, {
-    type: 'category',
+    type: 'GUILD_CATEGORY',
     position: Settings.CATEGORY.POSITION,
     permissionOverwrites: draftPermit,
   })
@@ -29,13 +29,13 @@ export const Create = async (year: number, month: number, msg: Discord.Message) 
   // チャンネルの作成し初回メッセージを送信
   await Promise.all(
     adoptChannels.map(async name => {
-      const c = await msg.guild?.channels.create(name, {type: 'text', parent: adoptCategory?.id})
+      const c = await msg.guild?.channels.create(name, {type: 'GUILD_TEXT', parent: adoptCategory?.id})
       c?.send(name)
     })
   )
   await Promise.all(
     draftChannels.map(async name => {
-      const c = await msg.guild?.channels.create(name, {type: 'text', parent: draftCategory?.id})
+      const c = await msg.guild?.channels.create(name, {type: 'GUILD_TEXT', parent: draftCategory?.id})
       c?.send(name)
     })
   )
@@ -57,7 +57,7 @@ export const Delete = async (year: number, month: number, msg: Discord.Message) 
   if (!categorys?.length) return msg.reply(`${year}年${month}月クラバトなんてないんだけど！`)
 
   for (const category of categorys) {
-    const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
+    const channels = category.guild.channels.cache.filter(c => c.parentId === category.id)
 
     // カテゴリとチャンネルを削除
     await category?.delete()
