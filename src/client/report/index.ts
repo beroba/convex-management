@@ -198,7 +198,7 @@ const peportConfirm = (
   // prettier-ignore
   msg.reply([
     `\`${boss.lap}\`周目 \`${boss.name}\` \`${hp}/${maxHP}\``,
-    `残凸数: ${member.convex}、持越数: ${member.over}`,
+    `残凸数: \`${member.convex}\`、持越数: \`${member.over}\``,
     member.end ? `\`${endN}\`人目の3凸終了よ！` : '',
   ].join('\n'))
 }
