@@ -10,7 +10,7 @@ import {Member} from '../../io/type'
  */
 export const Status = async (member: Member, content: string): Promise<[Member[], Option<Member>]> => {
   // 現在の凸状況を履歴に残す
-  member = saveHistory(member)
+  member = saveHistory(member, content)
 
   // 凸数と持越の状態を更新する
   member = statusUpdate(member, content)
@@ -32,9 +32,9 @@ export const Status = async (member: Member, content: string): Promise<[Member[]
  * @param member 更新するメンバー
  * @return 更新したメンバー
  */
-const saveHistory = (member: Member): Member => {
+const saveHistory = (member: Member, content: string): Member => {
   // 現在の凸状況を履歴に残す
-  member.history = `${member.convex}${'+'.repeat(member.over)}`
+  member.history = `${member.convex}${'+'.repeat(member.over)}|${content}`
   return member
 }
 

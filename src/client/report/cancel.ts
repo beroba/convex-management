@@ -114,7 +114,7 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
  * @return 2回キャンセルしていたかの真偽値
  */
 const confirmCancelTwice = (member: Member): boolean => {
-  return `${member.convex}${'+'.repeat(member.over)}` === member.history
+  return `${member.convex}${'+'.repeat(member.over)}` === member.history.split('|').first()
 }
 
 /**
@@ -123,8 +123,9 @@ const confirmCancelTwice = (member: Member): boolean => {
  * @return 更新したメンバー
  */
 const rollback = (member: Member): Member => {
-  member.convex = member.history[0].to_n()
-  member.over = member.history.match(/\+/g) ? <number>member.history.match(/\+/g)?.length : 0
+  const history = member.history.split('|').first()
+  member.convex = history[0].to_n()
+  member.over = history.match(/\+/g) ? <number>history.match(/\+/g)?.length : 0
   return member
 }
 
