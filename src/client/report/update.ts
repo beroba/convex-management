@@ -34,7 +34,7 @@ export const Status = async (member: Member, content: string): Promise<[Member[]
  */
 const saveHistory = (member: Member, content: string): Member => {
   // 現在の凸状況を履歴に残す
-  member.history = `${member.convex}${'+'.repeat(member.over)}|${content}`
+  member.history = `${member.convex}${'+'.repeat(member.over)}|${member.declare}${content}`
   return member
 }
 
