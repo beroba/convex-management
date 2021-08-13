@@ -37,6 +37,6 @@
     "pieces-each": "^1.0.0",
     "throw-env": "^1.0.1",
     "type-of-option": "^1.0.1",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.5"
   }
 }
