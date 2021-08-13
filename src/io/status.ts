@@ -247,3 +247,37 @@ export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
       }
     })
 }
+
+/**
+ * スプレッドシートの名前をbotへ適用する
+ */
+export const SetNamesFromSheet = async () => {
+  // 情報のシートを取得
+  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+
+  // メンバー全体の状態を取得
+  let members = await Fetch()
+
+  // メンバーの名前だけスプレッドシートの値に変更
+  const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
+  members = PiecesEach(cells, 3)
+    .filter(util.Omit)
+    .map(u => {
+      const id = u[1]
+      const member = <Member>members.find(m => m.id === id)
+      return {
+        name: u[0],
+        id: member.id,
+        limit: member.limit,
+        declare: member.declare,
+        carry: member.carry,
+        convex: member.convex,
+        over: member.over,
+        end: member.end,
+        history: member.history,
+      }
+    })
+
+  // キャルステータスを更新
+  await Update(members)
+}
