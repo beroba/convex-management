@@ -5,10 +5,14 @@ import * as command from './'
 import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
-import * as category from '../convex/category'
+import * as schedule from '../../io/schedule'
+import * as status from '../../io/status'
 import * as activityTime from '../convex/activityTime'
+import * as category from '../convex/category'
 import * as etc from '../convex/etc'
 import * as react from '../convex/react'
+import * as situation from '../convex/situation'
+import * as list from '../plan/list'
 import * as plan from '../plan/delete'
 
 /**
@@ -249,19 +253,32 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
   // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
-  // 引数が無い場合は終了
-  if (!args) return _msg.reply('更新したいプレイヤーと名前を指定しなさい')
+  // 引数が無い場合はシートの名前を適用
+  if (!args) {
+    // スプレッドシートの名前を適用
+    await status.SetNamesFromSheet()
 
-  // 変更先の名前を取得
-  const name = util
-    .Format(args)
-    .replace(/<.+>/, '') // プレイヤーIDを省く
-    .trim()
+    _msg.reply('スプレッドシートの名前を適用したわよ！')
+  } else {
+    // 変更先の名前を取得
+    const name = util
+      .Format(args)
+      .replace(/<.+>/, '') // プレイヤーIDを省く
+      .trim()
 
-  // 名前を設定する
-  await etc.SetName(name, _msg)
+    // 名前を設定する
+    await etc.SetName(name, _msg)
 
-  _msg.reply('名前を更新したわよ！')
+    _msg.reply('名前を更新したわよ！')
+  }
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+  situation.Report(members)
+
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
 }
 
 /**
