@@ -310,7 +310,7 @@ export const SendAguhiyori = async (msg: Discord.Message): Promise<Option<string
   // Tweetリストから選別して送信
   sendTweetLottery(list, msg)
 
-  return 'Send UsoOre'
+  return 'Send Aguhiyori'
 }
 
 /**
