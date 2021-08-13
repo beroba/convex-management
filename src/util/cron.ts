@@ -15,7 +15,7 @@ import * as plan from '../client/plan/delete'
  */
 export const CronOperation = () => {
   setRemainConvex('0 10 5 * * *')    // 05:10
-  resetAllPlan('0 50 4 * * *')       // 04:50
+  resetAllConvex('0 50 4 * * *')       // 04:50
   removeTaskillRoll('0 0 5 * * *')   // 05:00
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
@@ -53,13 +53,23 @@ const setRemainConvex = (expression: string) => {
  * 凸予定を全て削除するクーロンを作成する
  * @param expression クーロン式
  */
-const resetAllPlan = (expression: string) => {
+const resetAllConvex = (expression: string) => {
   cron.schedule(expression, () => {
     // 凸予定を全て削除
     plan.DeleteAll()
 
     // 持越を全て削除
     over.AllDeleteMsg()
+
+    // 凸残ロールを全て削除
+    // べろばあのクランメンバー一覧を取得
+    const clanMembers = util
+      .GetGuild()
+      ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
+      ?.members.map(m => m)
+
+    // クランメンバーに凸残ロールを付与する
+    clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
 
     // スプレッドシートに値を反映
     status.ReflectOnSheet()
