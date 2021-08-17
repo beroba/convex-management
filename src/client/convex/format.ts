@@ -18,6 +18,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
   // TLの整形をする
   const content = (await new Generate(tl, time, flag) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
+    .saveDescription()  // 説明書きを退避
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .extendFormat()) // smicle好みにTLを修正する
     .timeParser() // 時間のパースをする
@@ -25,6 +26,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
     .alignVertically() // TLの縦を合わせる
     .removeSomeSecond() // 先頭が同じ秒数なら消す
     .carryOverCalc() // 持越計算をする
+    .restoreDescription() // 説明書きを復元
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -33,6 +35,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
 class Generate {
   tl: string
   time: Option<number>
+  description: TLList = {index: -1, list: []}
   flag: boolean
 
   /**
@@ -80,6 +83,34 @@ class Generate {
   }
 
   /**
+   * 説明書きを退避させる
+   * @return this
+   */
+  saveDescription(): this {
+    const tl = this.tl.split('\n')
+
+    this.description.index = tl.indexOf('クランモード')
+    // 説明書きがある場合は保存
+    if (~this.description.index) {
+      this.description.list = tl.splice(this.description.index, 13)
+    }
+
+    this.tl = tl.join('\n')
+    return this
+  }
+
+  /**
+   * 括弧の前後スペースを調整する
+   * @return this
+   */
+  bracketSpaceAdjustment(): this {
+    this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')')
+    this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ')
+    this.tl = this.tl.replace(/^ \(/g, '(')
+    return this
+  }
+
+  /**
    * smicle好みにTLを修正する
    * @returns this
    */
@@ -87,18 +118,10 @@ class Generate {
     // `/cb tle`じゃない場合は終了
     if (!this.flag) return this
 
-    let tl: string[]
-    tl = this.tl.split('\n')
-
-    // 説明の保存
-    const explanation: TLList = {}
-    explanation.index = tl.indexOf('クランモード')
-    explanation.list = tl.splice(explanation.index, 13)
-
     // バトル開始の行を取り除く
+    const tl = this.tl.split('\n')
     const i = tl.indexOf('バトル開始')
     tl.splice(i, 1)
-
     this.tl = tl.join('\n')
 
     // 記号の部分を修正
@@ -137,17 +160,12 @@ class Generate {
     // リストをもとに修正
     modify.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'gi'), l.after)))
 
-    // 説明を元に戻す
-    tl = this.tl.split('\n')
-    tl.splice(explanation.index, 0, ...explanation.list)
-    this.tl = tl.join('\n')
-
     return this
   }
 
   /**
    * #tl修正の名前変更一覧からTL修正用のリストを作成
-   * @returns TL修正用のリスト
+   * @return TL修正用のリスト
    */
   async fetchTextToModify(): Promise<TLFormat[]> {
     // TL修正で使うチャンネルを取得
@@ -164,17 +182,6 @@ class Generate {
       .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
       .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
       .map(l => ({before: l[0], after: l[1]})) // TLFormatの形に変更
-  }
-
-  /**
-   * 括弧の前後スペースを調整する
-   * @return this
-   */
-  bracketSpaceAdjustment(): this {
-    this.tl = this.tl.replace(/ *\( */g, '(').replace(/ *\) */g, ')')
-    this.tl = this.tl.replace(/\(/g, ' (').replace(/\)/g, ') ')
-    this.tl = this.tl.replace(/^ \(/g, '(')
-    return this
   }
 
   /**
@@ -410,13 +417,29 @@ class Generate {
 
       /**
        * 秒数を順番に取り出し、カウントを進める
-       * @returns 秒数
+       * @return 秒数
        */
       pop() {
         return this.list[this.count++]
       }
     }
     return new Order(list)
+  }
+
+  /**
+   * 説明書きを復元する
+   * @return this
+   */
+  restoreDescription(): this {
+    const tl = this.tl.split('\n')
+
+    // 説明書きがある場合は復元
+    if (~this.description.index) {
+      tl.splice(this.description.index, 0, ...this.description.list)
+    }
+
+    this.tl = tl.join('\n')
+    return this
   }
 
   /**

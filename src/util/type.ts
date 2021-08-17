@@ -4,8 +4,8 @@
  * @property list リスト本体
  */
 export type TLList = {
-  index?: number
-  list?: string[]
+  index: number
+  list: string[]
 }
 
 /**
