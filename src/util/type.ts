@@ -1,4 +1,14 @@
 /**
+ * TL保存用のリスト
+ * @property index リストの場所
+ * @property list リスト本体
+ */
+export type TLList = {
+  index?: number
+  list?: string[]
+}
+
+/**
  * TL修正用の前後
  * @property before 変更前のTL
  * @property after 変更後のTL

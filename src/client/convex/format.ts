@@ -3,7 +3,7 @@ import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import {TLFormat} from '../../util/type'
+import {TLList, TLFormat} from '../../util/type'
 
 /**
  * TLを正しい書式に整形させる、
@@ -87,11 +87,19 @@ class Generate {
     // `/cb tle`じゃない場合は終了
     if (!this.flag) return this
 
+    let tl: string[]
+    tl = this.tl.split('\n')
+
+    // 説明の保存
+    const explanation: TLList = {}
+    explanation.index = tl.indexOf('クランモード')
+    explanation.list = tl.splice(explanation.index, 13)
+
     // バトル開始の行を取り除く
-    this.tl = this.tl
-      .split('\n')
-      .filter(l => !/バトル開始/.test(l))
-      .join('\n')
+    const i = tl.indexOf('バトル開始')
+    tl.splice(i, 1)
+
+    this.tl = tl.join('\n')
 
     // 記号の部分を修正
     this.tl = this.tl
@@ -125,9 +133,14 @@ class Generate {
       .replace(/\s討伐/, ' バトル終了')
 
     // TL修正用のリストを作成
-    const list = await this.fetchTextToModify()
-    // リストを元に修正
-    list.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'gi'), l.after)))
+    const modify = await this.fetchTextToModify()
+    // リストをもとに修正
+    modify.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'gi'), l.after)))
+
+    // 説明を元に戻す
+    tl = this.tl.split('\n')
+    tl.splice(explanation.index, 0, ...explanation.list)
+    this.tl = tl.join('\n')
 
     return this
   }
@@ -175,6 +188,7 @@ class Generate {
     const tl = this.tl.split('')
 
     for (let i = 0; i < tl.length; i++) {
+      /*
       // 星の場合は数字の先まで飛ばす
       if (/★/.test(tl[i])) {
         i = this.countUpToChar(tl, i + 1)
@@ -192,6 +206,7 @@ class Generate {
         i = this.countUpToChar(tl, i + 4)
         continue
       }
+      // */
 
       // 数字以外は次へ
       if (!/\d/.test(tl[i])) continue
