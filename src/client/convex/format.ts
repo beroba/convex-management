@@ -41,11 +41,11 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .extendFormat()) // smicle好みにTLを修正する
     .timeParser() // 時間のパースをする
-    .toCodeBlock() // コードブロックにする
     .alignVertically() // TLの縦を合わせる
     .removeSomeSecond() // 先頭が同じ秒数なら消す
     .carryOverCalc() // 持越計算をする
     .restoreDescription() // 説明書きを復元
+    .toCodeBlock() // コードブロックにする
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -108,7 +108,8 @@ class Generate {
   saveDescription(): this {
     const tl = this.tl.split('\n')
 
-    this.description.index = tl.indexOf('クランモード')
+    this.description.index = tl.findIndex(l => /クランモード/.test(l))
+
     // 説明書きがある場合は保存
     if (~this.description.index) {
       this.description.list = tl.splice(this.description.index, 13)
@@ -137,21 +138,23 @@ class Generate {
     // `/cb tle`じゃない場合は終了
     if (!this.flag) return this
 
-    // バトル開始の行を取り除く
+    // 不要な行を取り除く
     const tl = this.tl.split('\n')
-    const i = tl.indexOf('バトル開始')
-    tl.splice(i, 1)
+    ;[/バトル開始/, /ユニオンバースト発動時間/].forEach(t => {
+      const i = tl.findIndex(l => t.test(l))
+      if (~i) tl.splice(i, 1)
+    })
     this.tl = tl.join('\n')
 
     // 記号を修正
     {
       const list: TLFormat[] = [
-        ['\n{2,}', '\n'],
-        ['=', ''],
-        ['-', ''],
-        ['~', ''],
-        ['\\( ?\\(', '('],
-        ['\\) ?\\)', ')'],
+        ['\n{2,}', '\n'], // 複数の改行を削除
+        ['=', ''], // =は不要なので削除
+        ['-', ''], // -は不要なので削除
+        ['~', ''], // ~は不要なので削除
+        ['\\( ?\\(', '('], // 2重になっている括弧を1つにする
+        ['\\) ?\\)', ')'], // 2重になっている括弧を1つにする
       ].map(this.toTLFormat)
       this.tl = this.convertTLFormat(list, this.tl)
     }
@@ -167,6 +170,7 @@ class Generate {
         ['オートオン', 'オートON'],
         ['オートオフ', 'オートOFF'],
         ['^オートON\n', '――――オートON――――\n'],
+        ['^オートOFF\n', '――――オートON――――\n'],
         ['\nオートON\n', '\n――――オートON――――\n'],
         ['\nオートOFF\n', '\n――――オートOFF――――\n'],
       ].map(this.toTLFormat)
@@ -179,8 +183,8 @@ class Generate {
         ['ub', 'UB'],
         ['敵UB', 'ボスUB'],
         ['hit', 'Hit'],
-        [' 連打$', ''],
-        [' 連打\n', '\n'],
+        [' ?連打$', ''],
+        [' ?連打\n', '\n'],
         ['s討伐', ' バトル終了'],
       ].map(this.toTLFormat)
       this.tl = this.convertTLFormat(list, this.tl)
@@ -247,26 +251,6 @@ class Generate {
     const tl = this.tl.split('')
 
     for (let i = 0; i < tl.length; i++) {
-      /*
-      // 星の場合は数字の先まで飛ばす
-      if (/★/.test(tl[i])) {
-        i = this.countUpToChar(tl, i + 1)
-        continue
-      }
-
-      // Lvの場合は数字の先まで飛ばす
-      if (/Lv/i.test(tl[i] + tl[i + 1])) {
-        i = this.countUpToChar(tl, i + 2)
-        continue
-      }
-
-      // RANKの場合は数字の先まで飛ばす
-      if (/RANK/i.test(tl[i] + tl[i + 1] + tl[i + 2] + tl[i + 3])) {
-        i = this.countUpToChar(tl, i + 4)
-        continue
-      }
-      // */
-
       // 数字以外は次へ
       if (!/\d/.test(tl[i])) continue
 
@@ -341,17 +325,6 @@ class Generate {
       if (!/\d/.test(tl[i])) break
     }
     return i
-  }
-
-  /**
-   * コードブロックじゃない場合はコードブロックにする
-   * @return this
-   */
-  toCodeBlock(): this {
-    if (!/\`\`\`/.test(this.tl)) {
-      this.tl = `\`\`\`\n` + this.tl + `\`\`\``
-    }
-    return this
   }
 
   /**
@@ -491,6 +464,17 @@ class Generate {
     }
 
     this.tl = tl.join('\n')
+    return this
+  }
+
+  /**
+   * コードブロックじゃない場合はコードブロックにする
+   * @return this
+   */
+  toCodeBlock(): this {
+    if (!/\`\`\`/.test(this.tl)) {
+      this.tl = `\`\`\`\n` + this.tl + `\`\`\``
+    }
     return this
   }
 
