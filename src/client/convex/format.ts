@@ -84,7 +84,7 @@ class Generate {
    * @returns this
    */
   async extendFormat(): Promise<this> {
-    // キャルbotの管理者じゃない場合は終了
+    // `/cb tle`じゃない場合は終了
     if (!this.flag) return this
 
     // バトル開始の行を取り除く
@@ -93,19 +93,41 @@ class Generate {
       .filter(l => !/バトル開始/.test(l))
       .join('\n')
 
-    // 共通の部分を修正
+    // 記号の部分を修正
     this.tl = this.tl
+      .replace(/\n{2,}/g, '\n')
       .replace(/=/g, '')
       .replace(/-/g, '')
-      .replace(/オート/g, '(オート)')
+      .replace(/~/g, '')
       .replace(/\( ?\(/g, '(')
       .replace(/\) ?\)/g, ')')
+
+    // オートを修正
+    this.tl = this.tl
+      .replace(/ オート /g, ' (オート) ')
+      .replace(/ ?オート$/g, ' (オート)')
+      .replace(/ ?オート\n/g, ' (オート)\n')
+      .replace(/オートon/g, 'オートON')
+      .replace(/オートoff/g, 'オートOFF')
+      .replace(/オートオン/g, 'オートON')
+      .replace(/オートオフ/g, 'オートOFF')
+      .replace(/^オートON\n/gi, '――――オートON――――\n')
+      .replace(/\nオートON\n/gi, '\n――――オートON――――\n')
+      .replace(/\nオートOFF\n/gi, '\n――――オートOFF――――\n')
+
+    // その他の部分を修正
+    this.tl = this.tl
+      .replace(/ub/g, 'UB')
+      .replace(/敵UB/gi, 'ボスUB')
+      .replace(/hit/g, 'Hit')
+      .replace(/ 連打$/g, '')
+      .replace(/ 連打\n/g, '\n')
       .replace(/\s討伐/, ' バトル終了')
 
     // TL修正用のリストを作成
     const list = await this.fetchTextToModify()
     // リストを元に修正
-    list.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'ig'), l.after)))
+    list.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'gi'), l.after)))
 
     return this
   }
