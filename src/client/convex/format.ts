@@ -3,7 +3,26 @@ import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import {TLList, TLFormat} from '../../util/type'
+
+/**
+ * TL保存用のリスト
+ * @property index リストの場所
+ * @property list リスト本体
+ */
+type TLList = {
+  index: number
+  list: string[]
+}
+
+/**
+ * TL修正で使う変更用文字列の前後
+ * @property before 変更前の文字列
+ * @property after 変更後の文字列
+ */
+type TLFormat = {
+  before: string
+  after: string
+}
 
 /**
  * TLを正しい書式に整形させる、
@@ -124,50 +143,83 @@ class Generate {
     tl.splice(i, 1)
     this.tl = tl.join('\n')
 
-    // 記号の部分を修正
-    this.tl = this.tl
-      .replace(/\n{2,}/g, '\n')
-      .replace(/=/g, '')
-      .replace(/-/g, '')
-      .replace(/~/g, '')
-      .replace(/\( ?\(/g, '(')
-      .replace(/\) ?\)/g, ')')
+    // 記号を修正
+    {
+      const list: TLFormat[] = [
+        ['\n{2,}', '\n'],
+        ['=', ''],
+        ['-', ''],
+        ['~', ''],
+        ['\\( ?\\(', '('],
+        ['\\) ?\\)', ')'],
+      ].map(this.toTLFormat)
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
 
     // オートを修正
-    this.tl = this.tl
-      .replace(/ オート /g, ' (オート) ')
-      .replace(/ ?オート$/g, ' (オート)')
-      .replace(/ ?オート\n/g, ' (オート)\n')
-      .replace(/オートon/g, 'オートON')
-      .replace(/オートoff/g, 'オートOFF')
-      .replace(/オートオン/g, 'オートON')
-      .replace(/オートオフ/g, 'オートOFF')
-      .replace(/^オートON\n/gi, '――――オートON――――\n')
-      .replace(/\nオートON\n/gi, '\n――――オートON――――\n')
-      .replace(/\nオートOFF\n/gi, '\n――――オートOFF――――\n')
+    {
+      const list: TLFormat[] = [
+        [' オート ', ' (オート) '],
+        [' ?オート$', ' (オート)'],
+        [' ?オート\n', ' (オート)\n'],
+        ['オートon', 'オートON'],
+        ['オートoff', 'オートOFF'],
+        ['オートオン', 'オートON'],
+        ['オートオフ', 'オートOFF'],
+        ['^オートON\n', '――――オートON――――\n'],
+        ['\nオートON\n', '\n――――オートON――――\n'],
+        ['\nオートOFF\n', '\n――――オートOFF――――\n'],
+      ].map(this.toTLFormat)
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
 
     // その他の部分を修正
-    this.tl = this.tl
-      .replace(/ub/g, 'UB')
-      .replace(/敵UB/gi, 'ボスUB')
-      .replace(/hit/g, 'Hit')
-      .replace(/ 連打$/g, '')
-      .replace(/ 連打\n/g, '\n')
-      .replace(/\s討伐/, ' バトル終了')
+    {
+      const list: TLFormat[] = [
+        ['ub', 'UB'],
+        ['敵UB', 'ボスUB'],
+        ['hit', 'Hit'],
+        [' 連打$', ''],
+        [' 連打\n', '\n'],
+        ['s討伐', ' バトル終了'],
+      ].map(this.toTLFormat)
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
 
-    // TL修正用のリストを作成
-    const modify = await this.fetchTextToModify()
-    // リストをもとに修正
-    modify.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'gi'), l.after)))
+    // #TL修正用のリストの文字列を修正
+    {
+      const list = await this.fetchTextToModify()
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
 
     return this
+  }
+
+  /**
+   * 変更前後の文字配列をTLFormatの形式に変換して返す
+   * @param l 変更前と変更後の文字列
+   * @return 変換した値
+   */
+  private toTLFormat(l: string[]): TLFormat {
+    return {before: l[0], after: l[1]}
+  }
+
+  /**
+   * 渡されたリストを元にTLを変更する
+   * @param list TLFormatのリスト
+   * @param tl 変更するTL
+   * @return 変更後のTL
+   */
+  private convertTLFormat(list: TLFormat[], tl: string): string {
+    list.forEach(l => (tl = tl.replace(new RegExp(l.before, 'gi'), l.after)))
+    return tl
   }
 
   /**
    * #tl修正の名前変更一覧からTL修正用のリストを作成
    * @return TL修正用のリスト
    */
-  async fetchTextToModify(): Promise<TLFormat[]> {
+  private async fetchTextToModify(): Promise<TLFormat[]> {
     // TL修正で使うチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
     const msgs = (await channel.messages.fetch()).map(m => m)
@@ -181,7 +233,7 @@ class Generate {
       .filter(l => l) // 空の行を取り除く
       .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
       .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
-      .map(l => ({before: l[0], after: l[1]})) // TLFormatの形に変更
+      .map(this.toTLFormat) // TLFormatの形に変更
   }
 
   /**
