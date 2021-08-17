@@ -108,11 +108,11 @@ class Generate {
   saveDescription(): this {
     const tl = this.tl.split('\n')
 
-    this.description.index = tl.findIndex(l => /クランモード/.test(l))
+    this.description.index = tl.findIndex(l => /^クランモード/.test(l))
 
     // 説明書きがある場合は保存
     if (~this.description.index) {
-      this.description.list = tl.splice(this.description.index, 13)
+      this.description.list = tl.splice(this.description.index, 12)
     }
 
     this.tl = tl.join('\n')
