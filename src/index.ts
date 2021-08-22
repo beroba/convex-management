@@ -44,7 +44,7 @@ Client.on('guildMemberAdd', member => GuildMemberAdd(member))
 Client.on('guildMemberUpdate', (_, member) => GuildMemberUpdate(member))
 
 // メッセージが送信された際に実行
-Client.on('message', msg => Message(msg))
+Client.on('messageCreate', msg => Message(msg))
 
 // メッセージが削除された際に実行
 Client.on('messageDelete', msg => MessageDelete(msg))

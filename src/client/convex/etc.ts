@@ -1,9 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {AtoA} from 'alphabet-to-number'
 import * as status from '../../io/status'
-import * as spreadsheet from '../../util/spreadsheet'
 import {User} from '../../io/type'
 import * as util from '../../util'
 import * as situation from './situation'
@@ -100,58 +98,6 @@ export const UpdateMembers = async (msg: Discord.Message) => {
 
   // ステータスを更新
   await status.UpdateUsers(users)
-
-  // スプレッドシートに名前とidを保存する
-  await fetchNameAndID(users, Settings.INFORMATION_SHEET.SHEET_NAME)
-}
-
-/**
- * 妹クランのメンバー一覧を更新する
- * @param msg DiscordからのMessage
- */
-export const UpdateSisters = async (msg: Discord.Message) => {
-  // 妹クランメンバー一覧をニックネームで取得
-  const users: Option<User[]> = msg.guild?.roles.cache
-    .get(Settings.ROLE_ID.SISTER_MEMBERS)
-    ?.members.map(m => ({
-      name: util.GetUserName(m),
-      id: m.id,
-      limit: '',
-      declare: '',
-      carry: false,
-    }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
-
-  // スプレッドシートに名前とidを保存する
-  await fetchNameAndID(users, Settings.SISTER_SHEET.SHEET_NAME)
-}
-
-/**
- * 指定されたシートにメンバーの名前とidを保存する
- * @param members メンバーの情報
- * @param name 書き込むシートの名前
- */
-const fetchNameAndID = async (users: Option<User[]>, name: string) => {
-  // 値がない場合は終了
-  if (!users) return
-
-  // 書き込み先のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(name)
-
-  // メンバー一覧を更新
-  await Promise.all(
-    users.map(async (m, i) => {
-      const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
-
-      // 名前を更新
-      const name_cell = await sheet.getCell(`${col}${i + 3}`)
-      name_cell.setValue(m.name)
-
-      // idを更新
-      const id_cell = await sheet.getCell(`${AtoA(col, 1)}${i + 3}`)
-      id_cell.setValue(m.id)
-    })
-  )
 }
 
 /**
@@ -178,9 +124,6 @@ export const SetName = async (name: string, msg: Discord.Message) => {
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
-
-  // メンバーの名前をスプレッドシートに反映させる
-  status.ReflectOnName(member)
 
   // 凸状況に報告
   situation.Report(members)

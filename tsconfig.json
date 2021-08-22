@@ -63,6 +63,5 @@
       "src/util/cron.ts",
       "src/util/index.ts",
       "src/util/prototype.ts",
-      "src/util/spreadsheet.ts"
   ]
 }

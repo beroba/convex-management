@@ -1,8 +1,7 @@
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import * as util from '../util'
-import * as spreadsheet from '../util/spreadsheet'
+// import PiecesEach from 'pieces-each'
+// import * as util from '../util'
 import * as io from '.'
 import {DateTable} from './type'
 
@@ -11,6 +10,8 @@ import {DateTable} from './type'
  * @param args 開始日の日付
  */
 export const Update = async (args: Option<string>) => {
+  args
+  /*
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
 
@@ -30,6 +31,7 @@ export const Update = async (args: Option<string>) => {
 
   // キャルステータスを更新する
   await io.UpdateArray('dateTable', table)
+  // */
 }
 
 /**
@@ -37,7 +39,7 @@ export const Update = async (args: Option<string>) => {
  * @param args 開始日の日付
  * @param sheet 情報のシート
  */
-const setDate = async (args: string, sheet: any) => {
+export const setDate = async (args: string, sheet: any) => {
   // 開始日から順番に日付の配列を作成
   const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${args.split('/').last().to_n() + i}`)
 
@@ -55,7 +57,7 @@ const setDate = async (args: string, sheet: any) => {
  * @param d 整形前の日付
  * @return 整形後の日付
  */
-const parseZero = (d: string) => d.split('/').map(Number).join('/')
+export const parseZero = (d: string) => d.split('/').map(Number).join('/')
 
 /**
  * キャルステータスから日付テーブルを取得

@@ -1,15 +1,16 @@
-import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
+// import Settings from 'const-settings'
+// import PiecesEach from 'pieces-each'
 import Option from 'type-of-option'
-import * as util from '../util'
-import * as spreadsheet from '../util/spreadsheet'
+// import * as util from '../util'
 import * as io from '.'
-import {AtoE, BossTable} from './type'
+import {BossTable} from './type'
+// import {AtoE, BossTable} from './type'
 
 /**
  * ボステーブルを設定する
  */
 export const Update = async () => {
+  /*
   // 情報のシートを取得
   const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
   const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
@@ -25,6 +26,7 @@ export const Update = async () => {
 
   // キャルステータスを更新する
   await io.UpdateArray('bossTable', table)
+  // */
 }
 
 /**

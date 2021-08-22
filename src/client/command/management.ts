@@ -7,7 +7,6 @@ import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import * as activityTime from '../convex/activityTime'
 import * as category from '../convex/category'
 import * as etc from '../convex/etc'
 import * as react from '../convex/react'
@@ -60,19 +59,9 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'Update convex management members'
     }
 
-    case /cb manage update sisters/.test(content): {
-      await updateSistersController('/cb manage update sisters', content, msg)
-      return 'Update convex management sisters'
-    }
-
     case /cb manage set react/.test(content): {
       await setReactController('/cb manage set react', content, msg)
       return 'Set react for convex'
-    }
-
-    case /cb manage reflect activity time/.test(content): {
-      await reflectActivityTimeController('/cb manage reflect activity time', content, msg)
-      return 'Reflect activity time on the sheet'
     }
 
     case /cb manage delete all plan/.test(content): {
@@ -189,19 +178,6 @@ const updateMembersController = async (_command: string, _content: string, _msg:
 }
 
 /**
- * `/cb manage update sisters`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const updateSistersController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 妹クランメンバーの更新をする
-  await etc.UpdateSisters(_msg)
-
-  _msg.reply('妹クランメンバー一覧を更新したわよ！')
-}
-
-/**
  * `/cb manage set react`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
@@ -215,19 +191,6 @@ const setReactController = async (_command: string, _content: string, _msg: Disc
   await react.SetActivityTime()
 
   _msg.reply('凸管理用の絵文字を設定したわよ！')
-}
-
-/**
- * `/cb manage reflect activity time`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const reflectActivityTimeController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // スプレッドシートに反映
-  await activityTime.ReflectOnSheet()
-
-  _msg.reply('活動時間を設定したわよ！')
 }
 
 /**
