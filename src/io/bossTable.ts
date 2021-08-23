@@ -5,10 +5,12 @@ import {AtoE, BossTable} from './type'
 
 /**
  * ボステーブルを設定する
+ * @return 値がなかった場合のエラー
  */
-export const Update = async () => {
-  // ボス情報のJsonを取得
+export const Update = async (): Promise<Option<Error>> => {
+  // ボス情報のjsonを取得
   const list = await json.Fetch('boss')
+  if (!list) return Error()
 
   // スプレッドシートからボステーブルを作成する
   const table: BossTable[] = 'abcde'.split('').map((a, i) => ({

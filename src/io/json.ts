@@ -1,3 +1,4 @@
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {Json} from './type'
 import * as util from '../util'
@@ -7,7 +8,7 @@ import * as util from '../util'
  * @param naem 更新したいjsonの名前
  * @return 取得したjsonの情報
  */
-export const Fetch = async (name: string): Promise<Json> => {
+export const Fetch = async (name: string): Promise<Option<Json>> => {
   // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
   const msgs = (await channel.messages.fetch()).map(m => m)

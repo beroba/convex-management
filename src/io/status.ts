@@ -1,8 +1,6 @@
 import Option from 'type-of-option'
-// import Settings from 'const-settings'
-// import PiecesEach from 'pieces-each'
-// import * as util from '../util'
 import * as io from '.'
+import * as json from './json'
 import {User, Member} from './type'
 
 /**
@@ -123,36 +121,31 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 
 /**
  * スプレッドシートの名前をbotへ適用する
+ * @return 値がなかった場合のエラー
  */
-export const SetNamesFromSheet = async () => {
-  /*
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+export const SetNamesFromJson = async (): Promise<Option<Error>> => {
+  // ユーザー情報のjsonを取得
+  const list = await json.Fetch('user')
+  if (!list) return Error()
 
   // メンバー全体の状態を取得
   let members = await Fetch()
 
-  // メンバーの名前だけスプレッドシートの値に変更
-  const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
-  members = PiecesEach(cells, 3)
-    .filter(util.Omit)
-    .map(u => {
-      const id = u[1]
-      const member = <Member>members.find(m => m.id === id)
-      return {
-        name: u[0],
-        id: member.id,
-        limit: member.limit,
-        declare: member.declare,
-        carry: member.carry,
-        convex: member.convex,
-        over: member.over,
-        end: member.end,
-        history: member.history,
-      }
-    })
+  // ユーザー名だけjsonの値を適用
+  members = members.map(m => {
+    return {
+      name: list[m.id],
+      id: m.id,
+      limit: m.limit,
+      declare: m.declare,
+      carry: m.carry,
+      convex: m.convex,
+      over: m.over,
+      end: m.end,
+      history: m.history,
+    }
+  })
 
   // キャルステータスを更新
   await Update(members)
-  // */
 }

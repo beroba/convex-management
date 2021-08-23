@@ -126,6 +126,9 @@ const setDaysController = async (_command: string, _content: string, _msg: Disco
   // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
+  // 引数がない場合は終了
+  if (!args) return _msg.reply('設定したい日付を入力しなさい！')
+
   // 日付テーブルを更新する
   await dateTable.Update(args)
 
@@ -140,9 +143,9 @@ const setDaysController = async (_command: string, _content: string, _msg: Disco
  */
 const setBossController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // ボステーブルを更新する
-  await bossTable.Update()
+  const err = await bossTable.Update()
 
-  _msg.reply('クランバトルのボステーブルを設定したわよ！')
+  _msg.reply(err ? '`boss`の値が見つからなかったわ' : 'クランバトルのボステーブルを設定したわよ！')
 }
 
 /**
@@ -216,12 +219,11 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
   // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
-  // 引数が無い場合はシートの名前を適用
+  // 引数が無い場合はキャルステータスの名前を適用
   if (!args) {
-    // スプレッドシートの名前を適用
-    await status.SetNamesFromSheet()
-
-    _msg.reply('スプレッドシートの名前を適用したわよ！')
+    // キャルステータスの名前を適用
+    const err = await status.SetNamesFromJson()
+    _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
   } else {
     // 変更先の名前を取得
     const name = util
