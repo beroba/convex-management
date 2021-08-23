@@ -1,32 +1,24 @@
-// import Settings from 'const-settings'
-// import PiecesEach from 'pieces-each'
 import Option from 'type-of-option'
-// import * as util from '../util'
 import * as io from '.'
-import {BossTable} from './type'
-// import {AtoE, BossTable} from './type'
+import * as json from './json'
+import {AtoE, BossTable} from './type'
 
 /**
  * ボステーブルを設定する
  */
 export const Update = async () => {
-  /*
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.BOSS_CELLS)
+  // ボス情報のJsonを取得
+  const list = await json.Fetch('boss')
 
   // スプレッドシートからボステーブルを作成する
-  const table: BossTable[] = PiecesEach(cells, 3)
-    .filter(util.Omit)
-    .map(v => ({
-      num: v[0],
-      alpha: v[1] as AtoE,
-      name: v[2],
-    }))
+  const table: BossTable[] = 'abcde'.split('').map((a, i) => ({
+    num: `${i + 1}`,
+    alpha: a as AtoE,
+    name: list[a],
+  }))
 
   // キャルステータスを更新する
   await io.UpdateArray('bossTable', table)
-  // */
 }
 
 /**
