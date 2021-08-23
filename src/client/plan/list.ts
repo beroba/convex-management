@@ -110,6 +110,9 @@ const createAllPlanText = async (plans: Plan[]): Promise<string> => {
   // 現在の状況を取得
   const state = await current.Fetch()
 
+  // 名前順にソート
+  plans = plans.sort((a, b) => (a.name > b.name ? 1 : -1))
+
   // 全ボスの凸予定一覧のテキストを作成
   const a = await CreatePlanText('a', state.stage, plans)
   const b = await CreatePlanText('b', state.stage, plans)
