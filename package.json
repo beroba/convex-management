@@ -31,7 +31,7 @@
     "discord.js": "^13.0.1",
     "get-random-values": "^1.2.2",
     "google-spreadsheet-as-promised": "^0.2.12",
-    "ioredis": "^4.27.6",
+    "ioredis": "^4.27.8",
     "moji": "^0.5.1",
     "node-cron": "^2.0.3",
     "pieces-each": "^1.0.0",

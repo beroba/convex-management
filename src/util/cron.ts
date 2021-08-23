@@ -122,7 +122,7 @@ const notifyDailyMission = () => {
 /**
  * 朝活アンケートを通知する
  */
-const morningActivitySurvey = async () => {
+export const morningActivitySurvey = async () => {
   const d = new Date()
   const nextDay = `${d.getMonth() + 1}/${d.getDate() + 1}`
 

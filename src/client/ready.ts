@@ -1,6 +1,7 @@
 import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
+import * as cron from '../util/cron'
 import * as react from './convex/react'
 
 /**
@@ -13,6 +14,8 @@ export const Ready = async () => {
 
   // リアクションのキャッシュを取る
   react.Fetch()
+
+  cron.morningActivitySurvey()
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }
