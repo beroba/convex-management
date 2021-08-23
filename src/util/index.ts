@@ -33,7 +33,7 @@ export const Sleep = (ms: number): Promise<unknown> => {
  * @param step 刻む数
  * @returns 数字配列
  */
-export const range = (start: number, stop?: number, step: number = 1): number[] => {
+export const Range = (start: number, stop?: number, step: number = 1): number[] => {
   if (stop === undefined) {
     stop = start
     start = 0

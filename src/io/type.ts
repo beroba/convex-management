@@ -19,12 +19,10 @@ export type BossTable = {
  * クラバトの日付テーブル
  * @property num クラバトの日数
  * @property day クラバトの日付
- * @property col カラム
  */
 export type DateTable = {
   num: string
   day: string
-  col: string
 }
 
 /**
@@ -122,3 +120,8 @@ export type Status = {
  * @type history: string 凸の履歴
  */
 export type Member = User & Status
+
+/**
+ * キャルステータスのjson形式
+ */
+export type Json = {[key: string]: string}

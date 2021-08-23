@@ -235,7 +235,7 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
   // 抽選する回数を取得
   const c = msg.content.replace(/[^1-5]/g, '').to_n()
   if (c) {
-    util.range(c > 5 ? 5 : c).forEach(_ => {
+    util.Range(c > 5 ? 5 : c).forEach(_ => {
       // リストの数に応じて乱数を作る
       const rand = createRandNumber(items.length)
       // 草の画像を送信
@@ -365,7 +365,7 @@ const sendTweetLottery = (list: string[], msg: Discord.Message) => {
   // 抽選する回数を取得
   const c = msg.content.replace(/[^1-5]/g, '').to_n()
   if (c) {
-    util.range(c > 5 ? 5 : c).forEach(c => {
+    util.Range(c > 5 ? 5 : c).forEach(c => {
       // リストの数に応じて乱数を作る
       const rand = createRandNumber(list.length)
       msg.reply(`${c + 1}:heavy_check_mark:\n${list.splice(rand, 1).first().split('\n').last()}`)

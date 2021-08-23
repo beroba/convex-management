@@ -17,6 +17,9 @@ export const Report = async (members?: Member[], state?: Current) => {
   // 現在の状況を取得
   state ??= await current.Fetch()
 
+  // 名前順にソート
+  members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
+
   // 凸状況のテキストを作成
   const text = await createMessage(members, state)
 
@@ -33,7 +36,7 @@ export const Report = async (members?: Member[], state?: Current) => {
   {
     // ボス状況を更新
     const msg = await channel.messages.fetch(Settings.CONVEX_MESSAGE_ID.BOSS)
-    msg.edit(boss)
+    msg.edit('ボス状況\n' + boss)
   }
 
   // #凸状況履歴に報告
@@ -78,9 +81,12 @@ const createMessage = async (members: Member[], state: Current): Promise<string>
   const 持越1 = userSorting(members, undefined, 1)
 
   return [
-    `\`${time}\` ${date.num} 凸状況一覧`,
-    `\`${stage}\`段階目 残り\`${nextStage}\`周`,
-    `\`${state.lap}\`周目 \`${remainingConvex}\``,
+    '```m',
+    `${time} ${date.num} 凸状況一覧`,
+    `${stage}段階目 残り${nextStage}周`,
+    `${state.lap}周目 ${remainingConvex}`,
+    '```',
+    '残凸状況',
     '```',
     `残凸3: ${残凸3}`,
     `残凸2: ${残凸2}`,
@@ -88,6 +94,7 @@ const createMessage = async (members: Member[], state: Current): Promise<string>
     `残凸0: ${残凸0}`,
     `完凸済: ${完凸済}`,
     '```',
+    '持越状況',
     '```',
     `持越3: ${持越3}`,
     `持越2: ${持越2}`,
@@ -190,8 +197,8 @@ const bossMessage = async (members: Member[], state: Current): Promise<string> =
 
       // prettier-ignore
       return [
-        `\`${boss.lap}\`周目 \`${boss.name}\` \`${boss.hp}/${hp}\``,
-        '```',
+        '```m',
+        `${boss.lap}周目 ${boss.name} ${boss.hp}/${hp}`,
         `${declares.length ? declares.join(', ') : ' '}`,
         '```',
       ].join('\n')
