@@ -122,3 +122,8 @@ export type Status = {
  * @type history: string 凸の履歴
  */
 export type Member = User & Status
+
+/**
+ * キャルステータスのjson形式
+ */
+export type Json = {[key: string]: string}
