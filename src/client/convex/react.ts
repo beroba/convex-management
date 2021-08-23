@@ -30,24 +30,11 @@ export const SetActivityTime = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
 
   // 離席中のメッセージを取得
-  const awayIn = await channel.messages.fetch(Settings.ACTIVITY_TIME.AWAY_IN)
+  const awayIn = await channel.messages.fetch(Settings.AWAY_IN)
 
   // 出席、離席の絵文字を付ける
   await awayIn.react(Settings.EMOJI_ID.SHUSEKI)
   await awayIn.react(Settings.EMOJI_ID.RISEKI)
-
-  // 1-5日目の処理をする
-  const days: string[] = Object.values(Settings.ACTIVITY_TIME.DAYS)
-  Promise.all(
-    days.map(async id => {
-      // 日付のメッセージを取得
-      const day = await channel.messages.fetch(id)
-
-      // 1-7までの絵文字を付ける
-      const emoji: string[] = Object.values(Settings.ACTIVITY_TIME.EMOJI)
-      Promise.all(emoji.map(async id => day.react(id)))
-    })
-  )
 
   // 前半にリアクションを付ける
   const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
@@ -103,11 +90,11 @@ export const Fetch = async () => {
   )
 
   // #活動時間のチャンネルを取得
-  const activityTime = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
 
   // 前半と後半のメッセージを取得
-  const first = await activityTime.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
-  const latter = await activityTime.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
+  const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
+  const latter = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
 
   // メッセージに付いているリアクションをキャッシュ
   await Promise.all(first.reactions.cache.map(async r => r.users.fetch()))

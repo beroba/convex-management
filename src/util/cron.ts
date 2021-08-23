@@ -3,7 +3,7 @@ import Settings from 'const-settings'
 import * as util from '../util'
 import * as dateTable from '../io/dateTable'
 import * as status from '../io/status'
-import * as limitTime from '../client/convex/limitTime'
+import * as time from '../client/convex/time'
 import * as over from '../client/convex/over'
 import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
@@ -136,7 +136,7 @@ const limitTimeDisplay = (expression: string) => {
     const members = await status.Fetch()
 
     // 活動限界時間の表示を更新
-    limitTime.Display(members)
+    time.Display(members)
 
     // 現在の時刻を取得
     const date = new Date().getHours().to_s()

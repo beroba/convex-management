@@ -7,7 +7,7 @@ import * as status from '../../io/status'
 import {AtoE, Current, Member} from '../../io/type'
 import * as update from './update'
 import * as etc from '../convex/etc'
-import * as limitTime from '../convex/limitTime'
+import * as time from '../convex/time'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
 import * as declare from '../declare/list'
@@ -127,7 +127,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   roleDelete(member_2, msg)
 
   // 活動限界時間の表示を更新
-  limitTime.Display(members)
+  time.Display(members)
 
   return 'Update status'
 }
