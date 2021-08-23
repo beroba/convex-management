@@ -1,7 +1,5 @@
 import Option from 'type-of-option'
-import Settings from 'const-settings'
-// import PiecesEach from 'pieces-each'
-// import * as util from '../util'
+import * as util from '../util'
 import * as io from '.'
 import {DateTable} from './type'
 
@@ -9,55 +7,19 @@ import {DateTable} from './type'
  * 日付テーブルを設定する
  * @param args 開始日の日付
  */
-export const Update = async (args: Option<string>) => {
-  args
-  /*
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 引数がある場合は日付を更新
-  if (args) await setDate(args, sheet)
-
-  const cells: string[] = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.DATE_CELLS)
+export const Update = async (args: string) => {
+  // 開始日から順番に日付の配列を作成
+  const days = util.Range(5).map(i => `${args.split('/').first()}/${args.split('/').last().to_n() + i}`)
 
   // スプレッドシートからボステーブルを作成する
-  const table: DateTable[] = PiecesEach(cells, 3)
-    .filter(util.Omit)
-    .map(v => ({
-      num: v[0],
-      day: parseZero(v[1]),
-      col: v[2],
-    }))
+  const table: DateTable[] = days.map((d, i) => ({
+    num: `${i + 1}日目`,
+    day: d.split('/').map(Number).join('/'),
+  }))
 
   // キャルステータスを更新する
   await io.UpdateArray('dateTable', table)
-  // */
 }
-
-/**
- * クランバトルの日付を引数に渡された開始日から設定する
- * @param args 開始日の日付
- * @param sheet 情報のシート
- */
-export const setDate = async (args: string, sheet: any) => {
-  // 開始日から順番に日付の配列を作成
-  const days = Array.from(Array(5), (_, i) => `${args.split('/').first()}/${args.split('/').last().to_n() + i}`)
-
-  await Promise.all(
-    // 日付を更新
-    days.map(async (d, i) => {
-      const cell = await sheet.getCell(`${Settings.INFORMATION_SHEET.DATE_COLUMN}${i + 3}`)
-      await cell.setValue(d)
-    })
-  )
-}
-
-/**
- * 日付の0をパースして返す
- * @param d 整形前の日付
- * @return 整形後の日付
- */
-export const parseZero = (d: string) => d.split('/').map(Number).join('/')
 
 /**
  * キャルステータスから日付テーブルを取得
@@ -78,7 +40,7 @@ export const TakeDate = async (): Promise<DateTable> => {
   const date: Option<DateTable> = table.find(d => d.day === mmdd())
 
   // クラバトの日でなければ練習日を返す
-  return date ? date : table[5]
+  return date || {num: '練習日', day: '0/0'}
 }
 
 /**
@@ -86,4 +48,7 @@ export const TakeDate = async (): Promise<DateTable> => {
  * 5時より前の場合前の日扱いする
  * @return 現在の日付
  */
-const mmdd = (): string => (d => `${d.getMonth() + 1}/${d.getDate() - (d.getHours() < 5 ? 1 : 0)}`)(new Date())
+const mmdd = (): string => {
+  const d = new Date()
+  return `${d.getMonth() + 1}/${d.getDate() - (d.getHours() < 5 ? 1 : 0)}`
+}

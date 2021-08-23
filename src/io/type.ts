@@ -19,12 +19,10 @@ export type BossTable = {
  * クラバトの日付テーブル
  * @property num クラバトの日数
  * @property day クラバトの日付
- * @property col カラム
  */
 export type DateTable = {
   num: string
   day: string
-  col: string
 }
 
 /**
