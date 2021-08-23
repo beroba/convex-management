@@ -2,9 +2,9 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as status from '../../io/status'
-import {User} from '../../io/type'
+import * as json from '../../io/json'
+import {User, Json} from '../../io/type'
 import * as util from '../../util'
-import * as situation from './situation'
 
 /**
  * 同時凸の持越計算を行う
@@ -94,37 +94,13 @@ export const UpdateMembers = async (msg: Discord.Message) => {
       declare: '',
       carry: false,
     }))
-    .sort((a, b) => (a.name > b.name ? 1 : -1)) // 名前順にソート
+    .sort((a, b) => (a.id > b.id ? 1 : -1)) // ID順にソート
+  if (!users) return
 
   // ステータスを更新
   await status.UpdateUsers(users)
-}
 
-/**
- * botが認識している名前を変更する
- * @param msg DiscordからのMessage
- */
-export const SetName = async (name: string, msg: Discord.Message) => {
-  // 凸状況を更新するユーザーを取得する
-  const user = msg.mentions.users.first()
-  if (!user) {
-    msg.reply('メンションで誰の名前を変更したいか指定しなさい')
-    return
-  }
-
-  // メンバーの状態を取得
-  let member = await status.FetchMember(user.id)
-  if (!member) {
-    msg.reply('その人はクランメンバーじゃないわ')
-    return
-  }
-
-  // 名前を更新
-  member.name = name
-
-  // ステータスを更新
-  const members = await status.UpdateMember(member)
-
-  // 凸状況に報告
-  situation.Report(members)
+  // jsonの値を更新
+  const list: Json = users.map(u => ({[u.id]: u.name})).reduce((a, b) => ({...a, ...b}))
+  await json.Update('user', list)
 }

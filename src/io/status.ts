@@ -120,10 +120,23 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 }
 
 /**
+ * botが認識している名前を変更する
+ * @param member メンバーの状態
+ * @param name 変更先の名前
+ */
+export const SetName = async (member: Member, name: string) => {
+  // 名前を更新
+  member.name = name
+
+  // ステータスを更新
+  await UpdateMember(member)
+}
+
+/**
  * スプレッドシートの名前をbotへ適用する
  * @return 値がなかった場合のエラー
  */
-export const SetNamesFromJson = async (): Promise<Option<Error>> => {
+export const SetNames = async (): Promise<Option<Error>> => {
   // ユーザー情報のjsonを取得
   const list = await json.Fetch('user')
   if (!list) return Error()

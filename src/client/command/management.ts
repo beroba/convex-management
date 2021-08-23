@@ -222,7 +222,7 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
   // 引数が無い場合はキャルステータスの名前を適用
   if (!args) {
     // キャルステータスの名前を適用
-    const err = await status.SetNamesFromJson()
+    const err = await status.SetNames()
     _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
   } else {
     // 変更先の名前を取得
@@ -231,10 +231,24 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
       .replace(/<.+>/, '') // プレイヤーIDを省く
       .trim()
 
-    // 名前を設定する
-    await etc.SetName(name, _msg)
+    // 凸状況を更新するユーザーを取得する
+    const user = _msg.mentions.users.first()
+    if (!user) {
+      _msg.reply('メンションで誰の名前を変更したいか指定しなさい')
+      return
+    }
 
-    _msg.reply('名前を更新したわよ！')
+    // メンバーの状態を取得
+    let member = await status.FetchMember(user.id)
+    if (!member) {
+      _msg.reply('その人はクランメンバーじゃないわ')
+      return
+    }
+
+    // 名前を設定する
+    await status.SetName(member, name)
+
+    _msg.reply(`\`${name}\`の名前を更新したわよ！`)
   }
 
   // メンバー全員の状態を取得
