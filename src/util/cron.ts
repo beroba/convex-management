@@ -19,6 +19,7 @@ export const CronOperation = () => {
   removeTaskillRoll('0 0 5 * * *')   // 05:00
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
+  morningActivitySurvey('0 0 12 * * *') // 04:30
   limitTimeDisplay('0 0 */1 * * *')  // 1時間起き
 }
 
@@ -128,6 +129,33 @@ const notifyDailyMission = (expression: string) => {
     // 雑談に通知をする
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.CHAT)
     channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！')
+
+    console.log('Notify daily mission digestion')
+  })
+}
+
+/**
+ * 朝活アンケートを通知するクーロンを作成する
+ * @param expression クーロン式
+ */
+const morningActivitySurvey = (expression: string) => {
+  cron.schedule(expression, async () => {
+    const d = new Date()
+    const nextDay = `${d.getMonth() + 1}/${d.getDate() + 1}`
+
+    const date = await dateTable.Fetch()
+    const isDay = date.find(d => d.day === nextDay)
+    if (!isDay) return
+
+    const text = [
+      `<@&${Settings.ROLE_ID.CLAN_MEMBERS}>`,
+      `\`${isDay.day}\` クラバト${isDay.num}の朝活アンケートです`,
+      '朝活に参加する予定の方は、${Settings.EMOJI_FULL_ID.SANKA}を押して下さい',
+    ].join('\n')
+
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.CLAN_BATTLE_CONTACT)
+    const msg = await channel.send(text)
+    await msg.react(Settings.EMOJI_ID.SANKA)
 
     console.log('Notify daily mission digestion')
   })
