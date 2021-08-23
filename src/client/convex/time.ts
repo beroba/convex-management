@@ -74,9 +74,6 @@ const update = async (id: string) => {
 
   // 活動限界時間の表示を更新
   Display(members)
-
-  // 活動限界時間をスプレッドシートに反映
-  status.ReflectOnLimit(member)
 }
 
 /**
@@ -119,6 +116,9 @@ const fetchLimit = async (id: string): Promise<string> => {
  * @param members メンバー一覧
  */
 export const Display = async (members: Member[]) => {
+  // 名前順にソート
+  members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
+
   // 現在の時刻を取得
   const h = getHours()
 
@@ -208,5 +208,5 @@ const limitMember = (h: number, members: Member[]): string =>
       return createTime(m.limit) === h
     })
     .filter(m => !m.end) // 3凸終了している人は省く
-    .map(m => `${m.name}`)
+    .map(m => m.name)
     .join(', ')

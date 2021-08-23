@@ -1,11 +1,6 @@
 import Option from 'type-of-option'
-import Settings from 'const-settings'
-import PiecesEach from 'pieces-each'
-import {AtoA} from 'alphabet-to-number'
-import * as util from '../util'
-import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
-import * as dateTable from './dateTable'
+import * as json from './json'
 import {User, Member} from './type'
 
 /**
@@ -125,158 +120,44 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
 }
 
 /**
- * スプレッドシートにメンバーの凸状況を反映させる
+ * botが認識している名前を変更する
+ * @param member メンバーの状態
+ * @param name 変更先の名前
  */
-export const ReflectOnSheet = async () => {
-  // メンバー全体の状態を取得
-  const members = await Fetch()
+export const SetName = async (member: Member, name: string) => {
+  // 名前を更新
+  member.name = name
 
-  // 情報のシートを取得
-  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 凸状況のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // スプレッドシートからユーザー一覧を取得
-  const users = await FetchUserFromSheet(info)
-
-  // 列を取得
-  const col = (await dateTable.TakeDate()).col
-
-  for (const m of members) {
-    // 行を取得
-    const row = users.map(u => u.id).indexOf(m.id) + 3
-
-    // 凸数、持越、3凸終了、履歴を更新する
-    let i = 0
-    for (const v of [m.convex, m.over, m.end, m.history]) {
-      const cell = await sheet.getCell(`${AtoA(col, i++)}${row}`)
-      await cell.setValue(v)
-      await util.Sleep(100)
-    }
-  }
-}
-
-/**
- * メンバーの活動限界時間を反映させる
- * @param member 更新したいメンバー
- */
-export const ReflectOnLimit = async (member: Member) => {
-  // 情報のシートを取得
-  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // スプレッドシートからユーザー一覧を取得
-  const users = await FetchUserFromSheet(info)
-
-  // 行と列を取得
-  const col = Settings.INFORMATION_SHEET.LIMIT_COLUMN
-  const row = users.map(u => u.id).indexOf(member.id) + 3
-
-  // 活動限界時間を更新する
-  const cell = await info.getCell(`${col}${row}`)
-  await cell.setValue(member.limit)
-}
-
-/**
- * メンバーの名前を反映させる
- * @param member 更新したいメンバー
- */
-export const ReflectOnName = async (member: Member) => {
-  // 情報のシートを取得
-  const info = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // スプレッドシートからユーザー一覧を取得
-  const users = await FetchUserFromSheet(info)
-
-  // 行と列を取得
-  const col = Settings.INFORMATION_SHEET.MEMBER_COLUMN
-  const row = users.map(u => u.id).indexOf(member.id) + 3
-
-  // 活動限界時間を更新する
-  const cell = await info.getCell(`${col}${row}`)
-  await cell.setValue(member.name)
-}
-
-/**
- * スプレッドシートの凸状況をリセットする
- */
-export const ResetConvexOnSheet = async () => {
-  // メンバー全体の状態を取得
-  const state = await Fetch()
-
-  // 凸状況のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.MANAGEMENT_SHEET.SHEET_NAME)
-
-  // 列を取得
-  const col = (await dateTable.TakeDate()).col
-
-  for (const j of util.range(state.length)) {
-    // 行を取得
-    const row = j + 3
-
-    // 凸数、持越、3凸終了、履歴をリセットする
-    for (const i of util.range(4)) {
-      const cell = await sheet.getCell(`${AtoA(col, i)}${row}`)
-      await cell.setValue(i ? '' : '3')
-      await util.Sleep(100)
-    }
-  }
-}
-
-/**
- * 凸状況のシートからユーザー一覧を取得する
- * @param sheet 凸状況のシート
- * @return ユーザー一覧
- */
-export const FetchUserFromSheet = async (sheet: any): Promise<User[]> => {
-  // メンバー全体の状態を取得
-  const members = await Fetch()
-
-  const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
-  return PiecesEach(cells, 3)
-    .filter(util.Omit)
-    .map(u => {
-      const id = u[1]
-      const member = members.find(m => m.id === id)
-      return {
-        name: u[0],
-        id: id,
-        limit: u[2],
-        declare: member?.declare ?? '',
-        carry: false,
-      }
-    })
+  // ステータスを更新
+  await UpdateMember(member)
 }
 
 /**
  * スプレッドシートの名前をbotへ適用する
+ * @return 値がなかった場合のエラー
  */
-export const SetNamesFromSheet = async () => {
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
+export const SetNames = async (): Promise<Option<Error>> => {
+  // ユーザー情報のjsonを取得
+  const list = await json.Fetch('user')
+  if (!list) return Error()
 
   // メンバー全体の状態を取得
   let members = await Fetch()
 
-  // メンバーの名前だけスプレッドシートの値に変更
-  const cells = await spreadsheet.GetCells(sheet, Settings.INFORMATION_SHEET.MEMBER_CELLS)
-  members = PiecesEach(cells, 3)
-    .filter(util.Omit)
-    .map(u => {
-      const id = u[1]
-      const member = <Member>members.find(m => m.id === id)
-      return {
-        name: u[0],
-        id: member.id,
-        limit: member.limit,
-        declare: member.declare,
-        carry: member.carry,
-        convex: member.convex,
-        over: member.over,
-        end: member.end,
-        history: member.history,
-      }
-    })
+  // ユーザー名だけjsonの値を適用
+  members = members.map(m => {
+    return {
+      name: list[m.id],
+      id: m.id,
+      limit: m.limit,
+      declare: m.declare,
+      carry: m.carry,
+      convex: m.convex,
+      over: m.over,
+      end: m.end,
+      history: m.history,
+    }
+  })
 
   // キャルステータスを更新
   await Update(members)

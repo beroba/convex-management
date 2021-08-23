@@ -4,7 +4,7 @@ import * as util from '../../util'
 import * as status from '../../io/status'
 import {Member} from '../../io/type'
 import * as etc from './etc'
-import * as limitTime from './limitTime'
+import * as time from './time'
 import * as situation from './situation'
 
 /**
@@ -65,7 +65,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
   // 活動限界時間の表示を更新
-  limitTime.Display(members)
+  time.Display(members)
 
   return member
 }

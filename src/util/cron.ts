@@ -3,8 +3,7 @@ import Settings from 'const-settings'
 import * as util from '../util'
 import * as dateTable from '../io/dateTable'
 import * as status from '../io/status'
-import * as current from '../io/current'
-import * as limitTime from '../client/convex/limitTime'
+import * as time from '../client/convex/time'
 import * as over from '../client/convex/over'
 import * as situation from '../client/convex/situation'
 import * as plan from '../client/plan/delete'
@@ -15,7 +14,7 @@ import * as plan from '../client/plan/delete'
  */
 export const CronOperation = () => {
   setRemainConvex('0 10 5 * * *')    // 05:10
-  resetAllConvex('0 50 4 * * *')       // 04:50
+  resetAllConvex('0 50 4 * * *')     // 04:50
   removeTaskillRoll('0 0 5 * * *')   // 05:00
   resetConvex('0 0 5 * * *')         // 05:00
   notifyDailyMission('0 30 4 * * *') // 04:30
@@ -71,10 +70,6 @@ const resetAllConvex = (expression: string) => {
 
     // クランメンバーに凸残ロールを付与する
     clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
-
-    // スプレッドシートに値を反映
-    status.ReflectOnSheet()
-    current.ReflectOnSheet()
   })
 }
 
@@ -106,7 +101,6 @@ const resetConvex = (expression: string) => {
   cron.schedule(expression, async () => {
     // 全員の凸状況をリセット
     await status.ResetConvex()
-    await status.ResetConvexOnSheet()
 
     // メンバー全員の状態を取得
     const members = await status.Fetch()
@@ -170,7 +164,7 @@ const limitTimeDisplay = (expression: string) => {
     const members = await status.Fetch()
 
     // 活動限界時間の表示を更新
-    limitTime.Display(members)
+    time.Display(members)
 
     // 現在の時刻を取得
     const date = new Date().getHours().to_s()
@@ -180,9 +174,5 @@ const limitTimeDisplay = (expression: string) => {
     channel.send(`${date}時の活動限界時間を更新したわ`)
 
     console.log('Periodic update of activity time limit display')
-
-    // スプレッドシートに値を反映
-    status.ReflectOnSheet()
-    current.ReflectOnSheet()
   })
 }

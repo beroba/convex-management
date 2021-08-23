@@ -20,6 +20,9 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
   // メンバー全体の状態を取得
   members ??= await status.Fetch()
 
+  // 名前順にソート
+  members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
+
   // 凸宣言のメッセージを取得
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 

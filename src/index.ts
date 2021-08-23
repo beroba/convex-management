@@ -4,7 +4,7 @@ import ThrowEnv from 'throw-env'
 import {Ready} from './client/ready'
 import {GuildMemberAdd} from './client/guildMemberAdd'
 import {GuildMemberUpdate} from './client/guildMemberUpdate'
-import {Message} from './client/message'
+import {MessageCreate} from './client/messageCreate'
 import {MessageDelete} from './client/messageDelete'
 import {MessageReactionAdd} from './client/messageReactionAdd'
 import {MessageReactionRemove} from './client/messageReactionRemove'
@@ -44,7 +44,7 @@ Client.on('guildMemberAdd', member => GuildMemberAdd(member))
 Client.on('guildMemberUpdate', (_, member) => GuildMemberUpdate(member))
 
 // メッセージが送信された際に実行
-Client.on('message', msg => Message(msg))
+Client.on('messageCreate', msg => MessageCreate(msg))
 
 // メッセージが削除された際に実行
 Client.on('messageDelete', msg => MessageDelete(msg))

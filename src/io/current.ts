@@ -1,6 +1,4 @@
 import Settings from 'const-settings'
-import {AtoA} from 'alphabet-to-number'
-import * as spreadsheet from '../util/spreadsheet'
 import * as io from '.'
 import * as bossTable from './bossTable'
 import {AtoE, Current, CurrentBoss} from './type'
@@ -115,41 +113,3 @@ const getStageName = (lap: number): string => {
  * @return 現在の状況
  */
 export const Fetch = async (): Promise<Current> => io.Fetch<Current>('current')
-
-/**
- * スプレッドシートに現在の状況を反映させる
- */
-export const ReflectOnSheet = async () => {
-  // 現在の状況を取得
-  const state = await Fetch()
-
-  // 情報のシートを取得
-  const sheet = await spreadsheet.GetWorksheet(Settings.INFORMATION_SHEET.SHEET_NAME)
-
-  // 周回数、討伐状況、HPの番地を取得
-  const lap = Settings.INFORMATION_SHEET.LAP_CELL
-  const boss_lap = Settings.INFORMATION_SHEET.LAP_CELLS
-  const boss_hp = Settings.INFORMATION_SHEET.HP_CELLS
-
-  // 周回数を更新
-  const lap_cell = await sheet.getCell(lap)
-  await lap_cell.setValue(state.lap)
-
-  // ボスの周回数を更新
-  await Promise.all(
-    boss_lap.split(',').map(async (c: string, i: number) => {
-      const alpha = <AtoE>AtoA('a', i)
-      const cell = await sheet.getCell(c)
-      cell.setValue(state[alpha].lap)
-    })
-  )
-
-  // ボスのHPを更新
-  await Promise.all(
-    boss_hp.split(',').map(async (c: string, i: number) => {
-      const alpha = <AtoE>AtoA('a', i)
-      const cell = await sheet.getCell(c)
-      cell.setValue(state[alpha].hp)
-    })
-  )
-}

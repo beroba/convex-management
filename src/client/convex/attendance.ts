@@ -30,7 +30,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   if (!member) return
 
   // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.ACTIVITY_TIME.AWAY_IN) return
+  if (react.message.id !== Settings.AWAY_IN) return
 
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.SHUSEKI) return
@@ -85,7 +85,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   if (!member) return
 
   // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.ACTIVITY_TIME.AWAY_IN) return
+  if (react.message.id !== Settings.AWAY_IN) return
 
   // 出席リアクションでない場合は終了
   if (react.emoji.id !== Settings.EMOJI_ID.RISEKI) return
@@ -131,7 +131,7 @@ export const Edit = async () => {
 
   // 出欠のメッセージを取得する
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-  const msg = await channel.messages.fetch(Settings.ACTIVITY_TIME.AWAY_IN)
+  const msg = await channel.messages.fetch(Settings.AWAY_IN)
 
   // メッセージを更新
   await msg.edit(text)
