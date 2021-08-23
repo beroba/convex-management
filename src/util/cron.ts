@@ -122,7 +122,7 @@ const notifyDailyMission = () => {
 /**
  * 朝活アンケートを通知する
  */
-export const morningActivitySurvey = async () => {
+const morningActivitySurvey = async () => {
   const d = new Date()
   const nextDay = `${d.getMonth() + 1}/${d.getDate() + 1}`
 
@@ -133,7 +133,7 @@ export const morningActivitySurvey = async () => {
   const text = [
     `<@&${Settings.ROLE_ID.CLAN_MEMBERS}>`,
     `\`${isDay.day}\` クラバト${isDay.num}の朝活アンケートです`,
-    '朝活に参加する予定の方は、${Settings.EMOJI_FULL_ID.SANKA}を押して下さい',
+    `朝活に参加する予定の方は、${Settings.EMOJI_FULL_ID.SANKA} を押して下さい`,
   ].join('\n')
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CLAN_BATTLE_CONTACT)

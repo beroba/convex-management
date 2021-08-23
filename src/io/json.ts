@@ -28,23 +28,16 @@ export const Fetch = async (name: string): Promise<Option<Json>> => {
 }
 
 /**
- * キャルステータスの値を更新する
- * @param naem 更新したいjsonの名前
+ * キャルステータスの値を送信する
  * @param json 更新させたいjsonの情報
  */
-export const Update = async (name: string, json: Json) => {
+export const Update = async (json: Json) => {
   // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
-  const msgs = (await channel.messages.fetch()).map(m => m)
-
-  // 一致する名前のメッセージを取得
-  const msg = msgs.find(m => m.content.split('\n').first() === name)
-  if (!msg) return
 
   // prettier-ignore
   // 見やすいように書式を整形する
   const text = [
-    `${name}`,
     '```json',
     JSON.stringify(json)
       .replace(/^{/g, '{\n  ')
@@ -54,6 +47,6 @@ export const Update = async (name: string, json: Json) => {
     '```',
   ].join('\n')
 
-  // メッセージを更新
-  await msg.edit(text)
+  // メッセージを送信
+  await channel.send(text)
 }

@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as status from '../../io/status'
+// import * as status from '../../io/status'
 import * as json from '../../io/json'
 import {User, Json} from '../../io/type'
 import * as util from '../../util'
@@ -98,9 +98,9 @@ export const UpdateMembers = async (msg: Discord.Message) => {
   if (!users) return
 
   // ステータスを更新
-  await status.UpdateUsers(users)
+  // await status.UpdateUsers(users)
 
   // jsonの値を更新
   const list: Json = users.map(u => ({[u.id]: u.name})).reduce((a, b) => ({...a, ...b}))
-  await json.Update('user', list)
+  await json.Update(list)
 }
