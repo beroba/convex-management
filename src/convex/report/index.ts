@@ -6,8 +6,8 @@ import * as current from '../../io/current'
 import * as status from '../../io/status'
 import {AtoE, Current, Member} from '../../io/type'
 import * as update from './update'
-import * as etc from '../convex/etc'
-import * as time from '../convex/time'
+import * as role from '../convex/role'
+import * as time from '../convex/time/time'
 import * as over from '../convex/over'
 import * as situation from '../convex/situation'
 import * as declare from '../declare/list'
@@ -243,6 +243,6 @@ const roleDelete = (member: Member, msg: Discord.Message) => {
   if (member.end) {
     // ロールを削除
     msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
-    etc.RemoveBossRole(msg.member)
+    role.RemoveBossRole(msg.member)
   }
 }

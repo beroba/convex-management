@@ -1,14 +1,14 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as attendance from './convex/attendance'
-import * as time from './convex/time'
+import * as attendance from './convex/time/attendance'
+import * as time from './convex/time/time'
 import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as plan from './plan/delete'
 import * as report from './report/cancel'
 import * as declare from './declare/react'
-import * as playerID from './etc/playerID'
+import * as playerID from '../util/playerID'
 
 /**
  * リアクションのイベントに応じて適切な処理を実行する

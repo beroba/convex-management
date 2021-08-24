@@ -1,15 +1,15 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import {Command} from './command'
+import {Command} from '../command'
 import * as report from './report'
 import * as plan from './plan'
 import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as declare from './declare'
-import * as playerID from './etc/playerID'
-import * as send from './etc/send'
-import * as emoji from './etc/emoji'
+import * as playerID from '../util/playerID'
+import * as send from '../util/send'
+import * as emoji from '../util/emoji'
 
 /**
  * 入力されたメッセージに応じて適切な処理を実行する

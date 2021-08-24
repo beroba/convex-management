@@ -1,17 +1,18 @@
 import * as cron from 'node-cron'
 import * as etc from '../client/convex/etc'
-import * as time from '../client/convex/time'
+import * as role from '../client/convex/role'
+import * as time from '../client/convex/time/time'
 
 /**
  * クーロン処理一覧
  */
 export const CronOperation = () => {
   // 05:10
-  cron.schedule('0 10 5 * * *', () => etc.SetRemainConvex())
+  cron.schedule('0 10 5 * * *', () => role.SetRemainConvex())
   // 04:50
-  cron.schedule('0 50 4 * * *', () => etc.ResetAllConvex())
+  cron.schedule('0 50 4 * * *', () => role.ResetAllConvex())
   // 05:00
-  cron.schedule('0 0 5 * * *', () => etc.RemoveTaskillRole())
+  cron.schedule('0 0 5 * * *', () => role.RemoveTaskillRole())
   // 05:00
   cron.schedule('0 0 5 * * *', () => etc.ResetConvex())
   // 04:30

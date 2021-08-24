@@ -1,5 +1,5 @@
 import Settings from 'const-settings'
-import * as io from '.'
+import * as io from './redis'
 import * as bossTable from './bossTable'
 import {AtoE, Current, CurrentBoss} from './type'
 import * as declare from '../client/declare/status'

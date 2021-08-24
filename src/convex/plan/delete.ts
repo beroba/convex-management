@@ -6,7 +6,7 @@ import * as schedule from '../../io/schedule'
 import {Plan} from '../../io/type'
 import * as list from './list'
 import * as declare from '../declare/list'
-import * as etc from '../convex/etc'
+import * as role from '../convex/role'
 
 /**
  * 凸予定の自分のメッセージに完了の絵文字をつけたら削除する
@@ -160,7 +160,7 @@ export const DeleteAll = async () => {
 
   // クランメンバーのボスロールを全て削除
   if (clanMembers) {
-    await Promise.all(clanMembers.map(async m => etc.RemoveBossRole(m)))
+    await Promise.all(clanMembers.map(async m => role.RemoveBossRole(m)))
   }
 
   // 凸予定一覧を取得

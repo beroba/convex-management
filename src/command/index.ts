@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
-import * as util from '../../util'
+import * as util from '../util'
 import {ClanBattle} from './clanbattle'
 import {Management} from './management'
 

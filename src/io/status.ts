@@ -1,5 +1,5 @@
 import Option from 'type-of-option'
-import * as io from '.'
+import * as io from './redis'
 import * as json from './json'
 import {User, Member} from './type'
 

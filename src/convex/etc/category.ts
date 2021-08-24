@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as bossTable from '../../io/bossTable'
+import * as bossTable from '../../../io/bossTable'
 
 /**
  * クラバト用のカテゴリーとチャンネルを作成する

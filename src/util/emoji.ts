@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as util from '.'
 
 /**
  * 送信されたメッセージに特定の文字が含まれていた場合、対応した絵文字をつける

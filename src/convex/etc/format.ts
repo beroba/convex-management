@@ -2,7 +2,7 @@ import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as util from '../../../util'
 
 /**
  * TL保存用のリスト

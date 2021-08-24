@@ -2,7 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import * as declare from './declare/react'
-import * as time from './convex/time'
+import * as time from './convex/time/time'
 
 /**
  * リアクションのイベントに応じて適切な処理を実行する

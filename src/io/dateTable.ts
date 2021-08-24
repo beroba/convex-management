@@ -1,6 +1,6 @@
 import Option from 'type-of-option'
 import * as util from '../util'
-import * as io from '.'
+import * as io from './redis'
 import {DateTable} from './type'
 
 /**

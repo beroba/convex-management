@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as status from '../../io/status'
-import * as schedule from '../../io/schedule'
-import {AtoE} from '../../io/type'
-import * as declare from '../declare/list'
-import * as list from '../plan/list'
+import * as util from '../../../util'
+import * as status from '../../../io/status'
+import * as schedule from '../../../io/schedule'
+import {AtoE} from '../../../io/type'
+import * as declare from '../../declare/list'
+import * as list from '../../plan/list'
 
 /**
  * 出欠のメッセージに出席のリアクションを付けたら離席中ロールを外す
