@@ -5,10 +5,13 @@ import * as command from './'
 import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as dateTable from '../../io/dateTable'
+import * as schedule from '../../io/schedule'
+import * as status from '../../io/status'
 import * as category from '../convex/category'
-import * as activityTime from '../convex/activityTime'
 import * as etc from '../convex/etc'
 import * as react from '../convex/react'
+import * as situation from '../convex/situation'
+import * as list from '../plan/list'
 import * as plan from '../plan/delete'
 
 /**
@@ -56,19 +59,9 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'Update convex management members'
     }
 
-    case /cb manage update sisters/.test(content): {
-      await updateSistersController('/cb manage update sisters', content, msg)
-      return 'Update convex management sisters'
-    }
-
     case /cb manage set react/.test(content): {
       await setReactController('/cb manage set react', content, msg)
       return 'Set react for convex'
-    }
-
-    case /cb manage reflect activity time/.test(content): {
-      await reflectActivityTimeController('/cb manage reflect activity time', content, msg)
-      return 'Reflect activity time on the sheet'
     }
 
     case /cb manage delete all plan/.test(content): {
@@ -133,6 +126,9 @@ const setDaysController = async (_command: string, _content: string, _msg: Disco
   // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
+  // 引数がない場合は終了
+  if (!args) return _msg.reply('設定したい日付を入力しなさい！')
+
   // 日付テーブルを更新する
   await dateTable.Update(args)
 
@@ -147,9 +143,9 @@ const setDaysController = async (_command: string, _content: string, _msg: Disco
  */
 const setBossController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // ボステーブルを更新する
-  await bossTable.Update()
+  const err = await bossTable.Update()
 
-  _msg.reply('クランバトルのボステーブルを設定したわよ！')
+  _msg.reply(err ? '`boss`の値が見つからなかったわ' : 'クランバトルのボステーブルを設定したわよ！')
 }
 
 /**
@@ -185,19 +181,6 @@ const updateMembersController = async (_command: string, _content: string, _msg:
 }
 
 /**
- * `/cb manage update sisters`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const updateSistersController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 妹クランメンバーの更新をする
-  await etc.UpdateSisters(_msg)
-
-  _msg.reply('妹クランメンバー一覧を更新したわよ！')
-}
-
-/**
  * `/cb manage set react`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
@@ -211,19 +194,6 @@ const setReactController = async (_command: string, _content: string, _msg: Disc
   await react.SetActivityTime()
 
   _msg.reply('凸管理用の絵文字を設定したわよ！')
-}
-
-/**
- * `/cb manage reflect activity time`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const reflectActivityTimeController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // スプレッドシートに反映
-  await activityTime.ReflectOnSheet()
-
-  _msg.reply('活動時間を設定したわよ！')
 }
 
 /**
@@ -249,19 +219,45 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
   // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
-  // 引数が無い場合は終了
-  if (!args) return _msg.reply('更新したいプレイヤーと名前を指定しなさい')
+  // 引数が無い場合はキャルステータスの名前を適用
+  if (!args) {
+    // キャルステータスの名前を適用
+    const err = await status.SetNames()
+    _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
+  } else {
+    // 変更先の名前を取得
+    const name = util
+      .Format(args)
+      .replace(/<.+>/, '') // プレイヤーIDを省く
+      .trim()
 
-  // 変更先の名前を取得
-  const name = util
-    .Format(args)
-    .replace(/<.+>/, '') // プレイヤーIDを省く
-    .trim()
+    // 凸状況を更新するユーザーを取得する
+    const user = _msg.mentions.users.first()
+    if (!user) {
+      _msg.reply('メンションで誰の名前を変更したいか指定しなさい')
+      return
+    }
 
-  // 名前を設定する
-  await etc.SetName(name, _msg)
+    // メンバーの状態を取得
+    let member = await status.FetchMember(user.id)
+    if (!member) {
+      _msg.reply('その人はクランメンバーじゃないわ')
+      return
+    }
 
-  _msg.reply('名前を更新したわよ！')
+    // 名前を設定する
+    await status.SetName(member, name)
+
+    _msg.reply(`\`${name}\`の名前を更新したわよ！`)
+  }
+
+  // メンバー全員の状態を取得
+  const members = await status.Fetch()
+  situation.Report(members)
+
+  // 凸予定一覧を取得
+  const plans = await schedule.Fetch()
+  await list.SituationEdit(plans)
 }
 
 /**

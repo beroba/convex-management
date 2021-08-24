@@ -2,8 +2,10 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
+import * as current from '../../io/current'
 import * as status from '../../io/status'
-import {Member} from '../../io/type'
+import {AtoE, Member} from '../../io/type'
+import * as lapAndBoss from '../convex/lapAndBoss'
 import * as situation from '../convex/situation'
 
 /**
@@ -26,18 +28,23 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   await channel.messages.fetch(react.message.id)
 
+  const msg = <Discord.Message>react.message
+
   // 送信者と同じ人で無ければ終了
-  if (react.message.author.id !== user.id) return
+  if (msg.author.id !== user.id) return
 
   // メンバーの状態を取得
-  const member = await status.FetchMember(react.message.author.id)
+  const member = await status.FetchMember(msg.author.id)
   // クランメンバーでなければ終了
   if (!member) return
 
   // 凸状況を元に戻す
-  const members = await statusRestore(react.message, member)
+  const members = await statusRestore(msg, member)
   // 失敗したら終了
   if (!members) return
+
+  // ボスを討伐していたら戻す
+  await killConfirm(member.history)
 
   // 凸状況に報告
   situation.Report(members)
@@ -67,6 +74,9 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   // 失敗したら終了
   if (!members) return
 
+  // ボスを討伐していたら戻す
+  await killConfirm(member.history)
+
   // 凸状況に報告
   situation.Report(members)
 
@@ -94,8 +104,11 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
   }
 
   // 凸報告に凸状況を報告
-  const convex = `残凸数: ${member.convex}、持越数: ${member.over}`
+  const convex = `残凸数: \`${member.convex}\`、持越数: \`${member.over}\``
   msg.reply(`取消を行ったわよ\n${convex}`)
+
+  // ボス倒していたかを判別
+  // killConfirm(msg)
 
   // ステータスを更新
   const members = await status.UpdateMember(member)
@@ -109,7 +122,7 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
  * @return 2回キャンセルしていたかの真偽値
  */
 const confirmCancelTwice = (member: Member): boolean => {
-  return `${member.convex}${'+'.repeat(member.over)}` === member.history
+  return `${member.convex}${'+'.repeat(member.over)}` === member.history.split('|').first()
 }
 
 /**
@@ -118,8 +131,9 @@ const confirmCancelTwice = (member: Member): boolean => {
  * @return 更新したメンバー
  */
 const rollback = (member: Member): Member => {
-  member.convex = member.history[0].to_n()
-  member.over = member.history.match(/\+/g) ? <number>member.history.match(/\+/g)?.length : 0
+  const history = member.history.split('|').first()
+  member.convex = history[0].to_n()
+  member.over = history.match(/\+/g) ? <number>history.match(/\+/g)?.length : 0
   return member
 }
 
@@ -136,4 +150,25 @@ const endConfirm = (member: Member, msg: Discord.Message): Member => {
   msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   return member
+}
+
+/**
+ * ボスを倒していた場合、前のボスに戻す
+ * @param msg DiscordからのMessage
+ */
+const killConfirm = async (history: string) => {
+  const content = history.split('|').slice(1).join('')
+
+  // ボスを倒していなければ終了
+  if (!/^k|kill|きっl/i.test(content)) return
+
+  // 現在の状況を取得
+  const state = await current.Fetch()
+
+  // ボス番号と周回数を取得
+  const alpha = <AtoE>content[0]
+  const lap = state[alpha].lap
+
+  // ボスの周回数を変更
+  lapAndBoss.UpdateLap(lap - 1, alpha)
 }

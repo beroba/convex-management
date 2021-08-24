@@ -10,34 +10,20 @@ import * as bossTable from '../../io/bossTable'
  * @param msg DiscordからのMessage
  */
 export const Create = async (year: number, month: number, msg: Discord.Message) => {
-  const [adoptTitle, draftTitle] = ['採用', '立案'].map(t => `${year}年${month}月クラバト-${t}`)
-  const [adoptPermit, draftPermit] = settingPermit(msg)
-  const [adoptChannels, draftChannels] = await createChannelName(month)
+  const title = `${year}年${month}月クラバト`
+  const permit = settingPermit(msg)
+  const names = await createChannelName(month)
 
   // カテゴリーの作成
-  const adoptCategory = await msg.guild?.channels.create(adoptTitle, {
-    type: 'category',
+  const category = await msg.guild?.channels.create(title, {
+    type: 'GUILD_CATEGORY',
     position: Settings.CATEGORY.POSITION,
-    permissionOverwrites: adoptPermit,
-  })
-  const draftCategory = await msg.guild?.channels.create(draftTitle, {
-    type: 'category',
-    position: Settings.CATEGORY.POSITION,
-    permissionOverwrites: draftPermit,
+    permissionOverwrites: permit,
   })
 
   // チャンネルの作成し初回メッセージを送信
   await Promise.all(
-    adoptChannels.map(async name => {
-      const c = await msg.guild?.channels.create(name, {type: 'text', parent: adoptCategory?.id})
-      c?.send(name)
-    })
-  )
-  await Promise.all(
-    draftChannels.map(async name => {
-      const c = await msg.guild?.channels.create(name, {type: 'text', parent: draftCategory?.id})
-      c?.send(name)
-    })
+    names.map(async name => msg.guild?.channels.create(name, {type: 'GUILD_TEXT', parent: category?.id}))
   )
 
   msg.reply(`${year}年${month}月のカテゴリーを作成したわよ！`)
@@ -57,7 +43,7 @@ export const Delete = async (year: number, month: number, msg: Discord.Message) 
   if (!categorys?.length) return msg.reply(`${year}年${month}月クラバトなんてないんだけど！`)
 
   for (const category of categorys) {
-    const channels = category.guild.channels.cache.filter(c => c.parentID === category.id)
+    const channels = category.guild.channels.cache.filter(c => c.parentId === category.id)
 
     // カテゴリとチャンネルを削除
     await category?.delete()
@@ -74,7 +60,7 @@ export const Delete = async (year: number, month: number, msg: Discord.Message) 
  * @param msg DiscordからのMessage
  * @return 設定した権限
  */
-const settingPermit = (msg: Discord.Message): [Discord.OverwriteResolvable[], Discord.OverwriteResolvable[]] => {
+const settingPermit = (msg: Discord.Message): Discord.OverwriteResolvable[] => {
   const roles = msg.guild?.roles
   // 各ロールがあるか確認
   const leader        = roles?.cache.get(Settings.ROLE_ID.LEADER)?.id         ?? ''
@@ -87,24 +73,13 @@ const settingPermit = (msg: Discord.Message): [Discord.OverwriteResolvable[], Di
 
   // カテゴリーの権限を設定
   return [
-    [
-      {id: leader,        allow: ['MENTION_EVERYONE']                     },
-      {id: subLeader,     allow: ['MANAGE_MESSAGES']                      },
-      {id: progress,      allow: ['MANAGE_MESSAGES']                      },
-      {id: clanMembers,   allow: ['VIEW_CHANNEL'], deny: ['SEND_MESSAGES']},
-      {id: sisterMembers, allow: ['VIEW_CHANNEL'], deny: ['SEND_MESSAGES']},
-      {id: tomodachi,     allow: ['VIEW_CHANNEL'], deny: ['SEND_MESSAGES']},
-      {id: everyone,      deny:  ['VIEW_CHANNEL', 'MENTION_EVERYONE']     },
-    ],
-    [
-      {id: leader,        allow: ['MENTION_EVERYONE']                },
-      {id: subLeader,     allow: ['MANAGE_MESSAGES']                 },
-      {id: progress,      allow: ['MANAGE_MESSAGES']                 },
-      {id: clanMembers,   allow: ['VIEW_CHANNEL']                    },
-      {id: sisterMembers, allow: ['VIEW_CHANNEL']                    },
-      {id: tomodachi,     allow: ['VIEW_CHANNEL']                    },
-      {id: everyone,      deny:  ['VIEW_CHANNEL', 'MENTION_EVERYONE']},
-    ]
+    {id: leader,        allow: ['MENTION_EVERYONE']                },
+    {id: subLeader,     allow: ['MANAGE_MESSAGES']                 },
+    {id: progress,      allow: ['MANAGE_MESSAGES']                 },
+    {id: clanMembers,   allow: ['VIEW_CHANNEL']                    },
+    {id: sisterMembers, allow: ['VIEW_CHANNEL']                    },
+    {id: tomodachi,     allow: ['VIEW_CHANNEL']                    },
+    {id: everyone,      deny:  ['VIEW_CHANNEL', 'MENTION_EVERYONE']},
   ]
 }
 
@@ -113,7 +88,7 @@ const settingPermit = (msg: Discord.Message): [Discord.OverwriteResolvable[], Di
  * @param month 現在の月
  * @return チャンネル名のリスト
  */
-const createChannelName = async (month: number): Promise<[string[], string[]]> => {
+const createChannelName = async (month: number): Promise<string[]> => {
   // キャルステータスからボステーブルを取得
   const table = await bossTable.Fetch()
 
@@ -121,32 +96,24 @@ const createChannelName = async (month: number): Promise<[string[], string[]]> =
   const [a, b, c, d, e] = table.map(t => t.name)
 
   return [
-    [
-      `${month}月-採用凸ルート`,
-      `${month}月-${a}`,
-      `${month}月-${b}`,
-      `${month}月-${c}`,
-      `${month}月-${d}`,
-      `${month}月-${e}`,
-    ],
-    [
-      `${month}月-凸ルート案`,
-      `45-${a}`,
-      `45-${b}`,
-      `45-${c}`,
-      `45-${d}`,
-      `45-${e}`,
-      `3-${a}`,
-      `3-${b}`,
-      `3-${c}`,
-      `3-${d}`,
-      `3-${e}`,
-      `12-${a}`,
-      `12-${b}`,
-      `12-${c}`,
-      `12-${d}`,
-      `12-${e}`,
-      `${month}月-持越編成`,
-    ],
+    `${month}月-採用凸ルート`,
+    `${month}月-採用編成`,
+    `${month}月-凸ルート案`,
+    `45-${a}`,
+    `45-${b}`,
+    `45-${c}`,
+    `45-${d}`,
+    `45-${e}`,
+    `3-${a}`,
+    `3-${b}`,
+    `3-${c}`,
+    `3-${d}`,
+    `3-${e}`,
+    `12-${a}`,
+    `12-${b}`,
+    `12-${c}`,
+    `12-${d}`,
+    `12-${e}`,
+    `${month}月-持越編成`,
   ]
 }

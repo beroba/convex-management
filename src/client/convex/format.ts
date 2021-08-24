@@ -3,7 +3,26 @@ import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as util from '../../util'
-import {TLFormat} from '../../util/type'
+
+/**
+ * TL保存用のリスト
+ * @property index リストの場所
+ * @property list リスト本体
+ */
+type TLList = {
+  index: number
+  list: string[]
+}
+
+/**
+ * TL修正で使う変更用文字列の前後
+ * @property before 変更前の文字列
+ * @property after 変更後の文字列
+ */
+type TLFormat = {
+  before: string
+  after: string
+}
 
 /**
  * TLを正しい書式に整形させる、
@@ -18,13 +37,15 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
   // TLの整形をする
   const content = (await new Generate(tl, time, flag) // 元になるクラスを生成
     .zenkakuToHankaku() // 全角を半角に変換
+    .saveDescription()  // 説明書きを退避
     .bracketSpaceAdjustment() // 括弧の前後スペースを調整
     .extendFormat()) // smicle好みにTLを修正する
     .timeParser() // 時間のパースをする
-    .toCodeBlock() // コードブロックにする
     .alignVertically() // TLの縦を合わせる
     .removeSomeSecond() // 先頭が同じ秒数なら消す
     .carryOverCalc() // 持越計算をする
+    .restoreDescription() // 説明書きを復元
+    .toCodeBlock() // コードブロックにする
     .toString() // 文字列に戻す
 
   msg.reply(content)
@@ -33,6 +54,7 @@ export const TL = async (tl: string, time: Option<string>, msg: Discord.Message,
 class Generate {
   tl: string
   time: Option<number>
+  description: TLList = {index: -1, list: []}
   flag: boolean
 
   /**
@@ -80,55 +102,21 @@ class Generate {
   }
 
   /**
-   * smicle好みにTLを修正する
-   * @returns this
+   * 説明書きを退避させる
+   * @return this
    */
-  async extendFormat(): Promise<this> {
-    // キャルbotの管理者じゃない場合は終了
-    if (!this.flag) return this
+  saveDescription(): this {
+    const tl = this.tl.split('\n')
 
-    // バトル開始の行を取り除く
-    this.tl = this.tl
-      .split('\n')
-      .filter(l => !/バトル開始/.test(l))
-      .join('\n')
+    this.description.index = tl.findIndex(l => /^クランモード/.test(l))
 
-    // 共通の部分を修正
-    this.tl = this.tl
-      .replace(/=/g, '')
-      .replace(/-/g, '')
-      .replace(/オート/g, '(オート)')
-      .replace(/\( ?\(/g, '(')
-      .replace(/\) ?\)/g, ')')
-      .replace(/\s討伐/, ' バトル終了')
+    // 説明書きがある場合は保存
+    if (~this.description.index) {
+      this.description.list = tl.splice(this.description.index, 12)
+    }
 
-    // TL修正用のリストを作成
-    const list = await this.fetchTextToModify()
-    // リストを元に修正
-    list.forEach(l => (this.tl = this.tl.replace(new RegExp(l.before, 'ig'), l.after)))
-
+    this.tl = tl.join('\n')
     return this
-  }
-
-  /**
-   * #tl修正の名前変更一覧からTL修正用のリストを作成
-   * @returns TL修正用のリスト
-   */
-  async fetchTextToModify(): Promise<TLFormat[]> {
-    // TL修正で使うチャンネルを取得
-    const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
-    const msgs = (await channel.messages.fetch()).map(m => m)
-
-    // 修正用のリストを取得
-    const list = await Promise.all(msgs.map(m => m.content.replace(/\`\`\`\n?/g, '')))
-
-    return list
-      .join('\n') // 複数のリストを結合
-      .split('\n') // 改行で分割
-      .filter(l => l) // 空の行を取り除く
-      .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
-      .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
-      .map(l => ({before: l[0], after: l[1]})) // TLFormatの形に変更
   }
 
   /**
@@ -143,6 +131,116 @@ class Generate {
   }
 
   /**
+   * smicle好みにTLを修正する
+   * @returns this
+   */
+  async extendFormat(): Promise<this> {
+    // `/cb tle`じゃない場合は終了
+    if (!this.flag) return this
+
+    // 不要な行を取り除く
+    const tl = this.tl.split('\n')
+    ;[/バトル開始/, /ユニオンバースト発動時間/].forEach(t => {
+      const i = tl.findIndex(l => t.test(l))
+      if (~i) tl.splice(i, 1)
+    })
+    this.tl = tl.join('\n')
+
+    // 記号を修正
+    {
+      const list: TLFormat[] = [
+        ['\n{2,}', '\n'], // 複数の改行を削除
+        ['=', ''], // =は不要なので削除
+        ['-', ''], // -は不要なので削除
+        ['~', ''], // ~は不要なので削除
+        ['\\( ?\\(', '('], // 2重になっている括弧を1つにする
+        ['\\) ?\\)', ')'], // 2重になっている括弧を1つにする
+      ].map(this.toTLFormat)
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
+
+    // オートを修正
+    {
+      const list: TLFormat[] = [
+        [' オート ', ' (オート) '],
+        [' ?オート$', ' (オート)'],
+        [' ?オート\n', ' (オート)\n'],
+        ['オートon', 'オートON'],
+        ['オートoff', 'オートOFF'],
+        ['オートオン', 'オートON'],
+        ['オートオフ', 'オートOFF'],
+        ['^オートON\n', '――――オートON――――\n'],
+        ['^オートOFF\n', '――――オートON――――\n'],
+        ['\nオートON\n', '\n――――オートON――――\n'],
+        ['\nオートOFF\n', '\n――――オートOFF――――\n'],
+      ].map(this.toTLFormat)
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
+
+    // その他の部分を修正
+    {
+      const list: TLFormat[] = [
+        ['ub', 'UB'],
+        ['敵UB', 'ボスUB'],
+        ['hit', 'Hit'],
+        [' ?連打$', ''],
+        [' ?連打\n', '\n'],
+        ['s討伐', ' バトル終了'],
+      ].map(this.toTLFormat)
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
+
+    // #TL修正用のリストの文字列を修正
+    {
+      const list = await this.fetchTextToModify()
+      this.tl = this.convertTLFormat(list, this.tl)
+    }
+
+    return this
+  }
+
+  /**
+   * 変更前後の文字配列をTLFormatの形式に変換して返す
+   * @param l 変更前と変更後の文字列
+   * @return 変換した値
+   */
+  private toTLFormat(l: string[]): TLFormat {
+    return {before: l[0], after: l[1]}
+  }
+
+  /**
+   * 渡されたリストを元にTLを変更する
+   * @param list TLFormatのリスト
+   * @param tl 変更するTL
+   * @return 変更後のTL
+   */
+  private convertTLFormat(list: TLFormat[], tl: string): string {
+    list.forEach(l => (tl = tl.replace(new RegExp(l.before, 'gi'), l.after)))
+    return tl
+  }
+
+  /**
+   * #tl修正の名前変更一覧からTL修正用のリストを作成
+   * @return TL修正用のリスト
+   */
+  private async fetchTextToModify(): Promise<TLFormat[]> {
+    // TL修正で使うチャンネルを取得
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.TL_FORMAT)
+    const msgs = (await channel.messages.fetch()).map(m => m)
+
+    // 修正用のリストを取得
+    const list = await Promise.all(msgs.map(m => m.content.replace(/\`\`\`\n?/g, '')))
+
+    return list
+      .join('\n') // 複数のリストを結合
+      .split('\n') // 改行で分割
+      .filter(l => l) // 空の行を取り除く
+      .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
+      .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
+      .map(this.toTLFormat) // TLFormatの形に変更
+  }
+
+  /**
    * 時間の形を整形する
    * @return this
    */
@@ -153,24 +251,6 @@ class Generate {
     const tl = this.tl.split('')
 
     for (let i = 0; i < tl.length; i++) {
-      // 星の場合は数字の先まで飛ばす
-      if (/★/.test(tl[i])) {
-        i = this.countUpToChar(tl, i + 1)
-        continue
-      }
-
-      // Lvの場合は数字の先まで飛ばす
-      if (/Lv/i.test(tl[i] + tl[i + 1])) {
-        i = this.countUpToChar(tl, i + 2)
-        continue
-      }
-
-      // RANKの場合は数字の先まで飛ばす
-      if (/RANK/i.test(tl[i] + tl[i + 1] + tl[i + 2] + tl[i + 3])) {
-        i = this.countUpToChar(tl, i + 4)
-        continue
-      }
-
       // 数字以外は次へ
       if (!/\d/.test(tl[i])) continue
 
@@ -245,17 +325,6 @@ class Generate {
       if (!/\d/.test(tl[i])) break
     }
     return i
-  }
-
-  /**
-   * コードブロックじゃない場合はコードブロックにする
-   * @return this
-   */
-  toCodeBlock(): this {
-    if (!/\`\`\`/.test(this.tl)) {
-      this.tl = `\`\`\`\n` + this.tl + `\`\`\``
-    }
-    return this
   }
 
   /**
@@ -373,13 +442,40 @@ class Generate {
 
       /**
        * 秒数を順番に取り出し、カウントを進める
-       * @returns 秒数
+       * @return 秒数
        */
       pop() {
         return this.list[this.count++]
       }
     }
     return new Order(list)
+  }
+
+  /**
+   * 説明書きを復元する
+   * @return this
+   */
+  restoreDescription(): this {
+    const tl = this.tl.split('\n')
+
+    // 説明書きがある場合は復元
+    if (~this.description.index) {
+      tl.splice(this.description.index, 0, ...this.description.list)
+    }
+
+    this.tl = tl.join('\n')
+    return this
+  }
+
+  /**
+   * コードブロックじゃない場合はコードブロックにする
+   * @return this
+   */
+  toCodeBlock(): this {
+    if (!/\`\`\`/.test(this.tl)) {
+      this.tl = `\`\`\`\n` + this.tl + `\`\`\``
+    }
+    return this
   }
 
   /**

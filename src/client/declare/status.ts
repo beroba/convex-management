@@ -29,8 +29,10 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
 
   // 表示するテキストを作成
   const text = [
-    `\`${state[alpha].lap}\`週目 \`${state[alpha].name}\` \`${state[alpha].hp}/${maxHP}\``,
-    `予想残りHP \`${await expectRemainingHP(state[alpha].hp, channel)}\``,
+    '```m',
+    `${state[alpha].lap}周目 ${state[alpha].name} ${state[alpha].hp}/${maxHP}`,
+    `予想残りHP: ${await expectRemainingHP(state[alpha].hp, channel)}`,
+    '```',
   ].join('\n')
 
   // メッセージを編集

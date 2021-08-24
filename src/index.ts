@@ -1,46 +1,43 @@
 import './util/prototype'
 import * as Discord from 'discord.js'
 import ThrowEnv from 'throw-env'
+import {Partials, Intents} from './util/setting'
 import {Ready} from './client/ready'
 import {GuildMemberAdd} from './client/guildMemberAdd'
 import {GuildMemberUpdate} from './client/guildMemberUpdate'
-import {Message} from './client/message'
+import {MessageCreate} from './client/messageCreate'
 import {MessageDelete} from './client/messageDelete'
 import {MessageReactionAdd} from './client/messageReactionAdd'
 import {MessageReactionRemove} from './client/messageReactionRemove'
 import {MessageUpdate} from './client/messageUpdate'
 import {CronOperation} from './util/cron'
 
+// クライアントの作成
 export const Client = new Discord.Client({
-  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-  ws: {intents: Discord.Intents.ALL},
+  partials: Partials,
+  intents: Intents,
 })
 
-// botの起動時に実行
+// APIトリガー
 Client.on('ready', () => Ready())
 
-// 新しいメンバーが増えた際に実行
 Client.on('guildMemberAdd', member => GuildMemberAdd(member))
 
-// メンバーの状態が変わった際に実行
 Client.on('guildMemberUpdate', (_, member) => GuildMemberUpdate(member))
 
-// メッセージが送信された際に実行
-Client.on('message', msg => Message(msg))
+Client.on('messageCreate', msg => MessageCreate(msg))
 
-// メッセージが削除された際に実行
 Client.on('messageDelete', msg => MessageDelete(msg))
 
-// リアクションが付与された際に実行
-Client.on('messageReactionAdd', (react, user) => MessageReactionAdd(react, user))
+Client.on('messageReactionAdd', (react, user) => MessageReactionAdd(<Discord.MessageReaction>react, user))
 
-// リアクションを外した際に実行
-Client.on('messageReactionRemove', (react, user) => MessageReactionRemove(react, user))
+Client.on('messageReactionRemove', (react, user) => MessageReactionRemove(<Discord.MessageReaction>react, user))
 
-// メッセージが更新された際に実行
 Client.on('messageUpdate', (_, msg) => MessageUpdate(msg))
 
-// クーロンの処理
+// クーロン処理
 CronOperation()
 
-Client.login(ThrowEnv('CAL_TOKEN'))
+// ログイン
+const token = ThrowEnv('CAL_TOKEN')
+Client.login(token)

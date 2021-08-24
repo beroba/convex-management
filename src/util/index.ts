@@ -33,7 +33,7 @@ export const Sleep = (ms: number): Promise<unknown> => {
  * @param step 刻む数
  * @returns 数字配列
  */
-export const range = (start: number, stop?: number, step: number = 1): number[] => {
+export const Range = (start: number, stop?: number, step: number = 1): number[] => {
   if (stop === undefined) {
     stop = start
     start = 0
@@ -74,10 +74,7 @@ export const GetCalInfo = (): Option<Discord.GuildMember> => {
  * @param channel 比較するチャンネル
  * @return 真偽値
  */
-export const IsChannel = (
-  array: string[],
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
-): boolean => {
+export const IsChannel = (array: string[], channel: Discord.TextBasedChannels): boolean => {
   return array.some((c: string) => c === (channel as Discord.TextChannel).name)
 }
 

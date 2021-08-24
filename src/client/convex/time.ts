@@ -74,9 +74,6 @@ const update = async (id: string) => {
 
   // 活動限界時間の表示を更新
   Display(members)
-
-  // 活動限界時間をスプレッドシートに反映
-  status.ReflectOnLimit(member)
 }
 
 /**
@@ -97,21 +94,21 @@ const fetchLimit = async (id: string): Promise<string> => {
     first.reactions.cache
       .map(r => r)
       .filter(r => r.users.cache.map(u => u.id).some(u => u === id))
-      .map(r => r.emoji.name.replace('_', ''))
+      .map(r => r.emoji.name?.replace('_', ''))
   )
   // 後半の時間を取得
   const l = await Promise.all(
     latter.reactions.cache
       .map(r => r)
       .filter(r => r.users.cache.map(u => u.id).some(u => u === id))
-      .map(r => r.emoji.name.replace('_', ''))
+      .map(r => r.emoji.name?.replace('_', ''))
   )
 
   // 前半と後半を結合
   const list = f.concat(l)
 
   // 1番後ろの値を取得、なければ空
-  return list.last() !== undefined ? list.last() : ''
+  return list.last() !== undefined ? <string>list.last() : ''
 }
 
 /**
@@ -119,6 +116,9 @@ const fetchLimit = async (id: string): Promise<string> => {
  * @param members メンバー一覧
  */
 export const Display = async (members: Member[]) => {
+  // 名前順にソート
+  members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
+
   // 現在の時刻を取得
   const h = getHours()
 
@@ -208,5 +208,5 @@ const limitMember = (h: number, members: Member[]): string =>
       return createTime(m.limit) === h
     })
     .filter(m => !m.end) // 3凸終了している人は省く
-    .map(m => `${m.name}`)
+    .map(m => m.name)
     .join(', ')

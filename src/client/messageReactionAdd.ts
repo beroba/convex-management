@@ -1,9 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as activityTime from './convex/activityTime'
 import * as attendance from './convex/attendance'
-import * as limitTime from './convex/limitTime'
+import * as time from './convex/time'
 import * as over from './convex/over'
 import * as sister from './convex/sister'
 import * as plan from './plan/delete'
@@ -55,11 +54,7 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   if (comment) return console.log(comment)
 
   // 活動限界時間の設定を行う
-  comment = await limitTime.Add(react, user as Discord.User)
-  if (comment) return console.log(comment)
-
-  // 活動時間の追加を行う
-  comment = await activityTime.Add(react, user as Discord.User)
+  comment = await time.Add(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // 離席中ロールの削除を行う

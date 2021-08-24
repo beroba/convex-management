@@ -24,7 +24,8 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
   await channel.messages.fetch(react.message.id)
 
   // 送信者と同じ人で無ければ終了
-  if (react.message.author.id !== user.id) return
+  const msg = <Discord.Message>react.message
+  if (msg.author.id !== user.id) return
 
   // メッセージを削除する
   react.message.delete()
@@ -51,13 +52,27 @@ export const React = (msg: Discord.Message): Option<string> => {
  * メンバーの持越状況を全て削除する
  * @param member 削除したいメンバーの情報
  */
-export const AllDelete = async (member: Option<Discord.GuildMember>) => {
+export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
   // 持越状況を全て削除
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
-  ;(await channel.messages.fetch())
+  const msgs = await channel.messages.fetch()
+  msgs
     .map(m => m)
     .filter(m => m.author.id === member?.id)
     .forEach(m => m.delete())
+
+  console.log('Delete carryover message')
+}
+
+/**
+ * 持越状況を全て削除する
+ * @param
+ */
+export const AllDeleteMsg = async () => {
+  // 持越状況を全て削除
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
+  const msgs = await channel.messages.fetch()
+  msgs.map(m => m).forEach(m => m.delete())
 
   console.log('Delete carryover message')
 }

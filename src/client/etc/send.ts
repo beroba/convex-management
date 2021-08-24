@@ -13,7 +13,7 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
 
   // 漢字でも動くようにする
   const adjustment = msg.content.replace('　', ' ').replace(/お話し|お話/, 'おはなし')
@@ -48,7 +48,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
 
   // urlの場合は終了
   if (/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content)) return
@@ -141,14 +141,14 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
   if (msg.member?.user.bot) return
 
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
 
   // カンカンカンの文字が含まれているか確認
   if (!msg.content.match(/カンカンカン/)) return
 
   // カンカンカンのメッセージ
   const message =
-    'おはよー！！！カンカンカン！！！起きなさい！！！クラバトよ！！！！すごいクラバトよ！！！！外が明るいわよ！！カンカンカンカンカン！！！！！おはよ！！カンカンカン！！！見て見て！！！！外明るいの！！！外！！！！見て！！カンカンカンカンカン！！凸しなさい！！早く凸して！！カンカン！ぶっ殺すわよ！！！！！！！！！！'
+    'おはよー！！！カンカンカン！！！起きなさい！！！クラバトよ！！！！すごいクラバトよ！！！！外が明るいわよ！！カンカンカンカンカン！！！！！おはよ！！カンカンカン！！！見て見て！！！！外明るいの！！！外！！！！見て！！カンカンカンカンカン！！凸しなさい！！早く凸して！！カンカン！ぶっ殺すわよ！！！！！！！！！！:heavy_check_mark:'
 
   // メッセージ送信先のチャンネルを取得
   const channel = util.GetTextChannel(msg.channel.id)
@@ -158,43 +158,13 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
 }
 
 /**
- * 送信されたメッセージが履歴埋めの場合アリーナガイジを送信する
- * @param msg DiscordからのMessage
- * @return 履歴埋めかどうかの結果
- */
-export const ArenaGaiji = (msg: Discord.Message): Option<string> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
-
-  // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
-
-  // 履歴埋めでなければ終了
-  if (msg.content.replace(/^(en|us|zh|cn|es|ru|de|it|vi|vn|gb|ja|jp)/i, '').trim() !== '履歴埋め') return
-
-  // 履歴埋めのメッセージ
-  const message = [
-    '君プリコネ上手いね？誰推し？てかアリーナやってる？',
-    '履歴埋めってのがあってさ、一瞬！1回だけやってみない？',
-    '大丈夫すぐやめれるし',
-    '気持ちよくなれるよ',
-  ].join('\n')
-
-  // メッセージ送信先のチャンネルを取得
-  const channel = util.GetTextChannel(msg.channel.id)
-  channel.send(message)
-
-  return 'Arena Gaiji'
-}
-
-/**
  * 送信されたメッセージにヤバイの文字が含まれていた場合、ヤバイわよ！の画像を送信する
  * @param msg DiscordからのMessage
  * @return 画像を送信したかの結果
  */
 export const YabaiImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字にやばいが含まれているか確認
   const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
@@ -203,7 +173,7 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
   if (!match) return
 
   // ヤバイわよ！の画像を送信
-  msg.channel.send('', {files: [Settings.URL.YABAIWAYO]})
+  msg.channel.send({files: [Settings.URL.YABAIWAYO]})
 
   return 'Send Yabai Image'
 }
@@ -215,18 +185,36 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
  */
 export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字がシャイニートモか確認
   if (msg.content !== 'シャイニートモ') return
 
   // シャイニートモの画像を送信
-  msg.channel.send('', {files: [Settings.URL.SHINYTMO]})
+  msg.channel.send({files: [Settings.URL.SHINYTMO]})
 
   // 元のメッセージは削除
   setTimeout(() => msg.delete(), 100)
 
-  return 'Send Yabai Image'
+  return 'Send ShinyTmo Image'
+}
+
+/**
+ * 送信されたメッセージが助けて！の場合、助けて！の画像を送信する
+ * @param msg DiscordからのMessage
+ * @return 画像を送信したかの結果
+ */
+export const TasuketeImage = (msg: Discord.Message): Option<string> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
+
+  // 文字が助けて！か確認
+  if (!/^助けて(!|！)$/.test(msg.content)) return
+
+  // 助けて！の画像を送信
+  msg.channel.send({files: [Settings.URL.TASUKETE]})
+
+  return 'Send Tasukete Image'
 }
 
 /**
@@ -236,21 +224,157 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
  */
 export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> => {
   // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.THIS_AND_THAT_CHANNEL, msg.channel)) return
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
 
   // 文字が草か確認
-  if (msg.content !== '草') return
+  if (!/^草\s?\d*$/.test(msg.content)) return
 
   // ガチャの内容を作成
   const items: string[] = Settings.KUSA.map((v: {NAME: string; RATIO: string}) => Array(v.RATIO).fill(v.NAME)).flat()
 
-  // 乱数を生成
-  const rand = createRandNumber(items.length)
-
-  // 草の画像を送信
-  msg.reply(items[rand], {files: [`./assets/kusa/${items[rand]}.png`]})
+  // 抽選する回数を取得
+  const c = msg.content.replace(/[^1-5]/g, '').to_n()
+  if (c) {
+    util.Range(c > 5 ? 5 : c).forEach(_ => {
+      // リストの数に応じて乱数を作る
+      const rand = createRandNumber(items.length)
+      // 草の画像を送信
+      msg.reply({
+        content: `${items[rand]}:heavy_check_mark:`,
+        files: [`./assets/kusa/${items[rand]}.png`],
+      })
+    })
+  } else {
+    // リストの数に応じて乱数を作る
+    const rand = createRandNumber(items.length)
+    // 草の画像を送信
+    msg.reply({
+      content: `${items[rand]}:heavy_check_mark:`,
+      files: [`./assets/kusa/${items[rand]}.png`],
+    })
+  }
 
   return 'Send Kusa Gacha'
+}
+
+/**
+ * 送信されたメッセージが俺嘘の場合、#さとりんご名言ツイートからツイートをランダムで送信
+ * @param msg DiscordからのMessage
+ * @return ツイートを送信したかの結果
+ */
+export const SendUsoOre = async (msg: Discord.Message): Promise<Option<string>> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
+
+  // 文字が俺嘘か確認
+  if (!/^(俺嘘|嘘俺)\s?([1-5]|読み?)*$/.test(msg.content)) return
+
+  // #さとりんご名言ツイートからTweet一覧を取得する
+  const list = await fetchTweetList()
+  if (!list) return
+
+  // 読み?がある場合は読み上げをする
+  if (/読み?/.test(msg.content)) {
+    // リストの数に応じて乱数を作る
+    const rand = createRandNumber(list.length)
+    msg.reply(list.splice(rand, 1).first())
+
+    return 'Send UsoOre'
+  }
+
+  // Tweetリストから選別して送信
+  sendTweetLottery(list, msg)
+
+  return 'Send UsoOre'
+}
+
+/**
+ * 送信されたメッセージがアザラシの場合、#さとりんご名言ツイートからアザラシシーパラダイスのツイートをランダムで送信
+ * @param msg DiscordからのMessage
+ * @return ツイートを送信したかの結果
+ */
+export const SendAguhiyori = async (msg: Discord.Message): Promise<Option<string>> => {
+  // 指定のチャンネル以外では実行されない用にする
+  if (!util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) return
+
+  // 文字が俺嘘か確認
+  if (!/^アザラシ\s?([1-5]|読み?)*$/.test(msg.content)) return
+
+  // #さとりんご名言ツイートからTweet一覧を取得する
+  let list = await fetchTweetList()
+  if (!list) return
+
+  // アザラシシーパラダイスのツイートだけ選別
+  list = list.filter(m => /aguhiyori/.test(m))
+
+  // Tweetリストから選別して送信
+  sendTweetLottery(list, msg)
+
+  return 'Send Aguhiyori'
+}
+
+/**
+ * #さとりんご名言ツイートからTweet一覧を取得する
+ */
+const fetchTweetList = async () => {
+  // さとりんご名言ツイートのメッセージを取得
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.OREUSO)
+  const msgs: Discord.Message[] = []
+
+  // 取得するメッセージの上限を設定
+  const limit = 500
+  const rounds = limit / 100 + (limit % 100 ? 1 : 0)
+
+  // 取得した最後のメッセージを保存
+  let last_id = ''
+  for (let i = 0; i < rounds; i++) {
+    // オプションの設定
+    const options: Discord.ChannelLogsQueryOptions = {limit: 100}
+    if (last_id.length > 0) {
+      options.before = last_id
+    }
+
+    // メッセージを取得
+    const messages = (await channel.messages.fetch(options)).map(m => m)
+    msgs.push(...messages)
+
+    // 最後のメッセージを更新
+    last_id = messages.last().id
+    // 最後のメッセージが特定のメッセージなら終了
+    if (last_id === Settings.UsoOreLast) break
+  }
+
+  // ツイートの一覧を取得
+  return msgs
+    .map(m => m.embeds)
+    .reduce((pre, current) => {
+      // 配列を1重にする
+      pre.push(...current)
+      return pre
+    }, [])
+    .map(m => `${m.description}\n${m.url}`)
+    .filter(m => /twitter\.com/.test(m))
+}
+
+/**
+ * Tweetリストから選別して送信する
+ * @param list Tweetのリスト
+ * @param msg DiscordからのMessage
+ */
+const sendTweetLottery = (list: string[], msg: Discord.Message) => {
+  // 抽選する回数を取得
+  const c = msg.content.replace(/[^1-5]/g, '').to_n()
+  if (c) {
+    util.Range(c > 5 ? 5 : c).forEach(c => {
+      // リストの数に応じて乱数を作る
+      const rand = createRandNumber(list.length)
+      msg.reply(`${c + 1}:heavy_check_mark:\n${list.splice(rand, 1).first().split('\n').last()}`)
+    })
+  } else {
+    // リストの数に応じて乱数を作る
+    const rand = createRandNumber(list.length)
+    msg.reply(list.splice(rand, 1).first().split('\n').last())
+  }
 }
 
 /**
