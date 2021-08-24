@@ -31,7 +31,7 @@ export const Fetch = async (name: string): Promise<Option<Json>> => {
  * キャルステータスの値を送信する
  * @param json 更新させたいjsonの情報
  */
-export const Update = async (json: Json) => {
+export const Send = async (json: Json) => {
   // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
 

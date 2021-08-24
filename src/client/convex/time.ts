@@ -1,8 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as dateTable from '../../io/dateTable'
 import * as status from '../../io/status'
+import * as util from '../../util'
 import {Member} from '../../io/type'
 
 /**
@@ -210,3 +211,46 @@ const limitMember = (h: number, members: Member[]): string =>
     .filter(m => !m.end) // 3凸終了している人は省く
     .map(m => m.name)
     .join(', ')
+
+/**
+ * 朝活アンケートを通知する
+ */
+export const MorningActivitySurvey = async () => {
+  const d = new Date()
+  const nextDay = `${d.getMonth() + 1}/${d.getDate() + 1}`
+
+  const date = await dateTable.Fetch()
+  const isDay = date.find(d => d.day === nextDay)
+  if (!isDay) return
+
+  const text = [
+    `<@&${Settings.ROLE_ID.CLAN_MEMBERS}>`,
+    `\`${isDay.day}\` クラバト${isDay.num}の朝活アンケートです`,
+    `朝活に参加する予定の方は、${Settings.EMOJI_FULL_ID.SANKA} を押して下さい`,
+  ].join('\n')
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CLAN_BATTLE_CONTACT)
+  const msg = await channel.send(text)
+  await msg.react(Settings.EMOJI_ID.SANKA)
+
+  console.log('Notify daily mission digestion')
+}
+
+/**
+ * 活動限界時間を1時間起きに更新する
+ */
+export const LimitTimeDisplay = async () => {
+  const members = await status.Fetch()
+
+  // 活動限界時間の表示を更新
+  Display(members)
+
+  // 現在の時刻を取得
+  const date = new Date().getHours().to_s()
+
+  // bot-notifyに通知をする
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+  channel.send(`${date}時の活動限界時間を更新したわ`)
+
+  console.log('Periodic update of activity time limit display')
+}

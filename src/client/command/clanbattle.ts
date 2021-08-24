@@ -303,7 +303,7 @@ const overController = async (_command: string, _content: string, _msg: Discord.
  */
 const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // タスキルのロールを付与する
-  etc.AddTaskKillRoll(_msg)
+  etc.AddTaskKillRole(_msg)
 }
 
 /**
