@@ -2,14 +2,14 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import {Command} from '../command'
-import * as report from './report'
-import * as plan from './plan'
-import * as over from './convex/over'
-import * as sister from './convex/sister'
-import * as declare from './declare'
+import * as declare from '../convex/declare'
+import * as etc from '../convex/etc'
+import * as over from '../convex/over'
+import * as plan from '../convex/plan'
+import * as report from '../convex/report'
+import * as emoji from '../util/emoji'
 import * as playerID from '../util/playerID'
 import * as send from '../util/send'
-import * as emoji from '../util/emoji'
 
 /**
  * 入力されたメッセージに応じて適切な処理を実行する
@@ -43,7 +43,7 @@ export const MessageCreate = async (msg: Discord.Message) => {
     if (comment) return console.log(comment)
 
     // 持越凸先に絵文字をつける
-    comment = sister.React(msg)
+    comment = etc.React(msg)
     if (comment) return console.log(comment)
 
     // プレイヤーIDの保存処理を行う

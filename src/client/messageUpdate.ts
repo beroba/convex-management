@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as declare from './declare/status'
-import * as edit from './plan/edit'
+import * as declare from '../convex/declare/status'
+import * as edit from '../convex/plan/edit'
 
 /**
  * メッセージ更新のイベントに応じて適切な処理を実行する

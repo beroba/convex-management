@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as declare from './declare/status'
-import * as report from './report/cancel'
-import * as plan from './plan/delete'
+import * as declare from '../convex/declare/status'
+import * as plan from '../convex/plan/delete'
+import * as report from '../convex/report/cancel'
 
 /**
  * メッセージ削除のイベントに応じて適切な処理を実行する
