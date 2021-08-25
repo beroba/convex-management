@@ -9,30 +9,27 @@ import * as util from '.'
  * @return おはなしの結果
  */
 export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
+  const isMajorThat = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
+  if (!isMajorThat) return
 
-  // 漢字でも動くようにする
+  // 元のメッセージを半角に変換できないので`util.Format()`は使わない
+  // 全角スペースは許さない派なので半角スペースにする
   const adjustment = msg.content.replace('　', ' ').replace(/お話し|お話/, 'おはなし')
-
-  // おはなしが先頭じゃない場合は終了
   const match = adjustment.match(/^おはなし /)
   if (!match) return
 
-  // 送信者のメッセージを削除する
   setTimeout(() => msg.delete(), 500)
 
   // メッセージからおはなしを省く
   const content = adjustment.replace('おはなし ', '')
 
-  // メッセージ送信先のチャンネルを取得
   const channel = util.GetTextChannel(msg.channel.id)
   channel.send(content)
 
-  // 誰が送信したかのログを残す
+  // 良からぬ事を書いた人を確認する為にログを残す
   console.log(`${util.GetUserName(msg.member)}, ${content}`)
 
   return 'Speaking Cal'
@@ -44,56 +41,50 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
  * @return orが含まれていたかの結果
  */
 export const AorB = (msg: Discord.Message): Option<string> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)) return
+  const isMajorThat = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
+  if (!isMajorThat) return
 
-  // urlの場合は終了
-  if (/https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content)) return
+  const isUrl = /https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content)
+  if (isUrl) return
 
-  // 英単語の中身にorがある場合は終了
-  if (/[a-z|A-Z]or[a-z|A-Z]/.test(msg.content)) return
+  const isEnglishWord = /[a-z|A-Z]or[a-z|A-Z]/.test(msg.content)
+  if (isEnglishWord) return
 
-  // コードブロックの場合は終了
-  if (/\`\`\`/.test(msg.content)) return
+  const isChordBlock = /\`\`\`/.test(msg.content)
+  if (isChordBlock) return
 
-  // 全角を半角に変換
   const content = util.Format(msg.content)
 
   // 絵文字だけ抜き出したリストを作る
-  const emoji = content.match(/<.*?>/g)?.map(e => e)
+  const emojiList = content.match(/<.*?>/g)?.map(e => e)
 
-  // orが含まれている最初の行を取得
   const line = content
-    .replace(/<.*?>/g, '１') // 絵文字を全て１に変換
+    .replace(/<.*?>/g, '１') // 一時的に絵文字を１に置き換える
     .split('\n')
-    .find(s => /^.+or.+$/.test(s))
-
-  // orがなければ終了
+    .find(s => /^.+or.+$/.test(s)) // orが含まれている最初の行を取得
   if (!line) return
 
-  // orで文字列を区切る
   const raw = line.split(/or/)
 
-  // 12文字を超える文字列がある場合は終了
+  // 10文字を超える文字列がある場合は終了
   const bool = raw
     .filter(c => !/^\s.+$/.test(c) && !/^.+\s$/.test(c)) // 両端にスペースが入ってない文字列だけにする
-    .find(c => c.length > 10) // 12文字を超える文字列を取得
+    .find(c => c.length > 10) // 10文字を超える文字列を取得
   if (bool) return
 
-  // 絵文字を元に戻したリストを作成
+  // 置き換えていた１を絵文字に戻す
   const list = replaceEmoji(
     raw.map(l => l.trim()),
-    emoji
+    emojiList
   )
 
-  // リストの数に応じて乱数を作る
   const rand = createRandNumber(list.length)
   msg.reply(list[rand])
 
-  // 誰が送信したかのログを残す
+  // 良からぬ事を書いた人を確認する為にログを残す
   console.log(`${util.GetUserName(msg.member)}, ${content}`)
 
   return 'Returned any of or'
@@ -106,7 +97,6 @@ export const AorB = (msg: Discord.Message): Option<string> => {
  * @return 入れ替えたリスト
  */
 const replaceEmoji = (list: string[], emoji: Option<string[]>): string[] => {
-  // 絵文字がない場合は終了
   if (!emoji) return list
 
   // 絵文字のカウンタを作成
@@ -129,7 +119,9 @@ const replaceEmoji = (list: string[], emoji: Option<string[]>): string[] => {
  * @param n 乱数の生成範囲
  * @return 乱数
  */
-const createRandNumber = (n: number): number => require('get-random-values')(new Uint8Array(1))[0] % n
+const createRandNumber = (n: number): number => {
+  return require('get-random-values')(new Uint8Array(1))[0] % n
+}
 
 /**
  * 送信されたメッセージにカンカンカンが含まれていた場合おはよーを送信する

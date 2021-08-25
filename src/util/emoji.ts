@@ -8,9 +8,10 @@ import * as util from '.'
  * @param msg DiscordからのMessage
  */
 export const React = async (msg: Discord.Message) => {
-  // 指定のチャンネルでは実行されない用にする
-  if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
+  const isNotEmoji = util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)
+  if (isNotEmoji) return
 
+  // botがリアクションを押す処理
   yuiKusanoReact(msg)
   mazarashiReact(msg)
   usamaruReact(msg)
@@ -32,7 +33,9 @@ export const React = async (msg: Discord.Message) => {
  */
 const yuiKusanoReact = (msg: Discord.Message) => {
   // 特定のチャンネルでは草単体でガチャを行うので絵文字は不要
-  if (util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)) {
+  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (isNetaThat) {
+    // 草ガチャの形式か確認
     if (/^草\s?\d*$/.test(msg.content)) return
   }
 
@@ -198,10 +201,10 @@ const chuukaReact = (msg: Discord.Message) => {
  * @return 送信した絵文字の結果
  */
 export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
-  // 指定のチャンネルでは実行されない用にする
-  if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
+  const isNotEmoji = util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)
+  if (isNotEmoji) return
 
-  const name = `${util.GetUserName(msg.member)}`
+  const name = util.GetUserName(msg.member)
   let content: string
 
   content = msg.content.replace(/るる/, 'ルル')
@@ -249,7 +252,7 @@ export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
 const ruruEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.RURU)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
+  // ディレイを挟まないと残像が残る100ミリ秒待つ、以下同文
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send ruru Emoji`
 }
@@ -262,7 +265,6 @@ const ruruEmoji = async (msg: Discord.Message, name: string) => {
 const kmrEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.KMR)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send kmr Emoji`
 }
@@ -275,7 +277,6 @@ const kmrEmoji = async (msg: Discord.Message, name: string) => {
 const atsumoriEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.ATSUMORI)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send atsumori Emoji`
 }
@@ -288,7 +289,6 @@ const atsumoriEmoji = async (msg: Discord.Message, name: string) => {
 const kenkakaEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.KENKAKA)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send kenkaka Emoji`
 }
@@ -301,7 +301,6 @@ const kenkakaEmoji = async (msg: Discord.Message, name: string) => {
 const kusaEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.KUSA)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send kusa Emoji`
 }
@@ -314,7 +313,6 @@ const kusaEmoji = async (msg: Discord.Message, name: string) => {
 const pantiesEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.PANTIES)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send panties Emoji`
 }
@@ -327,7 +325,6 @@ const pantiesEmoji = async (msg: Discord.Message, name: string) => {
 const ringorouEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.RINGOROU)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send ringorou Emoji`
 }
@@ -340,7 +337,6 @@ const ringorouEmoji = async (msg: Discord.Message, name: string) => {
 const nmoEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.NMO)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send nmo Emoji`
 }
@@ -353,7 +349,6 @@ const nmoEmoji = async (msg: Discord.Message, name: string) => {
 const shiratoriEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.SHIRATORI)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send shiratori Emoji`
 }
@@ -366,7 +361,6 @@ const shiratoriEmoji = async (msg: Discord.Message, name: string) => {
 const aEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.A)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send A Emoji`
 }
@@ -379,7 +373,6 @@ const aEmoji = async (msg: Discord.Message, name: string) => {
 const taninEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.TANIN)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send TaninTL Emoji`
 }
@@ -392,7 +385,6 @@ const taninEmoji = async (msg: Discord.Message, name: string) => {
 const katudonEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.SAITOU)
 
-  // ディレイを挟まないと残像が残る100ミリ秒待つ
   setTimeout(() => msg.delete(), 100)
   return `${name}: Send saitou Emoji`
 }

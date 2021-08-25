@@ -36,7 +36,7 @@ Array.prototype.last = function <T>(): T {
 }
 
 Number.prototype.to_s = function (): string {
-  return String(this)
+  return `${this}`
 }
 
 String.prototype.to_n = function (): number {
