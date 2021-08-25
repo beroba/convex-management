@@ -1,20 +1,20 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import {AtoE, Current, Member} from '../../io/type'
-import * as update from './update'
-import * as role from '../convex/role'
-import * as time from '../convex/time/time'
-import * as over from '../convex/over'
-import * as situation from '../convex/situation'
 import * as declare from '../declare/list'
 import * as declareStatus from '../declare/status'
 import * as react from '../declare/react'
+import * as over from '../over'
 import * as cancel from '../plan/delete'
 import * as list from '../plan/list'
+import * as role from '../role'
+import * as situation from '../situation'
+import * as limit from '../time/limit'
+import * as update from './update'
+import * as util from '../../util'
+import {AtoE, Current, Member} from '../../util/type'
 
 /**
  * 凸報告の管理を行う
@@ -127,7 +127,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   roleDelete(member_2, msg)
 
   // 活動限界時間の表示を更新
-  time.Display(members)
+  limit.Display(members)
 
   return 'Update status'
 }

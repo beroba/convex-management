@@ -1,6 +1,6 @@
 import Option from 'type-of-option'
 import * as status from '../../io/status'
-import {Member} from '../../io/type'
+import {Member} from '../../util/type'
 
 /**
  * 凸報告に入力された情報から凸状況の更新をする
