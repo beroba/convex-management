@@ -4,23 +4,24 @@ import Settings from 'const-settings'
 import * as util from '.'
 
 /**
- * #id送信ロール付与いリアクションしたユーザーに、idスクショ送信のロールを付与する
+ * #id送信ロール付与 にリアクションしたユーザーに、idスクショ送信のロールを付与する
  * @param react DiscordからのReaction
  * @param user リアクションしたユーザー
  * @return ロール付与の実行結果
  */
 export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // #id送信ロール付与でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT) return
+  const isPlayerIdRoleGrant = react.message.channel.id === Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT
+  if (!isPlayerIdRoleGrant) return
 
-  // idスクショ送信のロールを付与する
   const member = util.GetMembersFromUser(react.message.guild?.members, user)
   member?.roles.add(Settings.ROLE_ID.PLAYER_ID_SEND)
 
-  // #id送信チャンネルへの誘導をする
-  const msg = await react.message.reply(
-    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！\n※10秒後にこのメッセージは消えます`
-  )
+  const text = [
+    `<@!${user.id}>  <#${Settings.CHANNEL_ID.PLAYER_ID_SEND}> ここでスクショを送ってね！`,
+    '※10秒後にこのメッセージは消えます',
+  ].join('\n')
+  const msg = await react.message.reply(text)
+
   // 10秒後にメッセージを削除する
   setTimeout(() => msg.delete(), 10000)
 
@@ -28,34 +29,31 @@ export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.Us
 }
 
 /**
- * 入力されたメッセージを#プレイヤーidリストに移動し元のメッセージを削除する。
+ * 入力されたメッセージを #プレイヤーidリスト に移動し元のメッセージを削除する。
  * #id送信チャンネルの閲覧ロールも削除する
  * @param msg DiscordからのMessage
  */
 export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // #id送信チャンネルでなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.PLAYER_ID_SEND) return
+  const isPlayerIdSend = msg.channel.id === Settings.CHANNEL_ID.PLAYER_ID_SEND
+  if (!isPlayerIdSend) return
 
-  // idスクショ送信のロールを削除
   await msg.member?.roles.remove(Settings.ROLE_ID.PLAYER_ID_SEND)
 
-  // 画像のURLを取得
-  const url = msg.attachments.map(a => a.url).first()
+  // prettier-ignore
+  const text = [
+    util.GetUserName(msg.member),
+    util.Format(msg.content),
+  ].join('\n')
+  // 画像がなければ空文字列
+  const url = [msg.attachments.map(a => a.url).first() && '']
 
-  // #プレイヤーidリストにメッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)
-  // 画像がある場合は画像も送信
-  const content = util.Format(msg.content)
-  await channel.send({
-    content: `${util.GetUserName(msg.member)}\n${content}`,
-    files: [url && ''],
-  })
+  await channel.send({content: text, files: url})
 
-  // 元のメッセージを削除
-  await msg.delete()
+  setTimeout(() => msg.delete(), 100)
 
   return 'Save player id'
 }
