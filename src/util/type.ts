@@ -27,8 +27,8 @@ export type DateTable = {
 
 /**
  * 現在のボス状況
+ * @property lap ボスの周回数
  * @property hp ボスのHP
- * @property subjugate ボスが討伐されたかの管理
  */
 export type CurrentBoss = BossTable & {
   lap: number
@@ -83,7 +83,7 @@ export type Plan = {
  * @property id ユーザーのID
  * @property limit 活動限界時間
  * @property declare 凸宣言先の情報
- * @property carry 持越凸かの管理
+ * @property carry 持越凸の管理
  */
 export type User = {
   name: string
@@ -97,7 +97,7 @@ export type User = {
  * 凸管理状況
  * @property convex 残凸の数
  * @property over 持越の数
- * @property end 凸が終了しているかの管理
+ * @property end 3凸終了の管理
  * @property history 凸の履歴
  */
 export type Status = {
@@ -113,10 +113,10 @@ export type Status = {
  * @type id: string ユーザーのID
  * @type limit: string 活動限界時間
  * @type declare: string 凸宣言先の情報
- * @type carry: boolean 持越凸かの管理
+ * @type carry: boolean 持越凸の管理
  * @type convex: number 残凸の数
  * @type over: number 持越の数
- * @type end: boolean 凸が終了しているかの管理
+ * @type end: boolean 3凸終了の管理
  * @type history: string 凸の履歴
  */
 export type Member = User & Status
