@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as member from '../../io/status'
-import {AtoE, Current, Member} from '../../io/type'
 import * as list from './list'
 import * as status from './status'
+import * as member from '../../io/status'
+import * as util from '../../util'
+import {AtoE, Current, Member} from '../../util/type'
 
 /**
  * 凸宣言の管理を行う

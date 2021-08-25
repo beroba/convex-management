@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as status from '../../../io/status'
-import * as json from '../../../io/json'
-import {User, Json} from '../../../io/type'
-import * as util from '../../../util'
 import * as situation from '../situation'
+import * as json from '../../io/json'
+import * as status from '../../io/status'
+import * as util from '../../util'
+import {User, Json} from '../../util/type'
 
 /**
  * 同時凸の持越計算を行う

@@ -2,17 +2,18 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as command from '.'
-import * as util from '../util'
+import * as etc from '../convex/etc'
+import * as category from '../convex/etc/category'
+import * as plan from '../convex/plan/delete'
+import * as list from '../convex/plan/list'
+import * as react from '../convex/react'
+import * as role from '../convex/role'
+import * as situation from '../convex/situation'
 import * as bossTable from '../io/bossTable'
 import * as dateTable from '../io/dateTable'
 import * as schedule from '../io/schedule'
 import * as status from '../io/status'
-import * as category from '../client/convex/etc/category'
-import * as etc from '../client/convex/etc'
-import * as react from '../client/convex/react'
-import * as situation from '../client/convex/situation'
-import * as list from '../client/plan/list'
-import * as plan from '../client/plan/delete'
+import * as util from '../util'
 
 /**
  * 運営管理者用のコマンド
@@ -156,7 +157,7 @@ const setBossController = async (_command: string, _content: string, _msg: Disco
  */
 const removeRoleController = async (_command: string, _content: string, _msg: Discord.Message) => {
   // 凸残ロールを全て外す
-  etc.RemoveConvexRoles()
+  await role.RemoveConvexRoles()
 
   _msg.reply('凸残ロール全て外したわよ！')
 }

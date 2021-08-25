@@ -196,14 +196,16 @@ const peportConfirm = (
   const endN = members.filter(s => s.end).length
 
   // prettier-ignore
-  msg.reply([
+  const text = [
     '```m',
     `${boss.lap}周目 ${boss.name} ${hp}/${maxHP}`,
     `残凸数: ${member.convex}、持越数: ${member.over}`,
     member.end ?
       `${endN}人目の3凸終了よ！` + '\n```' :
       '```',
-  ].join('\n'))
+  ].join('\n')
+
+  msg.reply(text)
 }
 
 /**

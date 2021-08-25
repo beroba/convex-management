@@ -2,27 +2,8 @@ import * as Discord from 'discord.js'
 import moji from 'moji'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../../util'
-
-/**
- * TL保存用のリスト
- * @property index リストの場所
- * @property list リスト本体
- */
-type TLList = {
-  index: number
-  list: string[]
-}
-
-/**
- * TL修正で使う変更用文字列の前後
- * @property before 変更前の文字列
- * @property after 変更後の文字列
- */
-type TLFormat = {
-  before: string
-  after: string
-}
+import * as util from '../../util'
+import {TLList, TLFormat} from '../../util/type'
 
 /**
  * TLを正しい書式に整形させる、

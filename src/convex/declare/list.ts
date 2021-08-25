@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as plan from '../plan/list'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {AtoE, Current, Member, Plan} from '../../io/type'
-import * as plan from '../plan/list'
+import * as util from '../../util'
+import {AtoE, Current, Member, Plan} from '../../util/type'
 
 /**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る

@@ -1,8 +1,8 @@
 import Settings from 'const-settings'
 import * as io from './redis'
 import * as bossTable from './bossTable'
-import {AtoE, Current, CurrentBoss} from './type'
-import * as declare from '../client/declare/status'
+import * as declare from '../convex/declare/status'
+import {AtoE, Current, CurrentBoss} from '../util/type'
 
 /**
  * 現在のボス状況を設定する

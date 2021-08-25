@@ -2,11 +2,11 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {AtoN} from 'alphabet-to-number'
-import * as util from '../../util'
-import * as status from '../../io/status'
-import {AtoE, Member} from '../../io/type'
 import * as list from './list'
-import * as situation from '../convex/situation'
+import * as situation from '../situation'
+import * as status from '../../io/status'
+import * as util from '../../util'
+import {AtoE, Member} from '../../util/type'
 
 /**
  * リアクションを追加した際に凸宣言を更新する

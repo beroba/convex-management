@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as lapAndBoss from '../lapAndBoss'
+import * as situation from '../situation'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import {AtoE, Current} from '../../io/type'
-import * as lapAndBoss from '../convex/lapAndBoss'
-import * as situation from '../convex/situation'
+import * as util from '../../util'
+import {AtoE, Current} from '../../util/type'
 
 /**
  * ボスの状態を変更する

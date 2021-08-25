@@ -125,3 +125,23 @@ export type Member = User & Status
  * キャルステータスのjson形式
  */
 export type Json = {[key: string]: string}
+
+/**
+ * TL保存用のリスト
+ * @property index リストの場所
+ * @property list リスト本体
+ */
+export type TLList = {
+  index: number
+  list: string[]
+}
+
+/**
+ * TL修正で使う変更用文字列の前後
+ * @property before 変更前の文字列
+ * @property after 変更後の文字列
+ */
+export type TLFormat = {
+  before: string
+  after: string
+}
