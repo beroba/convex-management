@@ -1,7 +1,7 @@
 import Option from 'type-of-option'
 import * as io from './redis'
 import * as json from './json'
-import {AtoE, BossTable} from './type'
+import {AtoE, BossTable} from '../util/type'
 
 /**
  * ボステーブルを設定する

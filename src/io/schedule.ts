@@ -1,6 +1,6 @@
 import Option from 'type-of-option'
 import * as io from './redis'
-import {Plan} from './type'
+import {Plan} from '../util/type'
 
 /**
  * キャルステータスの凸予定の情報を更新する

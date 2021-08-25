@@ -1,7 +1,7 @@
 import Option from 'type-of-option'
 import * as util from '../util'
 import * as io from './redis'
-import {DateTable} from './type'
+import {DateTable} from '../util/type'
 
 /**
  * 日付テーブルを設定する

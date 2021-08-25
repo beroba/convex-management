@@ -1,13 +1,13 @@
 import {MessageReaction} from 'discord.js'
-import {Client} from '../index'
-import {GuildMemberAdd} from '../client/guildMemberAdd'
-import {GuildMemberUpdate} from '../client/guildMemberUpdate'
-import {MessageCreate} from '../client/messageCreate'
-import {MessageDelete} from '../client/messageDelete'
-import {MessageReactionAdd} from '../client/messageReactionAdd'
-import {MessageReactionRemove} from '../client/messageReactionRemove'
-import {MessageUpdate} from '../client/messageUpdate'
-import {Ready} from '../client/ready'
+import {Client} from './index'
+import {GuildMemberAdd} from './client/guildMemberAdd'
+import {GuildMemberUpdate} from './client/guildMemberUpdate'
+import {MessageCreate} from './client/messageCreate'
+import {MessageDelete} from './client/messageDelete'
+import {MessageReactionAdd} from './client/messageReactionAdd'
+import {MessageReactionRemove} from './client/messageReactionRemove'
+import {MessageUpdate} from './client/messageUpdate'
+import {Ready} from './client/ready'
 
 /**
  * DiscordのAPIイベント一覧

@@ -4,7 +4,7 @@ import * as bossTable from '../../io/bossTable'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {AtoE, Plan} from '../../io/type'
+import {AtoE, Plan} from '../../util/type'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力

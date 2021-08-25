@@ -1,7 +1,7 @@
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {Json} from './type'
 import * as util from '../util'
+import {Json} from '../util/type'
 
 /**
  * キャルステータスの値を取得する

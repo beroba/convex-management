@@ -1,8 +1,8 @@
 import './util/prototype'
 import * as Discord from 'discord.js'
 import ThrowEnv from 'throw-env'
-import {Partials, Intents} from './init/setting'
-import {ClientEvent} from './init/event'
+import {Partials, Intents} from './setting'
+import {ClientEvent} from './event'
 import {CronOperation} from './cron'
 
 export const Client = new Discord.Client({

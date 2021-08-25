@@ -1,7 +1,7 @@
 import Option from 'type-of-option'
 import * as io from './redis'
 import * as json from './json'
-import {User, Member} from './type'
+import {User, Member} from '../util/type'
 
 /**
  * メンバーの状態を更新する

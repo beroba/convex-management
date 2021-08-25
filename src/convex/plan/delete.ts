@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as schedule from '../../io/schedule'
-import {Plan} from '../../io/type'
-import * as list from './list'
 import * as declare from '../declare/list'
-import * as role from '../convex/role'
+import * as list from './list'
+import * as role from '../role'
+import * as schedule from '../../io/schedule'
+import * as util from '../../util'
+import {Plan} from '../../util/type'
 
 /**
  * 凸予定の自分のメッセージに完了の絵文字をつけたら削除する

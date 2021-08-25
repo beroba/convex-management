@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as util from '.'
 
 /**
  * #id送信ロール付与いリアクションしたユーザーに、idスクショ送信のロールを付与する

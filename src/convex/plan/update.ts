@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
-import * as util from '../../util'
 import * as bossTable from '../../io/bossTable'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
-import {AtoE, Plan} from '../../io/type'
+import * as util from '../../util'
+import {AtoE, Plan} from '../../util/type'
 
 /**
  * 凸予定を更新する

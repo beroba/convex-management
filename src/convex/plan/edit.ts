@@ -2,11 +2,11 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
-import * as util from '../../util'
-import * as schedule from '../../io/schedule'
-import {AtoE} from '../../io/type'
-import * as list from './list'
 import * as declare from '../declare/list'
+import * as list from './list'
+import * as schedule from '../../io/schedule'
+import * as util from '../../util'
+import {AtoE} from '../../util/type'
 
 /**
  * 凸予定のメッセージ更新に合わせてスプレッドシートの値も更新する

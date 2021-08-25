@@ -1,7 +1,7 @@
 import * as cron from 'node-cron'
-import * as etc from '../client/convex/etc'
-import * as role from '../client/convex/role'
-import * as time from '../client/convex/time/time'
+import * as etc from './convex/etc'
+import * as role from './convex/role'
+import * as limit from './convex/time/limit'
 
 /**
  * クーロン処理一覧
@@ -18,7 +18,7 @@ export const CronOperation = () => {
   // 04:30
   cron.schedule('0 30 4 * * *', () => etc.NotifyDailyMission())
   // 12:00
-  cron.schedule('0 0 12 * * *', () => time.MorningActivitySurvey())
+  cron.schedule('0 0 12 * * *', () => limit.MorningActivitySurvey())
   // 1時間起き
-  cron.schedule('0 0 */1 * * *', () => time.LimitTimeDisplay())
+  cron.schedule('0 0 */1 * * *', () => limit.LimitTimeDisplay())
 }
