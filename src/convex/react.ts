@@ -1,5 +1,5 @@
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as util from '../util'
 
 /**
  * #凸宣言-ボス状況の絵文字を設定する

@@ -1,9 +1,9 @@
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as dateTable from '../../io/dateTable'
-import * as current from '../../io/current'
-import * as status from '../../io/status'
-import {AtoE, Current, Member} from '../../io/type'
+import * as current from '../io/current'
+import * as dateTable from '../io/dateTable'
+import * as status from '../io/status'
+import * as util from '../util'
+import {AtoE, Current, Member} from '../util/type'
 
 /**
  * 凸状況に報告をする

@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
+import * as util from '../util'
 
 /**
  * 持越状況の自分のメッセージに完了の絵文字をつけたら削除する

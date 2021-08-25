@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as status from '../../io/status'
-import {Member} from '../../io/type'
 import * as role from './role'
-import * as time from './time/time'
 import * as situation from './situation'
+import * as limit from './time/limit'
+import * as status from '../io/status'
+import * as util from '../util'
+import {Member} from '../util/type'
 
 /**
  * 引数で渡されたプレイヤーidの凸状況を変更する
@@ -65,7 +65,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
   // 活動限界時間の表示を更新
-  time.Display(members)
+  limit.Display(members)
 
   return member
 }

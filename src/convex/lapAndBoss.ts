@@ -1,9 +1,9 @@
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as current from '../../io/current'
-import * as declare from '../declare'
-import * as react from '../declare/react'
-import {AtoE, Current} from '../../io/type'
+import * as declare from './declare'
+import * as react from './declare/react'
+import * as current from '../io/current'
+import * as util from '../util'
+import {AtoE, Current} from '../util/type'
 
 /**
  * ボスのHPを変更する

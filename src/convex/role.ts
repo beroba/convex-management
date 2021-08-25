@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as dateTable from '../../io/dateTable'
-import * as util from '../../util'
 import * as over from './over'
-import * as plan from '../plan/delete'
+import * as plan from './plan/delete'
+import * as dateTable from '../io/dateTable'
+import * as util from '../util'
 
 /**
  * メッセージ送信者にタスキルロールを付与する
