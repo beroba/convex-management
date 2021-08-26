@@ -59,7 +59,10 @@ export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
   msgs
     .map(m => m)
     .filter(m => m.author.id === member?.id)
-    .forEach(m => m.delete())
+    .forEach(m => {
+      if (!m) return
+      m.delete()
+    })
 
   console.log('Delete carryover message')
 }
