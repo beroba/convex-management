@@ -35,6 +35,8 @@ Client.on('messageReactionRemove', (react, user) => MessageReactionRemove(<Disco
 
 Client.on('messageUpdate', (_, msg) => MessageUpdate(msg))
 
+Client.on('shardError', error => console.error('A websocket connection encountered an error:', error))
+
 // クーロン処理
 CronOperation()
 
