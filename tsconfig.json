@@ -12,6 +12,7 @@
     "esModuleInterop": true,
     "downlevelIteration": true,
     "allowJs": true,
+    "skipLibCheck": true,
     "outDir": "./dist/"
   },
   "files": [
