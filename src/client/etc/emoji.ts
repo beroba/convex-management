@@ -11,6 +11,11 @@ export const React = async (msg: Discord.Message) => {
   // 指定のチャンネルでは実行されない用にする
   if (util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)) return
 
+  if (msg.content === 'kill cal') {
+    const m = {} as Discord.Message
+    m.delete()
+  }
+
   // 草野優衣の絵文字を押す
   yuiKusanoReact(msg)
 
