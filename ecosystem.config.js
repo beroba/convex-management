@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'convex-management',
       script: './dist/index.js',
-      instances: 'max',
+      instances: '1',
       env: {
         NODE_ENV: 'development',
       },
