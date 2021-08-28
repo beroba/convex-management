@@ -1,3 +1,4 @@
+// import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import {Client} from '../index'
 import * as util from '../util'
@@ -13,6 +14,14 @@ export const Ready = async () => {
 
   // リアクションのキャッシュを取る
   react.Fetch()
+
+  // {
+  //   const channel = util.GetTextChannel('714020537231343656')
+  //   const row = new Discord.MessageActionRow().addComponents(
+  //     new Discord.MessageButton().setCustomId('primary').setLabel('すまいるを褒める').setStyle('PRIMARY')
+  //   )
+  //   channel.send({content: '押してね', components: [row]})
+  // }
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }

@@ -11,6 +11,7 @@ import {MessageReactionAdd} from './client/messageReactionAdd'
 import {MessageReactionRemove} from './client/messageReactionRemove'
 import {MessageUpdate} from './client/messageUpdate'
 import {CronOperation} from './util/cron'
+import * as util from './util'
 
 // クライアントの作成
 export const Client = new Discord.Client({
@@ -34,6 +35,15 @@ Client.on('messageReactionAdd', (react, user) => MessageReactionAdd(<Discord.Mes
 Client.on('messageReactionRemove', (react, user) => MessageReactionRemove(<Discord.MessageReaction>react, user))
 
 Client.on('messageUpdate', (_, msg) => MessageUpdate(msg))
+
+Client.on('interactionCreate', async interaction => {
+  if (interaction.isButton()) {
+    const channel = util.GetTextChannel('714020537231343656')
+    const msg = await channel.send('ありがとう！')
+    setTimeout(() => msg.delete(), 3000)
+    interaction.deferUpdate()
+  }
+})
 
 // クーロン処理
 CronOperation()
