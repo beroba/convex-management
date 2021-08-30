@@ -14,22 +14,17 @@ import {AtoE, Current} from '../util/type'
  */
 export const UpdateHP = async (hp: number, alpha: AtoE, state: Current): Promise<Current> => {
   // 変更前の周回数
-  const lap = state.lap
-
-  // 現在の状況を更新
+  const l = state.lap
   state = await current.Update(hp, alpha, state)
 
   // ボスが討伐されているか確認
   if (hp <= 0) {
-    // 進行に通知をする
     await progressReport(alpha, state)
-
-    // 次のボスに進める
     await declare.NextBoss(alpha, state)
   }
 
   // 周回数が変わったら通知
-  if (state.lap > lap) {
+  if (state.lap > l) {
     await progressLap(state.lap)
   }
 
@@ -43,7 +38,6 @@ export const UpdateHP = async (hp: number, alpha: AtoE, state: Current): Promise
  * @return 現在の状況
  */
 export const UpdateLap = async (lap: number, alpha: AtoE): Promise<Current> => {
-  // 現在の状況を取得
   let state = await current.Fetch()
 
   // 変更前の周回数
@@ -52,13 +46,8 @@ export const UpdateLap = async (lap: number, alpha: AtoE): Promise<Current> => {
   // ボスのHPを取得
   const hp = Settings.STAGE[state.stage].HP[alpha]
 
-  // 現在の状況を更新
   state = await current.Update(hp, alpha, state, lap)
-
-  // 討伐通知を送信
   await progressReport(alpha, state)
-
-  // 次のボスに進める
   await declare.NextBoss(alpha, state)
 
   // 周回数が変わったら通知
@@ -75,20 +64,14 @@ export const UpdateLap = async (lap: number, alpha: AtoE): Promise<Current> => {
  * @param state 現在の状況
  */
 const progressReport = async (alpha: AtoE, state: Current) => {
-  // ボスのロールを取得
   const role = Settings.BOSS_ROLE_ID[alpha]
 
-  // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-
-  // #進行-連携に次のボスを報告
   await channel.send(`<@&${role}>\n\`${state[alpha].lap}\`周目 \`${state[alpha].name}\``)
 
-  // 開放通知のメッセージを取得
   const text = await react.OpenNotice(alpha)
   if (!text) return
 
-  // #進行-連携に開放通知を報告
   await channel.send(text)
 }
 
@@ -97,9 +80,6 @@ const progressReport = async (alpha: AtoE, state: Current) => {
  * @param lap 周回数
  */
 const progressLap = async (lap: number) => {
-  // #進行-連携のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-
-  // #進行-連携に全体の周が変わった事を報告
   await channel.send(`全体\`${lap}\`周目`)
 }
