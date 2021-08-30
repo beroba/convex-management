@@ -17,13 +17,9 @@ export const Update = async (members: Member[]) => {
  * @return メンバー一覧
  */
 export const UpdateMember = async (member: Member): Promise<Member[]> => {
-  // メンバー全体の状態を取得
   let members = await Fetch()
 
-  // メンバーの状態を更新
   members = members.map(s => (s.id === member.id ? member : s))
-
-  // キャルステータスを更新
   await Update(members)
 
   return members
@@ -45,10 +41,8 @@ export const UpdateUsers = async (users: Option<User[]>) => {
     end: false,
     history: '',
   }))
-
   if (!members) return
 
-  // キャルステータスを更新
   await Update(members)
 }
 
@@ -56,7 +50,6 @@ export const UpdateUsers = async (users: Option<User[]>) => {
  * メンバー全員の凸状況をリセットする
  */
 export const ResetConvex = async () => {
-  // メンバー全体の状態を取得
   let members = await Fetch()
 
   // 全員の凸状況をリセット
@@ -72,7 +65,6 @@ export const ResetConvex = async () => {
     history: '',
   }))
 
-  // キャルステータスを更新
   await Update(members)
 }
 
@@ -80,7 +72,6 @@ export const ResetConvex = async () => {
  * メンバー全員の凸宣言をリセットする
  */
 export const ResetDeclare = async () => {
-  // メンバー全体の状態を取得
   let members = await Fetch()
 
   // 全員の凸状況をリセット
@@ -96,7 +87,6 @@ export const ResetDeclare = async () => {
     history: s.history,
   }))
 
-  // キャルステータスを更新
   await Update(members)
 }
 
@@ -104,14 +94,15 @@ export const ResetDeclare = async () => {
  * キャルステータスからメンバーの状態を取得
  * @return メンバーの状態
  */
-export const Fetch = async (): Promise<Member[]> => io.Fetch<Member[]>('members')
+export const Fetch = async (): Promise<Member[]> => {
+  return io.Fetch<Member[]>('members')
+}
 
 /**
  * キャルステータスからメンバーの状態を取得
  * @return メンバーの状態
  */
 export const FetchMember = async (id: string): Promise<Option<Member>> => {
-  // メンバー全体の状態を取得
   const members = await Fetch()
 
   // メンバーが存在しない場合はundefinedを返す
@@ -125,10 +116,7 @@ export const FetchMember = async (id: string): Promise<Option<Member>> => {
  * @param name 変更先の名前
  */
 export const SetName = async (member: Member, name: string) => {
-  // 名前を更新
   member.name = name
-
-  // ステータスを更新
   await UpdateMember(member)
 }
 
@@ -137,11 +125,9 @@ export const SetName = async (member: Member, name: string) => {
  * @return 値がなかった場合のエラー
  */
 export const SetNames = async (): Promise<Option<Error>> => {
-  // ユーザー情報のjsonを取得
   const list = await json.Fetch('user')
   if (!list) return Error()
 
-  // メンバー全体の状態を取得
   let members = await Fetch()
 
   // ユーザー名だけjsonの値を適用
@@ -159,6 +145,5 @@ export const SetNames = async (): Promise<Option<Error>> => {
     }
   })
 
-  // キャルステータスを更新
   await Update(members)
 }
