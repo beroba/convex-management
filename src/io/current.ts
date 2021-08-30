@@ -17,7 +17,7 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
   const num = (await bossTable.TakeNum(alpha)) ?? ''
   const name = (await bossTable.TakeName(alpha)) ?? ''
 
-  // ボスのHPを取得
+  // ボスの最大HPを取得
   const max = Settings.STAGE[state.stage].HP[alpha]
 
   // HPが0以下の場合、0にする
@@ -32,7 +32,6 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
   // HPが最大以上の場合、最大にする
   hp = hp > max ? max : hp
 
-  // ボス状況を更新
   state[alpha] = <CurrentBoss>{
     alpha: alpha,
     num: num,
@@ -41,10 +40,7 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
     hp: hp,
   }
 
-  // 全体の周回数を更新
   state = updateLap(state)
-
-  // キャルステータスを更新
   await io.UpdateJson('current', state)
 
   return state
@@ -62,16 +58,13 @@ const updateLap = (state: Current): Current => {
 
   // 全体の周回数よりボスの周回数が進んでいる場合は更新
   if (state.lap !== lap) {
-    // 周回数を更新
     state.lap = lap
   }
 
-  // 周回数から段階を取得
   const stage = getStageName(lap)
 
-  // 全体の段階とボスの段階が違うは更新
+  // 全体の段階とボスの段階が違う場合は更新
   if (state.stage !== stage) {
-    // 段階を更新
     state.stage = stage
 
     // ボスのHPを更新
@@ -112,4 +105,6 @@ const getStageName = (lap: number): string => {
  * キャルステータスから現在の状況を取得
  * @return 現在の状況
  */
-export const Fetch = async (): Promise<Current> => io.Fetch<Current>('current')
+export const Fetch = async (): Promise<Current> => {
+  return io.Fetch<Current>('current')
+}
