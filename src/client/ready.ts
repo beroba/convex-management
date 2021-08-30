@@ -20,7 +20,7 @@ export const Ready = async () => {
   //   const row = new Discord.MessageActionRow().addComponents(
   //     new Discord.MessageButton().setCustomId('primary').setLabel('すまいるを褒める').setStyle('PRIMARY')
   //   )
-  //   channel.send({content: '押してね', components: [row]})
+  //   channel.send({content: '↓押してね', components: [row]})
   // }
 
   console.log(`Logged in as ${Client.user?.username}!`)
