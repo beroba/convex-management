@@ -9,7 +9,6 @@ import {Json} from '../util/type'
  * @return 取得したjsonの情報
  */
 export const Fetch = async (name: string): Promise<Option<Json>> => {
-  // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
   const msgs = (await channel.messages.fetch()).map(m => m)
 
@@ -32,7 +31,6 @@ export const Fetch = async (name: string): Promise<Option<Json>> => {
  * @param json 更新させたいjsonの情報
  */
 export const Send = async (json: Json) => {
-  // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
 
   // prettier-ignore
@@ -47,6 +45,6 @@ export const Send = async (json: Json) => {
     '```',
   ].join('\n')
 
-  // メッセージを送信
+  // 他人のメッセージは編集できないので、メッセージを送信しそれをコピペして編集する
   await channel.send(text)
 }
