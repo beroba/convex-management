@@ -20,7 +20,6 @@ export const Update = async (state: string, msg: Discord.Message) => {
     return
   }
 
-  // メンバーの状態を取得
   let member = await status.FetchMember(user.id)
   if (!member) {
     msg.reply('その人はクランメンバーじゃないわ')
@@ -34,10 +33,8 @@ export const Update = async (state: string, msg: Discord.Message) => {
     member = await updateProcess(member, state, user, msg)
   }
 
-  // ステータスを更新
   const members = await status.UpdateMember(member)
 
-  // 凸状況に報告
   situation.Report(members)
 }
 
@@ -62,9 +59,15 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
   const n = members.filter(s => s.end).length + 1
-  await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
+  // prettier-ignore
+  const text = [
+    '```',
+    `残凸数: 0、持越数: 0`,
+    `${n}人目の3凸終了よ！`,
+    '```',
+  ].join('\n')
+  await msg.reply(text)
 
-  // 活動限界時間の表示を更新
   limit.Display(members)
 
   return member
@@ -91,12 +94,17 @@ const updateProcess = async (
   member.declare = ''
   member.carry = false
 
-  // 凸残ロールを付与
   const guildMember = await util.MemberFromId(user.id)
   await guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
-  // 凸状況を報告する
-  await msg.reply(`残凸数: ${member.convex}、持越数: ${member.over}`)
+  // prettier-ignore
+  const text = [
+    '```',
+    `残凸数: ${member.convex}、持越数: ${member.over}`,
+    '```',
+  ].join('\n')
+
+  await msg.reply(text)
 
   return member
 }
