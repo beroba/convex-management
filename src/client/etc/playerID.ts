@@ -42,17 +42,16 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   // idスクショ送信のロールを削除
   await msg.member?.roles.remove(Settings.ROLE_ID.PLAYER_ID_SEND)
 
-  // 画像のURLを取得
-  const url = msg.attachments.map(a => a.url).first()
+  // prettier-ignore
+  const text = [
+    util.GetUserName(msg.member),
+    util.Format(msg.content),
+  ].join('\n')
+  // 画像がなければ空文字列
+  const img = msg.attachments.map(a => a.url).first()
 
-  // #プレイヤーidリストにメッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)
-  // 画像がある場合は画像も送信
-  const content = util.Format(msg.content)
-  await channel.send({
-    content: `${util.GetUserName(msg.member)}\n${content}`,
-    files: [url && ''],
-  })
+  await channel.send(img ? {content: text, files: [img]} : text)
 
   // 元のメッセージを削除
   await msg.delete()
