@@ -14,5 +14,16 @@ export const Ready = async () => {
   // リアクションのキャッシュを取る
   react.Fetch()
 
+  {
+    // const channel = util.GetTextChannel('739410182693453844')
+    // console.log(channel.guild.channels.cache.map(m => m).length)
+    // const m = channel.members.map(m => [`${m.user.username}`, m.roles.cache.map(r => r).length])
+    // const t = m
+    //   .sort((a, b) => (a[1] > b[1] ? -1 : 1))
+    //   .map(m => `${m[0]}: ${m[1]}`)
+    //   .join('\n')
+    // channel.send(t)
+  }
+
   console.log(`Logged in as ${Client.user?.username}!`)
 }

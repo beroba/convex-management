@@ -48,10 +48,10 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
     util.Format(msg.content),
   ].join('\n')
   // 画像がなければ空文字列
-  const url = [msg.attachments.map(a => a.url).first() && '']
+  const img = msg.attachments.map(a => a.url).first()
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PLAYER_ID_LIST)
-  await channel.send({content: text, files: url})
+  await channel.send(img ? {content: text, files: [img]} : text)
 
   setTimeout(() => msg.delete(), 100)
 
