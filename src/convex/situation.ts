@@ -11,22 +11,15 @@ import {AtoE, Current, Member} from '../util/type'
  * @param state 現在の状況
  */
 export const Report = async (members?: Member[], state?: Current) => {
-  // メンバー全体の状態を取得
   members ??= await status.Fetch()
-
-  // 現在の状況を取得
   state ??= await current.Fetch()
 
-  // 名前順にソート
+  // 昇順ソート
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
-  // 凸状況のテキストを作成
   const text = await createMessage(members, state)
-
-  // ボス状況を更新
   const boss = await bossMessage(members, state)
 
-  // #凸状況を更新
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
   {
     // 凸状況を更新
@@ -39,7 +32,6 @@ export const Report = async (members?: Member[], state?: Current) => {
     msg.edit('ボス状況\n' + boss)
   }
 
-  // #凸状況履歴に報告
   const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
   history.send(text)
 
@@ -53,29 +45,27 @@ export const Report = async (members?: Member[], state?: Current) => {
  * @return 作成したテキスト
  */
 const createMessage = async (members: Member[], state: Current): Promise<string> => {
-  // 現在の日付と時刻を取得
+  // 日付と時刻
   const time = getCurrentDate()
-
-  // クラバトの日数を取得
   const date = await dateTable.TakeDate()
 
-  // 残り凸数を計算
+  // 残り凸数
   const remainingConvex = remainingConvexNumber(members)
 
-  // 現在の段階を数字で取得
+  // 段階
   const stage = Settings.STAGE[state.stage].NUMBER
 
-  // 次の段階までの凸数を計算
+  // 次の段階までの凸数
   const nextStage = lapsToTheNextStage(state)
 
-  // 全員の凸状況を見て残り凸数で振り分ける
+  // 全員の凸状況
   const 残凸3 = userSorting(members, 3)
   const 残凸2 = userSorting(members, 2)
   const 残凸1 = userSorting(members, 1)
   const 残凸0 = userSorting(members, 0, '1-3')
   const 完凸済 = userSorting(members, 0, 0)
 
-  // 全員の凸状況を見て持越数で振り分ける
+  // 全員の持越数
   const 持越3 = userSorting(members, undefined, 3)
   const 持越2 = userSorting(members, undefined, 2)
   const 持越1 = userSorting(members, undefined, 1)
@@ -119,10 +109,11 @@ const getCurrentDate = (): string => {
  * @return 計算結果
  */
 const remainingConvexNumber = (members: Member[]): string => {
-  // 残り凸数を計算
+  // 残り凸数
   const remaining = members.map(s => s.convex + s.over).reduce((a, b) => a + b)
-  // 残り持越数を計算
+  // 残り持越数
   const over = members.map(s => s.over).reduce((a, b) => a + b)
+
   return `${remaining}/${members.length * 3}(${over})`
 }
 
@@ -164,7 +155,6 @@ const userSorting = (members: Member[], convex?: number, over?: number | '1-3'):
     members = over === '1-3' ? members.filter(l => l.over !== 0) : members.filter(l => l.over === over)
   }
 
-  // リストから名前を`, `で繋げて返す
   return members.map(l => l.name).join(', ')
 }
 
@@ -189,10 +179,7 @@ const bossMessage = async (members: Member[], state: Current): Promise<string> =
           return `${m.name}[${convex}${over}${limit}]`
         })
 
-      // ボスの状況を取得
       const boss = state[<AtoE>a]
-
-      // ボスのHPを取得
       const hp = Settings.STAGE[state.stage].HP[a]
 
       // prettier-ignore

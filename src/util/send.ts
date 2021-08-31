@@ -12,8 +12,8 @@ export const Speak = async (msg: Discord.Message): Promise<Option<string>> => {
   const isBot = msg.member?.user.bot
   if (isBot) return
 
-  const isMajorThat = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
-  if (!isMajorThat) return
+  const isChannel = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   // 元のメッセージを半角に変換できないので`util.Format()`は使わない
   // 全角スペースは許さない派なので半角スペースにする
@@ -44,8 +44,8 @@ export const AorB = (msg: Discord.Message): Option<string> => {
   const isBot = msg.member?.user.bot
   if (isBot) return
 
-  const isMajorThat = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
-  if (!isMajorThat) return
+  const isChannel = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const isUrl = /https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+/.test(msg.content)
   if (isUrl) return
@@ -132,8 +132,8 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
   const isBot = msg.member?.user.bot
   if (isBot) return
 
-  const isMajorThat = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
-  if (!isMajorThat) return
+  const isChannel = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchKanKanKan = msg.content.match(/カンカンカン/)
   if (!matchKanKanKan) return
@@ -153,8 +153,8 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
  * @return 画像を送信したかの結果
  */
 export const YabaiImage = (msg: Discord.Message): Option<string> => {
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (!isNetaThat) return
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchYabai = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
   if (!matchYabai) return
@@ -170,8 +170,8 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
  * @return 画像を送信したかの結果
  */
 export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (!isNetaThat) return
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchShinyTmo = msg.content === 'シャイニートモ'
   if (!matchShinyTmo) return
@@ -187,8 +187,8 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
  * @return 画像を送信したかの結果
  */
 export const TasuketeImage = (msg: Discord.Message): Option<string> => {
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (!isNetaThat) return
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchTasukete = /^助けて(!|！)$/.test(msg.content)
   if (!matchTasukete) return
@@ -204,8 +204,8 @@ export const TasuketeImage = (msg: Discord.Message): Option<string> => {
  * @return 画像を送信したかの結果
  */
 export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (!isNetaThat) return
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchKusa = /^草\s?\d*$/.test(msg.content)
   if (!matchKusa) return
@@ -241,8 +241,8 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
  * @return ツイートを送信したかの結果
  */
 export const SendUsoOre = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (!isNetaThat) return
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchUsoOre = /^(嘘俺|俺嘘)\s?([1-5]|読み?)*$/.test(msg.content)
   if (!matchUsoOre) return
@@ -269,8 +269,8 @@ export const SendUsoOre = async (msg: Discord.Message): Promise<Option<string>> 
  * @return ツイートを送信したかの結果
  */
 export const SendAguhiyori = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (!isNetaThat) return
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (!isChannel) return
 
   const matchAzarashi = /^アザラシ\s?([1-5]|読み?)*$/.test(msg.content)
   if (!matchAzarashi) return

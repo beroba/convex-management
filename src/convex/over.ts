@@ -10,16 +10,15 @@ import * as util from '../util'
  * @return 削除処理の実行結果
  */
 export const Delete = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
+  const isBot = user.bot
+  if (isBot) return
 
-  // #持越状況でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.CARRYOVER_SITUATION) return
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
+  if (!isChannel) return
 
-  // 完了の絵文字で無ければ終了
-  if (react.emoji.id !== Settings.EMOJI_ID.KANRYOU) return
+  const isEmoji = react.emoji.id === Settings.EMOJI_ID.KANRYOU
+  if (!isEmoji) return
 
-  // メッセージをキャッシュする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   await channel.messages.fetch(react.message.id)
 
@@ -27,7 +26,6 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
   const msg = <Discord.Message>react.message
   if (msg.author.id !== user.id) return
 
-  // メッセージを削除する
   react.message.delete()
 
   return 'Delete completed message'
@@ -39,10 +37,9 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
  * @return 絵文字をつけたかの結果
  */
 export const React = (msg: Discord.Message): Option<string> => {
-  // #持越状況でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CARRYOVER_SITUATION) return
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
+  if (!isChannel) return
 
-  // 完了の絵文字をつける
   msg.react(Settings.EMOJI_ID.KANRYOU)
 
   return 'React Kanryou'
@@ -53,12 +50,12 @@ export const React = (msg: Discord.Message): Option<string> => {
  * @param member 削除したいメンバーの情報
  */
 export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
-  // 持越状況を全て削除
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   const msgs = await channel.messages.fetch()
+
   msgs
     .map(m => m)
-    .filter(m => m.author.id === member?.id)
+    .filter(m => m.author.id === member?.id) // 同じメンバーで絞る
     .forEach(m => m.delete())
 
   console.log('Delete carryover message')
@@ -69,9 +66,9 @@ export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
  * @param
  */
 export const AllDeleteMsg = async () => {
-  // 持越状況を全て削除
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   const msgs = await channel.messages.fetch()
+
   msgs.map(m => m).forEach(m => m.delete())
 
   console.log('Delete carryover message')

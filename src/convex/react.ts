@@ -5,18 +5,13 @@ import * as util from '../util'
  * #凸宣言-ボス状況の絵文字を設定する
  */
 export const SetDeclare = async () => {
+  // 全ボス分[a-e]
   await Promise.all(
     'abcde'.split('').map(async alpha => {
-      // チャンネルを取得
       const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-      // 凸宣言のメッセージを取得
       const declare = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
 
-      // 凸の絵文字を付ける
       await declare.react(Settings.EMOJI_ID.TOTU)
-
-      // 持越の絵文字を付ける
       await declare.react(Settings.EMOJI_ID.MOCHIKOSHI)
     })
   )
@@ -26,7 +21,6 @@ export const SetDeclare = async () => {
  * #活動時間のチャンネルを取得する
  */
 export const SetActivityTime = async () => {
-  // チャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
 
   // 離席中のメッセージを取得
@@ -71,12 +65,10 @@ export const SetActivityTime = async () => {
  * 特定のリアクションを先にキャッシュする
  */
 export const Fetch = async () => {
+  // 全ボス分[a-e]
   await Promise.all(
     'abcde'.split('').map(async alpha => {
-      // 凸宣言のチャンネルを取得
       const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-      // 凸宣言のメッセージを取得
       const msgs = await channel.messages.fetch()
 
       // prettier-ignore
@@ -89,10 +81,7 @@ export const Fetch = async () => {
     })
   )
 
-  // #活動時間のチャンネルを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-
-  // 前半と後半のメッセージを取得
   const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
   const latter = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
 
