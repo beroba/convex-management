@@ -23,12 +23,10 @@ export const SetDeclare = async () => {
 export const SetActivityTime = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
 
-  // 離席中のメッセージを取得
-  const awayIn = await channel.messages.fetch(Settings.AWAY_IN)
-
   // 出席、離席の絵文字を付ける
-  await awayIn.react(Settings.EMOJI_ID.SHUSEKI)
-  await awayIn.react(Settings.EMOJI_ID.RISEKI)
+  const attendance = await channel.messages.fetch(Settings.ATTENDANCE)
+  await attendance.react(Settings.EMOJI_ID.SHUSEKI)
+  await attendance.react(Settings.EMOJI_ID.RISEKI)
 
   // 前半にリアクションを付ける
   const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)

@@ -15,47 +15,39 @@ import {AtoE} from '../../util/type'
  * @return ロール変更処理の実行結果
  */
 export const Remove = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
+  const isBot = user.bot
+  if (isBot) return
 
-  // #活動時間でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.ACTIVITY_TIME
+  if (!isChannel) return
 
-  // 付けたリアクションを外す
   react.users.remove(user)
 
-  // メンバーの状態を取得
   const member = await status.FetchMember(user.id)
-  // クランメンバーでなければ終了
   if (!member) return
 
-  // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.AWAY_IN) return
+  const isMessage = react.message.id === Settings.ATTENDANCE
+  if (!isMessage) return
 
-  // 出席リアクションでない場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.SHUSEKI) return
+  const isEmoji = react.emoji.id === Settings.EMOJI_ID.SHUSEKI
+  if (!isEmoji) return
 
   // 離席中ロールを削除
   react.message.guild?.members.cache
     .map(m => m)
     .find(m => m.id === user.id)
-    ?.roles.remove(Settings.ROLE_ID.AWAY_IN)
-
+    ?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
   await util.Sleep(100)
 
-  // 出欠のメッセージを更新する
   await Edit()
 
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
-  // 凸状況を更新
   await list.SituationEdit(plans)
 
   await Promise.all(
+    // 全ボス分[a-e]
     'abcde'.split('').map(async a => {
-      // 凸宣言の凸予定を更新
       await declare.SetPlan(a as AtoE)
-      // 凸宣言を更新
       await declare.SetUser(a as AtoE)
     })
   )
@@ -70,46 +62,38 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
  * @return ロール変更処理の実行結果
  */
 export const Add = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
+  const isBot = user.bot
+  if (isBot) return
 
-  // #凸状況でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.ACTIVITY_TIME
+  if (!isChannel) return
 
-  // 付けたリアクションを外す
   react.users.remove(user)
 
-  // メンバーの状態を取得
   const member = await status.FetchMember(user.id)
-  // クランメンバーでなければ終了
   if (!member) return
 
-  // 出欠のメッセージでない場合は終了
-  if (react.message.id !== Settings.AWAY_IN) return
+  const isMsg = react.message.id === Settings.ATTENDANCE
+  if (!isMsg) return
 
-  // 出席リアクションでない場合は終了
-  if (react.emoji.id !== Settings.EMOJI_ID.RISEKI) return
+  const isEmoji = react.emoji.id === Settings.EMOJI_ID.RISEKI
+  if (isEmoji) return
 
-  // 離席中ロールを付与
   react.message.guild?.members.cache
     .map(m => m)
     .find(m => m.id === user.id)
-    ?.roles.add(Settings.ROLE_ID.AWAY_IN)
-
+    ?.roles.add(Settings.ROLE_ID.ATTENDANCE)
   await util.Sleep(100)
 
-  // 出欠のメッセージを更新する
   await Edit()
 
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
   list.SituationEdit(plans)
 
   await Promise.all(
+    // 全ボス分[a-e]
     'abcde'.split('').map(async a => {
-      // 凸宣言の凸予定を更新
       await declare.SetPlan(a as AtoE)
-      // 凸宣言を更新
       await declare.SetUser(a as AtoE)
     })
   )
@@ -121,18 +105,15 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
  * 出欠のメッセージを更新する
  */
 export const Edit = async () => {
-  // 更新するメッセージ
   const text = [
-    `<@&${Settings.ROLE_ID.AWAY_IN}> はこのメッセージがオレンジ色になります。`,
+    `<@&${Settings.ROLE_ID.ATTENDANCE}> はこのメッセージがオレンジ色になります。`,
     `メッセージに付けたリアクションはすぐに消えます。\n`,
     `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。`,
     `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`,
   ].join('\n')
 
-  // 出欠のメッセージを取得する
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-  const msg = await channel.messages.fetch(Settings.AWAY_IN)
+  const msg = await channel.messages.fetch(Settings.ATTENDANCE)
 
-  // メッセージを更新
   await msg.edit(text)
 }

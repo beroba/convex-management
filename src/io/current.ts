@@ -9,7 +9,7 @@ import {AtoE, Current, CurrentBoss} from '../util/type'
  * @param hp 残りHP
  * @param alpha ボス番号
  * @param state 現在の状況
- * @param state ボスの周回数
+ * @param lap ボスの周回数
  * @return 現在の状況
  */
 export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: number): Promise<Current> => {
@@ -49,7 +49,6 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
 /**
  * 現在の状況の段階と周回数を設定する
  * @param state 現在の状況
- * @param lap 周回数
  * @return 現在の状況
  */
 const updateLap = (state: Current): Current => {

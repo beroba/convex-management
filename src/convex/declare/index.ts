@@ -25,7 +25,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!alpha) return
 
   // 離席中ロールを削除
-  msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+  msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
 
   // 全角を半角に変換
   let content = util.Format(msg.content)

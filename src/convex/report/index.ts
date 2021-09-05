@@ -239,7 +239,7 @@ const overDelete = (member: Member, carry: boolean, msg: Discord.Message) => {
  */
 const roleDelete = (member: Member, msg: Discord.Message) => {
   // 離席中ロールを削除
-  msg.member?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+  msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
 
   // 3凸終了済みの場合
   if (member.end) {

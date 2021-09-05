@@ -63,7 +63,6 @@ export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
 
 /**
  * 持越状況を全て削除する
- * @param
  */
 export const AllDeleteMsg = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)

@@ -13,7 +13,7 @@ export const Update = async (members: Member[]) => {
 
 /**
  * メンバー個々の状態を設定する
- * @param メンバー情報
+ * @param member メンバー情報
  * @return メンバー一覧
  */
 export const UpdateMember = async (member: Member): Promise<Member[]> => {
@@ -27,7 +27,7 @@ export const UpdateMember = async (member: Member): Promise<Member[]> => {
 
 /**
  * メンバー全員の状態の名前とidを設定する
- * @param ユーザー情報
+ * @param users ユーザー情報
  */
 export const UpdateUsers = async (users: Option<User[]>) => {
   const members: Option<Member[]> = users?.map(u => ({
@@ -100,6 +100,7 @@ export const Fetch = async (): Promise<Member[]> => {
 
 /**
  * キャルステータスからメンバーの状態を取得
+ * @param id メンバーのID
  * @return メンバーの状態
  */
 export const FetchMember = async (id: string): Promise<Option<Member>> => {

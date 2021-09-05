@@ -12,7 +12,7 @@ export const Update = async (plans: Plan[]) => {
 
 /**
  * 凸予定を追加する
- * @param 追加する予定
+ * @param plan 追加する予定
  * @return 追加後の予定
  */
 export const Add = async (plan: Plan): Promise<Plan[]> => {
@@ -44,7 +44,6 @@ export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
 
 /**
  * 全ての凸予定を削除する
- * @param id 削除したい凸予定のid
  */
 export const AllDelete = async () => {
   await io.UpdateArray('plan', [])

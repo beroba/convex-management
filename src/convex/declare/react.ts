@@ -103,7 +103,7 @@ export const ConvexAdd = async (react: Discord.MessageReaction, user: Discord.Us
   react.message.guild?.members.cache
     .map(m => m)
     .find(m => m.id === user.id)
-    ?.roles.remove(Settings.ROLE_ID.AWAY_IN)
+    ?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
 
   return 'Addition of convex declaration'
 }

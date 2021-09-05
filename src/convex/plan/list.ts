@@ -78,7 +78,7 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
 
         // 離席状態か確認
         const member = await util.MemberFromId(p.playerID)
-        const awayIn = util.IsRole(member, Settings.ROLE_ID.AWAY_IN) ? '(離席中)' : ''
+        const awayIn = util.IsRole(member, Settings.ROLE_ID.ATTENDANCE) ? '(離席中)' : ''
 
         // 改行を潰して、連続した空白を1つにする
         const text = p.msg.replace(/\r?\n/g, '').replace(/\s/g, ' ')
