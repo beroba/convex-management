@@ -22,22 +22,18 @@ import {AtoE, Current, Member} from '../../util/type'
  * @return 凸報告の実行結果
  */
 export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // #凸報告でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CONVEX_REPORT
+  if (!isChannel) return
 
-  // メンバーの状態を取得
   let member_1 = await status.FetchMember(msg.author.id)
-
-  // クランメンバーでなければ終了
   if (!member_1) {
     msg.reply('クランメンバーじゃないわ')
     return 'Not a clan member'
   }
 
-  // 3凸していた場合は終了
   if (member_1.end) {
     msg.reply('もう3凸してるわ')
     return '3 Convex is finished'
@@ -46,87 +42,64 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // 3凸目の処理を実行
   let result: boolean
   ;[result, member_1] = await threeConvexProcess(member_1, msg)
-  // 3凸終了済みの場合は終了
   if (result) return '3 Convex is finished'
 
-  // 持越がないのに持越凸しようとした場合は終了
+  // 持越がないのに持越凸しようとした場合
   if (member_1.carry && !/[1-3]/.test(member_1.over.to_s())) {
     msg.reply('持越がないのに持越凸になってるわ')
     return 'Not carry over'
   }
 
-  // 持越か否かの真偽値
   const carry = member_1.carry
-
-  // 凸宣言しているボスの番号を取得
   const alpha = <Option<AtoE>>member_1.declare
 
-  // 凸宣言してない場合は終了
   if (!alpha) {
     msg.reply('凸報告の前に凸宣言をしてね')
     return 'Not declared convex'
   }
 
-  // 全角を半角に変換
   let content = util.Format(msg.content)
 
-  // killが入力された場合は、`@\d`を`0`にする
-  if (/^k|kill|きっl/i.test(content)) {
+  const isKill = /^k|kill|きっl/i.test(content)
+  if (isKill) {
+    // killが入力された場合、`@\d`を`0`に変更
     content = `${content.replace(/@\d*/, '')}@0`
   }
 
   // 凸状況を更新
   let members: Member[], member_2: Option<Member>
   ;[members, member_2] = await update.Status(member_1, content)
-
-  // 凸状況が更新できていない場合は終了
   if (!member_2) return
 
-  // ボス更新前の状況を取得
   let state = await current.Fetch()
 
-  // 残りの凸状況を報告
   peportConfirm(members, member_2, state, alpha, content, msg)
 
-  // @が入っている場合はHPの変更をする
+  // @が入っている場合、HPの変更
   if (/@\d/.test(content)) {
     state = await declareStatus.RemainingHPChange(content, alpha, state)
   }
 
   // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(content)) {
-    // 凸予定を削除
     cancel.Remove(alpha, msg.author.id)
-
-    // 凸宣言の予定を更新する
     list.SituationEdit()
   }
 
   // 3凸終了している場合、持越を全て削除
   if (member_2.end) {
-    // 持越を持っている人のメッセージを削除
     over.DeleteMsg(msg.member)
   }
 
-  // 凸状況を更新
   situation.Report(members, state)
-
-  // 凸宣言者を更新
   react.ConvexDone(alpha, msg.author)
-
-  // 凸宣言の予定を更新
   declare.SetPlan(alpha, state)
 
-  // 持越がある場合、持越状況のメッセージを全て削除
   overDelete(member_2, carry, msg)
 
-  // 凸報告に取消の絵文字をつける
   msg.react(Settings.EMOJI_ID.TORIKESHI)
-
-  // ロールを削除する
   roleDelete(member_2, msg)
 
-  // 活動限界時間の表示を更新
   limit.Display(members)
 
   return 'Update status'
@@ -146,17 +119,14 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
   // 既に凸が終わっていた場合
   if (member.over === 0) {
     member.end = true
-    // ステータスを更新
     const members = await status.UpdateMember(member)
 
-    // 何人目の3凸終了者なのかを報告する
     const n = members.filter(s => s.end).length + 1
     await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
     return [true, member]
   }
 
-  // 持越凸状態に変更
   member.carry = true
 
   return [false, member]
@@ -200,9 +170,8 @@ const peportConfirm = (
     '```m',
     `${boss.lap}周目 ${boss.name} ${hp}/${maxHP}`,
     `残凸数: ${member.convex}、持越数: ${member.over}`,
-    member.end ?
-      `${endN}人目の3凸終了よ！` + '\n```' :
-      '```',
+    member.end ? `${endN}人目の3凸終了よ！` : '',
+    '```',
   ].join('\n')
 
   msg.reply(text)
@@ -221,13 +190,9 @@ const overDelete = (member: Member, carry: boolean, msg: Discord.Message) => {
 
   // 持越が1つ、2-3つの場合で処理を分ける
   if (member.over === 0) {
-    // 持越を持っている人のメッセージを削除
     over.DeleteMsg(msg.member)
   } else if (/[1-2]/.test(member.over.to_s())) {
-    // #進行-連携のチャンネルを取得
     const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-
-    // #進行-連携に#持越状況を整理するように催促する
     channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
   }
 }
@@ -238,12 +203,9 @@ const overDelete = (member: Member, carry: boolean, msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const roleDelete = (member: Member, msg: Discord.Message) => {
-  // 離席中ロールを削除
   msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
 
-  // 3凸終了済みの場合
   if (member.end) {
-    // ロールを削除
     msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
     role.RemoveBossRole(msg.member)
   }

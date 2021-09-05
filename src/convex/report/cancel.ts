@@ -15,38 +15,30 @@ import {AtoE, Member} from '../../util/type'
  * @return 取り消し処理の実行結果
  */
 export const Cancel = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
+  const isBot = user.bot
+  if (isBot) return
 
-  // #凸報告でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.CONVEX_REPORT
+  if (!isChannel) return
 
-  // 完了の絵文字で無ければ終了
-  if (react.emoji.id !== Settings.EMOJI_ID.TORIKESHI) return
+  const isEmoji = react.emoji.id === Settings.EMOJI_ID.TORIKESHI
+  if (!isEmoji) return
 
-  // メッセージをキャッシュする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   await channel.messages.fetch(react.message.id)
 
   const msg = <Discord.Message>react.message
 
-  // 送信者と同じ人で無ければ終了
-  if (msg.author.id !== user.id) return
+  const isAuthor = msg.author.id === user.id
+  if (!isAuthor) return
 
-  // メンバーの状態を取得
   const member = await status.FetchMember(msg.author.id)
-  // クランメンバーでなければ終了
   if (!member) return
 
-  // 凸状況を元に戻す
   const members = await statusRestore(msg, member)
-  // 失敗したら終了
   if (!members) return
 
-  // ボスを討伐していたら戻す
   await killConfirm(member.history)
-
-  // 凸状況に報告
   situation.Report(members)
 
   return 'Convex cancellation'
@@ -58,26 +50,19 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
  * @return 削除処理の実行結果
  */
 export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // #凸報告でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_REPORT) return
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CONVEX_REPORT
+  if (!isChannel) return
 
-  // メンバーの状態を取得
   const member = await status.FetchMember(msg.author.id)
-  // クランメンバーでなければ終了
   if (!member) return
 
-  // 凸状況を元に戻す
   const members = await statusRestore(msg, member)
-  // 失敗したら終了
   if (!members) return
 
-  // ボスを討伐していたら戻す
   await killConfirm(member.history)
-
-  // 凸状況に報告
   situation.Report(members)
 
   return 'Convex cancellation'
@@ -85,32 +70,29 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 
 /**
  * 凸状況を元に戻す
+ * @param DiscordからのMessage
  * @param member 変更するメンバーの状態
- * @param user リアクションしたユーザー
  * @return メンバー一覧
  */
 const statusRestore = async (msg: Discord.Message, member: Member): Promise<Option<Member[]>> => {
-  // 2回キャンセルしてないか確認
   const result = confirmCancelTwice(member)
-  // キャンセルしていた場合は終了
   if (result) return
 
-  // 凸状況を1つ前に戻す
   member = rollback(member)
 
-  // 3凸時の処理
   if (member.end) {
     member = endConfirm(member, msg)
   }
 
-  // 凸報告に凸状況を報告
-  const convex = `残凸数: \`${member.convex}\`、持越数: \`${member.over}\``
-  msg.reply(`取消を行ったわよ\n${convex}`)
+  // prettier-ignore
+  const text = [
+    '取消を行ったわよ',
+    '```',
+    `残凸数: ${member.convex}、持越数: ${member.over}`,
+    '```',
+  ].join('\n')
+  msg.reply(text)
 
-  // ボス倒していたかを判別
-  // killConfirm(msg)
-
-  // ステータスを更新
   const members = await status.UpdateMember(member)
 
   return members
@@ -144,9 +126,7 @@ const rollback = (member: Member): Member => {
  * @return 更新したメンバー
  */
 const endConfirm = (member: Member, msg: Discord.Message): Member => {
-  // 3凸終了のフラグを折る
   member.end = false
-  // 凸残ロールを付与する
   msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   return member
@@ -154,21 +134,17 @@ const endConfirm = (member: Member, msg: Discord.Message): Member => {
 
 /**
  * ボスを倒していた場合、前のボスに戻す
- * @param msg DiscordからのMessage
+ * @param history 凸報告の履歴
  */
 const killConfirm = async (history: string) => {
   const content = history.split('|').slice(1).join('')
 
-  // ボスを倒していなければ終了
-  if (!/^k|kill|きっl/i.test(content)) return
+  const isKill = /^k|kill|きっl/i.test(content)
+  if (!isKill) return
 
-  // 現在の状況を取得
   const state = await current.Fetch()
-
-  // ボス番号と周回数を取得
   const alpha = <AtoE>content[0]
   const lap = state[alpha].lap
 
-  // ボスの周回数を変更
   lapAndBoss.UpdateLap(lap - 1, alpha)
 }

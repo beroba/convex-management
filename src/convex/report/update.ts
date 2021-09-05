@@ -9,21 +9,14 @@ import {Member} from '../../util/type'
  * @return メンバー一覧とメンバーの状態
  */
 export const Status = async (member: Member, content: string): Promise<[Member[], Option<Member>]> => {
-  // 現在の凸状況を履歴に残す
   member = saveHistory(member, content)
-
-  // 凸数と持越の状態を更新する
   member = statusUpdate(member, content)
 
-  // 3凸終了している場合
   if (isThreeConvex(member)) {
-    // 3凸終了のフラグを立てる
     member.end = true
   }
 
-  // ステータスを更新
   const members = await status.UpdateMember(member)
-
   return [members, member]
 }
 
@@ -33,7 +26,6 @@ export const Status = async (member: Member, content: string): Promise<[Member[]
  * @return 更新したメンバー
  */
 const saveHistory = (member: Member, content: string): Member => {
-  // 現在の凸状況を履歴に残す
   member.history = `${member.convex}${'+'.repeat(member.over)}|${member.declare}${content}`
   return member
 }
