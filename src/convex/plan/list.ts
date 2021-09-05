@@ -8,19 +8,13 @@ import {AtoE, Plan} from '../../util/type'
 
 /**
  * 引数で渡されたボス番号の凸予定一覧を出力
- * @param num ボス番号
+ * @param alpha ボス番号
  */
 export const Output = async (alpha: AtoE) => {
-  // 現在の状況を取得
   const state = await current.Fetch()
-
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
-
-  // 凸予定一覧のテキストを作成
   const text = await CreatePlanText(alpha, state.stage, plans)
 
-  // 凸予定一覧を出力
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(text)
 }
@@ -29,13 +23,9 @@ export const Output = async (alpha: AtoE) => {
  * 全凸予定一覧を出力
  */
 export const AllOutput = async () => {
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
-
-  // 凸予定一覧のテキストを作成
   const text = await createAllPlanText(plans)
 
-  // 凸予定一覧を出力
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(text)
 }
@@ -45,13 +35,9 @@ export const AllOutput = async () => {
  * @param plans 凸予定一覧
  */
 export const SituationEdit = async (plans?: Plan[]) => {
-  // 凸予定一覧を取得
   plans ??= await schedule.Fetch()
 
-  // 凸予定一覧のテキストを作成
   const text = await createAllPlanText(plans)
-
-  // 凸状況を更新
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_LIST_RESERVATE)
   const msg = await channel.messages.fetch(Settings.PLAN_MESSAGE_ID.PLAN)
   msg.edit(text)
@@ -97,8 +83,13 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
   const name = await bossTable.TakeName(alpha)
   const hp = Settings.STAGE[stage].HP[alpha]
 
-  // レイアウトを調整して返す
-  return `${name} \`${hp}\`\n\`\`\`\n${/^\s*$/.test(text) ? ' ' : text}\n\`\`\``
+  // prettier-ignore
+  return [
+    '```m',
+    `${name} ${hp}`,
+    `${/^\s*$/.test(text) ? ' ' : text}`,
+    '```',
+  ].join('\n')
 }
 
 /**
@@ -107,10 +98,9 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
  * @return 作成したテキスト
  */
 const createAllPlanText = async (plans: Plan[]): Promise<string> => {
-  // 現在の状況を取得
   const state = await current.Fetch()
 
-  // 名前順にソート
+  // 昇順ソート
   plans = plans.sort((a, b) => (a.name > b.name ? 1 : -1))
 
   // 全ボスの凸予定一覧のテキストを作成

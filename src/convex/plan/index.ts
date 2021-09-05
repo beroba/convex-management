@@ -13,13 +13,12 @@ import * as declare from '../declare/list'
  * @return 凸予定の実行結果
  */
 export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // #凸予定でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE) return
+  const isChannel = msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE
+  if (!isChannel) return
 
-  // メンバーの状態を取得
   const member = await status.FetchMember(msg.author.id)
   if (!member) {
     const cal = await msg.reply('クランメンバーじゃないわ\n※10秒後にこのメッセージは消えます')
@@ -41,16 +40,11 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return "I didn't write the expected damage"
   }
 
-  // 凸予定を更新
   const [plans, plan] = await update.Plans(msg)
 
-  // 凸状況を更新
   await list.SituationEdit(plans)
-
-  // 凸宣言の凸予定を更新
   await declare.SetPlan(plan.alpha)
 
-  // 凸宣言をリセット
   declare.SetUser(plan.alpha)
 
   return 'Make a convex reservation'
@@ -62,7 +56,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  * @return 真偽値
  */
 const formatConfirm = (msg: Discord.Message): boolean => {
-  // prettier-ignore
   const num = util.Format(msg.content).split(' ').first()
   return /[1-5]/.test(num)
 }

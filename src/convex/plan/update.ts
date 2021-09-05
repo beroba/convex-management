@@ -13,19 +13,19 @@ import {AtoE, Plan} from '../../util/type'
  * @return 更新後の予定
  */
 export const Plans = async (msg: Discord.Message): Promise<[Plan[], Plan]> => {
-  // 凸予定のオブジェクトを作成
   const plan = await createPlan(msg)
 
-  // 予定したボスを報告し、報告したキャルのメッセージIDを取得
-  plan.calID = (await msg.reply(`${plan.boss}を予定したわよ！\nid: ${plan.senderID}`)).id
+  // prettier-ignore
+  const text = [
+    `${plan.boss}を予定したわよ！`,
+    `id: ${plan.senderID}`,
+  ].join('\n')
+  const m = await msg.reply(text)
 
-  // 凸予定シートの値を更新
+  plan.calID = m.id
   const plans = await schedule.Add(plan)
 
-  // 完了の絵文字をつける
   await msg.react(Settings.EMOJI_ID.KANRYOU)
-
-  // ボス番号のロールを付与
   await msg.member?.roles.add(Settings.BOSS_ROLE_ID[plan.alpha])
 
   return [plans, plan]
@@ -37,14 +37,11 @@ export const Plans = async (msg: Discord.Message): Promise<[Plan[], Plan]> => {
  * @return 作成した凸予定
  */
 const createPlan = async (msg: Discord.Message): Promise<Plan> => {
-  // 編集されたメッセージを整形
   const content = util.Format(msg.content.replace(/\n/g, ' '))
 
-  // ボス番号とボス名を取得
   const alpha = NtoA(content[0]) as AtoE
   const boss = await bossTable.TakeName(alpha)
 
-  // メンバーの状態を取得
   const member = await status.FetchMember(msg.author.id)
 
   return {
