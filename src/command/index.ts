@@ -9,10 +9,9 @@ import * as util from '../util'
  * @param msg DiscordからのMessage
  */
 export const Command = async (msg: Discord.Message) => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
-  // 全角を全て半角にする
   const content = util.Format(msg.content)
 
   let comment: Option<string>

@@ -23,8 +23,8 @@ import {AtoE} from '../util/type'
  * @return 実行したコマンドの結果
  */
 export const ClanBattle = async (content: string, msg: Discord.Message): Promise<Option<string>> => {
-  // 指定のチャンネル以外では実行されない用にする
-  if (!util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)) return
+  const isChannel = util.IsChannel(Settings.COMMAND_CHANNEL.CLAN_BATTLE, msg.channel)
+  if (!isChannel) return
 
   switch (true) {
     case /cb tle/i.test(content): {
@@ -111,18 +111,14 @@ const tleController = async (_command: string, _content: string, _msg: Discord.M
     return isNaN ? null : time
   }
 
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
   // TL部分の生成
   const tl = _msg.content.split('\n').slice(1).join('\n')
-
   if (!tl) return _msg.reply('TLがないわ')
 
   // timeを作成
   const time = args && toTime(args)
-
-  // TLの整形をする
   await format.TL(tl, time, _msg, true)
 }
 
@@ -148,18 +144,14 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
     return isNaN ? null : time
   }
 
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
 
   // TL部分の生成
   const tl = _msg.content.split('\n').slice(1).join('\n')
-
   if (!tl) return _msg.reply('TLがないわ')
 
   // timeを作成
   const time = args && toTime(args)
-
-  // TLの整形をする
   await format.TL(tl, time, _msg)
 }
 
@@ -170,10 +162,7 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
  * @param _msg DiscordからのMessage
  */
 const convexController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
-
-  // 引数が無い場合は終了
   if (!args) return _msg.reply('更新したいプレイヤーと凸状況を指定しなさい')
 
   // 更新先の凸状況を取得
@@ -182,10 +171,9 @@ const convexController = async (_command: string, _content: string, _msg: Discor
     .replace(/<.+>/, '') // プレイヤーIDを省く
     .trim()
 
-  // 凸状況の書式がおかしい場合は終了
-  if (!/^(3|2\+{0,1}|1\+{0,2}|0\+{0,3})$/.test(state)) return _msg.reply('凸状況の書式が違うわ')
+  const isFormat = /^(3|2\+{0,1}|1\+{0,2}|0\+{0,3})$/.test(state)
+  if (!isFormat) return _msg.reply('凸状況の書式が違うわ')
 
-  // 凸状況を更新する
   await manage.Update(state, _msg)
 }
 
@@ -196,10 +184,7 @@ const convexController = async (_command: string, _content: string, _msg: Discor
  * @param _msg DiscordからのMessage
  */
 const lapController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
-
-  // 引数が無い場合は終了
   if (!args) return _msg.reply('周回数とボス番号を指定しなさい')
 
   // 周回数とボス番号を取得
@@ -210,14 +195,11 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
   if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
   if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
 
-  // 任意のボスへ移動させる
   await lapAndBoss.UpdateLap(lap.to_n(), <AtoE>alpha)
 
-  // メンバー全員の状態を取得
   const members = await status.Fetch()
   situation.Report(members)
 
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
   await list.SituationEdit(plans)
 }
@@ -229,25 +211,16 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
  * @param _msg DiscordからのMessage
  */
 const deletePlanController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
-
-  // 引数が無い場合は終了
   if (!args) return _msg.reply('削除する凸予定のidを指定しないと消せないわ')
 
   // 引数からユーザーidだけを取り除く
   const id = util.Format(args).replace(/[^0-9]/g, '')
 
-  // 凸予定を削除する
   const [plans, plan] = await schedule.Delete(id)
-
-  // 指定したidの凸予定がなかった場合
   if (!plan) return _msg.reply(`${id}の凸予定はなかったわ`)
 
-  // 凸予定一覧を取得
   await list.SituationEdit(plans)
-
-  // 凸宣言の凸予定を更新
   await declare.SetPlan(plan.alpha)
 
   _msg.reply('凸予定を削除したわ')
@@ -260,7 +233,6 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
  * @param _msg DiscordからのMessage
  */
 const planController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content) ?? ''
 
   // 引数にボス番号があるか確認
@@ -283,16 +255,11 @@ const planController = async (_command: string, _content: string, _msg: Discord.
  * @param _msg DiscordからのMessage
  */
 const overController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // 引数を抽出
   const args = command.ExtractArgument(_command, _content)
-
-  // 引数が無い場合は終了
   if (!args) return _msg.reply('HP A Bを指定しなさい')
 
   // HP, A, Bを分割して代入
   const [HP, A, B] = util.Format(args).split(' ').map(Number)
-
-  // 計算結果を出力
   etc.SimultConvexCalc(HP, A, B, _msg)
 }
 
@@ -303,7 +270,6 @@ const overController = async (_command: string, _content: string, _msg: Discord.
  * @param _msg DiscordからのMessage
  */
 const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // タスキルのロールを付与する
   role.AddTaskKillRole(_msg)
 }
 
@@ -314,11 +280,9 @@ const taskKillController = async (_command: string, _content: string, _msg: Disc
  * @param _msg DiscordからのMessage
  */
 const updateReportController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  // メンバー全員の状態を取得
   const members = await status.Fetch()
   situation.Report(members)
 
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
   await list.SituationEdit(plans)
 
