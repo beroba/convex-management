@@ -13,20 +13,18 @@ export const MessageReactionRemove = async (
   react: Discord.MessageReaction,
   user: Discord.User | Discord.PartialUser
 ) => {
-  // クランのサーバーでなければ終了
-  if (react.message.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
+  const isBeroba = react.message.guild?.id === ThrowEnv('CLAN_SERVER_ID')
+  if (!isBeroba) return
 
   let comment: Option<string>
+  user = user as Discord.User
 
-  // 凸宣言を行う
-  comment = await declare.ConvexRemove(react, user as Discord.User)
+  comment = await declare.ConvexRemove(react, user)
   if (comment) return console.log(comment)
 
-  // 通知キャンセルを行う
-  comment = await declare.NoticeCancel(react, user as Discord.User)
+  comment = await declare.NoticeCancel(react, user)
   if (comment) return console.log(comment)
 
-  // 活動限界時間の設定を行う
-  comment = await limit.Remove(react, user as Discord.User)
+  comment = await limit.Remove(react, user)
   if (comment) return console.log(comment)
 }

@@ -18,85 +18,64 @@ import * as send from '../util/send'
 export const MessageCreate = async (msg: Discord.Message) => {
   let comment: Option<string>
 
-  // クランのサーバーなら実行
-  if (msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')) {
-    // `/`から始まるコマンドの処理
+  const isBeroba = msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')
+  if (isBeroba) {
     if (msg.content.charAt(0) === '/') return await Command(msg)
 
-    // 特定のメッセージに絵文字を付ける
     emoji.React(msg)
 
-    // 凸宣言の処理を行う
     comment = await declare.Convex(msg)
     if (comment) return console.log(comment)
 
-    // 凸報告の処理を行う
     comment = await report.Convex(msg)
     if (comment) return console.log(comment)
 
-    // 凸予定の処理を行う
     comment = await plan.Convex(msg)
     if (comment) return console.log(comment)
 
-    // 持越状況に絵文字をつける
     comment = over.React(msg)
     if (comment) return console.log(comment)
 
-    // 持越凸先に絵文字をつける
     comment = etc.SisterReactAdd(msg)
     if (comment) return console.log(comment)
 
-    // プレイヤーIDの保存処理を行う
     comment = await playerID.Save(msg)
     if (comment) return console.log(comment)
 
-    // メッセージにカンカンカンが含まれている場合の処理
     comment = send.GoodMorning(msg)
     if (comment) return console.log(comment)
   }
 
-  // メッセージの先頭がおはなしの場合の処理
   comment = await send.Speak(msg)
   if (comment) return console.log(comment)
 
-  // メッセージにorが含まれている場合の処理
   comment = send.AorB(msg)
   if (comment) return console.log(comment)
 
-  // クランのサーバーなら実行
   if (msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')) {
-    // 特定の文字が完全一致していた場合に対応した絵文字を送信
     comment = await emoji.Send(msg)
     if (comment) return console.log(comment)
 
-    // #肉に画像が送信された際に肉絵文字を付ける
     comment = send.NikuPicture(msg)
     if (comment) return console.log(comment)
 
-    // #性癖調査18禁 #性癖調査よろず18禁に投稿した人に性癖調査をしろロールを付与
     comment = send.AddSeihekiRole(msg)
 
-    // ヤバイの文字がある場合に画像を送信
     comment = send.YabaiImage(msg)
     if (comment) return console.log(comment)
 
-    // シャイニートモの場合に画像を送信
     comment = send.ShinyTmoImage(msg)
     if (comment) return console.log(comment)
 
-    // 助けて！の場合に画像を送信
     comment = send.TasuketeImage(msg)
     if (comment) return console.log(comment)
 
-    // 草の場合に草ガチャを実施
     comment = await send.KusaGacha(msg)
     if (comment) return console.log(comment)
 
-    // 俺嘘の場合にツイートをランダムに送信
     comment = await send.SendUsoOre(msg)
     if (comment) return console.log(comment)
 
-    // アザラシの場合にアザラシシーパラダイスのツイートをランダムに送信
     comment = await send.SendAguhiyori(msg)
     if (comment) return console.log(comment)
   }

@@ -11,20 +11,18 @@ import * as report from '../convex/report/cancel'
  * @param msg DiscordからのMessage
  */
 export const MessageDelete = async (msg: Discord.Message | Discord.PartialMessage) => {
-  // クランのサーバーでなければ終了
-  if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
+  const isBeroba = msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')
+  if (!isBeroba) return
 
   let comment: Option<string>
+  msg = msg as Discord.Message
 
-  // 凸宣言のメッセージ削除を行う
-  comment = await declare.Delete(msg as Discord.Message)
+  comment = await declare.Delete(msg)
   if (comment) return console.log(comment)
 
-  // 凸報告を取り消しを行う
-  comment = await report.Delete(msg as Discord.Message)
+  comment = await report.Delete(msg)
   if (comment) return console.log(comment)
 
-  // 凸予定を削除を行う
-  comment = await plan.Delete(msg as Discord.Message)
+  comment = await plan.Delete(msg)
   if (comment) return console.log(comment)
 }

@@ -9,16 +9,15 @@ import * as edit from '../convex/plan/edit'
  * @param msg DiscordからのMessage
  */
 export const MessageUpdate = async (msg: Discord.Message | Discord.PartialMessage) => {
-  // クランのサーバーでなければ終了
-  if (msg.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
+  const isBeroba = msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')
+  if (!isBeroba) return
 
   let comment: Option<string>
+  msg = msg as Discord.Message
 
-  // 凸宣言のメッセージ編集を行う
-  comment = await declare.Edit(msg as Discord.Message)
+  comment = await declare.Edit(msg)
   if (comment) return console.log(comment)
 
-  // 凸報告を取り消しを行う
-  comment = await edit.Message(msg as Discord.Message)
+  comment = await edit.Message(msg)
   if (comment) return console.log(comment)
 }
