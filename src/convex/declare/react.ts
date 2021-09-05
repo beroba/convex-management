@@ -145,7 +145,10 @@ export const ConvexDone = async (alpha: AtoE, user: Discord.User) => {
   ;(await channel.messages.fetch())
     .map(m => m)
     .filter(m => m.author.id === user.id)
-    .map(m => m.delete())
+    .forEach(m => {
+      if (!m) return
+      m.delete()
+    })
 
   console.log('Completion of convex declaration')
 }

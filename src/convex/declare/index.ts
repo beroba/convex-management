@@ -113,6 +113,9 @@ const messageDelete = async (channel: Discord.TextChannel) => {
     msgs
       .map(m => m)
       .filter(m => !m.author.bot)
-      .map(async m => m.delete())
+      .map(async m => {
+        if (!m) return
+        await m.delete()
+      })
   )
 }

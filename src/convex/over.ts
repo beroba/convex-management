@@ -56,7 +56,10 @@ export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
   msgs
     .map(m => m)
     .filter(m => m.author.id === member?.id) // 同じメンバーで絞る
-    .forEach(m => m.delete())
+    .forEach(m => {
+      if (!m) return
+      m.delete()
+    })
 
   console.log('Delete carryover message')
 }
@@ -68,7 +71,12 @@ export const AllDeleteMsg = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   const msgs = await channel.messages.fetch()
 
-  msgs.map(m => m).forEach(m => m.delete())
+  msgs
+    .map(m => m)
+    .forEach(m => {
+      if (!m) return
+      m.delete()
+    })
 
   console.log('Delete carryover message')
 }
