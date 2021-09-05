@@ -16,7 +16,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const isBot = msg.member?.user.bot
   if (isBot) return
 
-  const isChannel = msg.channel.id !== Settings.CHANNEL_ID.CONVEX_RESERVATE
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CONVEX_RESERVATE
   if (!isChannel) return
 
   const member = await status.FetchMember(msg.author.id)
