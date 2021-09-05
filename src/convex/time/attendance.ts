@@ -77,7 +77,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   if (!isMsg) return
 
   const isEmoji = react.emoji.id === Settings.EMOJI_ID.RISEKI
-  if (isEmoji) return
+  if (!isEmoji) return
 
   react.message.guild?.members.cache
     .map(m => m)

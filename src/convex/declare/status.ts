@@ -15,27 +15,19 @@ import {AtoE, Current} from '../../util/type'
  * @param channel 凸宣言のチャンネル
  */
 export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  // 現在の状況を取得
   state ??= await current.Fetch()
-
-  // 凸宣言のチャンネルを取得
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
   // 現在のボスのHPを取得
   const maxHP = Settings.STAGE[state.stage].HP[alpha]
 
-  // ボスの状態のメッセージを取得
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
-
-  // 表示するテキストを作成
   const text = [
     '```m',
     `${state[alpha].lap}周目 ${state[alpha].name} ${state[alpha].hp}/${maxHP}`,
     `予想残りHP: ${await expectRemainingHP(state[alpha].hp, channel)}`,
     '```',
   ].join('\n')
-
-  // メッセージを編集
   await msg.edit(text)
 }
 
@@ -47,7 +39,6 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
  * @return 変更後の状態
  */
 export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Current): Promise<Current> => {
-  // 現在の状況を取得
   state ??= await current.Fetch()
 
   // 変更先のHPを取り出す
@@ -65,10 +56,8 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
   // HPの変更
   state = await lapAndBoss.UpdateHP(hp.to_n(), alpha, state)
 
-  // 状態を変更
   await Update(alpha, state)
 
-  // 凸状況を更新
   const members = await status.Fetch()
   situation.Report(members)
 
@@ -87,7 +76,6 @@ const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Prom
     .map(m => m)
     .filter(m => !m.author.bot)
     .map(m => {
-      // 全角を半角に変換
       let content = util.Format(m.content)
       // @とsが両方ある場合は@を消す
       content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
@@ -123,18 +111,15 @@ const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Prom
  * @return 削除処理の実行結果
  */
 export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
   // チャンネルのボス番号を取得
   const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
     key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
   ) as Option<AtoE>
-
-  // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
 
-  // 現在の状態を更新
   Update(alpha)
 
   return 'Calculate the HP Delete'
@@ -146,18 +131,15 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
  * @return 削除処理の実行結果
  */
 export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
-  // botのメッセージは実行しない
-  if (msg.member?.user.bot) return
+  const isBot = msg.member?.user.bot
+  if (isBot) return
 
   // チャンネルのボス番号を取得
   const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
     key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
   ) as Option<AtoE>
-
-  // ボス番号がなければ凸宣言のチャンネルでないので終了
   if (!alpha) return
 
-  // 現在の状態を更新
   Update(alpha)
 
   return 'Calculate the HP Edit'

@@ -14,26 +14,18 @@ import {AtoE, Current, Member, Plan} from '../../util/type'
  * @param members メンバー全体の状態
  */
 export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, members?: Member[]) => {
-  // 凸宣言のチャンネルを取得
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-  // メンバー全体の状態を取得
   members ??= await status.Fetch()
 
-  // 名前順にソート
+  // 昇順ソート
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
-  // 凸宣言のメッセージを取得
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
-
-  // 削除したボスの凸予定一覧を取得
   const plans = await schedule.FetchBoss(alpha)
 
-  // 凸宣言者一覧を作成
   const totu = await createDeclareList(members, plans, alpha, false)
   const mochikoshi = await createDeclareList(members, plans, alpha, true)
 
-  // 凸宣言のメッセージを作成
   const text = [
     '凸宣言 `[残凸数(+は持越), 活動限界時間]`',
     '```',
@@ -43,8 +35,6 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
     `${mochikoshi.join('\n')}`,
     '```',
   ].join('\n')
-
-  // 凸宣言のメッセージを編集
   await msg.edit(text)
 }
 
@@ -78,20 +68,13 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, 
  * @param channel 凸宣言のチャンネル
  */
 export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  // 現在の状況を取得
   state ??= await current.Fetch()
-
-  // 凸宣言のチャンネルを取得
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  // 凸予定のメッセージを取得
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
-
-  // 凸予定一覧を取得
   const plans = await schedule.Fetch()
   const text = await plan.CreatePlanText(alpha, state.stage, plans)
 
-  // 凸予定一覧を更新
-  // 1行目を取り除く
-  await msg.edit('凸予定\n' + text.split('\n').slice(1).join('\n'))
+  // 凸予定の前2行を取り除いて結合
+  await msg.edit('凸予定\n```m\n' + text.split('\n').slice(2).join('\n'))
 }
