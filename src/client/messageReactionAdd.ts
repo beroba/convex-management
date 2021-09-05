@@ -50,7 +50,7 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   if (comment) return console.log(comment)
 
   // 持越凸先の削除を行う
-  comment = await etc.Delete(react, user as Discord.User)
+  comment = await etc.SisterReactDelete(react, user as Discord.User)
   if (comment) return console.log(comment)
 
   // 活動限界時間の設定を行う

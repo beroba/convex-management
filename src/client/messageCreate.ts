@@ -43,7 +43,7 @@ export const MessageCreate = async (msg: Discord.Message) => {
     if (comment) return console.log(comment)
 
     // 持越凸先に絵文字をつける
-    comment = etc.React(msg)
+    comment = etc.SisterReactAdd(msg)
     if (comment) return console.log(comment)
 
     // プレイヤーIDの保存処理を行う

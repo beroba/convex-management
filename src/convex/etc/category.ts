@@ -21,7 +21,7 @@ export const Create = async (year: number, month: number, msg: Discord.Message) 
     permissionOverwrites: permit,
   })
 
-  // チャンネルの作成し初回メッセージを送信
+  // チャンネルの作成
   await Promise.all(
     names.map(async name => msg.guild?.channels.create(name, {type: 'GUILD_TEXT', parent: category?.id}))
   )
@@ -89,10 +89,7 @@ const settingPermit = (msg: Discord.Message): Discord.OverwriteResolvable[] => {
  * @return チャンネル名のリスト
  */
 const createChannelName = async (month: number): Promise<string[]> => {
-  // キャルステータスからボステーブルを取得
   const table = await bossTable.Fetch()
-
-  // ボスの名前を取得
   const [a, b, c, d, e] = table.map(t => t.name)
 
   return [

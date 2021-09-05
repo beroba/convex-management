@@ -19,8 +19,15 @@ export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.
   const a = overCalc(HP, A, B)
   const b = overCalc(HP, B, A)
 
-  // 計算結果を出力
-  msg.reply(`\`\`\`A ${a}s\nB ${b}s\`\`\`ダメージの高い方を先に通した方が持越時間が長くなるわよ！`)
+  // prettier-ignore
+  const text = [
+    '```m',
+    `A ${a}s`,
+    `B ${b}s`,
+    '```',
+    'ダメージの高い方を先に通した方が持越時間が長くなるわよ！',
+  ].join('\n')
+  msg.reply(text)
 }
 
 /**
@@ -39,14 +46,11 @@ const overCalc = (HP: number, a: number, b: number): number => {
  * メンバー全員の凸状況をリセットする
  */
 export const ResetConvex = async () => {
-  // 全員の凸状況をリセット
   await status.ResetConvex()
 
-  // メンバー全員の状態を取得
   const members = await status.Fetch()
   situation.Report(members)
 
-  // bot-notifyに通知をする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('全員の凸状況をリセットしたわ')
 
@@ -71,10 +75,8 @@ export const UpdateMembers = async (msg: Discord.Message) => {
     .sort((a, b) => (a.id > b.id ? 1 : -1)) // ID順にソート
   if (!users) return
 
-  // ステータスを更新
   await status.UpdateUsers(users)
 
-  // jsonの値を送信
   const list: Json = users.map(u => ({[u.id]: u.name})).reduce((a, b) => ({...a, ...b}))
   await json.Send(list)
 }
@@ -83,7 +85,6 @@ export const UpdateMembers = async (msg: Discord.Message) => {
  * デイリーミッション消化の通知する
  */
 export const NotifyDailyMission = () => {
-  // 雑談に通知をする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CHAT)
   channel.send('もう4:30よ！デイリーミッションは消化したわよね！！してなかったらぶっ殺すわよ！！！！')
 
@@ -96,22 +97,22 @@ export const NotifyDailyMission = () => {
  * @param user リアクションしたユーザー
  * @return 削除処理の実行結果
  */
-export const Delete = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
+export const SisterReactDelete = async (
+  react: Discord.MessageReaction,
+  user: Discord.User
+): Promise<Option<string>> => {
+  const isBot = user.bot
+  if (isBot) return
 
-  // #持越凸先でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.CARRYOVER_DESTINATION) return
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.CARRYOVER_DESTINATION
+  if (!isChannel) return
 
-  // メッセージをキャッシュする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_DESTINATION)
   await channel.messages.fetch(react.message.id)
 
-  // 送信者と同じ人で無ければ終了
   const msg = <Discord.Message>react.message
   if (msg.author.id !== user.id) return
 
-  // メッセージを削除する
   react.message.delete()
 
   return "Delete my sister's completed message"
@@ -122,12 +123,11 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
  * @param msg DiscordからのMessage
  * @return 絵文字をつけたかの結果
  */
-export const React = (msg: Discord.Message): Option<string> => {
-  // #持越状況でなければ終了
-  if (msg.channel.id !== Settings.CHANNEL_ID.CARRYOVER_DESTINATION) return
+export const SisterReactAdd = (msg: Discord.Message): Option<string> => {
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_DESTINATION
+  if (!isChannel) return
 
-  // ルナの絵文字をつける
   msg.react(Settings.EMOJI_ID.RUNA)
 
-  return 'React Kanryou'
+  return 'React Runa'
 }
