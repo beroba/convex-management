@@ -1,8 +1,8 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as declare from './declare/react'
-import * as time from './convex/time'
+import * as declare from '../convex/declare/react'
+import * as limit from '../convex/time/limit'
 
 /**
  * リアクションのイベントに応じて適切な処理を実行する
@@ -13,20 +13,18 @@ export const MessageReactionRemove = async (
   react: Discord.MessageReaction,
   user: Discord.User | Discord.PartialUser
 ) => {
-  // クランのサーバーでなければ終了
-  if (react.message.guild?.id !== ThrowEnv('CLAN_SERVER_ID')) return
+  const isBeroba = react.message.guild?.id === ThrowEnv('CLAN_SERVER_ID')
+  if (!isBeroba) return
 
   let comment: Option<string>
+  user = user as Discord.User
 
-  // 凸宣言を行う
-  comment = await declare.ConvexRemove(react, user as Discord.User)
+  comment = await declare.ConvexRemove(react, user)
   if (comment) return console.log(comment)
 
-  // 通知キャンセルを行う
-  comment = await declare.NoticeCancel(react, user as Discord.User)
+  comment = await declare.NoticeCancel(react, user)
   if (comment) return console.log(comment)
 
-  // 活動限界時間の設定を行う
-  comment = await time.Remove(react, user as Discord.User)
+  comment = await limit.Remove(react, user)
   if (comment) return console.log(comment)
 }

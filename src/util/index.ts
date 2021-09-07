@@ -75,7 +75,7 @@ export const GetCalInfo = (): Option<Discord.GuildMember> => {
  * @return 真偽値
  */
 export const IsChannel = (array: string[], channel: Discord.TextBasedChannels): boolean => {
-  return array.some((c: string) => c === (channel as Discord.TextChannel).name)
+  return array.some(c => c === (<Discord.TextChannel>channel).name)
 }
 
 /**
@@ -94,7 +94,8 @@ export const IsRole = (member: Option<Discord.GuildMember>, role: string): Optio
  * @return 取得したMember
  */
 export const MemberFromId = async (id: string): Promise<Discord.GuildMember> => {
-  return (await GetGuild()?.members.fetch())?.map(m => m).find(m => m.id === id) as Discord.GuildMember
+  const members = await GetGuild()?.members.fetch()
+  return members?.map(m => m).find(m => m.id === id) as Discord.GuildMember
 }
 
 /**

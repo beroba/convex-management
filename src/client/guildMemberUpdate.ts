@@ -6,7 +6,6 @@ import Settings from 'const-settings'
  * @param member 変更後のmember情報
  */
 export const GuildMemberUpdate = async (member: Discord.GuildMember | Discord.PartialGuildMember) => {
-  // ヤバイわよ！のロールを取得
   const yabaiwayo = member.guild.roles.cache.get(Settings.ROLE_ID.YABAIWAYO)
   if (!yabaiwayo) return
 

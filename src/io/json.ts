@@ -1,7 +1,7 @@
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {Json} from './type'
 import * as util from '../util'
+import {Json} from '../util/type'
 
 /**
  * キャルステータスの値を取得する
@@ -9,7 +9,6 @@ import * as util from '../util'
  * @return 取得したjsonの情報
  */
 export const Fetch = async (name: string): Promise<Option<Json>> => {
-  // 更新したいステータスのidを取得
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
   const msgs = (await channel.messages.fetch()).map(m => m)
 
@@ -31,8 +30,7 @@ export const Fetch = async (name: string): Promise<Option<Json>> => {
  * キャルステータスの値を送信する
  * @param json 更新させたいjsonの情報
  */
-export const Update = async (json: Json) => {
-  // 更新したいステータスのidを取得
+export const Send = async (json: Json) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CAL_STATUS)
 
   // prettier-ignore
@@ -47,6 +45,6 @@ export const Update = async (json: Json) => {
     '```',
   ].join('\n')
 
-  // メッセージを送信
+  // 他人のメッセージは編集できないので、メッセージを送信しそれをコピペして編集する
   await channel.send(text)
 }

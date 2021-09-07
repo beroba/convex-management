@@ -1,15 +1,15 @@
 import Settings from 'const-settings'
-import * as io from '.'
+import * as io from './redis'
 import * as bossTable from './bossTable'
-import {AtoE, Current, CurrentBoss} from './type'
-import * as declare from '../client/declare/status'
+import * as declare from '../convex/declare/status'
+import {AtoE, Current, CurrentBoss} from '../util/type'
 
 /**
  * 現在のボス状況を設定する
  * @param hp 残りHP
  * @param alpha ボス番号
  * @param state 現在の状況
- * @param state ボスの周回数
+ * @param lap ボスの周回数
  * @return 現在の状況
  */
 export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: number): Promise<Current> => {
@@ -17,7 +17,7 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
   const num = (await bossTable.TakeNum(alpha)) ?? ''
   const name = (await bossTable.TakeName(alpha)) ?? ''
 
-  // ボスのHPを取得
+  // ボスの最大HPを取得
   const max = Settings.STAGE[state.stage].HP[alpha]
 
   // HPが0以下の場合、0にする
@@ -32,7 +32,6 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
   // HPが最大以上の場合、最大にする
   hp = hp > max ? max : hp
 
-  // ボス状況を更新
   state[alpha] = <CurrentBoss>{
     alpha: alpha,
     num: num,
@@ -41,10 +40,7 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
     hp: hp,
   }
 
-  // 全体の周回数を更新
   state = updateLap(state)
-
-  // キャルステータスを更新
   await io.UpdateJson('current', state)
 
   return state
@@ -53,7 +49,6 @@ export const Update = async (hp: number, alpha: AtoE, state: Current, lap?: numb
 /**
  * 現在の状況の段階と周回数を設定する
  * @param state 現在の状況
- * @param lap 周回数
  * @return 現在の状況
  */
 const updateLap = (state: Current): Current => {
@@ -62,16 +57,13 @@ const updateLap = (state: Current): Current => {
 
   // 全体の周回数よりボスの周回数が進んでいる場合は更新
   if (state.lap !== lap) {
-    // 周回数を更新
     state.lap = lap
   }
 
-  // 周回数から段階を取得
   const stage = getStageName(lap)
 
-  // 全体の段階とボスの段階が違うは更新
+  // 全体の段階とボスの段階が違う場合は更新
   if (state.stage !== stage) {
-    // 段階を更新
     state.stage = stage
 
     // ボスのHPを更新
@@ -112,4 +104,6 @@ const getStageName = (lap: number): string => {
  * キャルステータスから現在の状況を取得
  * @return 現在の状況
  */
-export const Fetch = async (): Promise<Current> => io.Fetch<Current>('current')
+export const Fetch = async (): Promise<Current> => {
+  return io.Fetch<Current>('current')
+}

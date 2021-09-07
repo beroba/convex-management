@@ -4,10 +4,9 @@ import Settings from 'const-settings'
 import * as util from '../util'
 
 export const GuildMemberAdd = (member: Discord.GuildMember | Discord.PartialGuildMember) => {
-  // クランのサーバーでなければ終了
-  if (member.guild.id !== ThrowEnv('CLAN_SERVER_ID')) return
+  const isBeroba = member.guild.id === ThrowEnv('CLAN_SERVER_ID')
+  if (!isBeroba) return
 
-  // ウェルカムチャンネルに催促メッセージを送信
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CHAT)
 
   const text = [
