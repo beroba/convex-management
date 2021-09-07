@@ -8,8 +8,8 @@ import * as util from '.'
  * @param msg DiscordからのMessage
  */
 export const React = async (msg: Discord.Message) => {
-  const isNotEmoji = util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)
-  if (isNotEmoji) return
+  const isChannel = util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)
+  if (isChannel) return
 
   // botがリアクションを押す処理
   yuiKusanoReact(msg)
@@ -33,8 +33,8 @@ export const React = async (msg: Discord.Message) => {
  */
 const yuiKusanoReact = (msg: Discord.Message) => {
   // 特定のチャンネルでは草単体でガチャを行うので絵文字は不要
-  const isNetaThat = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
-  if (isNetaThat) {
+  const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
+  if (isChannel) {
     // 草ガチャの形式か確認
     if (/^草\s?\d*$/.test(msg.content)) return
   }
@@ -201,8 +201,8 @@ const chuukaReact = (msg: Discord.Message) => {
  * @return 送信した絵文字の結果
  */
 export const Send = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isNotEmoji = util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)
-  if (isNotEmoji) return
+  const isChannel = util.IsChannel(Settings.NOT_EMOJI_CHANNEL, msg.channel)
+  if (isChannel) return
 
   const name = util.GetUserName(msg.member)
   let content: string

@@ -10,8 +10,8 @@ import * as util from '.'
  * @return ロール付与の実行結果
  */
 export const RoleGrant = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  const isPlayerIdRoleGrant = react.message.channel.id === Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT
-  if (!isPlayerIdRoleGrant) return
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.PLAYER_ID_ROLE_GRANT
+  if (!isChannel) return
 
   const member = util.GetMembersFromUser(react.message.guild?.members, user)
   member?.roles.add(Settings.ROLE_ID.PLAYER_ID_SEND)
@@ -37,8 +37,8 @@ export const Save = async (msg: Discord.Message): Promise<Option<string>> => {
   const isBot = msg.member?.user.bot
   if (isBot) return
 
-  const isPlayerIdSend = msg.channel.id === Settings.CHANNEL_ID.PLAYER_ID_SEND
-  if (!isPlayerIdSend) return
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.PLAYER_ID_SEND
+  if (!isChannel) return
 
   await msg.member?.roles.remove(Settings.ROLE_ID.PLAYER_ID_SEND)
 
