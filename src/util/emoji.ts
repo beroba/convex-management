@@ -386,5 +386,5 @@ const katudonEmoji = async (msg: Discord.Message, name: string) => {
   await msg.channel.send(Settings.EMOJI_FULL_ID.SAITOU)
 
   setTimeout(() => msg.delete(), 100)
-  return `${name}: Send saitou Emoji`
+  return `${name}: Send katudon Emoji`
 }
