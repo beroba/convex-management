@@ -135,8 +135,8 @@ export const GoodMorning = (msg: Discord.Message): Option<string> => {
   const isChannel = util.IsChannel(Settings.MAJOR_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchKanKanKan = msg.content.match(/カンカンカン/)
-  if (!matchKanKanKan) return
+  const match = msg.content.match(/カンカンカン/)
+  if (!match) return
 
   const message =
     'おはよー！！！カンカンカン！！！起きなさい！！！クラバトよ！！！！すごいクラバトよ！！！！外が明るいわよ！！カンカンカンカンカン！！！！！おはよ！！カンカンカン！！！見て見て！！！！外明るいの！！！外！！！！見て！！カンカンカンカンカン！！凸しなさい！！早く凸して！！カンカン！ぶっ殺すわよ！！！！！！！！！！:heavy_check_mark:'
@@ -156,8 +156,8 @@ export const YabaiImage = (msg: Discord.Message): Option<string> => {
   const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchYabai = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
-  if (!matchYabai) return
+  const match = msg.content.replace(/やばい|ヤバい/g, 'ヤバイ').match(/ヤバイ/)
+  if (!match) return
 
   msg.channel.send({files: [Settings.URL.YABAIWAYO]})
 
@@ -173,8 +173,8 @@ export const ShinyTmoImage = (msg: Discord.Message): Option<string> => {
   const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchShinyTmo = msg.content === 'シャイニートモ'
-  if (!matchShinyTmo) return
+  const match = msg.content === 'シャイニートモ'
+  if (!match) return
 
   msg.channel.send({files: [Settings.URL.SHINYTMO]})
 
@@ -190,8 +190,8 @@ export const TasuketeImage = (msg: Discord.Message): Option<string> => {
   const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchTasukete = /^助けて(!|！)$/.test(msg.content)
-  if (!matchTasukete) return
+  const match = /^助けて(!|！)$/.test(msg.content)
+  if (!match) return
 
   msg.channel.send({files: [Settings.URL.TASUKETE]})
 
@@ -207,8 +207,8 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
   const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchKusa = /^草\s?\d*$/.test(msg.content)
-  if (!matchKusa) return
+  const match = /^草\s?\d*$/.test(msg.content)
+  if (!match) return
 
   // ガチャの内容を作成
   const items: string[] = Settings.KUSA.map((v: {NAME: string; RATIO: string}) => Array(v.RATIO).fill(v.NAME)).flat()
@@ -244,21 +244,23 @@ export const SendUsoOre = async (msg: Discord.Message): Promise<Option<string>> 
   const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchUsoOre = /^(嘘俺|俺嘘)\s?([1-5]|読み?)*$/.test(msg.content)
-  if (!matchUsoOre) return
+  const match = /^(嘘俺|俺嘘)\s?([1-5]|読み?)*$/.test(msg.content)
+  if (!match) return
 
   const list = await fetchTweetList()
   if (!list) return
 
-  const matchYomi = /読み?/.test(msg.content)
-  if (matchYomi) {
-    const rand = createRandNumber(list.length)
-    msg.reply(list.splice(rand, 1).first())
+  {
+    const match = /読み?/.test(msg.content)
+    if (match) {
+      const rand = createRandNumber(list.length)
+      msg.reply(list.splice(rand, 1).first())
 
-    return 'Send UsoOre'
+      return 'Send UsoOre'
+    }
+
+    sendTweetLottery(list, msg)
   }
-
-  sendTweetLottery(list, msg)
 
   return 'Send UsoOre'
 }
@@ -272,8 +274,8 @@ export const SendAguhiyori = async (msg: Discord.Message): Promise<Option<string
   const isChannel = util.IsChannel(Settings.NETA_THAT_CHANNEL, msg.channel)
   if (!isChannel) return
 
-  const matchAzarashi = /^アザラシ\s?([1-5]|読み?)*$/.test(msg.content)
-  if (!matchAzarashi) return
+  const match = /^アザラシ\s?([1-5]|読み?)*$/.test(msg.content)
+  if (!match) return
 
   let list = await fetchTweetList()
   if (!list) return
@@ -351,8 +353,8 @@ const sendTweetLottery = (list: string[], msg: Discord.Message) => {
  * @return リアクションしたかの結果
  */
 export const NikuPicture = (msg: Discord.Message): Option<string> => {
-  const isNiku = msg.channel.id === Settings.CHANNEL_ID.NIKU
-  if (!isNiku) return
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.NIKU
+  if (!isChannel) return
 
   const isImage = msg.attachments.map(a => a.url).first()
   if (!isImage) return
@@ -371,9 +373,9 @@ export const NikuPicture = (msg: Discord.Message): Option<string> => {
  * @return ロールを付与したかの結果
  */
 export const AddSeihekiRole = (msg: Discord.Message): Option<string> => {
-  const notIsSeheki =
+  const isChannel =
     msg.channel.id !== Settings.CHANNEL_ID.SEIHEKI && msg.channel.id !== Settings.CHANNEL_ID.SEIHEKI_YOROZU
-  if (notIsSeheki) return
+  if (isChannel) return
 
   // 性癖調査をしろのロールを付与する
   msg.member?.roles.add(Settings.ROLE_ID.SEIHEKI)
