@@ -23,6 +23,7 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
 
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
   const text = [
+    'ボス状況',
     '```m',
     `${state[alpha].lap}周目 ${state[alpha].name} ${state[alpha].hp}/${maxHP}`,
     `予想残りHP: ${await expectRemainingHP(state[alpha].hp, channel)}`,
