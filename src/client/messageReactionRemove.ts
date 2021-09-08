@@ -19,9 +19,6 @@ export const MessageReactionRemove = async (
   let comment: Option<string>
   user = user as Discord.User
 
-  comment = await declare.ConvexRemove(react, user)
-  if (comment) return console.log(comment)
-
   comment = await declare.NoticeCancel(react, user)
   if (comment) return console.log(comment)
 

@@ -3,9 +3,9 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
-import * as declare from '../declare/list'
+import * as declare from '../declare'
+import * as declareList from '../declare/list'
 import * as declareStatus from '../declare/status'
-import * as react from '../declare/react'
 import * as over from '../over'
 import * as cancel from '../plan/delete'
 import * as list from '../plan/list'
@@ -92,8 +92,8 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   situation.Report(members, state)
-  react.ConvexDone(alpha, msg.author)
-  declare.SetPlan(alpha, state)
+  declare.Done(alpha, msg.author)
+  declareList.SetPlan(alpha, state)
 
   overDelete(member_2, carry, msg)
 
