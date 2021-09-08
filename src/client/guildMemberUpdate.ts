@@ -1,11 +1,15 @@
 import * as Discord from 'discord.js'
+import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 
 /**
- * キャルbotの管理者にヤバイわよ！のロールを付与
- * @param member 変更後のmember情報
+ * メンバーの状態が変わった際の処理を実行する
+ * @param member メンバー
  */
 export const GuildMemberUpdate = async (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+  const isBeroba = member.guild.id === ThrowEnv('CLAN_SERVER_ID')
+  if (!isBeroba) return
+
   const yabaiwayo = member.guild.roles.cache.get(Settings.ROLE_ID.YABAIWAYO)
   if (!yabaiwayo) return
 
