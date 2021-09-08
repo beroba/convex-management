@@ -61,25 +61,11 @@ export const NextBoss = async (alpha: AtoE, state: Current) => {
 
   await status.Update(alpha, state, channel)
   await list.SetPlan(alpha, state, channel)
-  await resetReact(alpha, channel)
 
   const members = await undeclare(alpha)
 
   await list.SetUser(alpha, channel, members)
   await messageDelete(channel)
-}
-
-/**
- * 凸宣言に付いているリアクションを全て外す
- * @param alpha ボス番号
- * @param channel 凸宣言のチャンネル
- */
-const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
-
-  await msg.reactions.removeAll()
-  await msg.react(Settings.EMOJI_ID.TOTU)
-  await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
 }
 
 /**

@@ -2,22 +2,6 @@ import Settings from 'const-settings'
 import * as util from '../util'
 
 /**
- * #凸宣言-ボス状況の絵文字を設定する
- */
-export const SetDeclare = async () => {
-  // 全ボス分[a-e]
-  await Promise.all(
-    'abcde'.split('').map(async alpha => {
-      const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-      const declare = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
-
-      await declare.react(Settings.EMOJI_ID.TOTU)
-      await declare.react(Settings.EMOJI_ID.MOCHIKOSHI)
-    })
-  )
-}
-
-/**
  * #活動時間のチャンネルを取得する
  */
 export const SetActivityTime = async () => {
@@ -70,7 +54,7 @@ export const Fetch = async () => {
       const msgs = await channel.messages.fetch()
 
       // prettier-ignore
-      // 凸宣言に付いているリアクションをキャッシュ
+      // ダメージ報告に付いているリアクションをキャッシュ
       await Promise.all(
         msgs.map(async msg => Promise.all(
           msg.reactions.cache.map(async r =>  r.users.fetch())
