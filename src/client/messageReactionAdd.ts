@@ -22,9 +22,6 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
   let comment: Option<string>
   user = user as Discord.User
 
-  comment = await declare.ConvexAdd(react, user)
-  if (comment) return console.log(comment)
-
   comment = await declare.ConfirmNotice(react, user)
   if (comment) return console.log(comment)
 

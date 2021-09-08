@@ -61,25 +61,11 @@ export const NextBoss = async (alpha: AtoE, state: Current) => {
 
   await status.Update(alpha, state, channel)
   await list.SetPlan(alpha, state, channel)
-  await resetReact(alpha, channel)
 
   const members = await undeclare(alpha)
 
   await list.SetUser(alpha, channel, members)
   await messageDelete(channel)
-}
-
-/**
- * 凸宣言に付いているリアクションを全て外す
- * @param alpha ボス番号
- * @param channel 凸宣言のチャンネル
- */
-const resetReact = async (alpha: AtoE, channel: Discord.TextChannel) => {
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
-
-  await msg.reactions.removeAll()
-  await msg.react(Settings.EMOJI_ID.TOTU)
-  await msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
 }
 
 /**
@@ -118,4 +104,30 @@ const messageDelete = async (channel: Discord.TextChannel) => {
         await m.delete()
       })
   )
+}
+
+/**
+ * 渡されたユーザーの凸宣言を完了する
+ * @param member メンバーの状態
+ * @param user リアクションを外すユーザー
+ */
+export const Done = async (alpha: AtoE, user: Discord.User) => {
+  const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
+
+  msg.reactions.cache.map(r => r.users.remove(user))
+
+  list.SetUser(alpha, channel)
+
+  // 凸宣言完了者のメッセージを全て削除
+  const msgs = await channel.messages.fetch()
+  msgs
+    .map(m => m)
+    .filter(m => m.author.id === user.id)
+    .forEach(m => {
+      if (!m) return
+      m.delete()
+    })
+
+  console.log('Completion of convex declaration')
 }

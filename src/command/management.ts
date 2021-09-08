@@ -169,7 +169,6 @@ const updateMembersController = async (_command: string, _content: string, _msg:
  * @param _msg DiscordからのMessage
  */
 const setReactController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  await react.SetDeclare()
   await react.SetActivityTime()
   _msg.reply('凸管理用の絵文字を設定したわよ！')
 }

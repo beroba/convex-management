@@ -2,6 +2,7 @@ import {MessageReaction} from 'discord.js'
 import {Client} from './index'
 import {GuildMemberAdd} from './client/guildMemberAdd'
 import {GuildMemberUpdate} from './client/guildMemberUpdate'
+import {InteractionCreate} from './client/interactionCreate'
 import {MessageCreate} from './client/messageCreate'
 import {MessageDelete} from './client/messageDelete'
 import {MessageReactionAdd} from './client/messageReactionAdd'
@@ -17,6 +18,8 @@ export const ClientEvent = () => {
 
   Client.on('guildMemberAdd', member => GuildMemberAdd(member))
   Client.on('guildMemberUpdate', (_, member) => GuildMemberUpdate(member))
+
+  Client.on('interactionCreate', interaction => InteractionCreate(interaction))
 
   Client.on('messageCreate', msg => MessageCreate(msg))
   Client.on('messageDelete', msg => MessageDelete(msg))

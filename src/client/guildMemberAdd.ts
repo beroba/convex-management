@@ -3,6 +3,10 @@ import ThrowEnv from 'throw-env'
 import Settings from 'const-settings'
 import * as util from '../util'
 
+/**
+ * クランメンバーが増えた際の処理を実行する
+ * @param member メンバー
+ */
 export const GuildMemberAdd = (member: Discord.GuildMember | Discord.PartialGuildMember) => {
   const isBeroba = member.guild.id === ThrowEnv('CLAN_SERVER_ID')
   if (!isBeroba) return
