@@ -10,6 +10,8 @@ export const Client = new Discord.Client({
   intents: Intents,
 })
 
+process.on('unhandledRejection', console.dir)
+
 ClientEvent()
 CronOperation()
 

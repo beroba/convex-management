@@ -38,9 +38,9 @@ export const SituationEdit = async (plans?: Plan[]) => {
   plans ??= await schedule.Fetch()
 
   const text = await createAllPlanText(plans)
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_LIST_RESERVATE)
-  const msg = await channel.messages.fetch(Settings.PLAN_MESSAGE_ID.PLAN)
-  msg.edit(text)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.PLAN)
+  msg.edit('予定一覧\n' + text)
 
   console.log('Edit the convex schedule of the convex situation')
 }
