@@ -49,8 +49,8 @@ export const Display = async (members: Member[]) => {
   const oneNext = limitMember(h + 1, members)
   const twoNext = limitMember(h + 2, members)
 
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-  const msg = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.DISPLAY)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION)
+  const msg = await channel.messages.fetch(Settings.BOT_OPERATION.TIME_LIMIT)
 
   const text = [
     '活動限界時間',

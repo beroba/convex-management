@@ -5,11 +5,11 @@ import {NtoA} from 'alphabet-to-number'
 import * as command from '.'
 import * as declare from '../convex/declare/list'
 import * as etc from '../convex/etc'
-import * as format from '../convex/etc/format'
+import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
 import * as list from '../convex/plan/list'
-import * as role from '../convex/role'
+import * as kill from '../convex/role/kill'
 import * as situation from '../convex/situation'
 import * as schedule from '../io/schedule'
 import * as status from '../io/status'
@@ -270,7 +270,7 @@ const overController = async (_command: string, _content: string, _msg: Discord.
  * @param _msg DiscordからのMessage
  */
 const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  role.AddTaskKillRole(_msg)
+  kill.AddRole(_msg)
 }
 
 /**

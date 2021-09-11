@@ -18,7 +18,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
   const isBot = user.bot
   if (isBot) return
 
-  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.ACTIVITY_TIME
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.BOT_OPERATION
   if (!isChannel) return
 
   react.users.remove(user)
@@ -65,7 +65,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
   const isBot = user.bot
   if (isBot) return
 
-  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.ACTIVITY_TIME
+  const isChannel = react.message.channel.id === Settings.CHANNEL_ID.BOT_OPERATION
   if (!isChannel) return
 
   react.users.remove(user)
@@ -102,18 +102,16 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
 }
 
 /**
- * 出欠のメッセージを更新する
+ * 離席中状態のメッセージを更新する
  */
 export const Edit = async () => {
   const text = [
-    `<@&${Settings.ROLE_ID.ATTENDANCE}> はこのメッセージがオレンジ色になります。`,
-    `メッセージに付けたリアクションはすぐに消えます。\n`,
-    `> 凸予定が表示されない場合は、${Settings.EMOJI_FULL_ID.SHUSEKI}を押して下さい。`,
-    `> 離席する際は、${Settings.EMOJI_FULL_ID.RISEKI}を押して下さい。`,
+    `<@&${Settings.ROLE_ID.ATTENDANCE}> は、このメッセージがオレンジ色になります。`,
+    '↓のボタンで離席中状態を変更できます。',
   ].join('\n')
 
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-  const msg = await channel.messages.fetch(Settings.ATTENDANCE)
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION)
+  const msg = await channel.messages.fetch(Settings.BOT_OPERATION.ATTENDANCE)
 
   await msg.edit(text)
 }

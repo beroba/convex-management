@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as situation from '../situation'
-import * as json from '../../io/json'
-import * as status from '../../io/status'
-import * as util from '../../util'
-import {User, Json} from '../../util/type'
+import * as situation from './situation'
+import * as json from '../io/json'
+import * as status from '../io/status'
+import * as util from '../util'
+import {User, Json} from '../util/type'
 
 /**
  * 同時凸の持越計算を行う
@@ -79,6 +79,27 @@ export const UpdateMembers = async (msg: Discord.Message) => {
 
   const list: Json = users.map(u => ({[u.id]: u.name})).reduce((a, b) => ({...a, ...b}))
   await json.Send(list)
+}
+
+/**
+ * 特定のリアクションを先にキャッシュする
+ */
+export const Fetch = async () => {
+  // 全ボス分[a-e]
+  await Promise.all(
+    'abcde'.split('').map(async alpha => {
+      const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+      const msgs = await channel.messages.fetch()
+
+      // prettier-ignore
+      // ダメージ報告に付いているリアクションをキャッシュ
+      await Promise.all(
+        msgs.map(async msg => Promise.all(
+          msg.reactions.cache.map(async r =>  r.users.fetch())
+        ))
+      )
+    })
+  )
 }
 
 /**

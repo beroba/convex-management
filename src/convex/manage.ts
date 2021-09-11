@@ -126,7 +126,18 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   const members = await status.UpdateMember(member)
   interaction.reply({content: text, ephemeral: true})
 
+  await edit()
   situation.Report(members)
 
   return 'Change of convex management'
+}
+
+/**
+ * タスキル状態のメッセージを変更する
+ */
+const edit = async () => {
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION)
+  const msg = await channel.messages.fetch(Settings.BOT_OPERATION.CONVEX_SITUATION)
+
+  await msg.edit('凸状況の変更')
 }
