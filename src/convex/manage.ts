@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as role from './role'
 import * as situation from './situation'
@@ -27,13 +28,11 @@ export const Update = async (state: string, msg: Discord.Message) => {
   }
 
   // 3凸終了とそれ以外に処理を分ける
-  if (state === '0') {
-    member = await convexEndProcess(member, user, msg)
-  } else {
-    member = await updateProcess(member, state, user, msg)
-  }
+  let text: string
+  ;[member, text] = state === '0' ? await convexEndProcess(member, user) : await updateProcess(member, state, user)
 
   const members = await status.UpdateMember(member)
+  await msg.reply(text)
 
   situation.Report(members)
 }
@@ -42,10 +41,9 @@ export const Update = async (state: string, msg: Discord.Message) => {
  * 3凸状態に更新する処理
  * @param member 更新するメンバー
  * @param user 更新したいユーザー
- * @param msg DiscordからのMessage
- * @return 更新したメンバー
+ * @return [更新したメンバー, 報告するテキスト]
  */
-const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord.Message): Promise<Member> => {
+const convexEndProcess = async (member: Member, user: Discord.User): Promise<[Member, string]> => {
   // 凸状況を変更
   member.convex = 0
   member.over = 0
@@ -59,6 +57,7 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
   // 何人目の3凸終了者なのかを報告する
   const members = await status.Fetch()
   const n = members.filter(s => s.end).length + 1
+
   // prettier-ignore
   const text = [
     '```',
@@ -66,11 +65,10 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
     `${n}人目の3凸終了よ！`,
     '```',
   ].join('\n')
-  await msg.reply(text)
 
   limit.Display(members)
 
-  return member
+  return [member, text]
 }
 
 /**
@@ -78,15 +76,9 @@ const convexEndProcess = async (member: Member, user: Discord.User, msg: Discord
  * @param member 更新するメンバー
  * @param state 更新する凸状況
  * @param user 更新したいユーザー
- * @param msg DiscordからのMessage
- * @return 更新したメンバー
+ * @return [更新したメンバー, 報告するテキスト]
  */
-const updateProcess = async (
-  member: Member,
-  state: string,
-  user: Discord.User,
-  msg: Discord.Message
-): Promise<Member> => {
+const updateProcess = async (member: Member, state: string, user: Discord.User): Promise<[Member, string]> => {
   // 凸状況を変更
   member.convex = state[0].to_n()
   member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
@@ -104,7 +96,37 @@ const updateProcess = async (
     '```',
   ].join('\n')
 
-  await msg.reply(text)
+  return [member, text]
+}
 
-  return member
+/**
+ * 選択された情報に応じて凸状況を更新する
+ * @param interaction インタラクションの情報
+ * @return 凸状況更新の実行結果
+ */
+export const Interaction = async (interaction: Discord.Interaction): Promise<Option<string>> => {
+  const isBot = interaction.user.bot
+  if (isBot) return
+
+  if (!interaction.isSelectMenu()) return
+
+  const isId = interaction.customId === 'convex-status'
+  if (!isId) return
+
+  const user = interaction.user
+  const state = interaction.values.first()
+
+  let member = await status.FetchMember(user.id)
+  if (!member) return
+
+  // 3凸終了とそれ以外に処理を分ける
+  let text: string
+  ;[member, text] = state === '0' ? await convexEndProcess(member, user) : await updateProcess(member, state, user)
+
+  const members = await status.UpdateMember(member)
+  interaction.reply({content: text, ephemeral: true})
+
+  situation.Report(members)
+
+  return 'Change of convex management'
 }
