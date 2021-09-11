@@ -7,109 +7,31 @@ import * as util from '../../util'
 import {Member} from '../../util/type'
 
 /**
- * 活動限界時間を設定する
- * @param react DiscordからのReaction
- * @param user リアクションしたユーザー
- * @returns 活動限界時間設定の実行結果
+ * 選択された情報に応じて活動限界時間を更新する
+ * @param interaction インタラクションの情報
+ * @return 活動限界時間更新の実行結果
  */
-export const Add = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
+export const Interaction = async (interaction: Discord.Interaction): Promise<Option<string>> => {
+  const isBot = interaction.user.bot
+  if (isBot) return
 
-  // #活動時間でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
+  if (!interaction.isSelectMenu()) return
 
-  // 前半、後半のメッセージ以外は終了
-  if (![Settings.TIME_LIMIT_EMOJI.FIRST, Settings.TIME_LIMIT_EMOJI.LATTER].some(id => id === react.message.id)) return
+  const isId = interaction.customId === 'time-limit'
+  if (!isId) return
 
-  // メンバーの状態を取得
+  const user = interaction.user
   const member = await status.FetchMember(user.id)
-  // クランメンバーでなければ、リアクションを外して終了
-  if (!member) {
-    react.users.remove(user)
-    return
-  }
-
-  // 活動限界時間の更新
-  update(user.id)
-
-  return 'Setting the activity limit time'
-}
-
-/**
- * 活動限界時間を設定する
- * @param react DiscordからのReaction
- * @param user リアクションしたユーザー
- * @returns 活動限界時間設定の実行結果
- */
-export const Remove = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  // botのリアクションは実行しない
-  if (user.bot) return
-
-  // #活動時間でなければ終了
-  if (react.message.channel.id !== Settings.CHANNEL_ID.ACTIVITY_TIME) return
-
-  // 前半、後半のメッセージ以外は終了
-  if (![Settings.TIME_LIMIT_EMOJI.FIRST, Settings.TIME_LIMIT_EMOJI.LATTER].some(id => id === react.message.id)) return
-
-  // 活動限界時間の更新
-  update(user.id)
-
-  return 'Setting the activity limit time'
-}
-
-/**
- * 引数で渡したユーザーidの活動限界時間を設定する
- * @param id ユーザーid
- */
-const update = async (id: string) => {
-  // メンバーの状態を取得
-  let member = await status.FetchMember(id)
   if (!member) return
 
-  // 活動限界時間の設定
-  member.limit = await fetchLimit(id)
+  member.limit = interaction.values.first()
 
-  // ステータスを更新
   const members = await status.UpdateMember(member)
-
-  // 活動限界時間の表示を更新
   Display(members)
-}
 
-/**
- * 活動限界時間をリアクションから取得する
- * @param id ユーザーid
- * @returns 取得した時間
- */
-const fetchLimit = async (id: string): Promise<string> => {
-  // #活動時間のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
+  interaction.reply({content: `${member.limit}時`, ephemeral: true})
 
-  // 前半と後半のメッセージを取得
-  const first = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.FIRST)
-  const latter = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.LATTER)
-
-  // 前半の時間を取得
-  const f = await Promise.all(
-    first.reactions.cache
-      .map(r => r)
-      .filter(r => r.users.cache.map(u => u.id).some(u => u === id))
-      .map(r => r.emoji.name?.replace('_', ''))
-  )
-  // 後半の時間を取得
-  const l = await Promise.all(
-    latter.reactions.cache
-      .map(r => r)
-      .filter(r => r.users.cache.map(u => u.id).some(u => u === id))
-      .map(r => r.emoji.name?.replace('_', ''))
-  )
-
-  // 前半と後半を結合
-  const list = f.concat(l)
-
-  // 1番後ろの値を取得、なければ空
-  return list.last() !== undefined ? <string>list.last() : ''
+  return
 }
 
 /**
@@ -120,18 +42,16 @@ export const Display = async (members: Member[]) => {
   // 名前順にソート
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
-  // 現在の時刻を取得
   const h = getHours()
-
-  // 活動限界時間を迎えているメンバー一覧を取得
   const over = overMember(h, members)
 
-  // 現在の時刻、次の時刻、その次の時刻が限界のメンバー一覧を取得
   const now = limitMember(h, members)
   const oneNext = limitMember(h + 1, members)
   const twoNext = limitMember(h + 2, members)
 
-  // 活動限界時間のテキストを作成
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
+  const msg = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.DISPLAY)
+
   const text = [
     '活動限界時間',
     '```',
@@ -141,14 +61,6 @@ export const Display = async (members: Member[]) => {
     `${(h + 2) % 24}: ${twoNext}`,
     '```',
   ].join('\n')
-
-  // #活動時間のチャンネルを取得
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.ACTIVITY_TIME)
-
-  // 活動時間限界のメッセージを取得
-  const msg = await channel.messages.fetch(Settings.TIME_LIMIT_EMOJI.DISPLAY)
-
-  // メッセージを編集
   msg.edit(text)
 
   console.log('Updated activity time limit display')
@@ -169,7 +81,6 @@ const getHours = (): number => {
  * @returns 作成した時間
  */
 const createTime = (num: number | string): number => {
-  // 強制的にnumberにする
   const n = Number(num)
   // 5未満は+24する
   return n < 5 ? n + 24 : n
@@ -181,18 +92,17 @@ const createTime = (num: number | string): number => {
  * @param members メンバー一覧
  * @returns 取得したメンバー一覧
  */
-const overMember = (h: number, members: Member[]): string =>
-  members
+const overMember = (h: number, members: Member[]): string => {
+  return members
     .filter(m => {
-      // 活動限界時間を設定していない人は終了
       if (m.limit === '') return false
-      // 限界を超えているか確認
       return createTime(m.limit) < h
     })
     .filter(m => !m.end) // 3凸終了している人は省く
     .sort((a, b) => createTime(a.limit) - createTime(b.limit)) // 活動限界時間順に並び替える
     .map(m => `${m.name}[${m.limit}]`)
     .join(', ')
+}
 
 /**
  * 渡された時間が活動限界のメンバー一覧を取得する
@@ -200,17 +110,16 @@ const overMember = (h: number, members: Member[]): string =>
  * @param members メンバー一覧
  * @returns 取得したメンバー一覧
  */
-const limitMember = (h: number, members: Member[]): string =>
-  members
+const limitMember = (h: number, members: Member[]): string => {
+  return members
     .filter(m => {
-      // 活動限界時間を設定していない人は終了
       if (m.limit === '') return false
-      // 同じ時間かか確認
       return createTime(m.limit) === h
     })
     .filter(m => !m.end) // 3凸終了している人は省く
     .map(m => m.name)
     .join(', ')
+}
 
 /**
  * 朝活アンケートを通知する
@@ -242,13 +151,10 @@ export const MorningActivitySurvey = async () => {
 export const LimitTimeDisplay = async () => {
   const members = await status.Fetch()
 
-  // 活動限界時間の表示を更新
   Display(members)
 
-  // 現在の時刻を取得
   const date = new Date().getHours().to_s()
 
-  // bot-notifyに通知をする
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send(`${date}時の活動限界時間を更新したわ`)
 
