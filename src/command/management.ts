@@ -3,10 +3,9 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as command from '.'
 import * as etc from '../convex/etc'
-import * as category from '../convex/etc/category'
+import * as category from '../convex/category'
 import * as plan from '../convex/plan/delete'
 import * as list from '../convex/plan/list'
-import * as react from '../convex/react'
 import * as role from '../convex/role'
 import * as situation from '../convex/situation'
 import * as bossTable from '../io/bossTable'
@@ -57,11 +56,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     case /cb manage update members/.test(content): {
       await updateMembersController('/cb manage update members', content, msg)
       return 'Update convex management members'
-    }
-
-    case /cb manage set react/.test(content): {
-      await setReactController('/cb manage set react', content, msg)
-      return 'Set react for convex'
     }
 
     case /cb manage delete all plan/.test(content): {
@@ -160,17 +154,6 @@ const updateMembersController = async (_command: string, _content: string, _msg:
 
   await etc.UpdateMembers(_msg)
   _msg.reply('クランメンバー一覧を更新したわよ！')
-}
-
-/**
- * `/cb manage set react`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const setReactController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  await react.SetActivityTime()
-  _msg.reply('凸管理用の絵文字を設定したわよ！')
 }
 
 /**

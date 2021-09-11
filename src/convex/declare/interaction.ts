@@ -18,12 +18,11 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
 
   if (!interaction.isButton()) return
 
-  // インタラクション失敗を回避
-  interaction.deferUpdate()
-
-  // インタラクションがboss以外終了
   const idList = interaction.customId.split('-')
   if (idList.first() !== 'boss') return
+
+  // インタラクション失敗を回避
+  interaction.deferUpdate()
 
   const id = idList.last()
   if (id === 'cancel') {

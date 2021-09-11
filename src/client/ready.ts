@@ -1,7 +1,7 @@
 // import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import {Client} from '../index'
-import * as react from '../convex/react'
+import * as etc from '../convex/etc'
 import * as util from '../util'
 
 /**
@@ -12,7 +12,7 @@ export const Ready = async () => {
   await channel.send('きゃるきゃるーん')
 
   // リアクションのキャッシュを取る
-  react.Fetch()
+  etc.Fetch()
 
   console.log(`Logged in as ${Client.user?.username}!`)
 }
