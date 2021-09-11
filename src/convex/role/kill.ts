@@ -48,9 +48,9 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
     await member.roles.remove(Settings.ROLE_ID.TASK_KILL)
     await edit()
     return 'Remove task kill roll'
+  } else {
+    return
   }
-
-  return
 }
 
 /**

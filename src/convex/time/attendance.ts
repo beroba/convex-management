@@ -39,7 +39,7 @@ export const Remove = async (react: Discord.MessageReaction, user: Discord.User)
     ?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
   await util.Sleep(100)
 
-  await Edit()
+  await edit()
 
   const plans = await schedule.Fetch()
   await list.SituationEdit(plans)
@@ -85,7 +85,7 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
     ?.roles.add(Settings.ROLE_ID.ATTENDANCE)
   await util.Sleep(100)
 
-  await Edit()
+  await edit()
 
   const plans = await schedule.Fetch()
   list.SituationEdit(plans)
@@ -102,9 +102,42 @@ export const Add = async (react: Discord.MessageReaction, user: Discord.User): P
 }
 
 /**
+ * 押されたボタンに応じて離席中状態を変更する
+ * @param interaction インタラクションの情報
+ * @return 離席中状態変更の実行結果
+ */
+export const Interaction = async (interaction: Discord.Interaction): Promise<Option<string>> => {
+  const isBot = interaction.user.bot
+  if (isBot) return
+
+  if (!interaction.isButton()) return
+
+  const idList = interaction.customId.split('-')
+  if (idList.first() !== 'riseki') return
+
+  // インタラクション失敗を回避
+  interaction.deferUpdate()
+
+  const member = interaction.member as Discord.GuildMember
+
+  const id = idList.last()
+  if (id === 'on') {
+    await member.roles.add(Settings.ROLE_ID.ATTENDANCE)
+    await edit()
+    return 'Add riseki roll'
+  } else if (id === 'off') {
+    await member.roles.remove(Settings.ROLE_ID.ATTENDANCE)
+    await edit()
+    return 'Remove riseki roll'
+  } else {
+    return
+  }
+}
+
+/**
  * 離席中状態のメッセージを更新する
  */
-export const Edit = async () => {
+const edit = async () => {
   const text = [
     `<@&${Settings.ROLE_ID.ATTENDANCE}> は、このメッセージがオレンジ色になります。`,
     '↓のボタンで離席中状態を変更できます。',
