@@ -119,11 +119,20 @@ export const Done = async (alpha: AtoE, user: Discord.User) => {
 
   list.SetUser(alpha, channel)
 
+  const msgs = (await channel.messages.fetch()).map(m => m)
+
   // 凸宣言完了者のメッセージを全て削除
-  const msgs = await channel.messages.fetch()
   msgs
-    .map(m => m)
     .filter(m => m.author.id === user.id)
+    .forEach(m => {
+      if (!m) return
+      m.delete()
+    })
+
+  // 凸宣言完了者のキャルの返信を全て削除
+  msgs
+    .filter(m => m.author.id === Settings.CAL_ID)
+    .filter(m => RegExp(user.id).test(m.content))
     .forEach(m => {
       if (!m) return
       m.delete()

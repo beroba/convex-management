@@ -51,7 +51,7 @@ export const React = (msg: Discord.Message): Option<string> => {
  */
 export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
-  const msgs = await channel.messages.fetch()
+  const msgs = (await channel.messages.fetch()).map(m => m)
 
   msgs
     .map(m => m)
