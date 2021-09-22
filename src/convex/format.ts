@@ -394,7 +394,7 @@ class Generate {
     if (i === -1) return this
 
     // 0未満の秒数より後のTLを省いて結合
-    this.tl = tl.slice(0, i).join('\n') + '```'
+    this.tl = tl.slice(0, i).join('\n')
 
     // `0:-`を全て削除
     this.tl = this.tl.replace(/0:-/g, '')
@@ -454,7 +454,7 @@ class Generate {
    */
   toCodeBlock(): this {
     if (!/\`\`\`/.test(this.tl)) {
-      this.tl = `\`\`\`\n` + this.tl + `\`\`\``
+      this.tl = '```\n' + this.tl + '```'
     }
     return this
   }
