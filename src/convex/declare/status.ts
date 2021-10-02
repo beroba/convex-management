@@ -21,11 +21,15 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
   // 現在のボスのHPを取得
   const maxHP = Settings.STAGE[state.stage].HP[alpha]
 
+  const percent = Math.ceil(20 * (state[alpha].hp / maxHP))
+  const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
+
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
   const text = [
     'ボス状況',
     '```m',
-    `${state[alpha].lap}周目 ${state[alpha].name} ${state[alpha].hp}/${maxHP}`,
+    `${state[alpha].lap}周目 ${state[alpha].name}`,
+    `${bar} ${state[alpha].hp}/${maxHP}`,
     `予想残りHP: ${await expectRemainingHP(state[alpha].hp, channel)}`,
     '```',
   ].join('\n')

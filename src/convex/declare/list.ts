@@ -29,9 +29,9 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
   const text = [
     '凸宣言 `[残凸数(+は持越), 活動限界時間]`',
     '```',
-    '――――凸宣言――――',
+    `- 凸宣言 ${totu.length}人`,
     `${totu.join('\n')}${totu.length ? '\n' : ''}`,
-    '――――持越凸――――',
+    `- 持越凸 ${mochikoshi.length}人`,
     `${mochikoshi.join('\n')}`,
     '```',
   ].join('\n')

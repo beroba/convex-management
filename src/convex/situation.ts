@@ -71,12 +71,15 @@ const createWholeText = async (members: Member[], state: Current): Promise<strin
   // 次の段階までの凸数
   const nextStage = lapsToTheNextStage(state)
 
+  const 完凸済 = perfectConvexNumber(members)
+
   return [
     '全体状況',
-    '```m',
+    '```ml',
     `${time} ${date.num} 凸状況一覧`,
     `${stage}段階目 残り${nextStage}周`,
     `${state.lap}周目 ${remainingConvex}`,
+    `完凸人数 ${完凸済}人`,
     '```',
   ].join('\n')
 }
@@ -97,12 +100,13 @@ const getCurrentDate = (): string => {
  * @return 計算結果
  */
 const remainingConvexNumber = (members: Member[]): string => {
+  const length = members.length * 3
   // 残り凸数
   const remaining = members.map(s => s.convex + s.over).reduce((a, b) => a + b)
   // 残り持越数
   const over = members.map(s => s.over).reduce((a, b) => a + b)
 
-  return `${remaining}/${members.length * 3}(${over})`
+  return `${remaining}/${length}(${over}) 進捗${100 - Math.ceil((remaining / length) * 100)}%`
 }
 
 /**
@@ -123,6 +127,17 @@ const lapsToTheNextStage = (state: Current): number | string => {
     default:
       return '-'
   }
+}
+
+/**
+ * 完凸済の人数を返す
+ * @param members メンバー全員の状態
+ * @return 完凸済の人数
+ */
+const perfectConvexNumber = (members: Member[]): number => {
+  members = members.filter(l => l.convex === 0)
+  members = members.filter(l => l.over === 0)
+  return members.length
 }
 
 /**
@@ -215,9 +230,15 @@ const createBossText = async (members: Member[], state: Current): Promise<string
     const boss = state[<AtoE>a]
     const hp = Settings.STAGE[state.stage].HP[a]
 
+    const percent = Math.ceil(20 * (boss.hp / hp))
+    const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
+
+    const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
+
     return [
       '```m',
-      `${boss.lap}周目 ${boss.name} ${boss.hp}/${hp}`,
+      `${boss.lap}周目 ${boss.name} ${icon}`,
+      `${bar} ${boss.hp}/${hp}`,
       `${declares.length ? declares.join(', ') : ' '}`,
       '```',
     ].join('\n')
