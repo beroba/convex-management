@@ -113,21 +113,9 @@ const messageDelete = async (channel: Discord.TextChannel) => {
  */
 export const Done = async (alpha: AtoE, user: Discord.User) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
-
-  msg.reactions.cache.map(r => r.users.remove(user))
-
   list.SetUser(alpha, channel)
 
   const msgs = (await channel.messages.fetch()).map(m => m)
-
-  // 凸宣言完了者のメッセージを全て削除
-  msgs
-    .filter(m => m.author.id === user.id)
-    .forEach(m => {
-      if (!m) return
-      m.delete()
-    })
 
   // 凸宣言完了者のキャルの返信を全て削除
   msgs
