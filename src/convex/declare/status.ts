@@ -26,7 +26,7 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
   const percent = Math.ceil(20 * (HP / maxHP))
   const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
 
-  const damage = await totalDamage(HP, channel)
+  const damage = await totalDamage(channel)
 
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
   const text = [
@@ -75,11 +75,10 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
 
 /**
  * ダメージ報告の合計ダメージを計算する
- * @param HP 現在のHP
  * @param channel 凸宣言のチャンネル
  * @return 合計ダメージ
  */
-const totalDamage = async (HP: number, channel: Discord.TextChannel): Promise<number> => {
+const totalDamage = async (channel: Discord.TextChannel): Promise<number> => {
   // 全員のダメージ報告からダメージをリストにして取り出す
   const list = (await channel.messages.fetch())
     .map(m => m)
