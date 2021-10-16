@@ -18,19 +18,23 @@ export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.Tex
   state ??= await current.Fetch()
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
+  const HP = state[alpha].hp
+
   // 現在のボスのHPを取得
   const maxHP = Settings.STAGE[state.stage].HP[alpha]
 
-  const percent = Math.ceil(20 * (state[alpha].hp / maxHP))
+  const percent = Math.ceil(20 * (HP / maxHP))
   const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
+
+  const damage = await totalDamage(HP, channel)
 
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
   const text = [
     'ボス状況',
     '```m',
     `${state[alpha].lap}周目 ${state[alpha].name}`,
-    `${bar} ${state[alpha].hp}/${maxHP}`,
-    `予想残りHP: ${await expectRemainingHP(state[alpha].hp, channel)}`,
+    `${bar} ${HP}/${maxHP}`,
+    `ダメージ合計: ${damage}, 予想残りHP: ${expectRemainingHP(HP, damage)}`,
     '```',
   ].join('\n')
   await msg.edit(text)
@@ -70,12 +74,12 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
 }
 
 /**
- * 予想残りHPを計算する
+ * ダメージ報告の合計ダメージを計算する
  * @param HP 現在のHP
  * @param channel 凸宣言のチャンネル
- * @return 計算した残りHP
+ * @return 合計ダメージ
  */
-const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Promise<number> => {
+const totalDamage = async (HP: number, channel: Discord.TextChannel): Promise<number> => {
   // 全員のダメージ報告からダメージをリストにして取り出す
   const list = (await channel.messages.fetch())
     .map(m => m)
@@ -101,8 +105,16 @@ const expectRemainingHP = async (HP: number, channel: Discord.TextChannel): Prom
     .map(n => (Number.isNaN(n) ? 0 : n)) // NaNが混ざってたら0に変換
 
   // リストにダメージがある場合は合計値、ない場合は0を代入
-  const damage = list.length && list.reduce((a, b) => a + b)
+  return list.length && list.reduce((a, b) => a + b)
+}
 
+/**
+ * 予想残りHPを計算する
+ * @param HP 現在のHP
+ * @param damage ダメージ報告の合計ダメージ
+ * @return 残りHP
+ */
+const expectRemainingHP = (HP: number, damage: number): number => {
   // 残りHPを計算
   const hp = HP - damage
 
