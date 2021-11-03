@@ -25,14 +25,6 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   // 凸宣言の持越にはリアクションは終了
   if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
 
-  const isEmoji = react.emoji.id === Settings.EMOJI_ID.TOOSHI
-  if (!isEmoji) {
-    // 持越と待機の絵文字は外さずに終了
-    if ([Settings.EMOJI_ID.MOCHIKOSHI, Settings.EMOJI_ID.TAIKI].some(id => id === react.emoji.id)) return
-    react.users.remove(user)
-    return
-  }
-
   const msg = await fetchMessage(react, alpha)
 
   // 既に済が付いている場合は通知しない
@@ -40,12 +32,6 @@ export const ConfirmNotice = async (react: Discord.MessageReaction, user: Discor
   if (sumi) return
 
   await msg.react(Settings.EMOJI_ID.SUMI)
-  // prettier-ignore
-  const text = [
-    '確定！',
-    `id: ${msg.member?.id}`,
-  ].join('\n')
-  await msg.reply(text)
 
   return 'Confirm notice'
 }
@@ -129,30 +115,6 @@ export const StayMark = async (react: Discord.MessageReaction, user: Discord.Use
   await msg.react(Settings.EMOJI_ID.SUMI)
 
   return 'Carry over notice'
-}
-
-/**
- * リアクションを外した際に済も外す
- * @param react DiscordからのReaction
- * @param user リアクションしたユーザー
- * @return 取り消し処理の実行結果
- */
-export const NoticeCancel = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
-  const isBot = user.bot
-  if (isBot) return
-
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === react.message.channel.id
-  ) as Option<AtoE>
-  if (!alpha) return
-
-  // 凸宣言の持越にリアクションした場合は終了
-  if (Settings.DECLARE_MESSAGE_ID[alpha].DECLARE === react.message.id) return
-
-  const msg = await fetchMessage(react, alpha)
-  const sumi = msg.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI)
-  sumi?.remove()
 }
 
 /**

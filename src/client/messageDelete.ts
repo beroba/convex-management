@@ -1,7 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as declare from '../convex/declare/status'
 import * as plan from '../convex/plan/delete'
 import * as report from '../convex/report/cancel'
 
@@ -16,9 +15,6 @@ export const MessageDelete = async (msg: Discord.Message | Discord.PartialMessag
 
   let comment: Option<string>
   msg = msg as Discord.Message
-
-  comment = await declare.Delete(msg)
-  if (comment) return console.log(comment)
 
   comment = await report.Delete(msg)
   if (comment) return console.log(comment)

@@ -42,11 +42,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Remaining HP change'
   }
 
-  msg.react(Settings.EMOJI_ID.TOOSHI)
-  msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
-  msg.react(Settings.EMOJI_ID.TAIKI)
-
-  await status.Update(alpha)
+  await list.SetDamage(alpha)
 
   return 'Calculate the HP React'
 }
@@ -59,7 +55,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 export const NextBoss = async (alpha: AtoE, state: Current) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  await status.Update(alpha, state, channel)
+  await list.SetDamage(alpha, state, channel)
   await list.SetPlan(alpha, state, channel)
 
   const members = await undeclare(alpha)
@@ -113,7 +109,7 @@ const messageDelete = async (channel: Discord.TextChannel) => {
  */
 export const Done = async (alpha: AtoE, user: Discord.User) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-  list.SetUser(alpha, channel)
+  await list.SetUser(alpha, channel)
 
   const msgs = (await channel.messages.fetch()).map(m => m)
 

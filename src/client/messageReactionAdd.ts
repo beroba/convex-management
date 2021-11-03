@@ -1,7 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
-import * as declare from '../convex/declare/react'
 import * as etc from '../convex/etc'
 import * as over from '../convex/over'
 import * as plan from '../convex/plan/delete'
@@ -20,15 +19,6 @@ export const MessageReactionAdd = async (react: Discord.MessageReaction, user: D
 
   let comment: Option<string>
   user = user as Discord.User
-
-  comment = await declare.ConfirmNotice(react, user)
-  if (comment) return console.log(comment)
-
-  comment = await declare.OverNotice(react, user)
-  if (comment) return console.log(comment)
-
-  comment = await declare.StayMark(react, user)
-  if (comment) return console.log(comment)
 
   comment = await report.Cancel(react, user)
   if (comment) return console.log(comment)

@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
+import * as declare from './status'
 import * as plan from '../plan/list'
 import * as current from '../../io/current'
 import * as schedule from '../../io/schedule'
@@ -76,4 +77,38 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE):
 
       return `${carry}${m.name}[${convex}${over}${limit}]${msg}`
     })
+}
+
+/**
+ * ボスの状態を変更する
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
+ */
+export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
+  state ??= await current.Fetch()
+  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+
+  const boss = state[alpha]
+
+  const HP = boss.hp
+  const maxHP = Settings.STAGE[state.stage].HP[alpha]
+  const percent = Math.ceil(20 * (HP / maxHP))
+  const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
+
+  const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
+
+  const damage = await declare.TotalDamage(channel)
+
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DAMAGE)
+  const text = [
+    'ダメージ集計 `⭕通したい` `🆖事故・通したくない` `✅報告済`',
+    '```ts',
+    `${boss.lap}周目 ${boss.name} ${icon}`,
+    `${bar} ${HP}/${maxHP}`,
+    `ダメージ合計: ${damage}, 予想残りHP: ${declare.ExpectRemainingHP(HP, damage)}`,
+    '',
+    '```',
+  ].join('\n')
+  await msg.edit(text)
 }

@@ -1,44 +1,12 @@
 import * as Discord from 'discord.js'
-import Option from 'type-of-option'
-import Settings from 'const-settings'
+// import Settings from 'const-settings'
+import * as list from './list'
 import * as lapAndBoss from '../lapAndBoss'
 import * as situation from '../situation'
 import * as current from '../../io/current'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current} from '../../util/type'
-
-/**
- * ボスの状態を変更する
- * @param alpha ボス番号
- * @param state 現在の状況
- * @param channel 凸宣言のチャンネル
- */
-export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  state ??= await current.Fetch()
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-  const HP = state[alpha].hp
-
-  // 現在のボスのHPを取得
-  const maxHP = Settings.STAGE[state.stage].HP[alpha]
-
-  const percent = Math.ceil(20 * (HP / maxHP))
-  const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
-
-  const damage = await totalDamage(channel)
-
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
-  const text = [
-    'ボス状況',
-    '```m',
-    `${state[alpha].lap}周目 ${state[alpha].name}`,
-    `${bar} ${HP}/${maxHP}`,
-    `ダメージ合計: ${damage}, 予想残りHP: ${expectRemainingHP(HP, damage)}`,
-    '```',
-  ].join('\n')
-  await msg.edit(text)
-}
 
 /**
  * ボスの残りHPを更新する
@@ -65,7 +33,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
   // HPの変更
   state = await lapAndBoss.UpdateHP(hp.to_n(), alpha, state)
 
-  await Update(alpha, state)
+  await list.SetDamage(alpha, state)
 
   const members = await status.Fetch()
   situation.Report(members)
@@ -78,7 +46,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
  * @param channel 凸宣言のチャンネル
  * @return 合計ダメージ
  */
-const totalDamage = async (channel: Discord.TextChannel): Promise<number> => {
+export const TotalDamage = async (channel: Discord.TextChannel): Promise<number> => {
   // 全員のダメージ報告からダメージをリストにして取り出す
   const list = (await channel.messages.fetch())
     .map(m => m)
@@ -113,50 +81,10 @@ const totalDamage = async (channel: Discord.TextChannel): Promise<number> => {
  * @param damage ダメージ報告の合計ダメージ
  * @return 残りHP
  */
-const expectRemainingHP = (HP: number, damage: number): number => {
+export const ExpectRemainingHP = (HP: number, damage: number): number => {
   // 残りHPを計算
   const hp = HP - damage
 
   // 0以下なら0にする
   return hp >= 0 ? hp : 0
-}
-
-/**
- * 凸宣言のメッセージを削除した際に残りHPの計算を行う
- * @param msg DiscordからのMessage
- * @return 削除処理の実行結果
- */
-export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isBot = msg.member?.user.bot
-  if (isBot) return
-
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
-  ) as Option<AtoE>
-  if (!alpha) return
-
-  Update(alpha)
-
-  return 'Calculate the HP Delete'
-}
-
-/**
- * 凸宣言のメッセージを編集した際に残りHPの計算を行う
- * @param msg DiscordからのMessage
- * @return 削除処理の実行結果
- */
-export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isBot = msg.member?.user.bot
-  if (isBot) return
-
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
-  ) as Option<AtoE>
-  if (!alpha) return
-
-  Update(alpha)
-
-  return 'Calculate the HP Edit'
 }
