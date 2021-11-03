@@ -8,6 +8,24 @@ import * as util from '../../util'
 import {AtoE, Current, Member, Plan} from '../../util/type'
 
 /**
+ * 凸予定一覧を更新する
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ * @param channel 凸宣言のチャンネル
+ */
+export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
+  state ??= await current.Fetch()
+  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+
+  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
+  const plans = await schedule.Fetch()
+  const text = await plan.CreatePlanText(alpha, state.stage, plans)
+
+  // 凸予定の前2行を取り除いて結合
+  await msg.edit('凸予定\n```m\n' + text.split('\n').slice(2).join('\n'))
+}
+
+/**
  * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル
@@ -58,22 +76,4 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE):
 
       return `${carry}${m.name}[${convex}${over}${limit}]${msg}`
     })
-}
-
-/**
- * 凸予定一覧を更新する
- * @param alpha ボス番号
- * @param state 現在の状況
- * @param channel 凸宣言のチャンネル
- */
-export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  state ??= await current.Fetch()
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
-  const plans = await schedule.Fetch()
-  const text = await plan.CreatePlanText(alpha, state.stage, plans)
-
-  // 凸予定の前2行を取り除いて結合
-  await msg.edit('凸予定\n```m\n' + text.split('\n').slice(2).join('\n'))
 }
