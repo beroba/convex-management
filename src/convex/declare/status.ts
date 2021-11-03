@@ -4,6 +4,7 @@ import * as list from './list'
 import * as lapAndBoss from '../lapAndBoss'
 import * as situation from '../situation'
 import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current} from '../../util/type'
@@ -28,6 +29,25 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
 
   await util.Sleep(100)
   msg.delete()
+}
+
+const setDamage = async (content: string, alpha: AtoE) => {
+  const damages = await damageList.FetchBoss(alpha)
+  const d = fetchDamage
+}
+
+const fetchDamage = (content: string): number => {
+  // ダメージだけ取りだす
+  const list = content
+    .replace(/\d*(s|秒)/gi, '')
+    .trim()
+    .match(/[\d]+/g)
+
+  // リストがnullなら0ダメージ
+  if (!list) return 0
+
+  // リストの中から1番大きい値を返す
+  return Math.max(...list.map(Number))
 }
 
 /**
