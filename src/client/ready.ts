@@ -13,7 +13,9 @@ export const Ready = async () => {
   await channel.send('きゃるきゃるーん')
 
   const list = {a: [], b: [], c: [], d: [], e: []}
-  damageList.Update(list)
+  await damageList.Update(list)
+  const l = await damageList.Fetch()
+  console.log(l)
 
   // リアクションのキャッシュを取る
   etc.Fetch()
