@@ -126,15 +126,18 @@ export type Member = User & Status
  * @property name ユーザーの名前
  * @property id ユーザーのID
  * @property text ダメージ報告のテキスト
- * @property damage ダメージの数値
- * @property time 残り秒数の数値
+ * @property damage ダメージの値
+ * @property time 残り秒数の値
+ * @property over 持越秒数の値
  */
 export type Damage = {
   name: string
   id: string
+  flag: 'ok' | 'ng' | 'check'
   text: string
-  damage: number
-  time: number
+  damage: number | string
+  time: number | string
+  over: number | string
 }
 
 /**
