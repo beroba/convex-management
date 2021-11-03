@@ -23,16 +23,13 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
   const plans = await schedule.FetchBoss(alpha)
 
-  const totu = await createDeclareList(members, plans, alpha, false)
-  const mochikoshi = await createDeclareList(members, plans, alpha, true)
+  const list = await createDeclareList(members, plans, alpha)
 
   const text = [
-    '凸宣言 `[残凸数(+は持越), 活動限界時間]`',
-    '```',
-    `- 凸宣言 ${totu.length}人`,
-    `${totu.join('\n')}${totu.length ? '\n' : ''}`,
-    `- 持越凸 ${mochikoshi.length}人`,
-    `${mochikoshi.join('\n')}`,
+    '凸宣言 `⭐持越` `[残凸数(+は持越), 活動限界時間]`',
+    '```ts',
+    `- 宣言者 ${list.length}人`,
+    `${list.join('\n')}`,
     '```',
   ].join('\n')
   await msg.edit(text)
@@ -43,22 +40,24 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
  * @param members メンバー全体の状態
  * @param plans 凸予定一覧
  * @param alpha ボス番号
- * @param carry 持越凸か判断するフラグ
  * @return 作成したリスト
  */
-const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, carry: boolean): Promise<string[]> => {
-  const convex = members.filter(m => new RegExp(alpha, 'gi').test(m.declare)).filter(m => m.carry === carry)
-
+const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE): Promise<string[]> => {
   // テキストを作成
-  return convex.map(m => {
-    const p = plans.find(p => p.playerID === m?.id)
+  return members
+    .filter(m => new RegExp(alpha, 'gi').test(m.declare))
+    .map(m => {
+      const carry = m.carry ? '⭐' : ''
 
-    const convex = m.convex
-    const over = '+'.repeat(m.over)
-    const limit = m.limit !== '' ? `, ${m.limit}時` : ''
+      const convex = m.convex
+      const over = '+'.repeat(m.over)
+      const limit = m.limit !== '' ? `, ${m.limit}時` : ''
 
-    return `${m.name}[${convex}${over}${limit}]${p ? ` ${p.msg}` : ''}`
-  })
+      const p = plans.find(p => p.playerID === m?.id)
+      const msg = p ? ` ${p.msg}` : ''
+
+      return `${carry}${m.name}[${convex}${over}${limit}]${msg}`
+    })
 }
 
 /**
