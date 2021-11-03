@@ -9,6 +9,28 @@ import * as util from '../../util'
 import {AtoE, Current} from '../../util/type'
 
 /**
+ * 凸宣言に入力されたメッセージを処理する
+ * @param msg DiscordからのMessage
+ * @param alpha ボス番号
+ * @return
+ */
+export const Process = async (msg: Discord.Message, alpha: AtoE) => {
+  let content = util.Format(msg.content)
+
+  // @とsが両方ある場合は@を消す
+  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
+
+  // @が入っている場合はHPの変更をする
+  if (/@\d/.test(content)) {
+    await RemainingHPChange(content, alpha)
+    // return 'Remaining HP change'
+  }
+
+  await util.Sleep(100)
+  msg.delete()
+}
+
+/**
  * ボスの残りHPを更新する
  * @param content 変更先HPのメッセージ
  * @param alpha ボス番号

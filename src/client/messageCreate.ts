@@ -20,12 +20,12 @@ export const MessageCreate = async (msg: Discord.Message) => {
 
   const isBeroba = msg.guild?.id === ThrowEnv('CLAN_SERVER_ID')
   if (isBeroba) {
+    comment = await declare.Convex(msg)
+    if (comment) return console.log(comment)
+
     if (msg.content.charAt(0) === '/') return await Command(msg)
 
     emoji.React(msg)
-
-    comment = await declare.Convex(msg)
-    if (comment) return console.log(comment)
 
     comment = await report.Convex(msg)
     if (comment) return console.log(comment)

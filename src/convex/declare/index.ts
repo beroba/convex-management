@@ -24,23 +24,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
 
-  let content = util.Format(msg.content)
-
-  // @とsが両方ある場合は@を消す
-  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
-
-  const isKill = content === 'kill'
-  if (isKill) {
-    content = '@0'
-  }
-
-  // @が入っている場合はHPの変更をする
-  if (/@\d/.test(content)) {
-    await status.RemainingHPChange(content, alpha)
-    msg.delete()
-
-    return 'Remaining HP change'
-  }
+  await status.Process(msg, alpha)
 
   await list.SetDamage(alpha)
 
@@ -89,17 +73,16 @@ const undeclare = async (alpha: AtoE): Promise<Member[]> => {
  * @param channel 凸宣言のチャンネル
  */
 const messageDelete = async (channel: Discord.TextChannel) => {
-  const msgs = await channel.messages.fetch()
-
-  await Promise.all(
-    msgs
-      .map(m => m)
-      .filter(m => !m.author.bot)
-      .map(async m => {
-        if (!m) return
-        await m.delete()
-      })
-  )
+  // sumiの付いているメッセージを全て削除
+  const msgs = (await channel.messages.fetch())
+    .map(m => m)
+    .filter(m => m.author.id === Settings.CAL_ID)
+    .filter(m => m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
+    .filter(m => m)
+  for (const m of msgs) {
+    await util.Sleep(100)
+    m.delete()
+  }
 }
 
 /**
@@ -107,20 +90,9 @@ const messageDelete = async (channel: Discord.TextChannel) => {
  * @param member メンバーの状態
  * @param user リアクションを外すユーザー
  */
-export const Done = async (alpha: AtoE, user: Discord.User) => {
+export const Done = async (alpha: AtoE) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await list.SetUser(alpha, channel)
-
-  const msgs = (await channel.messages.fetch()).map(m => m)
-
-  // 凸宣言完了者のキャルの返信を全て削除
-  msgs
-    .filter(m => m.author.id === Settings.CAL_ID)
-    .filter(m => RegExp(user.id).test(m.content))
-    .forEach(m => {
-      if (!m) return
-      m.delete()
-    })
 
   console.log('Completion of convex declaration')
 }

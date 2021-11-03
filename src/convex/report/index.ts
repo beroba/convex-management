@@ -98,7 +98,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   situation.Report(members, state)
-  declare.Done(alpha, msg.author)
+  declare.Done(alpha)
   declareList.SetPlan(alpha, state)
 
   overDelete(member_2, carry, msg)
