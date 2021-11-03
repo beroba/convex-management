@@ -3,6 +3,7 @@ import Settings from 'const-settings'
 import {Client} from '../index'
 import * as etc from '../convex/etc'
 import * as util from '../util'
+import * as damageList from '../io/damageList'
 
 /**
  * キャルが起動した際に通知を送る
@@ -10,6 +11,9 @@ import * as util from '../util'
 export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   await channel.send('きゃるきゃるーん')
+
+  const list = {a: [], b: [], c: [], d: [], e: []}
+  damageList.Update(list)
 
   // リアクションのキャッシュを取る
   etc.Fetch()
