@@ -25,8 +25,8 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
   interaction.deferUpdate()
 
   const id = idList.last()
-  if (id === 'cancel') {
-    cancel(interaction)
+  if (/\*/.test(id)) {
+    cancel(id, interaction)
     return 'Deletion of convex declaration'
   } else {
     add(id, interaction)
@@ -38,18 +38,14 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
  * 凸宣言を削除する
  * @param interaction インタラクションの情報
  */
-const cancel = async (interaction: Discord.ButtonInteraction) => {
+const cancel = async (id: string, interaction: Discord.ButtonInteraction) => {
   const member = await status.FetchMember(interaction.user.id)
   if (!member) return
 
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === interaction.channel?.id
-  ) as Option<AtoE>
-  if (!alpha) return
+  const alpha = id.replace('*', '') as AtoE
 
   // 凸状況を更新
-  member.declare = ''
-  member.carry = false
+  member.declare = member.declare.replace(alpha, '')
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
@@ -75,9 +71,10 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
     if (!member.over) return
     member.carry = true
   } else {
-    member.carry = false
+    // 3凸目で持越がある場合は持越
+    member.carry = !member.convex && member.over ? true : false
   }
-  member.declare = alpha
+  member.declare = [...new Set(`${member.declare}${alpha}`.split(''))].join('')
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])

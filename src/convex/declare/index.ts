@@ -77,8 +77,8 @@ const undeclare = async (alpha: AtoE): Promise<Member[]> => {
   let members = await member.Fetch()
 
   members = members.map(m => {
-    if (m.declare === alpha) {
-      m.declare = ''
+    if (new RegExp(alpha, 'gi').test(m.declare)) {
+      m.declare = m.declare.replace(alpha, '')
     }
     return m
   })

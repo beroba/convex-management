@@ -47,7 +47,7 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
  * @return 作成したリスト
  */
 const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, carry: boolean): Promise<string[]> => {
-  const convex = members.filter(m => m.declare === alpha).filter(m => m.carry === carry)
+  const convex = members.filter(m => new RegExp(alpha, 'gi').test(m.declare)).filter(m => m.carry === carry)
 
   // テキストを作成
   return convex.map(m => {
