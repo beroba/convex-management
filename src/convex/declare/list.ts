@@ -109,9 +109,9 @@ export const SetDamage = async (
 
   const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
 
-  const damage = await declare.TotalDamage(channel)
+  const total = await declare.TotalDamage(damages)
 
-  const list = await createDamageList(damages, damage, HP, members)
+  const list = await createDamageList(damages, HP, members)
 
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DAMAGE)
   const text = [
@@ -119,7 +119,7 @@ export const SetDamage = async (
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}`,
-    `ダメージ合計: ${damage}, 予想残りHP: ${declare.ExpectRemainingHP(HP, damage)}`,
+    `ダメージ合計: ${total}, 予想残りHP: ${declare.ExpectRemainingHP(HP, total)}`,
     '',
     '- ダメージ一覧',
     `${list.join('\n')}`,
@@ -131,17 +131,11 @@ export const SetDamage = async (
 /**
  * ダメージ集計一覧のリストを作成する
  * @param damages ダメージ一覧
- * @param total 合計ダメージ
  * @param HP ボスの残りHP
  * @param members メンバー全体の状態
  * @return 作成したリスト
  */
-const createDamageList = async (
-  damages: Damage[],
-  _total: number,
-  _HP: number,
-  members: Member[]
-): Promise<string[]> => {
+const createDamageList = async (damages: Damage[], HP: number, members: Member[]): Promise<string[]> => {
   return damages.map(d => {
     const m = members.find(m => m.id === d.id)
     if (!m) return ''
@@ -157,7 +151,7 @@ const createDamageList = async (
 
     const damage = d.damage || '不明'
     const time = d.time ? `${d.time}秒` : '不明'
-    const calc = '不可'
+    const calc = declare.CalcCarryOver(HP, d.damage)
 
     // prettier-ignore
     return [
