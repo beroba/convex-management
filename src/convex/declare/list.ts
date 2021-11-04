@@ -1,12 +1,14 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as declare from './status'
 import * as plan from '../plan/list'
 import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
 import * as util from '../../util'
-import {AtoE, Current, Member, Plan} from '../../util/type'
+import {AtoE, Current, Damage, Member, Plan} from '../../util/type'
 
 /**
  * 凸予定一覧を更新する
@@ -85,9 +87,15 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE):
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル
  */
-export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
+export const SetDamage = async (
+  alpha: AtoE,
+  state?: Current,
+  channel?: Discord.TextChannel,
+  damages?: Option<Damage[]>
+) => {
   state ??= await current.Fetch()
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+  damages ??= await damageList.FetchBoss(alpha)
 
   const boss = state[alpha]
 
@@ -102,7 +110,7 @@ export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.
 
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DAMAGE)
   const text = [
-    'ダメージ集計 `⭕通したい` `🆖事故・通したくない` `✅報告済`',
+    'ダメージ集計 `⭕通したい` `🆖事故・通したくない` `✅通し`',
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}`,

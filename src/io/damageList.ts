@@ -17,9 +17,29 @@ export const Update = async (list: DamageList) => {
  */
 export const UpdateBoss = async (alpha: AtoE, damage: Damage[]): Promise<DamageList> => {
   const list = await Fetch()
-  list[alpha] = damage
+  list[alpha] = numbering(damage)
   await io.UpdateArray('damageList', list)
   return list
+}
+
+/**
+ * ダメージ順にソートして番号を採番する
+ * @param damage ダメージ一覧
+ * @return ダメージ一覧
+ */
+const numbering = (damage: Damage[]): Damage[] => {
+  return damage
+    .sort((a, b) => b.damage - a.damage)
+    .map((d, i) => ({
+      name: d.name,
+      id: d.id,
+      num: i + 1,
+      exclusion: d.exclusion,
+      flag: d.flag,
+      text: d.text,
+      damage: d.damage,
+      time: d.time,
+    }))
 }
 
 /**

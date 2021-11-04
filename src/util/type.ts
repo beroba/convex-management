@@ -122,11 +122,16 @@ export type Status = {
 export type Member = User & Status
 
 /**
+ * [ok|ng|check|]の型
+ */
+export type DamageFlag = 'ok' | 'ng' | 'check' | ''
+
+/**
  * ダメージ報告の内容
  * @property name ユーザーの名前
  * @property id ユーザーのID
  * @property num 凸報告の順番
- * @property flag ok|ng|checkのフラグ
+ * @property flag ダメージのフラグ
  * @property text ダメージ報告のテキスト
  * @property damage ダメージの値
  * @property time 残り秒数の値
@@ -135,12 +140,12 @@ export type Member = User & Status
 export type Damage = {
   name: string
   id: string
-  num: string
-  flag: 'ok' | 'ng' | 'check'
+  num: number
+  exclusion: boolean
+  flag: DamageFlag
   text: string
   damage: number
   time: number
-  over: number
 }
 
 /**

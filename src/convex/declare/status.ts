@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import Option from 'type-of-option'
 // import Settings from 'const-settings'
 import * as list from './list'
 import * as lapAndBoss from '../lapAndBoss'
@@ -7,7 +8,7 @@ import * as current from '../../io/current'
 import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
-import {AtoE, Current} from '../../util/type'
+import {AtoE, Current, Damage} from '../../util/type'
 
 /**
  * 凸宣言に入力されたメッセージを処理する
@@ -27,13 +28,34 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
     // return 'Remaining HP change'
   }
 
+  const damages = await setDamage(msg, content, alpha)
+  await list.SetDamage(alpha, undefined, undefined, damages)
+
   await util.Sleep(100)
   msg.delete()
 }
 
-const setDamage = async (content: string, alpha: AtoE) => {
-  const damages = await damageList.FetchBoss(alpha)
-  const d = fetchDamage
+const setDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Promise<Option<Damage[]>> => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
+
+  const damage: Damage = {
+    name: member.name,
+    id: member.id,
+    num: 0,
+    exclusion: false,
+    flag: '',
+    text: content,
+    damage: fetchDamage(content),
+    time: fetchTime(content),
+  }
+  damages = [...damages, damage]
+
+  await damageList.UpdateBoss(alpha, damages)
+
+  return damages
 }
 
 const fetchDamage = (content: string): number => {
@@ -48,6 +70,21 @@ const fetchDamage = (content: string): number => {
 
   // リストの中から1番大きい値を返す
   return Math.max(...list.map(Number))
+}
+
+const fetchTime = (content: string): number => {
+  // 秒数だけ取りだす
+  const time = content.match(/\d*(s|秒)/gi)
+
+  // timeがnullなら0秒
+  if (!time) return 0
+
+  // リストの中から先頭の値を返す
+  return time
+    .map(d => d)
+    .first()
+    .replace(/(s|秒)/gi, '')
+    .to_n()
 }
 
 /**
