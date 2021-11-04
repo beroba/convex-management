@@ -110,7 +110,7 @@ export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.
     `${bar} ${HP}/${maxHP}`,
     `ダメージ合計: ${damage}, 予想残りHP: ${declare.ExpectRemainingHP(HP, damage)}`,
     '',
-    `${damages.map(d => `${d.text} ${d.damage} ${d.time}`)}`,
+    `${damages.map(d => `'${d.text}' ${d.exclusion} ${d.flag}`)}`,
     '```',
   ].join('\n')
   await msg.edit(text)

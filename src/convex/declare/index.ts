@@ -92,9 +92,20 @@ const messageDelete = async (channel: Discord.TextChannel) => {
  * @param member メンバーの状態
  * @param user リアクションを外すユーザー
  */
-export const Done = async (alpha: AtoE) => {
+export const Done = async (alpha: AtoE, id: string) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await list.SetUser(alpha, channel)
+
+  // ダメージ集計にチェックを付ける
+  let damages = await damageList.FetchBoss(alpha)
+  damages = damages.map(d => {
+    if (d.id !== id) return d
+    d.exclusion = true
+    d.flag = 'check'
+    return d
+  })
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
 
   console.log('Completion of convex declaration')
 }

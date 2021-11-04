@@ -98,7 +98,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   situation.Report(members, state)
-  declare.Done(alpha)
+  declare.Done(alpha, msg.author.id)
   declareList.SetPlan(alpha, state)
 
   overDelete(member_2, carry, msg)
@@ -118,7 +118,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
  * @return 凸が終わっているかの真偽値
  */
 const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise<boolean> => {
-  if (member.over !== 0) return false
+  if (member.convex || member.over) return false
 
   member.end = true
   const members = await status.UpdateMember(member)
