@@ -1,6 +1,9 @@
 import * as Discord from 'discord.js'
 import * as status from './status'
+// import * as command from '../../command'
 import {AtoE} from '../../util/type'
+
+// const args = command.ExtractArgument(_command, _content)
 
 /**
  * 凸宣言のコマンドを処理する
@@ -10,9 +13,11 @@ import {AtoE} from '../../util/type'
  */
 export const Process = async (msg: Discord.Message, content: string, alpha: AtoE) => {
   msg
-  // @が入っている場合はHPの変更をする
-  if (/@\d/.test(content)) {
-    await status.RemainingHPChange(content, alpha)
-    // return 'Remaining HP change'
+  switch (true) {
+    case /\/(@|hp?)/i.test(content): {
+      content = content.replace(/\/hp?/gi, '@')
+      await status.RemainingHPChange(content, alpha)
+      return 'Remaining HP change'
+    }
   }
 }
