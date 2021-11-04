@@ -81,7 +81,7 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE):
 }
 
 /**
- * ボスの状態を変更する
+ * ダメージ集計を変更する
  * @param alpha ボス番号
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル

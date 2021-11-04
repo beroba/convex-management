@@ -20,17 +20,66 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
   if (!interaction.isButton()) return
 
   const idList = interaction.customId.split('-')
-  if (idList.first() !== 'boss') return
+  if (idList.first() === 'damage') {
+    return damage(interaction, idList)
+  } else if (idList.first() === 'boss') {
+    return boss(interaction, idList)
+  }
+}
 
+/**
+ * ダメージの処理
+ * @param interaction ボタンのインタラクション
+ * @param idList ボタンのidリスト
+ * @return 実行結果の文字列
+ */
+const damage = async (interaction: Discord.ButtonInteraction, idList: string[]): Promise<string> => {
+  // インタラクション失敗を回避
+  interaction.deferUpdate()
+
+  const id = idList.last()
+  const alpha = <AtoE>id[0]
+  const flag = id[1] === '+' ? 'ok' : id[1] === '*' ? 'ng' : 'none'
+
+  let damages = await damageList.FetchBoss(alpha)
+  damages = damages.map(d => {
+    if (d.id !== interaction.user.id) return d
+
+    // トグルするように実装
+    if (d.flag === 'check') {
+    } else if (d.flag === 'none') {
+      d.flag = flag
+    } else if (d.flag === 'ok') {
+      d.flag = flag === 'ok' ? 'none' : flag === 'ng' ? 'ng' : 'ok'
+    } else if (d.flag === 'ng') {
+      d.flag = flag === 'ng' ? 'none' : flag === 'ok' ? 'ok' : 'ng'
+    }
+
+    return d
+  })
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, undefined, damages)
+
+  return 'Flag change'
+}
+
+/**
+ * ボスの処理
+ * @param interaction ボタンのインタラクション
+ * @param idList ボタンのidリスト
+ * @return 実行結果の文字列
+ */
+const boss = async (interaction: Discord.ButtonInteraction, idList: string[]): Promise<string> => {
   // インタラクション失敗を回避
   interaction.deferUpdate()
 
   const id = idList.last()
   if (/\*/.test(id)) {
-    cancel(id, interaction)
+    await cancel(id, interaction)
     return 'Deletion of convex declaration'
   } else {
-    add(id, interaction)
+    await add(id, interaction)
     return 'Addition of convex declaration'
   }
 }

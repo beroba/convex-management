@@ -23,8 +23,8 @@ export const Ready = async () => {
   //   const 持越 = new Discord.MessageButton().setCustomId('boss-a+').setStyle('SUCCESS').setLabel('持越')
   //   const 取消 = new Discord.MessageButton().setCustomId('boss-a*').setStyle('SECONDARY').setLabel('取消')
 
-  //   const 通したい = new Discord.MessageButton().setCustomId('damage-a').setStyle('SECONDARY').setLabel('⭕')
-  //   const 通したくない = new Discord.MessageButton().setCustomId('damage-a+').setStyle('SECONDARY').setLabel('🆖')
+  //   const 通したい = new Discord.MessageButton().setCustomId('damage-a+').setStyle('SECONDARY').setLabel('⭕')
+  //   const 通したくない = new Discord.MessageButton().setCustomId('damage-a*').setStyle('SECONDARY').setLabel('🆖')
 
   //   const m1 = await channel.send('凸予定')
   //   const m2 = await channel.send({
