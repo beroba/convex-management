@@ -58,7 +58,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
     id: member.id,
     num: 0,
     exclusion: false,
-    flag: '',
+    flag: 'none',
     text: content,
     damage: fetchDamage(content),
     time: fetchTime(content),

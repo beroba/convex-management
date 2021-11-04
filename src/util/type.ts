@@ -122,9 +122,9 @@ export type Status = {
 export type Member = User & Status
 
 /**
- * [ok|ng|check|]の型
+ * [ok|ng|check|none]の型
  */
-export type DamageFlag = 'ok' | 'ng' | 'check' | ''
+export type DamageFlag = 'ok' | 'ng' | 'check' | 'none'
 
 /**
  * ダメージ報告の内容

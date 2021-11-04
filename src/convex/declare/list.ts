@@ -85,11 +85,20 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE):
  * @param alpha ボス番号
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル
+ * @param damages ダメージ一覧
+ * @param members メンバー全体の状態
  */
-export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel, damages?: Damage[]) => {
+export const SetDamage = async (
+  alpha: AtoE,
+  state?: Current,
+  channel?: Discord.TextChannel,
+  damages?: Damage[],
+  members?: Member[]
+) => {
   state ??= await current.Fetch()
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   damages ??= await damageList.FetchBoss(alpha)
+  members ??= await status.Fetch()
 
   const boss = state[alpha]
 
@@ -102,6 +111,8 @@ export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.
 
   const damage = await declare.TotalDamage(channel)
 
+  const list = await createDamageList(damages, damage, HP, members)
+
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DAMAGE)
   const text = [
     'ダメージ集計 `⭕通したい` `🆖事故・通したくない` `✅通し`',
@@ -110,8 +121,48 @@ export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.
     `${bar} ${HP}/${maxHP}`,
     `ダメージ合計: ${damage}, 予想残りHP: ${declare.ExpectRemainingHP(HP, damage)}`,
     '',
-    `${damages.map(d => `'${d.text}' ${d.exclusion} ${d.flag}`)}`,
+    '- ダメージ一覧',
+    `${list.join('\n')}`,
     '```',
   ].join('\n')
   await msg.edit(text)
+}
+
+/**
+ * ダメージ集計一覧のリストを作成する
+ * @param damages ダメージ一覧
+ * @param total 合計ダメージ
+ * @param HP ボスの残りHP
+ * @param members メンバー全体の状態
+ * @return 作成したリスト
+ */
+const createDamageList = async (
+  damages: Damage[],
+  _total: number,
+  _HP: number,
+  members: Member[]
+): Promise<string[]> => {
+  return damages.map(d => {
+    const m = members.find(m => m.id === d.id)
+    if (!m) return ''
+
+    const _ = d.exclusion ? '_' : ''
+    const carry = m.carry ? '⭐' : ''
+
+    const convex = m.convex
+    const over = '+'.repeat(m.over)
+    const limit = m.limit !== '' ? `, ${m.limit}時` : ''
+
+    const flag = Settings.DAMAGE_FLAG[d.flag]
+
+    const damage = d.damage || '不明'
+    const time = d.time ? `${d.time}秒` : '不明'
+    const calc = '不可'
+
+    // prettier-ignore
+    return [
+      `${_}${d.num}: ${carry}${d.name}[${convex}${over}${limit}] '${d.text}'`,
+      `${flag}| ダメージ: ${damage} | 秒数: ${time} | 持越: ${calc}`
+    ].join('\n')
+  })
 }

@@ -27,7 +27,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   await status.Process(msg, alpha)
 
-  return 'Calculate the HP React'
+  return 'Report damage or execute command'
 }
 
 /**

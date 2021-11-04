@@ -56,3 +56,10 @@ BOT_OPERATION:
   TIME_LIMIT: '885850652448788491'
   ATTENDANCE: '885865380625678387'
   TASK_KILL: '885856546578374718'
+
+# ダメージ集計のフラグ
+DAMAGE_FLAG:
+  ok: '  ⭕ '
+  ng: '  🆖 '
+  check: '  ✅ '
+  none: 'ㅤㅤㅤ'
