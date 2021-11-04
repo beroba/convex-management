@@ -23,7 +23,7 @@ export const MessageCreate = async (msg: Discord.Message) => {
     comment = await declare.Convex(msg)
     if (comment) return console.log(comment)
 
-    if (msg.content.charAt(0) === '/') return await Command(msg)
+    if (msg.content.charAt(0) === '/') return Command(msg)
 
     emoji.React(msg)
 

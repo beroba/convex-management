@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
+import * as command from './command'
 import * as list from './list'
 import * as lapAndBoss from '../lapAndBoss'
 import * as situation from '../situation'
@@ -11,9 +12,9 @@ import {AtoE, Current, Damage} from '../../util/type'
 
 /**
  * 凸宣言に入力されたメッセージを処理する
+ * 必ずメッセージは削除する
  * @param msg DiscordからのMessage
  * @param alpha ボス番号
- * @return
  */
 export const Process = async (msg: Discord.Message, alpha: AtoE) => {
   let content = util.Format(msg.content)
@@ -21,10 +22,12 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
   // @とsが両方ある場合は@を消す
   content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
 
-  // @が入っている場合はHPの変更をする
-  if (/@\d/.test(content)) {
-    await RemainingHPChange(content, alpha)
-    // return 'Remaining HP change'
+  // コマンドの処理
+  if (msg.content.charAt(0) === '/') {
+    await command.Process(msg, content, alpha)
+    await util.Sleep(100)
+    msg.delete()
+    return
   }
 
   const damages = await addDamage(msg, content, alpha)

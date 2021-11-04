@@ -1,6 +1,5 @@
 import Settings from 'const-settings'
 import * as declare from './declare'
-import * as react from './declare/react'
 import * as current from '../io/current'
 import * as util from '../util'
 import {AtoE, Current} from '../util/type'
@@ -68,11 +67,6 @@ const progressReport = async (alpha: AtoE, state: Current) => {
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   await channel.send(`<@&${role}>\n\`${state[alpha].lap}\`周目 \`${state[alpha].name}\``)
-
-  const text = await react.OpenNotice(alpha)
-  if (!text) return
-
-  await channel.send(text)
 }
 
 /**
