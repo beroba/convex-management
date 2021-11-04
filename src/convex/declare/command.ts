@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import * as status from './status'
+import * as lapAndBoss from '../lapAndBoss'
 // import * as command from '../../command'
 import {AtoE} from '../../util/type'
 
@@ -18,6 +19,14 @@ export const Process = async (msg: Discord.Message, content: string, alpha: AtoE
       content = content.replace(/\/hp?/gi, '@')
       await status.RemainingHPChange(content, alpha)
       return 'Remaining HP change'
+    }
+
+    case /\/(l|lap)/i.test(content): {
+      const list = content.match(/\d+/g)
+      if (!list) return
+      const lap = list.map(l => l).first()
+      await lapAndBoss.UpdateLap(lap.to_n(), alpha)
+      return 'Change boss'
     }
   }
 }
