@@ -28,18 +28,30 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
     // return 'Remaining HP change'
   }
 
-  const damages = await setDamage(msg, content, alpha)
-  await list.SetDamage(alpha, undefined, undefined, damages)
+  const damages = await addDamage(msg, content, alpha)
+  if (damages) {
+    await list.SetDamage(alpha, undefined, undefined, damages)
+  }
 
   await util.Sleep(100)
   msg.delete()
 }
 
-const setDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Promise<Option<Damage[]>> => {
+/**
+ * ダメージ報告のメッセージをダメージ一覧に追加する
+ * @param msg DiscordからのMessage
+ * @param content ダメージ報告のメッセージ
+ * @param alpha ボス番号
+ * @return ダメージ一覧
+ */
+const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Promise<Option<Damage[]>> => {
   let damages = await damageList.FetchBoss(alpha)
 
   const member = await status.FetchMember(msg.author.id)
   if (!member) return
+
+  // 上書きできるように前のダメージを消す
+  damages = damages.filter(d => d.id !== member.id)
 
   const damage: Damage = {
     name: member.name,
@@ -53,13 +65,17 @@ const setDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   }
   damages = [...damages, damage]
 
-  await damageList.UpdateBoss(alpha, damages)
+  damages = await damageList.UpdateBoss(alpha, damages)
 
   return damages
 }
 
+/**
+ * メッセージからダメージだけを取りだす
+ * @param content ダメージ報告のメッセージ
+ * @return ダメージ
+ */
 const fetchDamage = (content: string): number => {
-  // ダメージだけ取りだす
   const list = content
     .replace(/\d*(s|秒)/gi, '')
     .trim()
@@ -72,8 +88,12 @@ const fetchDamage = (content: string): number => {
   return Math.max(...list.map(Number))
 }
 
+/**
+ * メッセージから秒数だけを取りだす
+ * @param content ダメージ報告のメッセージ
+ * @return 秒数
+ */
 const fetchTime = (content: string): number => {
-  // 秒数だけ取りだす
   const time = content.match(/\d*(s|秒)/gi)
 
   // timeがnullなら0秒

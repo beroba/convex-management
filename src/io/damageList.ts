@@ -13,13 +13,13 @@ export const Update = async (list: DamageList) => {
  * 特定ボスのダメージ一覧を更新
  * @param alpha ボス番号
  * @param damage ダメージ一覧
- * @return ダメージリスト
+ * @return ダメージ一覧
  */
-export const UpdateBoss = async (alpha: AtoE, damage: Damage[]): Promise<DamageList> => {
+export const UpdateBoss = async (alpha: AtoE, damage: Damage[]): Promise<Damage[]> => {
   const list = await Fetch()
   list[alpha] = numbering(damage)
   await io.UpdateArray('damageList', list)
-  return list
+  return list[alpha]
 }
 
 /**
@@ -43,6 +43,41 @@ const numbering = (damage: Damage[]): Damage[] => {
 }
 
 /**
+ * ダメージリストを削除
+ * @return ダメージリスト
+ */
+export const Delete = async (): Promise<DamageList> => {
+  const list = {a: [], b: [], c: [], d: [], e: []}
+  await io.UpdateArray('damageList', list)
+  return list
+}
+
+/**
+ * 特定ボスのダメージ一覧を削除
+ * @param alpha ボス番号
+ * @return ダメージ一覧
+ */
+export const DeleteBoss = async (alpha: AtoE): Promise<Damage[]> => {
+  const list = await Fetch()
+  list[alpha] = []
+  await io.UpdateArray('damageList', list)
+  return list[alpha]
+}
+
+/**
+ * 特定ボスのダメージ一覧から渡されたIDのダメージを削除
+ * @param alpha ボス番号
+ * @param id ユーザーID
+ * @return ダメージ一覧
+ */
+export const DeleteUser = async (alpha: AtoE, id: string): Promise<Damage[]> => {
+  const list = await Fetch()
+  list[alpha] = list[alpha].filter(d => d.id !== id)
+  await io.UpdateArray('damageList', list)
+  return list[alpha]
+}
+
+/**
  * キャルステータスからダメージリストを取得
  * @return ダメージリスト
  */
@@ -52,7 +87,7 @@ export const Fetch = async (): Promise<DamageList> => {
 
 /**
  * キャルステータスから特定ボスのダメージ一覧を取得
- * @return ダメージリスト
+ * @return ダメージ一覧
  */
 export const FetchBoss = async (alpha: AtoE): Promise<Damage[]> => {
   const list = await Fetch()

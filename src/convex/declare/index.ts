@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as status from './status'
+import * as damageList from '../../io/damageList'
 import * as member from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current, Member} from '../../util/type'
@@ -26,8 +27,6 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   await status.Process(msg, alpha)
 
-  await list.SetDamage(alpha)
-
   return 'Calculate the HP React'
 }
 
@@ -39,12 +38,15 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 export const NextBoss = async (alpha: AtoE, state: Current) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  await list.SetDamage(alpha, state, channel)
   await list.SetPlan(alpha, state, channel)
 
   const members = await undeclare(alpha)
 
   await list.SetUser(alpha, channel, members)
+
+  const damages = await damageList.DeleteBoss(alpha)
+  await list.SetDamage(alpha, state, channel, damages)
+
   await messageDelete(channel)
 }
 

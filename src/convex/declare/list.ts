@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as declare from './status'
 import * as plan from '../plan/list'
@@ -87,12 +86,7 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE):
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル
  */
-export const SetDamage = async (
-  alpha: AtoE,
-  state?: Current,
-  channel?: Discord.TextChannel,
-  damages?: Option<Damage[]>
-) => {
+export const SetDamage = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel, damages?: Damage[]) => {
   state ??= await current.Fetch()
   channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   damages ??= await damageList.FetchBoss(alpha)
@@ -116,6 +110,7 @@ export const SetDamage = async (
     `${bar} ${HP}/${maxHP}`,
     `ダメージ合計: ${damage}, 予想残りHP: ${declare.ExpectRemainingHP(HP, damage)}`,
     '',
+    `${damages.map(d => `${d.text} ${d.damage} ${d.time}`)}`,
     '```',
   ].join('\n')
   await msg.edit(text)

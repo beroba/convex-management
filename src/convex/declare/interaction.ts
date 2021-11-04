@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as situation from '../situation'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
@@ -50,6 +51,9 @@ const cancel = async (id: string, interaction: Discord.ButtonInteraction) => {
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await list.SetUser(alpha, channel, members)
+
+  const damages = await damageList.DeleteUser(alpha, member.id)
+  await list.SetDamage(alpha, undefined, channel, damages)
 
   situation.Report(members)
   deleteAttendance(interaction)
