@@ -34,8 +34,21 @@ export const Process = async (msg: Discord.Message, content: string, alpha: AtoE
       return 'Change boss'
     }
 
-    case /\/(\d|[a-z])+$/i.test(content): {
-      const list = content.match(/\d+/g)
+    case /\/_(\d|[a-z])+$/i.test(content): {
+      const list = content.match(/(\d|[a-z])+/g)
+      if (!list) return
+      const set = list
+        .map(l => l)
+        .join('')
+        .split('')
+      const numbers = [...new Set(set)]
+
+      await status.ExclusionSettings(numbers, alpha, channel)
+      return 'Exclusion settings'
+    }
+
+    case /\/(\d|[a-z]|\s)+$/i.test(content): {
+      const list = content.match(/(\d|[a-z])+/g)
       if (!list) return
       const set = list
         .map(l => l)

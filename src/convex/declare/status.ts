@@ -180,6 +180,33 @@ export const CalcCarryOver = (HP: number, damage: number): string => {
 }
 
 /**
+ * ダメージ計算の除外設定をする
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
+  if (!dList.length) return
+
+  const idList = dList.map(l => l?.id)
+
+  damages = damages.map(d => {
+    const id = idList.find(id => id === d.id)
+    if (!id) return d
+
+    d.exclusion = !d.exclusion
+    return d
+  })
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
+}
+
+/**
  * 通しの通知とチェックを付ける
  * @param numbers 通知する番号
  * @param alpha ボス番号
@@ -188,9 +215,11 @@ export const CalcCarryOver = (HP: number, damage: number): string => {
 export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
   let damages = await damageList.FetchBoss(alpha)
 
+  // 存在しない番号は除外
   const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
   if (!dList.length) return
 
+  // 既にチェック済みの人は除外
   const idList = dList.filter(l => l?.flag !== 'check').map(l => l?.id)
   const mentions = idList.map(id => `<@!${id}>`).join(' ')
 
