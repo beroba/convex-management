@@ -191,11 +191,11 @@ export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: D
   let damages = await damageList.FetchBoss(alpha)
 
   // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
   if (!dList.length) return
 
-  const idList = dList.map(l => l?.id)
-  const names = dList.map(l => l?.name).join(' or ')
+  const idList = dList.map(d => d.id)
+  const names = dList.map(d => d.name).join(' or ')
 
   const rand = send.CreateRandNumber(idList.length)
 
@@ -235,6 +235,7 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
 
   const a = etc.OverCalc(HP, A.damage, B.damage)
   const b = etc.OverCalc(HP, B.damage, A.damage)
+
   // prettier-ignore
   const text = [
     '```m',
@@ -260,9 +261,7 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
   const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
   if (!dList.length) return
 
-  const idList = dList.map(l => l.id)
-
-  etc
+  const idList = dList.map(d => d.id)
 
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
@@ -289,20 +288,24 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
   const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
   if (!dList.length) return
 
-  // 既にチェック済みの人は除外
-  const idList = dList.filter(l => l.flag !== 'check').map(l => l.id)
-  const mentions = idList.map(id => `<@!${id}>`).join(' ')
+  const idList = dList.map(l => l.id)
+  const mentions = dList
+    .filter(d => d.flag !== 'check')
+    .map(d => `<@!${d.id}>`)
+    .join(' ')
 
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
     if (!id) return d
 
-    d.flag = 'check'
+    d.flag = d.flag === 'check' ? 'none' : 'check'
     return d
   })
 
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
+
+  if (!mentions.length) return
 
   const msg = await channel.send(`${mentions} 通し！`)
   await msg.react(Settings.EMOJI_ID.SUMI)
