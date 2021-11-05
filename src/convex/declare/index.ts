@@ -109,3 +109,37 @@ export const Done = async (alpha: AtoE, id: string) => {
 
   console.log('Completion of convex declaration')
 }
+
+/**
+ * 済が付いているキャルのメッセージにリアクションしたら削除する
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 削除処理の実行結果
+ */
+export const Sumi = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+  const isBot = user.bot
+  if (isBot) return
+
+  const isEmoji = react.emoji.id === Settings.EMOJI_ID.SUMI
+  if (!isEmoji) return
+
+  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
+    key => Settings.DECLARE_CHANNEL_ID[key] === react.message.channel.id
+  ) as Option<AtoE>
+  if (!alpha) return
+
+  await react.message.channel.messages.fetch(react.message.id)
+
+  const msg = <Discord.Message>react.message
+  if (msg.author.id !== Settings.CAL_ID) return
+
+  // キャルともう1人がリアクションしていない場合
+  if (react.count < 2) {
+    await react.remove()
+    return
+  }
+
+  react.message.delete()
+
+  return 'Delete completed message'
+}
