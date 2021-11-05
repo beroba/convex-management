@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as command from './command'
 import * as list from './list'
+import * as etc from '../etc'
 import * as lapAndBoss from '../lapAndBoss'
 import * as situation from '../situation'
 import * as current from '../../io/current'
@@ -209,6 +210,44 @@ export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: D
 }
 
 /**
+ * 持越計算をする
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  const state = await current.Fetch()
+  let damages = await damageList.FetchBoss(alpha)
+
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  if (!dList.length) return
+
+  const HP = state[alpha].hp
+
+  const A = dList.first()
+  if (A.damage === 0) return
+  const B = dList.last()
+  if (B.damage === 0) return
+
+  // ボスを倒せない場合は終了
+  if (A.damage + B.damage < HP) return
+
+  const a = etc.OverCalc(HP, A.damage, B.damage)
+  const b = etc.OverCalc(HP, B.damage, A.damage)
+  // prettier-ignore
+  const text = [
+    '```m',
+    `${A.name}: ${a >= 90 ? '90秒(フル)' : a + '秒'}`,
+    `${B.name}: ${b >= 90 ? '90秒(フル)' : b + '秒'}`,
+    '```',
+  ].join('\n')
+
+  const msg = await channel.send(text)
+  await msg.react(Settings.EMOJI_ID.SUMI)
+}
+
+/**
  * ダメージ計算の除外設定をする
  * @param numbers 通知する番号
  * @param alpha ボス番号
@@ -218,10 +257,12 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
   let damages = await damageList.FetchBoss(alpha)
 
   // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
   if (!dList.length) return
 
-  const idList = dList.map(l => l?.id)
+  const idList = dList.map(l => l.id)
+
+  etc
 
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
@@ -245,11 +286,11 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
   let damages = await damageList.FetchBoss(alpha)
 
   // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
   if (!dList.length) return
 
   // 既にチェック済みの人は除外
-  const idList = dList.filter(l => l?.flag !== 'check').map(l => l?.id)
+  const idList = dList.filter(l => l.flag !== 'check').map(l => l.id)
   const mentions = idList.map(id => `<@!${id}>`).join(' ')
 
   damages = damages.map(d => {

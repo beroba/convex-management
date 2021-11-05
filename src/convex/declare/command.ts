@@ -45,6 +45,20 @@ export const Process = async (msg: Discord.Message, content: string, alpha: AtoE
       return 'Random selection'
     }
 
+    case /\/(calc|c)/i.test(content): {
+      const list = content.replace(/\/(calc|c)/i, '').match(/(\d|[a-z])+/g)
+      if (!list) return
+      const set = list
+        .map(l => l)
+        .join('')
+        .split('')
+      const numbers = [...new Set(set)]
+      if (numbers.length !== 2) return
+
+      await status.CarryoverCalculation(numbers, alpha, channel)
+      return 'Carryover calculation'
+    }
+
     case /\/_(\d|[a-z])+$/i.test(content): {
       const list = content.match(/(\d|[a-z])+/g)
       if (!list) return

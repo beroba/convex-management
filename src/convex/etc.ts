@@ -16,16 +16,15 @@ import {User, Json} from '../util/type'
  */
 export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.Message) => {
   // 持越秒数を計算
-  const a = overCalc(HP, A, B)
-  const b = overCalc(HP, B, A)
+  const a = OverCalc(HP, A, B)
+  const b = OverCalc(HP, B, A)
 
   // prettier-ignore
   const text = [
     '```m',
-    `A ${a}s`,
-    `B ${b}s`,
+    `A: ${a >= 90 ? '90秒(フル)' : a + '秒'}`,
+    `B: ${b >= 90 ? '90秒(フル)' : b + '秒'}`,
     '```',
-    'ダメージの高い方を先に通した方が持越時間が長くなるわよ！',
   ].join('\n')
   msg.reply(text)
 }
@@ -38,7 +37,7 @@ export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.
  * @param b BのHP
  * @return 計算結果
  */
-const overCalc = (HP: number, a: number, b: number): number => {
+export const OverCalc = (HP: number, a: number, b: number): number => {
   return Math.ceil(90 - (((HP - a) * 90) / b - 20))
 }
 
