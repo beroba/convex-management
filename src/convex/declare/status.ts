@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
+import Settings from 'const-settings'
 import * as command from './command'
 import * as list from './list'
 import * as lapAndBoss from '../lapAndBoss'
@@ -58,7 +59,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   const damage: Damage = {
     name: member.name,
     id: member.id,
-    num: 0,
+    num: '0',
     exclusion: false,
     flag: 'none',
     text: content,
@@ -176,4 +177,34 @@ export const ExpectRemainingHP = (HP: number, total: number): number => {
 export const CalcCarryOver = (HP: number, damage: number): string => {
   const calc = Math.ceil((1 - HP / damage) * 90 + 20)
   return HP <= damage ? `${calc >= 90 ? '90秒(フル)' : calc + '秒'}` : '不可'
+}
+
+/**
+ * 通しの通知とチェックを付ける
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
+  if (!dList.length) return
+
+  const idList = dList.filter(l => l?.flag !== 'check').map(l => l?.id)
+  const mentions = idList.map(id => `<@!${id}>`).join(' ')
+
+  damages = damages.map(d => {
+    const id = idList.find(id => id === d.id)
+    if (!id) return d
+
+    d.flag = 'check'
+    return d
+  })
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
+
+  const msg = await channel.send(`${mentions} 通し！`)
+  await msg.react(Settings.EMOJI_ID.SUMI)
 }

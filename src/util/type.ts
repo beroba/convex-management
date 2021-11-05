@@ -140,7 +140,7 @@ export type DamageFlag = 'ok' | 'ng' | 'check' | 'none'
 export type Damage = {
   name: string
   id: string
-  num: number
+  num: string
   exclusion: boolean
   flag: DamageFlag
   text: string

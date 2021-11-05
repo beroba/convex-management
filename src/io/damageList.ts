@@ -28,12 +28,13 @@ export const UpdateBoss = async (alpha: AtoE, damage: Damage[]): Promise<Damage[
  * @return ダメージ一覧
  */
 const numbering = (damage: Damage[]): Damage[] => {
+  const nums = '123456789abcdefghijklmnopqrstuvwxyz'.split('')
   return damage
     .sort((a, b) => b.damage - a.damage)
     .map((d, i) => ({
       name: d.name,
       id: d.id,
-      num: i + 1,
+      num: nums[i],
       exclusion: d.exclusion,
       flag: d.flag,
       text: d.text,

@@ -46,8 +46,7 @@ const damage = async (interaction: Discord.ButtonInteraction, idList: string[]):
     if (d.id !== interaction.user.id) return d
 
     // トグルするように実装
-    if (d.flag === 'check') {
-    } else if (d.flag === 'none') {
+    if (d.flag === 'check' || d.flag === 'none') {
       d.flag = flag
     } else if (d.flag === 'ok') {
       d.flag = flag === 'ok' ? 'none' : flag === 'ng' ? 'ng' : 'ok'
