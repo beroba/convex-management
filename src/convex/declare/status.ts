@@ -27,7 +27,7 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
 
   // コマンドの処理
   if (msg.content.charAt(0) === '/') {
-    await command.Process(msg, content, alpha)
+    await command.Process(content, alpha)
     await util.Sleep(100)
     msg.delete()
     return
@@ -273,6 +273,9 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
 
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
+
+  // メッセージを削除する際に残像が残るので追加
+  await util.Sleep(1000)
 }
 
 /**
