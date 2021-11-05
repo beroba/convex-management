@@ -122,6 +122,49 @@ export type Status = {
 export type Member = User & Status
 
 /**
+ * [ok|ng|check|none]の型
+ */
+export type DamageFlag = 'ok' | 'ng' | 'check' | 'none'
+
+/**
+ * ダメージ報告の内容
+ * @property name ユーザーの名前
+ * @property id ユーザーのID
+ * @property num 凸報告の順番
+ * @property flag ダメージのフラグ
+ * @property text ダメージ報告のテキスト
+ * @property damage ダメージの値
+ * @property time 残り秒数の値
+ * @property over 持越秒数の値
+ */
+export type Damage = {
+  name: string
+  id: string
+  num: string
+  exclusion: boolean
+  flag: DamageFlag
+  text: string
+  damage: number
+  time: number
+}
+
+/**
+ * ダメージ報告のリスト
+ * @property a 1ボスのダメージ報告
+ * @property b 2ボスのダメージ報告
+ * @property c 3ボスのダメージ報告
+ * @property d 4ボスのダメージ報告
+ * @property e 5ボスのダメージ報告
+ */
+export type DamageList = {
+  a: Damage[]
+  b: Damage[]
+  c: Damage[]
+  d: Damage[]
+  e: Damage[]
+}
+
+/**
  * キャルステータスのjson形式
  */
 export type Json = {[key: string]: string}

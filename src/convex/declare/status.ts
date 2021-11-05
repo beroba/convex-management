@@ -1,43 +1,115 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as command from './command'
+import * as list from './list'
+import * as etc from '../etc'
 import * as lapAndBoss from '../lapAndBoss'
 import * as situation from '../situation'
 import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
-import {AtoE, Current} from '../../util/type'
+import * as send from '../../util/send'
+import {AtoE, Current, Damage} from '../../util/type'
 
 /**
- * ボスの状態を変更する
+ * 凸宣言に入力されたメッセージを処理する
+ * 必ずメッセージは削除する
+ * @param msg DiscordからのMessage
  * @param alpha ボス番号
- * @param state 現在の状況
- * @param channel 凸宣言のチャンネル
  */
-export const Update = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  state ??= await current.Fetch()
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+export const Process = async (msg: Discord.Message, alpha: AtoE) => {
+  let content = util.Format(msg.content)
 
-  const HP = state[alpha].hp
+  // @とsが両方ある場合は@を消す
+  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
 
-  // 現在のボスのHPを取得
-  const maxHP = Settings.STAGE[state.stage].HP[alpha]
+  // コマンドの処理
+  if (msg.content.charAt(0) === '/') {
+    await command.Process(msg, content, alpha)
+    await util.Sleep(100)
+    msg.delete()
+    return
+  }
 
-  const percent = Math.ceil(20 * (HP / maxHP))
-  const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
+  const damages = await addDamage(msg, content, alpha)
+  if (damages) {
+    await list.SetDamage(alpha, undefined, undefined, damages)
+  }
 
-  const damage = await totalDamage(channel)
+  await util.Sleep(100)
+  msg.delete()
+}
 
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].STATUS)
-  const text = [
-    'ボス状況',
-    '```m',
-    `${state[alpha].lap}周目 ${state[alpha].name}`,
-    `${bar} ${HP}/${maxHP}`,
-    `ダメージ合計: ${damage}, 予想残りHP: ${expectRemainingHP(HP, damage)}`,
-    '```',
-  ].join('\n')
-  await msg.edit(text)
+/**
+ * ダメージ報告のメッセージをダメージ一覧に追加する
+ * @param msg DiscordからのMessage
+ * @param content ダメージ報告のメッセージ
+ * @param alpha ボス番号
+ * @return ダメージ一覧
+ */
+const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Promise<Option<Damage[]>> => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
+
+  // 上書きできるように前のダメージを消す
+  damages = damages.filter(d => d.id !== member.id)
+
+  const damage: Damage = {
+    name: member.name,
+    id: member.id,
+    num: '0',
+    exclusion: false,
+    flag: 'none',
+    text: content,
+    damage: fetchDamage(content),
+    time: fetchTime(content),
+  }
+  damages = [...damages, damage]
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+
+  return damages
+}
+
+/**
+ * メッセージからダメージだけを取りだす
+ * @param content ダメージ報告のメッセージ
+ * @return ダメージ
+ */
+const fetchDamage = (content: string): number => {
+  const list = content
+    .replace(/\d*(s|秒)/gi, '')
+    .trim()
+    .match(/[\d]+/g)
+
+  // リストがnullなら0ダメージ
+  if (!list) return 0
+
+  // リストの中から1番大きい値を返す
+  return Math.max(...list.map(Number))
+}
+
+/**
+ * メッセージから秒数だけを取りだす
+ * @param content ダメージ報告のメッセージ
+ * @return 秒数
+ */
+const fetchTime = (content: string): number => {
+  const time = content.match(/\d*(s|秒)/gi)
+
+  // timeがnullなら0秒
+  if (!time) return 0
+
+  // リストの中から先頭の値を返す
+  return time
+    .map(d => d)
+    .first()
+    .replace(/(s|秒)/gi, '')
+    .to_n()
 }
 
 /**
@@ -65,7 +137,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
   // HPの変更
   state = await lapAndBoss.UpdateHP(hp.to_n(), alpha, state)
 
-  await Update(alpha, state)
+  await list.SetDamage(alpha, state)
 
   const members = await status.Fetch()
   situation.Report(members)
@@ -75,88 +147,166 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
 
 /**
  * ダメージ報告の合計ダメージを計算する
- * @param channel 凸宣言のチャンネル
+ * @param damage ダメージ一覧
  * @return 合計ダメージ
  */
-const totalDamage = async (channel: Discord.TextChannel): Promise<number> => {
-  // 全員のダメージ報告からダメージをリストにして取り出す
-  const list = (await channel.messages.fetch())
-    .map(m => m)
-    .filter(m => !m.author.bot)
-    .map(m => {
-      let content = util.Format(m.content)
-      // @とsが両方ある場合は@を消す
-      content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
-
-      // ダメージだけ取りだす
-      const list = content
-        .replace(/\d*(s|秒)/gi, '')
-        .trim()
-        .match(/[\d]+/g)
-
-      // リストがnullなら終了
-      if (!list) return
-
-      // リストの中から1番大きい値を返す
-      return Math.max(...list.map(Number))
-    })
-    .map(Number)
-    .map(n => (Number.isNaN(n) ? 0 : n)) // NaNが混ざってたら0に変換
-
-  // リストにダメージがある場合は合計値、ない場合は0を代入
-  return list.length && list.reduce((a, b) => a + b)
+export const TotalDamage = async (damages: Damage[]): Promise<number> => {
+  const list = damages.filter(d => !d.exclusion)
+  // ダメージ一覧がない場合は0を返す
+  return list.length && list.map(d => d.damage).reduce((a, b) => a + b)
 }
 
 /**
  * 予想残りHPを計算する
  * @param HP 現在のHP
- * @param damage ダメージ報告の合計ダメージ
+ * @param total 合計ダメージ
  * @return 残りHP
  */
-const expectRemainingHP = (HP: number, damage: number): number => {
+export const ExpectRemainingHP = (HP: number, total: number): number => {
   // 残りHPを計算
-  const hp = HP - damage
+  const hp = HP - total
 
   // 0以下なら0にする
   return hp >= 0 ? hp : 0
 }
 
 /**
- * 凸宣言のメッセージを削除した際に残りHPの計算を行う
- * @param msg DiscordからのMessage
- * @return 削除処理の実行結果
+ * 予想残りHPを計算する
+ * @param HP 現在のHP
+ * @param damage ダメージ
+ * @return 持越秒数
  */
-export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isBot = msg.member?.user.bot
-  if (isBot) return
-
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
-  ) as Option<AtoE>
-  if (!alpha) return
-
-  Update(alpha)
-
-  return 'Calculate the HP Delete'
+export const CalcCarryOver = (HP: number, damage: number): string => {
+  const calc = Math.ceil((1 - HP / damage) * 90 + 20)
+  return HP <= damage ? `${calc >= 90 ? '90秒(フル)' : calc + '秒'}` : '不可'
 }
 
 /**
- * 凸宣言のメッセージを編集した際に残りHPの計算を行う
- * @param msg DiscordからのMessage
- * @return 削除処理の実行結果
+ * ランダム選択をする
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
  */
-export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
-  const isBot = msg.member?.user.bot
-  if (isBot) return
+export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
 
-  // チャンネルのボス番号を取得
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === msg.channel.id
-  ) as Option<AtoE>
-  if (!alpha) return
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  if (!dList.length) return
 
-  Update(alpha)
+  const idList = dList.map(d => d.id)
+  const names = dList.map(d => d.name).join(' or ')
 
-  return 'Calculate the HP Edit'
+  const rand = send.CreateRandNumber(idList.length)
+
+  // prettier-ignore
+  const text = [
+    `${names}`,
+    `<@!${idList[rand]}>`,
+  ].join('\n')
+
+  const msg = await channel.send(text)
+  await msg.react(Settings.EMOJI_ID.SUMI)
+}
+
+/**
+ * 持越計算をする
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  const state = await current.Fetch()
+  let damages = await damageList.FetchBoss(alpha)
+
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  if (!dList.length) return
+
+  const HP = state[alpha].hp
+
+  const A = dList.first()
+  if (A.damage === 0) return
+  const B = dList.last()
+  if (B.damage === 0) return
+
+  // ボスを倒せない場合は終了
+  if (A.damage + B.damage < HP) return
+
+  const a = etc.OverCalc(HP, A.damage, B.damage)
+  const b = etc.OverCalc(HP, B.damage, A.damage)
+
+  // prettier-ignore
+  const text = [
+    '```m',
+    `${A.name}: ${a >= 90 ? '90秒(フル)' : a + '秒'}`,
+    `${B.name}: ${b >= 90 ? '90秒(フル)' : b + '秒'}`,
+    '```',
+  ].join('\n')
+
+  const msg = await channel.send(text)
+  await msg.react(Settings.EMOJI_ID.SUMI)
+}
+
+/**
+ * ダメージ計算の除外設定をする
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  if (!dList.length) return
+
+  const idList = dList.map(d => d.id)
+
+  damages = damages.map(d => {
+    const id = idList.find(id => id === d.id)
+    if (!id) return d
+
+    d.exclusion = !d.exclusion
+    return d
+  })
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
+}
+
+/**
+ * 通しの通知とチェックを付ける
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  if (!dList.length) return
+
+  const idList = dList.map(l => l.id)
+  const mentions = dList
+    .filter(d => d.flag !== 'check')
+    .map(d => `<@!${d.id}>`)
+    .join(' ')
+
+  damages = damages.map(d => {
+    const id = idList.find(id => id === d.id)
+    if (!id) return d
+
+    d.flag = d.flag === 'check' ? 'none' : 'check'
+    return d
+  })
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
+
+  if (!mentions.length) return
+
+  const msg = await channel.send(`${mentions} 通し！`)
+  await msg.react(Settings.EMOJI_ID.SUMI)
 }

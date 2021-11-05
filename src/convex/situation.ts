@@ -218,7 +218,7 @@ const createBossText = async (members: Member[], state: Current): Promise<string
   const list = 'abcde'.split('').map(a => {
     // 凸宣言者一覧を取得
     const declares = members
-      .filter(m => m.declare === a)
+      .filter(m => new RegExp(a, 'gi').test(m.declare))
       .map(m => {
         const convex = m.convex
         const over = '+'.repeat(m.over)

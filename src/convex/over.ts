@@ -51,15 +51,14 @@ export const React = (msg: Discord.Message): Option<string> => {
  */
 export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
-  const msgs = (await channel.messages.fetch()).map(m => m)
-
-  msgs
+  const msgs = (await channel.messages.fetch())
     .map(m => m)
     .filter(m => m.author.id === member?.id) // 同じメンバーで絞る
-    .forEach(m => {
-      if (!m) return
-      m.delete()
-    })
+    .filter(m => m)
+  for (const m of msgs) {
+    await util.Sleep(100)
+    m.delete()
+  }
 
   console.log('Delete carryover message')
 }
@@ -69,14 +68,11 @@ export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
  */
 export const AllDeleteMsg = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
-  const msgs = await channel.messages.fetch()
-
-  msgs
-    .map(m => m)
-    .forEach(m => {
-      if (!m) return
-      m.delete()
-    })
+  const msgs = (await channel.messages.fetch()).map(m => m).filter(m => m)
+  for (const m of msgs) {
+    await util.Sleep(100)
+    m.delete()
+  }
 
   console.log('Delete carryover message')
 }

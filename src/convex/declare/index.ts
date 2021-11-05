@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as status from './status'
+import * as damageList from '../../io/damageList'
 import * as member from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current, Member} from '../../util/type'
@@ -24,31 +25,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
 
-  let content = util.Format(msg.content)
+  await status.Process(msg, alpha)
 
-  // @とsが両方ある場合は@を消す
-  content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
-
-  const isKill = content === 'kill'
-  if (isKill) {
-    content = '@0'
-  }
-
-  // @が入っている場合はHPの変更をする
-  if (/@\d/.test(content)) {
-    await status.RemainingHPChange(content, alpha)
-    msg.delete()
-
-    return 'Remaining HP change'
-  }
-
-  msg.react(Settings.EMOJI_ID.TOOSHI)
-  msg.react(Settings.EMOJI_ID.MOCHIKOSHI)
-  msg.react(Settings.EMOJI_ID.TAIKI)
-
-  await status.Update(alpha)
-
-  return 'Calculate the HP React'
+  return 'Report damage or execute command'
 }
 
 /**
@@ -59,12 +38,15 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 export const NextBoss = async (alpha: AtoE, state: Current) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  await status.Update(alpha, state, channel)
   await list.SetPlan(alpha, state, channel)
 
   const members = await undeclare(alpha)
 
   await list.SetUser(alpha, channel, members)
+
+  const damages = await damageList.DeleteBoss(alpha)
+  await list.SetDamage(alpha, state, channel, damages)
+
   await messageDelete(channel)
 }
 
@@ -77,8 +59,8 @@ const undeclare = async (alpha: AtoE): Promise<Member[]> => {
   let members = await member.Fetch()
 
   members = members.map(m => {
-    if (m.declare === alpha) {
-      m.declare = ''
+    if (new RegExp(alpha, 'gi').test(m.declare)) {
+      m.declare = m.declare.replace(alpha, '')
     }
     return m
   })
@@ -93,17 +75,16 @@ const undeclare = async (alpha: AtoE): Promise<Member[]> => {
  * @param channel 凸宣言のチャンネル
  */
 const messageDelete = async (channel: Discord.TextChannel) => {
-  const msgs = await channel.messages.fetch()
-
-  await Promise.all(
-    msgs
-      .map(m => m)
-      .filter(m => !m.author.bot)
-      .map(async m => {
-        if (!m) return
-        await m.delete()
-      })
-  )
+  // sumiの付いているメッセージを全て削除
+  const msgs = (await channel.messages.fetch())
+    .map(m => m)
+    .filter(m => m.author.id === Settings.CAL_ID)
+    .filter(m => m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
+    .filter(m => m)
+  for (const m of msgs) {
+    await util.Sleep(100)
+    m.delete()
+  }
 }
 
 /**
@@ -111,32 +92,54 @@ const messageDelete = async (channel: Discord.TextChannel) => {
  * @param member メンバーの状態
  * @param user リアクションを外すユーザー
  */
-export const Done = async (alpha: AtoE, user: Discord.User) => {
+export const Done = async (alpha: AtoE, id: string) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
+  await list.SetUser(alpha, channel)
 
-  msg.reactions.cache.map(r => r.users.remove(user))
-
-  list.SetUser(alpha, channel)
-
-  const msgs = (await channel.messages.fetch()).map(m => m)
-
-  // 凸宣言完了者のメッセージを全て削除
-  msgs
-    .filter(m => m.author.id === user.id)
-    .forEach(m => {
-      if (!m) return
-      m.delete()
-    })
-
-  // 凸宣言完了者のキャルの返信を全て削除
-  msgs
-    .filter(m => m.author.id === Settings.CAL_ID)
-    .filter(m => RegExp(user.id).test(m.content))
-    .forEach(m => {
-      if (!m) return
-      m.delete()
-    })
+  // ダメージ集計にチェックを付ける
+  let damages = await damageList.FetchBoss(alpha)
+  damages = damages.map(d => {
+    if (d.id !== id) return d
+    d.exclusion = true
+    d.flag = 'check'
+    return d
+  })
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
 
   console.log('Completion of convex declaration')
+}
+
+/**
+ * 済が付いているキャルのメッセージにリアクションしたら削除する
+ * @param react DiscordからのReaction
+ * @param user リアクションしたユーザー
+ * @return 削除処理の実行結果
+ */
+export const Sumi = async (react: Discord.MessageReaction, user: Discord.User): Promise<Option<string>> => {
+  const isBot = user.bot
+  if (isBot) return
+
+  const isEmoji = react.emoji.id === Settings.EMOJI_ID.SUMI
+  if (!isEmoji) return
+
+  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
+    key => Settings.DECLARE_CHANNEL_ID[key] === react.message.channel.id
+  ) as Option<AtoE>
+  if (!alpha) return
+
+  await react.message.channel.messages.fetch(react.message.id)
+
+  const msg = <Discord.Message>react.message
+  if (msg.author.id !== Settings.CAL_ID) return
+
+  // キャルともう1人がリアクションしていない場合
+  if (react.count < 2) {
+    await react.remove()
+    return
+  }
+
+  react.message.delete()
+
+  return 'Delete completed message'
 }

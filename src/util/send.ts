@@ -81,7 +81,7 @@ export const AorB = (msg: Discord.Message): Option<string> => {
     emojiList
   )
 
-  const rand = createRandNumber(list.length)
+  const rand = CreateRandNumber(list.length)
   msg.reply(list[rand])
 
   // 良からぬ事を書いた人を確認する為にログを残す
@@ -119,7 +119,7 @@ const replaceEmoji = (list: string[], emoji: Option<string[]>): string[] => {
  * @param n 乱数の生成範囲
  * @return 乱数
  */
-const createRandNumber = (n: number): number => {
+export const CreateRandNumber = (n: number): number => {
   return require('get-random-values')(new Uint8Array(1))[0] % n
 }
 
@@ -217,7 +217,7 @@ export const KusaGacha = async (msg: Discord.Message): Promise<Option<string>> =
    * 草をランダムで送信する
    */
   const sendKusa = () => {
-    const rand = createRandNumber(items.length)
+    const rand = CreateRandNumber(items.length)
     msg.reply({
       content: `${items[rand]}:heavy_check_mark:`,
       files: [`./assets/kusa/${items[rand]}.png`],
@@ -253,7 +253,7 @@ export const SendUsoOre = async (msg: Discord.Message): Promise<Option<string>> 
   {
     const match = /読み?/.test(msg.content)
     if (match) {
-      const rand = createRandNumber(list.length)
+      const rand = CreateRandNumber(list.length)
       msg.reply(list.splice(rand, 1).first())
 
       return 'Send UsoOre'
@@ -338,11 +338,11 @@ const sendTweetLottery = (list: string[], msg: Discord.Message) => {
   const c = msg.content.replace(/[^1-5]/g, '').to_n()
   if (c) {
     util.Range(c > 5 ? 5 : c).forEach(c => {
-      const rand = createRandNumber(list.length)
+      const rand = CreateRandNumber(list.length)
       msg.reply(`${c + 1}:heavy_check_mark:\n${list.splice(rand, 1).first().split('\n').last()}`)
     })
   } else {
-    const rand = createRandNumber(list.length)
+    const rand = CreateRandNumber(list.length)
     msg.reply(list.splice(rand, 1).first().split('\n').last())
   }
 }

@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as situation from '../situation'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
@@ -19,17 +20,65 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
   if (!interaction.isButton()) return
 
   const idList = interaction.customId.split('-')
-  if (idList.first() !== 'boss') return
+  if (idList.first() === 'damage') {
+    return damage(interaction, idList)
+  } else if (idList.first() === 'boss') {
+    return boss(interaction, idList)
+  }
+}
 
+/**
+ * ダメージの処理
+ * @param interaction ボタンのインタラクション
+ * @param idList ボタンのidリスト
+ * @return 実行結果の文字列
+ */
+const damage = async (interaction: Discord.ButtonInteraction, idList: string[]): Promise<string> => {
   // インタラクション失敗を回避
   interaction.deferUpdate()
 
   const id = idList.last()
-  if (id === 'cancel') {
-    cancel(interaction)
+  const alpha = <AtoE>id[0]
+  const flag = id[1] === '+' ? 'ok' : id[1] === '*' ? 'ng' : 'none'
+
+  let damages = await damageList.FetchBoss(alpha)
+  damages = damages.map(d => {
+    if (d.id !== interaction.user.id) return d
+
+    // トグルするように実装
+    if (d.flag === 'check' || d.flag === 'none') {
+      d.flag = flag
+    } else if (d.flag === 'ok') {
+      d.flag = flag === 'ok' ? 'none' : flag === 'ng' ? 'ng' : 'ok'
+    } else if (d.flag === 'ng') {
+      d.flag = flag === 'ng' ? 'none' : flag === 'ok' ? 'ok' : 'ng'
+    }
+
+    return d
+  })
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, undefined, damages)
+
+  return 'Flag change'
+}
+
+/**
+ * ボスの処理
+ * @param interaction ボタンのインタラクション
+ * @param idList ボタンのidリスト
+ * @return 実行結果の文字列
+ */
+const boss = async (interaction: Discord.ButtonInteraction, idList: string[]): Promise<string> => {
+  // インタラクション失敗を回避
+  interaction.deferUpdate()
+
+  const id = idList.last()
+  if (/\*/.test(id)) {
+    await cancel(id, interaction)
     return 'Deletion of convex declaration'
   } else {
-    add(id, interaction)
+    await add(id, interaction)
     return 'Addition of convex declaration'
   }
 }
@@ -38,22 +87,21 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
  * 凸宣言を削除する
  * @param interaction インタラクションの情報
  */
-const cancel = async (interaction: Discord.ButtonInteraction) => {
+const cancel = async (id: string, interaction: Discord.ButtonInteraction) => {
   const member = await status.FetchMember(interaction.user.id)
   if (!member) return
 
-  const alpha = Object.keys(Settings.DECLARE_CHANNEL_ID).find(
-    key => Settings.DECLARE_CHANNEL_ID[key] === interaction.channel?.id
-  ) as Option<AtoE>
-  if (!alpha) return
+  const alpha = id.replace('*', '') as AtoE
 
   // 凸状況を更新
-  member.declare = ''
-  member.carry = false
+  member.declare = member.declare.replace(alpha, '')
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await list.SetUser(alpha, channel, members)
+
+  const damages = await damageList.DeleteUser(alpha, member.id)
+  await list.SetDamage(alpha, undefined, channel, damages)
 
   situation.Report(members)
   deleteAttendance(interaction)
@@ -75,9 +123,10 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
     if (!member.over) return
     member.carry = true
   } else {
-    member.carry = false
+    // 3凸目で持越がある場合は持越
+    member.carry = !member.convex && member.over ? true : false
   }
-  member.declare = alpha
+  member.declare = [...new Set(`${member.declare}${alpha}`.split(''))].join('')
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])

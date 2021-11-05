@@ -1,7 +1,7 @@
 import Settings from 'const-settings'
 import * as io from './redis'
 import * as bossTable from './bossTable'
-import * as declare from '../convex/declare/status'
+import * as declare from '../convex/declare/list'
 import {AtoE, Current, CurrentBoss} from '../util/type'
 
 /**
@@ -73,7 +73,7 @@ const updateLap = (state: Current): Current => {
       state[<AtoE>a].hp = hp
 
       // 全ボスの凸宣言を更新
-      declare.Update(<AtoE>a, state)
+      declare.SetDamage(<AtoE>a, state)
     })
   }
 

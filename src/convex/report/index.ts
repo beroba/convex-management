@@ -39,9 +39,8 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return '3 Convex is finished'
   }
 
-  // 3凸目の処理を実行
-  let result: boolean
-  ;[result, member_1] = await threeConvexProcess(member_1, msg)
+  // 3凸終わっている場合の処理
+  const result = await threeConvexProcess(member_1, msg)
   if (result) return '3 Convex is finished'
 
   // 持越がないのに持越凸しようとした場合
@@ -50,13 +49,20 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Not carry over'
   }
 
-  const carry = member_1.carry
-  const alpha = <Option<AtoE>>member_1.declare
-
-  if (!alpha) {
+  if (!member_1.declare.length) {
     msg.reply('凸報告の前に凸宣言をしてね')
     return 'Not declared convex'
   }
+
+  if (member_1.declare.length > 1) {
+    member_1.declare = ''
+    await status.UpdateMember(member_1)
+    msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
+    return 'Duplicate convex declaration'
+  }
+
+  const carry = member_1.carry
+  const alpha = <AtoE>member_1.declare
 
   let content = util.Format(msg.content)
 
@@ -92,7 +98,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   situation.Report(members, state)
-  declare.Done(alpha, msg.author)
+  declare.Done(alpha, msg.author.id)
   declareList.SetPlan(alpha, state)
 
   overDelete(member_2, carry, msg)
@@ -106,30 +112,21 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 3凸目で持越がない場合は凸を終了状態に変更する。
- * そうでない場合は持越凸状態にする
+ * 凸が終わっている場合は終了させる
  * @param member メンバーの状態
  * @param msg DiscordからのMessage
- * @return 凸が終わっているかの真偽値とメンバーの状態
+ * @return 凸が終わっているかの真偽値
  */
-const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise<[boolean, Member]> => {
-  // 3凸目でない場合は終了
-  if (member.convex !== 0) return [false, member]
+const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise<boolean> => {
+  if (member.convex || member.over) return false
 
-  // 既に凸が終わっていた場合
-  if (member.over === 0) {
-    member.end = true
-    const members = await status.UpdateMember(member)
+  member.end = true
+  const members = await status.UpdateMember(member)
 
-    const n = members.filter(s => s.end).length + 1
-    await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
+  const n = members.filter(s => s.end).length + 1
+  await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
-    return [true, member]
-  }
-
-  member.carry = true
-
-  return [false, member]
+  return true
 }
 
 /**
