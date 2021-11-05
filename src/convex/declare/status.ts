@@ -9,6 +9,7 @@ import * as current from '../../io/current'
 import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
+import * as send from '../../util/send'
 import {AtoE, Current, Damage} from '../../util/type'
 
 /**
@@ -177,6 +178,34 @@ export const ExpectRemainingHP = (HP: number, total: number): number => {
 export const CalcCarryOver = (HP: number, damage: number): string => {
   const calc = Math.ceil((1 - HP / damage) * 90 + 20)
   return HP <= damage ? `${calc >= 90 ? '90秒(フル)' : calc + '秒'}` : '不可'
+}
+
+/**
+ * ランダム選択をする
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
+
+  // 存在しない番号は除外
+  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n)
+  if (!dList.length) return
+
+  const idList = dList.map(l => l?.id)
+  const names = dList.map(l => l?.name).join(' or ')
+
+  const rand = send.CreateRandNumber(idList.length)
+
+  // prettier-ignore
+  const text = [
+    `${names}`,
+    `<@!${idList[rand]}>`,
+  ].join('\n')
+
+  const msg = await channel.send(text)
+  await msg.react(Settings.EMOJI_ID.SUMI)
 }
 
 /**

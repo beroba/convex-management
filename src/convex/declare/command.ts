@@ -2,11 +2,8 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as status from './status'
 import * as lapAndBoss from '../lapAndBoss'
-// import * as command from '../../command'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
-
-// const args = command.ExtractArgument(_command, _content)
 
 /**
  * 凸宣言のコマンドを処理する
@@ -25,13 +22,27 @@ export const Process = async (msg: Discord.Message, content: string, alpha: AtoE
       return 'Remaining HP change'
     }
 
-    case /\/(l|lap)/i.test(content): {
+    case /\/(lap|l)/i.test(content): {
       const list = content.match(/\d+/g)
       if (!list) return
       const lap = list.map(l => l).first()
 
       await lapAndBoss.UpdateLap(lap.to_n(), alpha)
       return 'Change boss'
+    }
+
+    case /\/(or|o)/i.test(content): {
+      const list = content.replace(/\/(or|o)/i, '').match(/(\d|[a-z])+/g)
+      if (!list) return
+      const set = list
+        .map(l => l)
+        .join('')
+        .split('')
+      const numbers = [...new Set(set)]
+      if (numbers.length < 2) return
+
+      await status.RandomSelection(numbers, alpha, channel)
+      return 'Random selection'
     }
 
     case /\/_(\d|[a-z])+$/i.test(content): {
