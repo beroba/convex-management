@@ -275,7 +275,7 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
   await list.SetDamage(alpha, undefined, channel, damages)
 
   // メッセージを削除する際に残像が残るので追加
-  await util.Sleep(1000)
+  await util.Sleep(500)
 }
 
 /**
