@@ -79,8 +79,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!member_2) return
 
   let state = await current.Fetch()
+  const overMsgs = await over.GetAllUserMsg(member_2.id)
 
-  content = await peportConfirm(members, member_2, state, alpha, content, msg)
+  content = await peportConfirm(members, member_2, state, alpha, overMsgs, content, msg)
 
   // @が入っている場合、HPの変更
   if (/@\d/.test(content)) {
@@ -93,16 +94,11 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     list.SituationEdit()
   }
 
-  // 3凸終了している場合、持越を全て削除
-  if (member_2.end) {
-    over.DeleteMsg(msg.member)
-  }
+  overDelete(member_2, carry, overMsgs)
 
   situation.Report(members, state)
   declare.Done(alpha, msg.author.id)
   declareList.SetPlan(alpha, state)
-
-  overDelete(member_2, carry, msg)
 
   msg.react(Settings.EMOJI_ID.TORIKESHI)
   roleDelete(member_2, msg)
@@ -136,6 +132,7 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
  * @param member メンバーの状態
  * @param state 現在の状況
  * @param alpha ボスの番号
+ * @param overMsgs メンバーの持越状況のメッセージ一覧
  * @param content 凸報告のメッセージ
  * @param msg DiscordからのMessage
  */
@@ -144,11 +141,13 @@ const peportConfirm = async (
   member: Member,
   state: Current,
   alpha: AtoE,
+  overMsgs: Discord.Message[],
   content: string,
   msg: Discord.Message
 ): Promise<string> => {
   const damages = await damageList.FetchBoss(alpha)
   damages
+  overMsgs
 
   const boss = state[alpha]
 
@@ -166,7 +165,8 @@ const peportConfirm = async (
   // 何人3凸終了しているか確認
   const endN = members.filter(s => s.end).length
 
-  // prettier-ignore
+  // channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
+
   const text = [
     '```m',
     `${boss.lap}周目 ${boss.name} ${hp}/${maxHP}`,
@@ -181,22 +181,23 @@ const peportConfirm = async (
 }
 
 /**
- * 持越が0の場合、持越状況のメッセージを全て削除する
- * 持越が1-2の場合、#進行-連携に#持越状況を整理するように催促する
+ * 3凸終了時または持越凸の際にメッセージが1つの場合、持越状況のメッセージを削除する
  * @param member メンバーの状態
  * @param carry 持越か否かの真偽値
- * @param msg DiscordからのMessage
+ * @param overMsgs メンバーの持越状況のメッセージ一覧
  */
-const overDelete = (member: Member, carry: boolean, msg: Discord.Message) => {
+const overDelete = (member: Member, carry: boolean, overMsgs: Discord.Message[]) => {
+  // 3凸終了している場合、持越を全て削除
+  if (member.end) {
+    over.DeleteAllUserMsg(overMsgs)
+  }
+
   // 持越凸でない場合は終了
   if (!carry) return
 
-  // 持越が1つ、2-3つの場合で処理を分ける
-  if (member.over === 0) {
-    over.DeleteMsg(msg.member)
-  } else if (/[1-2]/.test(member.over.to_s())) {
-    const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-    channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
+  // 持越状況のメッセージが1つの場合は削除
+  if (overMsgs.length === 1) {
+    over.DeleteAllUserMsg(overMsgs)
   }
 }
 

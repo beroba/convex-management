@@ -46,15 +46,20 @@ export const React = (msg: Discord.Message): Option<string> => {
 }
 
 /**
- * メンバーの持越状況を全て削除する
- * @param member 削除したいメンバーの情報
+ * 渡されたメンバーidの持越状況のメッセージを全て取得
+ * @param id 取得したいメンバーのid
  */
-export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
+export const GetAllUserMsg = async (id: string): Promise<Discord.Message[]> => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
-  const msgs = (await channel.messages.fetch())
-    .map(m => m)
-    .filter(m => m.author.id === member?.id) // 同じメンバーで絞る
-    .filter(m => m)
+  const msgs = (await channel.messages.fetch()).map(m => m)
+  return msgs.filter(m => m.author.id === id).filter(m => m)
+}
+
+/**
+ * 渡されたメンバーidの持越状況を全て削除する
+ * @param id 削除したいメンバーのid
+ */
+export const DeleteAllUserMsg = async (msgs: Discord.Message[]) => {
   for (const m of msgs) {
     await util.Sleep(100)
     m.delete()
@@ -66,7 +71,7 @@ export const DeleteMsg = async (member: Option<Discord.GuildMember>) => {
 /**
  * 持越状況を全て削除する
  */
-export const AllDeleteMsg = async () => {
+export const DeleteAllMsg = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   const msgs = (await channel.messages.fetch()).map(m => m).filter(m => m)
   for (const m of msgs) {

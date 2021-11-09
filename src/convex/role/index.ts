@@ -61,7 +61,7 @@ export const RemoveBossRole = async (member: Option<Discord.GuildMember>) => {
 export const ResetAllConvex = () => {
   plan.DeleteAll()
 
-  over.AllDeleteMsg()
+  over.DeleteAllMsg()
 
   // べろばあのクランメンバー一覧を取得
   const clanMembers = util
