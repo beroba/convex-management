@@ -2,6 +2,7 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as declare from '../declare'
 import * as declareList from '../declare/list'
@@ -43,14 +44,14 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const result = await threeConvexProcess(member_1, msg)
   if (result) return '3 Convex is finished'
 
-  // 持越がないのに持越凸しようとした場合
+  // 持越がないのに持越凸しようとした場合 (基本的にありえない)
   if (member_1.carry && !/[1-3]/.test(member_1.over.to_s())) {
     msg.reply('持越がないのに持越凸になってるわ')
     return 'Not carry over'
   }
 
   if (!member_1.declare.length) {
-    msg.reply('凸報告の前に凸宣言をしてね')
+    msg.reply('凸宣言をしてから凸報告をしてね')
     return 'Not declared convex'
   }
 
@@ -66,10 +67,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   let content = util.Format(msg.content)
 
-  const isKill = /^k|kill|きっl/i.test(content)
+  const isKill = /^k|kill|き(っ|l)l/i.test(content)
   if (isKill) {
     // killが入力された場合、`@\d`を`0`に変更
-    content = `${content.replace(/@\d*/, '')}@0`
+    content = `${content.replace(/@\d*/g, '')}@0`
   }
 
   // 凸状況を更新
@@ -79,7 +80,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   let state = await current.Fetch()
 
-  peportConfirm(members, member_2, state, alpha, content, msg)
+  content = await peportConfirm(members, member_2, state, alpha, content, msg)
 
   // @が入っている場合、HPの変更
   if (/@\d/.test(content)) {
@@ -138,14 +139,17 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
  * @param content 凸報告のメッセージ
  * @param msg DiscordからのMessage
  */
-const peportConfirm = (
+const peportConfirm = async (
   members: Member[],
   member: Member,
   state: Current,
   alpha: AtoE,
   content: string,
   msg: Discord.Message
-) => {
+): Promise<string> => {
+  const damages = await damageList.FetchBoss(alpha)
+  damages
+
   const boss = state[alpha]
 
   // 凸報告のメッセージからHPを取得
@@ -171,7 +175,9 @@ const peportConfirm = (
     '```',
   ].join('\n')
 
-  msg.reply(text)
+  await msg.reply(text)
+
+  return content
 }
 
 /**
