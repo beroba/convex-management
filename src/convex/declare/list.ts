@@ -24,7 +24,7 @@ export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.Te
   const text = await plan.CreatePlanText(alpha, state.stage, plans)
 
   // 凸予定の前2行を取り除いて結合
-  await msg.edit('凸予定\n```m\n' + text.split('\n').slice(2).join('\n'))
+  await msg.edit('凸予定\n```ts\n' + text.split('\n').slice(2).join('\n'))
 }
 
 /**

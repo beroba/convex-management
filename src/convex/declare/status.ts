@@ -238,7 +238,7 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
 
   // prettier-ignore
   const text = [
-    '```m',
+    '```ts',
     `${A.name}: ${a >= 90 ? '90秒(フル)' : a + '秒'}`,
     `${B.name}: ${b >= 90 ? '90秒(フル)' : b + '秒'}`,
     '```',

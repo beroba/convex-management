@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
-import {AtoE, Current, Member} from '../../util/type'
+import {AtoE, Current, CurrentBoss, Member} from '../../util/type'
 
 /**
  * 残りの凸状況を報告する
@@ -31,7 +31,7 @@ export const Reply = async (
     warningText(),
     '```ts',
     convexInfo(),
-    bossInfo(),
+    bossInfo(boss, state, HP, maxHP),
     userInfo(members, member),
     '```',
   ].join('\n')
@@ -62,9 +62,18 @@ const convexInfo = (): string => {
  * ボス情報のテキストを作成
  * @return 作成したテキスト
  */
-const bossInfo = (): string => {
-  // `${boss.lap}周目 ${boss.name} ${HP}/${maxHP}`,
-  return [].join('\n')
+const bossInfo = (boss: CurrentBoss, state: Current, HP: number, maxHP: number): string => {
+  const percent = Math.ceil(20 * (HP / maxHP))
+  const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
+
+  const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
+
+  // prettier-ignore
+  return [
+    `${boss.lap}周目 ${boss.name} ${icon}`,
+    `${bar} ${HP}/${maxHP}`,
+    '',
+  ].join('\n')
 }
 
 /**

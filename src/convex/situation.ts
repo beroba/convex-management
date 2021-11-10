@@ -75,7 +75,7 @@ const createWholeText = async (members: Member[], state: Current): Promise<strin
 
   return [
     '全体状況',
-    '```ml',
+    '```ts',
     `${time} ${date.num} 凸状況一覧`,
     `${stage}段階目 残り${nextStage}周`,
     `${state.lap}周目 ${remainingConvex}`,
@@ -231,17 +231,18 @@ const createBossText = async (members: Member[], state: Current): Promise<string
       })
 
     const boss = state[<AtoE>a]
-    const hp = Settings.STAGE[state.stage].HP[a]
+    const HP = boss.hp
+    const maxHP = Settings.STAGE[state.stage].HP[a]
 
-    const percent = Math.ceil(20 * (boss.hp / hp))
+    const percent = Math.ceil(20 * (HP / maxHP))
     const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
 
     const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
 
     return [
-      '```m',
+      '```ts',
       `${boss.lap}周目 ${boss.name} ${icon}`,
-      `${bar} ${boss.hp}/${hp}`,
+      `${bar} ${HP}/${maxHP}`,
       `${declares.length ? declares.join(', ') : ' '}`,
       '```',
     ].join('\n')
