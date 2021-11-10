@@ -23,23 +23,61 @@ export const Reply = async (
 ): Promise<string> => {
   const boss = state[alpha]
 
-  const hp = content ? content.replace(/@/g, '').to_n() : boss.hp
+  const HP = content ? content.replace(/@/g, '').to_n() : boss.hp
   const maxHP = Settings.STAGE[state.stage].HP[alpha]
 
-  // 何人3凸終了しているか確認
-  const endN = members.filter(s => s.end).length
-
-  // channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
-
+  // prettier-ignore
   const text = [
-    '```m',
-    `${boss.lap}周目 ${boss.name} ${hp}/${maxHP}`,
-    `残凸数: ${member.convex}、持越数: ${member.over}`,
-    member.end ? `${endN}人目の3凸終了よ！` : '',
+    warningText(),
+    '```ts',
+    convexInfo(),
+    bossInfo(),
+    userInfo(members, member),
     '```',
   ].join('\n')
 
   await msg.reply(text)
 
   return content
+}
+
+/**
+ * 警告文のテキストを作成
+ * @return 作成したテキスト
+ */
+const warningText = (): string => {
+  // channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
+  return [].join('\n')
+}
+
+/**
+ * 凸情報のテキストを作成
+ * @return 作成したテキスト
+ */
+const convexInfo = (): string => {
+  return [].join('\n')
+}
+
+/**
+ * ボス情報のテキストを作成
+ * @return 作成したテキスト
+ */
+const bossInfo = (): string => {
+  // `${boss.lap}周目 ${boss.name} ${HP}/${maxHP}`,
+  return [].join('\n')
+}
+
+/**
+ * ユーザー情報のテキストを作成
+ * @param members メンバー全員の状態
+ * @param member メンバーの状態
+ * @return 作成したテキスト
+ */
+const userInfo = (members: Member[], member: Member): string => {
+  const endNum = members.filter(s => s.end).length
+  // prettier-ignore
+  return [
+    `残凸数: ${member.convex}、持越数: ${member.over}`,
+    member.end ? `${endNum}人目の3凸終了よ！` : '',
+  ].join('\n')
 }
