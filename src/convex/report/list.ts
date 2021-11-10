@@ -1,9 +1,11 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
+import * as util from '../../util'
 import {AtoE, Current, CurrentBoss, Member} from '../../util/type'
 
 /**
  * 残りの凸状況を報告する
+ * @param msg DiscordからのMessage
  * @param members メンバー全員の状態
  * @param member メンバーの状態
  * @param carry 持越か否かの真偽値
@@ -11,7 +13,6 @@ import {AtoE, Current, CurrentBoss, Member} from '../../util/type'
  * @param alpha ボスの番号
  * @param overMsgs メンバーの持越状況のメッセージ一覧
  * @param content 凸報告のメッセージ
- * @param msg DiscordからのMessage
  */
 export const Reply = async (
   members: Member[],
@@ -22,7 +23,7 @@ export const Reply = async (
   overMsgs: Discord.Message[],
   content: string,
   msg: Discord.Message
-): Promise<string> => {
+) => {
   const boss = state[alpha]
 
   const HP = content ? content.replace(/@/g, '').to_n() : boss.hp
@@ -30,7 +31,7 @@ export const Reply = async (
 
   // prettier-ignore
   const text = [
-    warningText(),
+    warningText(msg),
     '```ts',
     bossInfo(boss, state, HP, maxHP),
     convexInfo(boss, carry, HP),
@@ -39,17 +40,20 @@ export const Reply = async (
   ].join('\n')
 
   await msg.reply(text)
-
-  return content
 }
 
 /**
  * 警告文のテキストを作成
  * @return 作成したテキスト
  */
-const warningText = (): string => {
+const warningText = (msg: Discord.Message): string => {
+  const texts: string[] = []
+
+  util.Format(msg.content)
+
   // channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
-  return [].join('\n')
+
+  return texts.join('\n')
 }
 
 /**

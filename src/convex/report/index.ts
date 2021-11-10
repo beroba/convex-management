@@ -66,8 +66,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const carry = member_1.carry
   const alpha = <AtoE>member_1.declare
 
-  let content = util.Format(msg.content)
-  content = await changeContentToHpOrEmpty(content, member_1, alpha)
+  const content = await fetchHPOrEmpty(member_1, alpha, msg)
 
   // 凸状況を更新
   let members: Member[], member_2: Option<Member>
@@ -77,7 +76,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   let state = await current.Fetch()
   const overMsgs = await over.GetAllUserMsg(member_2.id)
 
-  content = await list.Reply(members, member_2, carry, state, alpha, overMsgs, content, msg)
+  await list.Reply(members, member_2, carry, state, alpha, overMsgs, content, msg)
 
   // @が入っている場合、HPの変更
   if (/@\d/.test(content)) {
@@ -131,13 +130,15 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
 }
 
 /**
- * contentを@HPまたは空にして返す;
- * @param content 凸報告のメッセージ
+ * msgのcontentから@HPまたは空にして返す;
  * @param member メンバーの状態
  * @param alpha ボスの番号
+ * @param msg DiscordからのMessage
  * @return 変更後のcontent
  */
-const changeContentToHpOrEmpty = async (content: string, member: Member, alpha: AtoE): Promise<string> => {
+const fetchHPOrEmpty = async (member: Member, alpha: AtoE, msg: Discord.Message): Promise<string> => {
+  const content = util.Format(msg.content)
+
   // killの場合は@0にする
   if (/^k|kill|き(っ|l)l/i.test(content)) {
     return '@0'
