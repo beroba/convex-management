@@ -89,8 +89,8 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
     '取消を行ったわよ！\n',
     'ボスのHPや周回数が合っているか確認してね',
     'HPが間違っている場合は`/@{HP}`、周回数が間違っている場合は進行役に連絡しなさい！',
-    '```',
-    `残凸数: ${member.convex}、持越数: ${member.over}`,
+    '```ts',
+    `残凸数: ${member.convex}, 持越数: ${member.over}`,
     '```',
   ].join('\n')
   msg.reply(text)

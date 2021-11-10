@@ -77,7 +77,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   let state = await current.Fetch()
   const overMsgs = await over.GetAllUserMsg(member_2.id)
 
-  content = await list.Reply(members, member_2, state, alpha, overMsgs, content, msg)
+  content = await list.Reply(members, member_2, carry, state, alpha, overMsgs, content, msg)
 
   // @が入っている場合、HPの変更
   if (/@\d/.test(content)) {
@@ -117,7 +117,15 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
   const members = await status.UpdateMember(member)
 
   const n = members.filter(s => s.end).length + 1
-  await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
+
+  // prettier-ignore
+  const text = [
+    '```ts',
+    `残凸数: 0, 持越数: 0`,
+    `${n}人目の3凸終了よ！`,
+    '```'
+  ].join('\n')
+  await msg.reply(text)
 
   return true
 }
