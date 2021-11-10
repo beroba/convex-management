@@ -23,11 +23,9 @@ export const Reply = async (
   content: string,
   msg: Discord.Message
 ): Promise<string> => {
-  const damages = await damageList.FetchBoss(alpha)
-  damages
-  overMsgs
-
   const boss = state[alpha]
+
+  content = await ConvertToHP(content, member, alpha)
 
   // 凸報告のメッセージからHPを取得
   let hp: Option<number | string> = content
@@ -56,4 +54,31 @@ export const Reply = async (
   await msg.reply(text)
 
   return content
+}
+
+/**
+ * @がない場合に、ダメージ集計との差分が1000以上ならHP変更扱いにする;
+ * @param content 凸報告のメッセージ
+ * @param member メンバーの状態
+ * @param alpha ボスの番号
+ * @return 変更後のcontent
+ */
+const ConvertToHP = async (content: string, member: Member, alpha: AtoE): Promise<string> => {
+  if (/@\d/.test(content)) return content
+
+  // 数字がない場合は終了
+  const num = content.replace(/[^\d]/g, '').to_n()
+  if (!num) return content
+
+  const damages = await damageList.FetchBoss(alpha)
+  const d = damages.find(d => d.id === member.id)
+  const damage = d ? d.damage : 0
+
+  // ダメージが0の場合は終了
+  if (!damage) return content
+
+  const differ = Math.abs(num - damage)
+  if (differ < 1000) return content
+
+  return `@${num}`
 }
