@@ -17,7 +17,7 @@ export const Reply = async (
   member: Member,
   state: Current,
   alpha: AtoE,
-  _overMsgs: Discord.Message[],
+  overMsgs: Discord.Message[],
   content: string,
   msg: Discord.Message
 ): Promise<string> => {
@@ -78,6 +78,16 @@ const userInfo = (members: Member[], member: Member): string => {
   // prettier-ignore
   return [
     `残凸数: ${member.convex}、持越数: ${member.over}`,
-    member.end ? `${endNum}人目の3凸終了よ！` : '',
+    member.end ? `${getCurrentDate()} ${endNum}人目の3凸終了よ！` : '',
   ].join('\n')
+}
+
+/**
+ * 現在の時刻を取得
+ * @return 取得した文字列
+ */
+const getCurrentDate = (): string => {
+  const p0 = (n: number): string => n.to_s().padStart(2, '0')
+  const d = new Date()
+  return `${p0(d.getHours())}:${p0(d.getMinutes())}`
 }

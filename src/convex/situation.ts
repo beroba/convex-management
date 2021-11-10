@@ -89,7 +89,7 @@ const createWholeText = async (members: Member[], state: Current): Promise<strin
  * @return 取得した文字列
  */
 const getCurrentDate = (): string => {
-  const p0 = (n: number): string => (n + '').padStart(2, '0')
+  const p0 = (n: number): string => n.to_s().padStart(2, '0')
   const d = new Date()
   return `${p0(d.getMonth() + 1)}/${p0(d.getDate())} ${p0(d.getHours())}:${p0(d.getMinutes())}`
 }
