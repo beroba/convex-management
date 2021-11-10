@@ -87,7 +87,8 @@ const userInfo = (members: Member[], member: Member): string => {
  * @return 取得した文字列
  */
 const getCurrentDate = (): string => {
-  const p0 = (n: number): string => n.to_s().padStart(2, '0')
   const d = new Date()
-  return `${p0(d.getHours())}:${p0(d.getMinutes())}`
+  const HH = d.getHours().padStart(2, '0')
+  const mm = d.getMinutes().padStart(2, '0')
+  return `${HH}:${mm}`
 }
