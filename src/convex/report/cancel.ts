@@ -141,7 +141,7 @@ const endConfirm = (member: Member, msg: Discord.Message): Member => {
 const killConfirm = async (history: string) => {
   const content = history.split('|').slice(1).join('')
 
-  const isKill = /^k|kill|き(っ|l)l/i.test(content)
+  const isKill = /@0/.test(content)
   if (!isKill) return
 
   const state = await current.Fetch()

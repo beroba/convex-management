@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as update from './update'
 import * as list from './list'
 import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as declare from '../declare'
 import * as declareList from '../declare/list'
@@ -66,12 +67,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const alpha = <AtoE>member_1.declare
 
   let content = util.Format(msg.content)
-
-  const isKill = /^k|kill|き(っ|l)l/i.test(content)
-  if (isKill) {
-    // killが入力された場合、`@\d`を`0`に変更
-    content = `${content.replace(/@\d*/g, '')}@0`
-  }
+  content = await changeContentToHpOrEmpty(content, member_1, alpha)
 
   // 凸状況を更新
   let members: Member[], member_2: Option<Member>
@@ -124,6 +120,45 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
   await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
 
   return true
+}
+
+/**
+ * contentを@HPまたは空にして返す;
+ * @param content 凸報告のメッセージ
+ * @param member メンバーの状態
+ * @param alpha ボスの番号
+ * @return 変更後のcontent
+ */
+const changeContentToHpOrEmpty = async (content: string, member: Member, alpha: AtoE): Promise<string> => {
+  // killの場合は@0にする
+  if (/^k|kill|き(っ|l)l/i.test(content)) {
+    return '@0'
+  }
+
+  // @HPの場合は@HPだけ取り除く
+  if (/@\d+/.test(content)) {
+    const hp = (content.match(/@\d+/) as RegExpMatchArray).map(e => e).first()
+    return hp
+  }
+
+  // 数字ではない場合は空
+  const num = content.replace(/[^\d]/g, '').to_n()
+  if (!num) return ''
+
+  const damages = await damageList.FetchBoss(alpha)
+  const d = damages.find(d => d.id === member.id)
+  const damage = d ? d.damage : 0
+
+  // ダメージが0の場合は空
+  if (!damage) return ''
+
+  // ダメージ集計のダメージと報告のメッセージに、1000以上の差分がある場合は@HPにする
+  const diff = Math.abs(num - damage)
+  if (diff >= 1000) {
+    return `@${num}`
+  } else {
+    return ''
+  }
 }
 
 /**
