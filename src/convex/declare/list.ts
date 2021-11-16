@@ -151,7 +151,7 @@ const createDamageList = async (damages: Damage[], HP: number, members: Member[]
 
     const damage = d.damage || '不明'
     const time = d.time ? `${d.time}秒` : '不明'
-    const calc = declare.CalcCarryOver(HP, d.damage)
+    const calc = m.carry ? '不可' : declare.CalcCarryOver(HP, d.damage)
 
     // prettier-ignore
     return [

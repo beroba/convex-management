@@ -130,7 +130,11 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+
   await list.SetUser(alpha, channel, members)
+
+  const damages = await damageList.FetchBoss(alpha)
+  await list.SetDamage(alpha, undefined, channel, damages)
 
   situation.Report(members)
   deleteAttendance(interaction)
