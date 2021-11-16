@@ -102,7 +102,7 @@ const bossInfo = (boss: CurrentBoss, state: Current, HP: number, maxHP: number):
   const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
   // prettier-ignore
   return [
-    `${boss.lap}周目 ${boss.name} ${icon}`,
+    `${getCurrentDate()} ${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}`,
     '',
   ].join('\n')
@@ -133,7 +133,7 @@ const userInfo = (members: Member[], member: Member): string => {
   // prettier-ignore
   return [
     `残凸数: ${member.convex}, 持越数: ${member.over}`,
-    member.end ? `${getCurrentDate()} | ${endNum}人目の3凸終了よ！` : '',
+    member.end ? `${endNum}人目の3凸終了よ！` : '',
   ].join('\n')
 }
 
