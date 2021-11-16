@@ -6,7 +6,7 @@ import * as status from './status'
 import * as damageList from '../../io/damageList'
 import * as member from '../../io/status'
 import * as util from '../../util'
-import {AtoE, Current, Member} from '../../util/type'
+import {AtoE, Current, Damage, Member} from '../../util/type'
 
 /**
  * 凸宣言の管理を行う
@@ -92,18 +92,35 @@ const messageDelete = async (channel: Discord.TextChannel) => {
  * @param member メンバーの状態
  * @param user リアクションを外すユーザー
  */
-export const Done = async (alpha: AtoE, id: string) => {
+export const Done = async (alpha: AtoE, id: string, member: Member) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await list.SetUser(alpha, channel)
 
-  // ダメージ集計にチェックを付ける
   let damages = await damageList.FetchBoss(alpha)
-  damages = damages.map(d => {
-    if (d.id !== id) return d
-    d.exclusion = true
-    d.flag = 'check'
-    return d
-  })
+  const damage = damages.find(d => d.id === id)
+
+  // ダメージにチェックを付けるない場合は追加
+  if (damage) {
+    damages = damages.map(d => {
+      if (d.id !== id) return d
+      d.exclusion = true
+      d.flag = 'check'
+      return d
+    })
+  } else {
+    const damage: Damage = {
+      name: member.name,
+      id: member.id,
+      num: '0',
+      exclusion: true,
+      flag: 'check',
+      text: '',
+      damage: 0,
+      time: 0,
+    }
+    damages = [...damages, damage]
+  }
+
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
 

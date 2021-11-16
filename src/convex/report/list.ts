@@ -83,7 +83,7 @@ const warningText = (
   } else if (!content) {
     const text = [
       'ボスを倒していない場合は、`@残りHP`で凸報告してね (例:`@3800`)',
-      `<#${Settings.DECLARE_CHANNEL_ID[alpha]}> でボスのHPを修正してね`,
+      `<#${Settings.DECLARE_CHANNEL_ID[alpha]}> でボスのHPを修正してなさい！`,
       '残りHP3800の場合は`/h3800`というメッセージを送信するとHPが変更できるわよ',
     ].join('\n')
     texts.push(text)
