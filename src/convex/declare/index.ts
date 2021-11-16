@@ -105,6 +105,7 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
       if (d.id !== id) return d
       d.exclusion = true
       d.flag = 'check'
+      d.already = true
       return d
     })
   } else {
@@ -117,6 +118,7 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
       text: '',
       damage: 0,
       time: 0,
+      already: true,
     }
     damages = [...damages, damage]
   }

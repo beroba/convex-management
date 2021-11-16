@@ -67,6 +67,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
     text: content,
     damage: fetchDamage(content),
     time: fetchTime(content),
+    already: false,
   }
   damages = [...damages, damage]
 

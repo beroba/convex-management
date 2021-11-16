@@ -43,13 +43,15 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
   const plans = await schedule.FetchBoss(alpha)
 
-  const list = await createDeclareList(members, plans, alpha)
+  const list = await createDeclareList(members, plans, alpha, false)
+  const carry = await createDeclareList(members, plans, alpha, true)
 
   const text = [
     '凸宣言 `⭐持越` `[残凸数(+は持越), 活動限界時間]`',
     '```ts',
     `- 宣言者 ${list.length}人`,
     `${list.join('\n')}`,
+    `${carry.join('\n')}`,
     '```',
   ].join('\n')
   await msg.edit(text)
@@ -62,10 +64,11 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
  * @param alpha ボス番号
  * @return 作成したリスト
  */
-const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE): Promise<string[]> => {
+const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, carry: boolean): Promise<string[]> => {
   // テキストを作成
   return members
     .filter(m => new RegExp(alpha, 'gi').test(m.declare))
+    .filter(m => m.carry === carry)
     .map(m => {
       const carry = m.carry ? '⭐' : ''
 
@@ -111,18 +114,21 @@ export const SetDamage = async (
 
   const total = await declare.TotalDamage(damages)
 
-  const list = await createDamageList(damages, HP, members)
+  const before = await createDamageList(damages, HP, members, false)
+  const after = await createDamageList(damages, HP, members, true)
 
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DAMAGE)
   const text = [
-    'ダメージ集計 `⭕通したい` `🆖事故・通したくない` `✅通し`',
+    'ダメージ集計 `⭕優先権(通したい)` `🆖事故・下振れ(通したくない)` `✅通し`',
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}`,
     `ダメージ合計: ${total}, 予想残りHP: ${declare.ExpectRemainingHP(HP, total)}`,
     '',
     '- ダメージ一覧',
-    `${list.join('\n')}`,
+    `${before.join('\n')}`,
+    ' ―――――― 確定済 ――――――',
+    `${after.join('\n')}`,
     '```',
   ].join('\n')
   await msg.edit(text)
@@ -133,30 +139,37 @@ export const SetDamage = async (
  * @param damages ダメージ一覧
  * @param HP ボスの残りHP
  * @param members メンバー全体の状態
+ * @param already 確定済か否かの判定
  * @return 作成したリスト
  */
-const createDamageList = async (damages: Damage[], HP: number, members: Member[]): Promise<string[]> => {
-  return damages.map(d => {
-    const m = members.find(m => m.id === d.id)
-    if (!m) return ''
+const createDamageList = async (
+  damages: Damage[],
+  HP: number,
+  members: Member[],
+  already: Boolean
+): Promise<string[]> => {
+  return damages
+    .filter(d => d.already === already)
+    .map(d => {
+      const m = members.find(m => m.id === d.id)
+      if (!m) return ''
 
-    const _ = d.exclusion ? '_' : ''
-    const carry = m.carry ? '⭐' : ''
+      const _ = d.exclusion ? '_' : ''
+      const carry = m.carry ? '⭐' : ''
 
-    const convex = m.convex
-    const over = '+'.repeat(m.over)
-    const limit = m.limit !== '' ? `, ${m.limit}時` : ''
+      const convex = m.convex
+      const over = '+'.repeat(m.over)
+      const limit = m.limit !== '' ? `, ${m.limit}時` : ''
 
-    const flag = Settings.DAMAGE_FLAG[d.flag]
+      const flag = Settings.DAMAGE_FLAG[d.flag]
 
-    const damage = d.damage || '不明'
-    const time = d.time ? `${d.time}秒` : '不明'
-    const calc = m.carry ? '不可' : declare.CalcCarryOver(HP, d.damage)
+      const damage = d.damage || '不明'
+      const time = d.time ? `${d.time}秒` : '不明'
+      const calc = m.carry || d.already ? '不可' : declare.CalcCarryOver(HP, d.damage)
 
-    // prettier-ignore
-    return [
-      `${_}${d.num}: ${carry}${d.name}[${convex}${over}${limit}] '${d.text}'`,
-      `${flag}| ダメージ: ${damage} | 秒数: ${time} | 持越: ${calc}`
-    ].join('\n')
-  })
+      return [
+        `${_}${d.num}: ${carry}${d.name}[${convex}${over}${limit}] '${d.text}'`,
+        `${flag}| ダメージ: ${damage} | 秒数: ${time} | 持越: ${calc}`,
+      ].join('\n')
+    })
 }

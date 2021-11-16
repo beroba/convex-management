@@ -131,11 +131,12 @@ export type DamageFlag = 'ok' | 'ng' | 'check' | 'none'
  * @property name ユーザーの名前
  * @property id ユーザーのID
  * @property num 凸報告の順番
+ * @property exclusion ダメージ計算から除外するかの真偽値
  * @property flag ダメージのフラグ
  * @property text ダメージ報告のテキスト
  * @property damage ダメージの値
  * @property time 残り秒数の値
- * @property over 持越秒数の値
+ * @property already 報告済みかの真偽値
  */
 export type Damage = {
   name: string
@@ -146,6 +147,7 @@ export type Damage = {
   text: string
   damage: number
   time: number
+  already: boolean
 }
 
 /**
