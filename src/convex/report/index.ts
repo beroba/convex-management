@@ -16,7 +16,7 @@ import * as role from '../role'
 import * as situation from '../situation'
 import * as limit from '../time/limit'
 import * as util from '../../util'
-import {AtoE, Damage, Member} from '../../util/type'
+import {AtoE, Member} from '../../util/type'
 
 /**
  * 凸報告の管理を行う
@@ -57,9 +57,12 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   if (member_1.declare.length > 1) {
-    cancelAllConvex(member_1)
-    msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
-    return 'Duplicate convex declaration'
+    let result: boolean
+    ;[member_1, result] = await duplicateConvexDeclare(member_1)
+    if (result) {
+      msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
+      return 'Duplicate convex declaration'
+    }
   }
 
   const carry = member_1.carry
@@ -130,22 +133,44 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
   return true
 }
 
-const cancelAllConvex = async (member: Member) => {
+/**
+ * 複数凸宣言あった場合、ダメージ報告が1つならそのボスの凸宣言にする。
+ * そうでない場合は全てキャンセルする
+ * @param member メンバーの状態
+ * @return [メンバーの状態, ダメージ報告が1つじゃない場合]
+ */
+const duplicateConvexDeclare = async (member: Member): Promise<[Member, boolean]> => {
   const dList = await damageList.Fetch()
-  const damages = member.declare
-    .split('')
+
+  const alphas = member.declare.split('').sort()
+
+  // メンバーの報告済ではないボス番号を取得
+  const alpha = alphas
     .map(a => {
       const ds = dList[<AtoE>a]
-      return ds.find(d => d.id === member.id)
+      const d = ds.filter(d => !d.already).find(d => d.id === member.id)
+      return d && a
     })
-    .filter(n => n) as Damage[]
+    .filter(a => a)
+    .join('')
 
-  console.log(member.declare.split(''))
-  console.log(damages)
+  let result: boolean
 
-  return
-  // member.declare = ''
-  // await status.UpdateMember(member)
+  if (alpha.length === 1) {
+    member.declare = alpha
+    result = false
+  } else {
+    member.declare = ''
+    result = true
+  }
+
+  // 凸宣言一をを更新
+  const members = await status.UpdateMember(member)
+  for (const a of alphas) {
+    await declareList.SetUser(<AtoE>a, undefined, members)
+  }
+
+  return [member, result]
 }
 
 /**

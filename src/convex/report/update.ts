@@ -6,7 +6,7 @@ import {Member} from '../../util/type'
  * 凸報告に入力された情報から凸状況の更新をする
  * @param member メンバーの状態
  * @param content 凸宣言のメッセージ
- * @return メンバー一覧とメンバーの状態
+ * @return [メンバー一覧, メンバーの状態]
  */
 export const Status = async (member: Member, content: string): Promise<[Member[], Option<Member>]> => {
   member = saveHistory(member, content)

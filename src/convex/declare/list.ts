@@ -28,7 +28,7 @@ export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.Te
 }
 
 /**
- * 凸宣言にリアクションしているユーザーから凸宣言一覧を作る
+ * メンバーの凸宣言から凸宣言一覧を作る
  * @param state 現在の状況
  * @param channel 凸宣言のチャンネル
  * @param members メンバー全体の状態
@@ -43,15 +43,15 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
   const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].DECLARE)
   const plans = await schedule.FetchBoss(alpha)
 
-  const list = await createDeclareList(members, plans, alpha, false)
+  const noCarry = await createDeclareList(members, plans, alpha, false)
   const carry = await createDeclareList(members, plans, alpha, true)
+  const list = [...noCarry, ...carry]
 
   const text = [
     '凸宣言 `⭐持越` `[残凸数(+は持越), 活動限界時間]`',
     '```ts',
     `- 宣言者 ${list.length}人`,
     `${list.join('\n')}`,
-    `${carry.join('\n')}`,
     '```',
   ].join('\n')
   await msg.edit(text)
