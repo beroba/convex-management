@@ -183,6 +183,21 @@ export const CalcCarryOver = (HP: number, damage: number): string => {
 }
 
 /**
+ * ダメージ報告を削除する
+ * @param numbers 通知する番号
+ * @param alpha ボス番号
+ * @param channel 凸宣言のチャンネル
+ */
+export const DeleteDamage = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+  let damages = await damageList.FetchBoss(alpha)
+  // 指定された番号のダメージ報告を除外
+  damages = damages.filter(d => !numbers.find(n => n === d.num))
+
+  damages = await damageList.UpdateBoss(alpha, damages)
+  await list.SetDamage(alpha, undefined, channel, damages)
+}
+
+/**
  * ランダム選択をする
  * @param numbers 通知する番号
  * @param alpha ボス番号
@@ -191,8 +206,7 @@ export const CalcCarryOver = (HP: number, damage: number): string => {
 export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
   let damages = await damageList.FetchBoss(alpha)
 
-  // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  const dList = excludeNoNumbers(numbers, damages)
   if (!dList.length) return
 
   const idList = dList.map(d => d.id)
@@ -220,8 +234,7 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
   const state = await current.Fetch()
   let damages = await damageList.FetchBoss(alpha)
 
-  // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  const dList = excludeNoNumbers(numbers, damages)
   if (!dList.length) return
 
   const HP = state[alpha].hp
@@ -258,8 +271,7 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
 export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
   let damages = await damageList.FetchBoss(alpha)
 
-  // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  const dList = excludeNoNumbers(numbers, damages)
   if (!dList.length) return
 
   const idList = dList.map(d => d.id)
@@ -288,8 +300,7 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
 export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
   let damages = await damageList.FetchBoss(alpha)
 
-  // 存在しない番号は除外
-  const dList = numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  const dList = excludeNoNumbers(numbers, damages)
   if (!dList.length) return
 
   const idList = dList.map(l => l.id)
@@ -314,4 +325,14 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
 
   const msg = await channel.send(`${mentions} 通し！`)
   await msg.react(Settings.EMOJI_ID.SUMI)
+}
+
+/**
+ * 存在しない番号を省く
+ * @param numbers 存在する番号
+ * @param damages ダメージ一覧
+ * @return 除外したダメージ一覧
+ */
+const excludeNoNumbers = (numbers: string[], damages: Damage[]): Damage[] => {
+  return numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
 }

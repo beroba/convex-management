@@ -14,6 +14,35 @@ import {AtoE} from '../../util/type'
 export const Process = async (content: string, alpha: AtoE, msg: Discord.Message) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   switch (true) {
+    case /\/(del|d)/i.test(content): {
+      const list = content.replace(/\/(del|d)/i, '').match(/(\d|[a-z])+/g)
+      if (!list) return
+      const numbers = fetchNumbers(list)
+
+      await status.DeleteDamage(numbers, alpha, channel)
+      return 'Delete damage'
+    }
+
+    case /\/(or|o)/i.test(content): {
+      const list = content.replace(/\/(or|o)/i, '').match(/(\d|[a-z])+/g)
+      if (!list) return
+      const numbers = fetchNumbers(list)
+      if (numbers.length < 2) return
+
+      await status.RandomSelection(numbers, alpha, channel)
+      return 'Random selection'
+    }
+
+    case /\/(calc|c)/i.test(content): {
+      const list = content.replace(/\/(calc|c)/i, '').match(/(\d|[a-z])+/g)
+      if (!list) return
+      const numbers = fetchNumbers(list)
+      if (numbers.length !== 2) return
+
+      await status.CarryoverCalculation(numbers, alpha, channel)
+      return 'Carryover calculation'
+    }
+
     case /\/(@|hp?)/i.test(content): {
       content = content.replace(/\/hp?/gi, '@')
       await status.RemainingHPChange(content, alpha)
@@ -29,42 +58,10 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       return 'Change boss'
     }
 
-    case /\/(or|o)/i.test(content): {
-      const list = content.replace(/\/(or|o)/i, '').match(/(\d|[a-z])+/g)
-      if (!list) return
-      const set = list
-        .map(l => l)
-        .join('')
-        .split('')
-      const numbers = [...new Set(set)]
-      if (numbers.length < 2) return
-
-      await status.RandomSelection(numbers, alpha, channel)
-      return 'Random selection'
-    }
-
-    case /\/(calc|c)/i.test(content): {
-      const list = content.replace(/\/(calc|c)/i, '').match(/(\d|[a-z])+/g)
-      if (!list) return
-      const set = list
-        .map(l => l)
-        .join('')
-        .split('')
-      const numbers = [...new Set(set)]
-      if (numbers.length !== 2) return
-
-      await status.CarryoverCalculation(numbers, alpha, channel)
-      return 'Carryover calculation'
-    }
-
     case /\/_(\d|[a-z])+$/i.test(content): {
       const list = content.match(/(\d|[a-z])+/g)
       if (!list) return
-      const set = list
-        .map(l => l)
-        .join('')
-        .split('')
-      const numbers = [...new Set(set)]
+      const numbers = fetchNumbers(list)
 
       await status.ExclusionSettings(numbers, alpha, channel)
       return 'Exclusion settings'
@@ -73,14 +70,18 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
     case /\/(\d|[a-z]|\s)+$/i.test(content): {
       const list = content.match(/(\d|[a-z])+/g)
       if (!list) return
-      const set = list
-        .map(l => l)
-        .join('')
-        .split('')
-      const numbers = [...new Set(set)]
+      const numbers = fetchNumbers(list)
 
       await status.ThroughNotice(numbers, alpha, channel)
       return 'Through notification'
     }
   }
+}
+
+const fetchNumbers = (list: RegExpMatchArray): string[] => {
+  const set = list
+    .map(l => l)
+    .join('')
+    .split('')
+  return [...new Set(set)]
 }
