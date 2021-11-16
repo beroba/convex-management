@@ -31,7 +31,7 @@ export const Reply = async (
 
   // prettier-ignore
   const text = [
-    warningText(msg),
+    warningText(alpha, content, carry, overMsgs, msg),
     '```ts',
     bossInfo(boss, state, HP, maxHP),
     convexInfo(boss, carry, HP),
@@ -46,12 +46,48 @@ export const Reply = async (
  * 警告文のテキストを作成
  * @return 作成したテキスト
  */
-const warningText = (msg: Discord.Message): string => {
+const warningText = (
+  alpha: AtoE,
+  content: string,
+  carry: boolean,
+  overMsgs: Discord.Message[],
+  msg: Discord.Message
+): string => {
   const texts: string[] = []
 
-  util.Format(msg.content)
+  const c = util.Format(msg.content)
 
-  // channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
+  if (c === 'k') {
+    const text = '`k`じゃなくてちゃんと`kill`って入力しなさい！'
+    texts.push(text)
+  }
+
+  if (carry) {
+    if (overMsgs.length >= 2) {
+      const text = `<#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> に複数メッセージがあるから整理してね`
+      texts.push(text)
+    }
+  } else if (content === '@0') {
+    const text = `<#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> に編成や秒数を記載してね`
+    texts.push(text)
+  }
+
+  if (/^\d$/.test(c)) {
+    const text = '数字(残りHP)の前に`@`を付けてね (例:`@3800`)'
+    texts.push(text)
+
+    if (!content) {
+      const text = `<#${Settings.DECLARE_CHANNEL_ID[alpha]}> に\`/h${c}\`というメッセージを送信してHPを変更してね`
+      texts.push(text)
+    }
+  } else if (!content) {
+    const text = [
+      'ボスを倒していない場合は、`@残りHP`で凸報告してね (例:`@3800`)',
+      `<#${Settings.DECLARE_CHANNEL_ID[alpha]}> でボスのHPを修正してね`,
+      '残りHP3800の場合は`/h3800`というメッセージを送信するとHPが変更できるわよ',
+    ].join('\n')
+    texts.push(text)
+  }
 
   return texts.join('\n')
 }
@@ -80,8 +116,8 @@ const convexInfo = (boss: CurrentBoss, carry: boolean, HP: number): string => {
   const damage = boss.hp - HP
   // prettier-ignore
   return [
-    carry ? '通常凸' : '持越凸',
-    `HP: ${boss.hp}→${damage ? HP : '不明'}, ダメージ: ${damage || '不明'}`,
+    `- ${carry ? '通常' : '持越'}凸`,
+    `HP: ${boss.hp} → ${damage ? HP : '不明'}, ダメージ: ${damage || '不明'}`,
     '',
 ].join('\n')
 }
@@ -97,7 +133,7 @@ const userInfo = (members: Member[], member: Member): string => {
   // prettier-ignore
   return [
     `残凸数: ${member.convex}, 持越数: ${member.over}`,
-    member.end ? `${getCurrentDate()} ${endNum}人目の3凸終了よ！` : '',
+    member.end ? `${getCurrentDate()} | ${endNum}人目の3凸終了よ！` : '',
   ].join('\n')
 }
 
