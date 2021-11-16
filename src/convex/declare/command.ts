@@ -1,3 +1,4 @@
+import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as status from './status'
 import * as lapAndBoss from '../lapAndBoss'
@@ -7,9 +8,10 @@ import {AtoE} from '../../util/type'
 /**
  * 凸宣言のコマンドを処理する
  * @param content ダメージ報告のメッセージ
+ * @param msg DiscordからのMessage*
  * @param alpha ボス番号
  */
-export const Process = async (content: string, alpha: AtoE) => {
+export const Process = async (content: string, alpha: AtoE, msg: Discord.Message) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   switch (true) {
     case /\/(@|hp?)/i.test(content): {
@@ -23,7 +25,7 @@ export const Process = async (content: string, alpha: AtoE) => {
       if (!list) return
       const lap = list.map(l => l).first()
 
-      await lapAndBoss.UpdateLap(lap.to_n(), alpha)
+      await lapAndBoss.UpdateLap(lap.to_n(), alpha, msg.author)
       return 'Change boss'
     }
 

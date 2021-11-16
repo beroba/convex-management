@@ -27,7 +27,7 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
 
   // コマンドの処理
   if (msg.content.charAt(0) === '/') {
-    await command.Process(content, alpha)
+    await command.Process(content, alpha, msg)
     await util.Sleep(100)
     msg.delete()
     return
