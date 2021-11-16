@@ -24,23 +24,26 @@ export const UpdateBoss = async (alpha: AtoE, damage: Damage[]): Promise<Damage[
 
 /**
  * ダメージ順にソートして番号を採番する
- * @param damage ダメージ一覧
+ * @param damages ダメージ一覧
  * @return ダメージ一覧
  */
-const numbering = (damage: Damage[]): Damage[] => {
+const numbering = (damages: Damage[]): Damage[] => {
   const nums = '123456789abcdefghijklmnopqrstuvwxyz'.split('')
-  return damage
-    .sort((a, b) => b.damage - a.damage)
-    .map((d, i) => ({
-      name: d.name,
-      id: d.id,
-      num: nums[i],
-      exclusion: d.exclusion,
-      flag: d.flag,
-      text: d.text,
-      damage: d.damage,
-      time: d.time,
-    }))
+
+  const before = damages.filter(d => !d.already).sort((a, b) => b.damage - a.damage)
+  const after = damages.filter(d => d.already).sort((a, b) => b.damage - a.damage)
+
+  return [...before, ...after].map((d, i) => ({
+    name: d.name,
+    id: d.id,
+    num: nums[i],
+    exclusion: d.exclusion,
+    flag: d.flag,
+    text: d.text,
+    damage: d.damage,
+    time: d.time,
+    already: d.already,
+  }))
 }
 
 /**
@@ -73,7 +76,7 @@ export const DeleteBoss = async (alpha: AtoE): Promise<Damage[]> => {
  */
 export const DeleteUser = async (alpha: AtoE, id: string): Promise<Damage[]> => {
   const list = await Fetch()
-  list[alpha] = list[alpha].filter(d => d.id !== id)
+  list[alpha] = numbering(list[alpha].filter(d => d.id !== id || d.already))
   await io.UpdateArray('damageList', list)
   return list[alpha]
 }

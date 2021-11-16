@@ -60,8 +60,8 @@ const convexEndProcess = async (member: Member, user: Discord.User): Promise<[Me
 
   // prettier-ignore
   const text = [
-    '```',
-    `残凸数: 0、持越数: 0`,
+    '```ts',
+    `残凸数: 0, 持越数: 0`,
     `${n}人目の3凸終了よ！`,
     '```',
   ].join('\n')
@@ -91,8 +91,8 @@ const updateProcess = async (member: Member, state: string, user: Discord.User):
 
   // prettier-ignore
   const text = [
-    '```',
-    `残凸数: ${member.convex}、持越数: ${member.over}`,
+    '```ts',
+    `残凸数: ${member.convex}, 持越数: ${member.over}`,
     '```',
   ].join('\n')
 

@@ -44,6 +44,7 @@ const damage = async (interaction: Discord.ButtonInteraction, idList: string[]):
   let damages = await damageList.FetchBoss(alpha)
   damages = damages.map(d => {
     if (d.id !== interaction.user.id) return d
+    if (d.already) return d
 
     // トグルするように実装
     if (d.flag === 'check' || d.flag === 'none') {
@@ -130,7 +131,11 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
+
   await list.SetUser(alpha, channel, members)
+
+  const damages = await damageList.FetchBoss(alpha)
+  await list.SetDamage(alpha, undefined, channel, damages)
 
   situation.Report(members)
   deleteAttendance(interaction)

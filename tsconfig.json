@@ -51,6 +51,7 @@
     "src/convex/plan/update.ts",
     "src/convex/report/cancel.ts",
     "src/convex/report/index.ts",
+    "src/convex/report/list.ts",
     "src/convex/report/update.ts",
     "src/convex/role/index.ts",
     "src/convex/role/kill.ts",

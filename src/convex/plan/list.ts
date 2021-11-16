@@ -85,7 +85,7 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
 
   // prettier-ignore
   return [
-    '```m',
+    '```ts',
     `- ${name} ${hp}`,
     `${/^\s*$/.test(text) ? ' ' : text}`,
     '```',

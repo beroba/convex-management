@@ -17,6 +17,10 @@ declare global {
      * String()する
      */
     to_s(): string
+    /**
+     * String.prototype.padStart()を行う
+     */
+    padStart(targetLength: number, padString: string): string
   }
 
   interface String {
@@ -37,6 +41,10 @@ Array.prototype.last = function <T>(): T {
 
 Number.prototype.to_s = function (): string {
   return `${this}`
+}
+
+Number.prototype.padStart = function (targetLength: number, padString: string): string {
+  return `${this}`.padStart(targetLength, padString)
 }
 
 String.prototype.to_n = function (): number {

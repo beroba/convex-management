@@ -1,20 +1,22 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as update from './update'
+import * as list from './list'
 import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as declare from '../declare'
 import * as declareList from '../declare/list'
 import * as declareStatus from '../declare/status'
 import * as over from '../over'
 import * as cancel from '../plan/delete'
-import * as list from '../plan/list'
+import * as planList from '../plan/list'
 import * as role from '../role'
 import * as situation from '../situation'
 import * as limit from '../time/limit'
-import * as update from './update'
 import * as util from '../../util'
-import {AtoE, Current, Member} from '../../util/type'
+import {AtoE, Member} from '../../util/type'
 
 /**
  * 凸報告の管理を行う
@@ -43,34 +45,30 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const result = await threeConvexProcess(member_1, msg)
   if (result) return '3 Convex is finished'
 
-  // 持越がないのに持越凸しようとした場合
+  // 持越がないのに持越凸しようとした場合 (基本的にありえない)
   if (member_1.carry && !/[1-3]/.test(member_1.over.to_s())) {
     msg.reply('持越がないのに持越凸になってるわ')
     return 'Not carry over'
   }
 
   if (!member_1.declare.length) {
-    msg.reply('凸報告の前に凸宣言をしてね')
+    msg.reply('凸宣言をしてから凸報告をしてね')
     return 'Not declared convex'
   }
 
   if (member_1.declare.length > 1) {
-    member_1.declare = ''
-    await status.UpdateMember(member_1)
-    msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
-    return 'Duplicate convex declaration'
+    let result: boolean
+    ;[member_1, result] = await duplicateConvexDeclare(member_1)
+    if (result) {
+      msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
+      return 'Duplicate convex declaration'
+    }
   }
 
   const carry = member_1.carry
   const alpha = <AtoE>member_1.declare
 
-  let content = util.Format(msg.content)
-
-  const isKill = /^k|kill|きっl/i.test(content)
-  if (isKill) {
-    // killが入力された場合、`@\d`を`0`に変更
-    content = `${content.replace(/@\d*/, '')}@0`
-  }
+  const content = await fetchHPOrEmpty(member_1, alpha, msg)
 
   // 凸状況を更新
   let members: Member[], member_2: Option<Member>
@@ -78,8 +76,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!member_2) return
 
   let state = await current.Fetch()
+  const overMsgs = await over.GetAllUserMsg(member_2.id)
 
-  peportConfirm(members, member_2, state, alpha, content, msg)
+  await list.Reply(members, member_2, carry, state, alpha, overMsgs, content, msg)
 
   // @が入っている場合、HPの変更
   if (/@\d/.test(content)) {
@@ -89,19 +88,16 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(content)) {
     cancel.Remove(alpha, msg.author.id)
-    list.SituationEdit()
+    planList.SituationEdit()
   }
 
-  // 3凸終了している場合、持越を全て削除
-  if (member_2.end) {
-    over.DeleteMsg(msg.member)
-  }
+  overDelete(member_2, carry, overMsgs)
 
   situation.Report(members, state)
-  declare.Done(alpha, msg.author.id)
+  if (content !== '@0') {
+    declare.Done(alpha, msg.author.id, member_2)
+  }
   declareList.SetPlan(alpha, state)
-
-  overDelete(member_2, carry, msg)
 
   msg.react(Settings.EMOJI_ID.TORIKESHI)
   roleDelete(member_2, msg)
@@ -124,73 +120,118 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
   const members = await status.UpdateMember(member)
 
   const n = members.filter(s => s.end).length + 1
-  await msg.reply(`残凸数: 0、持越数: 0\n\`${n}\`人目の3凸終了よ！`)
+
+  // prettier-ignore
+  const text = [
+    '```ts',
+    `残凸数: 0, 持越数: 0`,
+    `${n}人目の3凸終了よ！`,
+    '```'
+  ].join('\n')
+  await msg.reply(text)
 
   return true
 }
 
 /**
- * 残りの凸状況を報告する
- * @param members メンバー全員の状態
+ * 複数凸宣言あった場合、ダメージ報告が1つならそのボスの凸宣言にする。
+ * そうでない場合は全てキャンセルする
  * @param member メンバーの状態
- * @param state 現在の状況
- * @param alpha ボスの番号
- * @param content 凸報告のメッセージ
- * @param msg DiscordからのMessage
+ * @return [メンバーの状態, ダメージ報告が1つじゃない場合]
  */
-const peportConfirm = (
-  members: Member[],
-  member: Member,
-  state: Current,
-  alpha: AtoE,
-  content: string,
-  msg: Discord.Message
-) => {
-  const boss = state[alpha]
+const duplicateConvexDeclare = async (member: Member): Promise<[Member, boolean]> => {
+  const dList = await damageList.Fetch()
 
-  // 凸報告のメッセージからHPを取得
-  let hp: Option<number | string> = content
-    .replace(/^.*@/g, '')
-    .trim()
-    .replace(/\s.*$/g, '')
-    .match(/\d*/)
-    ?.map(e => e)
-    .first()
-  hp = hp === '' || hp === undefined ? boss.hp : hp
-  const maxHP = Settings.STAGE[state.stage].HP[alpha]
+  const alphas = member.declare.split('').sort()
 
-  // 何人3凸終了しているか確認
-  const endN = members.filter(s => s.end).length
+  // メンバーの報告済ではないボス番号を取得
+  const alpha = alphas
+    .map(a => {
+      const ds = dList[<AtoE>a]
+      const d = ds.filter(d => !d.already).find(d => d.id === member.id)
+      return d && a
+    })
+    .filter(a => a)
+    .join('')
 
-  // prettier-ignore
-  const text = [
-    '```m',
-    `${boss.lap}周目 ${boss.name} ${hp}/${maxHP}`,
-    `残凸数: ${member.convex}、持越数: ${member.over}`,
-    member.end ? `${endN}人目の3凸終了よ！` : '',
-    '```',
-  ].join('\n')
+  let result: boolean
 
-  msg.reply(text)
+  if (alpha.length === 1) {
+    member.declare = alpha
+    result = false
+  } else {
+    member.declare = ''
+    result = true
+  }
+
+  // 凸宣言一をを更新
+  const members = await status.UpdateMember(member)
+  for (const a of alphas) {
+    await declareList.SetUser(<AtoE>a, undefined, members)
+  }
+
+  return [member, result]
 }
 
 /**
- * 持越が0の場合、持越状況のメッセージを全て削除する
- * 持越が1-2の場合、#進行-連携に#持越状況を整理するように催促する
+ * msgのcontentから@HPまたは空にして返す;
+ * @param member メンバーの状態
+ * @param alpha ボスの番号
+ * @param msg DiscordからのMessage
+ * @return 変更後のcontent
+ */
+const fetchHPOrEmpty = async (member: Member, alpha: AtoE, msg: Discord.Message): Promise<string> => {
+  const content = util.Format(msg.content)
+
+  // killの場合は@0にする
+  if (/^k|kill|き(っ|l)l/i.test(content)) {
+    return '@0'
+  }
+
+  // @HPの場合は@HPだけ取り除く
+  if (/@\d+/.test(content)) {
+    const hp = (content.match(/@\d+/) as RegExpMatchArray).map(e => e).first()
+    return hp
+  }
+
+  // 数字ではない場合は空
+  const num = content.replace(/[^\d]/g, '').to_n()
+  if (!num) return ''
+
+  const damages = await damageList.FetchBoss(alpha)
+  const d = damages.find(d => d.id === member.id)
+  const damage = d ? d.damage : 0
+
+  // ダメージが0の場合は空
+  if (!damage) return ''
+
+  // ダメージ集計のダメージと報告のメッセージに、1000以上の差分がある場合は@HPにする
+  const diff = Math.abs(num - damage)
+  if (diff >= 1000) {
+    return `@${num}`
+  } else {
+    return ''
+  }
+}
+
+/**
+ * 3凸終了時または持越凸の際にメッセージが1つの場合、持越状況のメッセージを削除する
  * @param member メンバーの状態
  * @param carry 持越か否かの真偽値
- * @param msg DiscordからのMessage
+ * @param overMsgs メンバーの持越状況のメッセージ一覧
  */
-const overDelete = (member: Member, carry: boolean, msg: Discord.Message) => {
+const overDelete = (member: Member, carry: boolean, overMsgs: Discord.Message[]) => {
+  // 3凸終了している場合、持越を全て削除
+  if (member.end) {
+    over.DeleteAllUserMsg(overMsgs)
+  }
+
   // 持越凸でない場合は終了
   if (!carry) return
 
-  // 持越が1つ、2-3つの場合で処理を分ける
-  if (member.over === 0) {
-    over.DeleteMsg(msg.member)
-  } else if (/[1-2]/.test(member.over.to_s())) {
-    const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
-    channel.send(`<@!${member.id}> <#${Settings.CHANNEL_ID.CARRYOVER_SITUATION}> を整理してね`)
+  // 持越状況のメッセージが1つの場合は削除
+  if (overMsgs.length === 1) {
+    over.DeleteAllUserMsg(overMsgs)
   }
 }
 

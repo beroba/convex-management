@@ -21,7 +21,7 @@ export const SimultConvexCalc = (HP: number, A: number, B: number, msg: Discord.
 
   // prettier-ignore
   const text = [
-    '```m',
+    '```ts',
     `A: ${a >= 90 ? '90秒(フル)' : a + '秒'}`,
     `B: ${b >= 90 ? '90秒(フル)' : b + '秒'}`,
     '```',
