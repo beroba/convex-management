@@ -76,7 +76,7 @@ export const DeleteBoss = async (alpha: AtoE): Promise<Damage[]> => {
  */
 export const DeleteUser = async (alpha: AtoE, id: string): Promise<Damage[]> => {
   const list = await Fetch()
-  list[alpha] = numbering(list[alpha].filter(d => d.id !== id))
+  list[alpha] = numbering(list[alpha].filter(d => d.id !== id || d.already))
   await io.UpdateArray('damageList', list)
   return list[alpha]
 }

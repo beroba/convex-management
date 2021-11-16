@@ -57,7 +57,7 @@ const warningText = (
 
   const c = util.Format(msg.content)
 
-  if (c === 'k') {
+  if (/^k$/i.test(c)) {
     const text = '`k`じゃなくてちゃんと`kill`って入力しなさい！'
     texts.push(text)
   }

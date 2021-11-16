@@ -16,7 +16,7 @@ import * as role from '../role'
 import * as situation from '../situation'
 import * as limit from '../time/limit'
 import * as util from '../../util'
-import {AtoE, Member} from '../../util/type'
+import {AtoE, Damage, Member} from '../../util/type'
 
 /**
  * 凸報告の管理を行う
@@ -57,8 +57,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   if (member_1.declare.length > 1) {
-    member_1.declare = ''
-    await status.UpdateMember(member_1)
+    cancelAllConvex(member_1)
     msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
     return 'Duplicate convex declaration'
   }
@@ -129,6 +128,24 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
   await msg.reply(text)
 
   return true
+}
+
+const cancelAllConvex = async (member: Member) => {
+  const dList = await damageList.Fetch()
+  const damages = member.declare
+    .split('')
+    .map(a => {
+      const ds = dList[<AtoE>a]
+      return ds.find(d => d.id === member.id)
+    })
+    .filter(n => n) as Damage[]
+
+  console.log(member.declare.split(''))
+  console.log(damages)
+
+  return
+  // member.declare = ''
+  // await status.UpdateMember(member)
 }
 
 /**

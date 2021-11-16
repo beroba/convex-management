@@ -56,7 +56,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   if (!member) return
 
   // 上書きできるように前のダメージを消す
-  damages = damages.filter(d => d.id !== member.id)
+  damages = damages.filter(d => d.id !== member.id || d.already)
 
   const damage: Damage = {
     name: member.name,
