@@ -301,6 +301,7 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
     if (!id) return d
+    if (d.already) return d
 
     d.flag = d.flag === 'check' ? 'none' : 'check'
     return d
