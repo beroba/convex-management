@@ -118,6 +118,7 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
       text: '',
       damage: 0,
       time: 0,
+      date: util.GetCurrentDate(),
       already: true,
     }
     damages = [...damages, damage]

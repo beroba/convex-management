@@ -147,6 +147,7 @@ export type Damage = {
   text: string
   damage: number
   time: number
+  date: string
   already: boolean
 }
 

@@ -102,7 +102,7 @@ const bossInfo = (boss: CurrentBoss, state: Current, HP: number, maxHP: number):
   const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
   // prettier-ignore
   return [
-    `${getCurrentDate()} ${boss.lap}周目 ${boss.name} ${icon}`,
+    `${util.GetCurrentDate()} ${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}`,
     '',
   ].join('\n')
@@ -135,15 +135,4 @@ const userInfo = (members: Member[], member: Member): string => {
     `残凸数: ${member.convex}, 持越数: ${member.over}`,
     member.end ? `${endNum}人目の3凸終了よ！` : '',
   ].join('\n')
-}
-
-/**
- * 現在の時刻を取得
- * @return 取得した文字列
- */
-const getCurrentDate = (): string => {
-  const d = new Date()
-  const HH = d.getHours().padStart(2, '0')
-  const mm = d.getMinutes().padStart(2, '0')
-  return `${HH}:${mm}`
 }

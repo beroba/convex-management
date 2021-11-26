@@ -169,7 +169,7 @@ const createDamageList = async (
 
       return [
         `${_}${d.num}: ${carry}${d.name}[${convex}${over}${limit}] '${d.text}'`,
-        `${flag}| ダメージ: ${damage} | 秒数: ${time} | 持越: ${calc}`,
+        `${flag}| ダメージ: ${damage} | 秒数: ${time} | 時刻: ${d.date} | 持越: ${calc}`,
       ].join('\n')
     })
 }
