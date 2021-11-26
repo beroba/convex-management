@@ -53,6 +53,17 @@ export const Omit = (v: any): boolean => {
 }
 
 /**
+ * 現在の時刻を取得
+ * @return 取得した文字列
+ */
+export const GetCurrentDate = (): string => {
+  const d = new Date()
+  const HH = d.getHours().padStart(2, '0')
+  const mm = d.getMinutes().padStart(2, '0')
+  return `${HH}:${mm}`
+}
+
+/**
  * クランサーバーのguildを取得する
  * @return クランサーバーのguild
  */

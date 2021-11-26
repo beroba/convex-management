@@ -42,6 +42,7 @@ const numbering = (damages: Damage[]): Damage[] => {
     text: d.text,
     damage: d.damage,
     time: d.time,
+    date: d.date,
     already: d.already,
   }))
 }
