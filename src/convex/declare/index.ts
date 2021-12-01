@@ -89,8 +89,9 @@ const messageDelete = async (channel: Discord.TextChannel) => {
 
 /**
  * 渡されたユーザーの凸宣言を完了する
+ * @param alpha ボス番号
+ * @param id ユーザーID
  * @param member メンバーの状態
- * @param user リアクションを外すユーザー
  */
 export const Done = async (alpha: AtoE, id: string, member: Member) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
@@ -126,6 +127,18 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
 
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
+
+  // 通し通知を削除
+  const msgs = (await channel.messages.fetch())
+    .map(m => m)
+    .filter(m => m.author.id === Settings.CAL_ID)
+    .filter(m => m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
+    .filter(m => new RegExp(id, 'g').test(m.content))
+    .filter(m => m)
+  for (const m of msgs) {
+    await util.Sleep(100)
+    m.delete()
+  }
 
   console.log('Completion of convex declaration')
 }

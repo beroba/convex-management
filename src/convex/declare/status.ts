@@ -305,10 +305,7 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
   if (!dList.length) return
 
   const idList = dList.map(l => l.id)
-  const mentions = dList
-    .filter(d => d.flag !== 'check')
-    .map(d => `<@!${d.id}>`)
-    .join(' ')
+  const mentions = dList.filter(d => d.flag !== 'check').map(d => `<@!${d.id}>`)
 
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
@@ -324,8 +321,10 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
 
   if (!mentions.length) return
 
-  const msg = await channel.send(`${mentions} 通し！`)
-  await msg.react(Settings.EMOJI_ID.SUMI)
+  for (const mention of mentions) {
+    const msg = await channel.send(`${mention} 通し！`)
+    msg.react(Settings.EMOJI_ID.SUMI)
+  }
 }
 
 /**
