@@ -65,12 +65,15 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   // 上書きできるように前のダメージを消す
   damages = damages.filter(d => d.id !== member.id || d.already)
 
+  // 事故っている場合のフラグ
+  const accident = /事故|じこ|死|失敗|落ち/.test(content)
+
   const damage: Damage = {
     name: member.name,
     id: member.id,
     num: '0',
-    exclusion: false,
-    flag: 'none',
+    exclusion: accident,
+    flag: accident ? 'ng' : 'none',
     text: msg.content,
     damage: fetchDamage(content),
     time: fetchTime(content),
