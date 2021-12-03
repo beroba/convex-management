@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as role from './role'
 import * as situation from './situation'
-import * as limit from './time/limit'
+import * as limit from './timeLimit'
 import * as status from '../io/status'
 import * as util from '../util'
 import {Member} from '../util/type'
@@ -35,6 +35,7 @@ export const Update = async (state: string, msg: Discord.Message) => {
   await msg.reply(text)
 
   situation.Report(members)
+  situation.Boss(members)
 }
 
 /**
@@ -128,6 +129,7 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
 
   await edit()
   situation.Report(members)
+  situation.Boss(members)
 
   return 'Change of convex management'
 }

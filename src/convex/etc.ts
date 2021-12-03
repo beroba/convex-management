@@ -48,7 +48,8 @@ export const ResetConvex = async () => {
   await status.ResetConvex()
 
   const members = await status.Fetch()
-  situation.Report(members)
+  await situation.Report(members)
+  await situation.Boss(members)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('全員の凸状況をリセットしたわ')

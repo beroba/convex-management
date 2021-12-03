@@ -2,6 +2,8 @@ import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as declare from './declare'
 import * as current from '../io/current'
+import * as damageList from '../io/damageList'
+import * as list from './declare/list'
 import * as util from '../util'
 import {AtoE, Current} from '../util/type'
 
@@ -26,6 +28,7 @@ export const UpdateHP = async (hp: number, alpha: AtoE, state: Current): Promise
   // 周回数が変わったら通知
   if (state.lap > l) {
     await progressLap(state.lap)
+    await damageReportUpdate(alpha, state)
   }
 
   return state
@@ -58,6 +61,7 @@ export const UpdateLap = async (lap: number, alpha: AtoE, user?: Discord.User): 
   // 周回数が変わったら通知
   if (state.lap > l) {
     await progressLap(state.lap)
+    await damageReportUpdate(alpha, state)
   }
 
   return state
@@ -82,4 +86,19 @@ const progressReport = async (alpha: AtoE, state: Current): Promise<Discord.Mess
 const progressLap = async (lap: number) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   await channel.send(`全体\`${lap}\`周目`)
+}
+
+/**
+ * 全てのボスのダメージ報告を更新
+ * @param alpha ボス番号
+ * @param state 現在の状況
+ */
+const damageReportUpdate = async (alpha: AtoE, state: Current) => {
+  'abcde'
+    .replace(alpha, '')
+    .split('')
+    .forEach(async a => {
+      const damages = await damageList.DeleteBoss(alpha)
+      list.SetDamage(<AtoE>a, state, undefined, damages)
+    })
 }

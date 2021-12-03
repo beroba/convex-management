@@ -2,8 +2,8 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import {NtoA} from 'alphabet-to-number'
+import * as situation from '../situation'
 import * as declare from '../declare/list'
-import * as list from './list'
 import * as schedule from '../../io/schedule'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
@@ -25,8 +25,8 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   const text = content.slice(1).trim()
   const plans = await schedule.Edit(text, msg.id)
 
-  await list.SituationEdit(plans)
-  await declare.SetPlan(alpha)
+  situation.Plans(plans)
+  situation.DeclarePlan(alpha)
   declare.SetUser(alpha)
 
   return 'Edit appointment message'

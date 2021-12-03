@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as situation from '../situation'
+import * as attendance from '../role/attendance'
 import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
 import * as util from '../../util'
@@ -55,6 +56,13 @@ const damage = async (interaction: Discord.ButtonInteraction, idList: string[]):
       d.flag = flag === 'ng' ? 'none' : flag === 'ok' ? 'ok' : 'ng'
     }
 
+    // NGが付いたら_を付ける
+    if (d.flag === 'ng') {
+      d.exclusion = true
+    } else if (flag === 'ng') {
+      d.exclusion = false
+    }
+
     return d
   })
 
@@ -103,9 +111,6 @@ const cancel = async (id: string, interaction: Discord.ButtonInteraction) => {
 
   const damages = await damageList.DeleteUser(alpha, member.id)
   await list.SetDamage(alpha, undefined, channel, damages)
-
-  situation.Report(members)
-  deleteAttendance(interaction)
 }
 
 /**
@@ -137,15 +142,6 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
   const damages = await damageList.FetchBoss(alpha)
   await list.SetDamage(alpha, undefined, channel, damages)
 
-  situation.Report(members)
-  deleteAttendance(interaction)
-}
-
-/**
- * 離席中ロールを外す
- * @param interaction インタラクションの情報
- */
-const deleteAttendance = (interaction: Discord.ButtonInteraction) => {
-  const member = interaction.member as Discord.GuildMember
-  member.roles.remove(Settings.ROLE_ID.ATTENDANCE)
+  await attendance.Remove(interaction.member as Discord.GuildMember)
+  situation.Plans()
 }

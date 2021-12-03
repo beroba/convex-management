@@ -2,7 +2,7 @@ import * as cron from 'node-cron'
 import * as etc from './convex/etc'
 import * as role from './convex/role'
 import * as kill from './convex/role/kill'
-import * as limit from './convex/time/limit'
+import * as limit from './convex/timeLimit'
 
 /**
  * クーロン処理一覧
@@ -13,7 +13,7 @@ export const CronOperation = () => {
   // 04:50
   cron.schedule('0 50 4 * * *', () => role.ResetAllConvex())
   // 05:00
-  cron.schedule('0 0 5 * * *', () => kill.RemoveAllRole())
+  cron.schedule('0 0 5 * * *', () => kill.RemoveAll())
   // 05:00
   cron.schedule('0 0 5 * * *', () => etc.ResetConvex())
   // 04:30

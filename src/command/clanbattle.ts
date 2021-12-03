@@ -1,14 +1,12 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {NtoA} from 'alphabet-to-number'
 import * as command from '.'
 import * as declare from '../convex/declare/list'
 import * as etc from '../convex/etc'
 import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
-import * as list from '../convex/plan/list'
 import * as kill from '../convex/role/kill'
 import * as situation from '../convex/situation'
 import * as schedule from '../io/schedule'
@@ -52,14 +50,14 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Change boss'
     }
 
+    case /cb delete declare/.test(content): {
+      await deleteDeclareController('/cb delete declare', content, msg)
+      return 'Delete declare'
+    }
+
     case /cb delete plan/.test(content): {
       await deletePlanController('/cb delete plan', content, msg)
       return 'Delete plan'
-    }
-
-    case /cb plan/.test(content): {
-      await planController('/cb plan', content, msg)
-      return 'Display convex plan list'
     }
 
     case /cb over/.test(content): {
@@ -198,10 +196,37 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
   await lapAndBoss.UpdateLap(lap.to_n(), <AtoE>alpha)
 
   const members = await status.Fetch()
-  situation.Report(members)
+  await situation.Report(members)
+  await situation.Boss(members)
 
   const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
+}
+
+/**
+ * `/cb delete declare`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const deleteDeclareController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const args = command.ExtractArgument(_command, _content)
+  if (!args) return _msg.reply('削除する凸宣言者を指定しないと消せないわ')
+
+  // 引数からユーザーidだけを取り除く
+  const id = util.Format(args).replace(/[^0-9]/g, '')
+
+  let members = await status.Fetch()
+  const member = members.find(m => m.id === id)
+
+  if (!member) return _msg.reply(`クランメンバーにいなかったわ`)
+
+  member.declare = ''
+  members = await status.UpdateMember(member)
+
+  'abcde'.split('').forEach(a => declare.SetUser(<AtoE>a, undefined, members))
+
+  _msg.reply('凸宣言を全て削除したわ')
 }
 
 /**
@@ -220,32 +245,10 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   const [plans, plan] = await schedule.Delete(id)
   if (!plan) return _msg.reply(`${id}の凸予定はなかったわ`)
 
-  await list.SituationEdit(plans)
-  await declare.SetPlan(plan.alpha)
+  await situation.Plans(plans)
+  await situation.DeclarePlan(plan.alpha)
 
   _msg.reply('凸予定を削除したわ')
-}
-
-/**
- * `/cb plan`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const planController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content) ?? ''
-
-  // 引数にボス番号があるか確認
-  if (/^[a-e]$/i.test(args)) {
-    // ボス番号の凸予定一覧を表示
-    list.Output(args as AtoE)
-  } else if (/^[1-5]$/i.test(args)) {
-    // ボス番号の凸予定一覧を表示
-    list.Output(NtoA(args) as AtoE)
-  } else {
-    // 凸予定一覧を全て表示
-    list.AllOutput()
-  }
 }
 
 /**
@@ -270,7 +273,7 @@ const overController = async (_command: string, _content: string, _msg: Discord.
  * @param _msg DiscordからのMessage
  */
 const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  kill.AddRole(_msg)
+  kill.Add(_msg)
 }
 
 /**
@@ -281,10 +284,11 @@ const taskKillController = async (_command: string, _content: string, _msg: Disc
  */
 const updateReportController = async (_command: string, _content: string, _msg: Discord.Message) => {
   const members = await status.Fetch()
-  situation.Report(members)
+  await situation.Report(members)
+  await situation.Boss(members)
 
   const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
 
   _msg.reply('凸状況を更新したわよ！')
 }

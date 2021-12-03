@@ -25,6 +25,13 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
   // @とsが両方ある場合は@を消す
   content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
 
+  // m:ssを[\d]sに変換
+  const t = content.match(/(0|1):\d{1,2}/g)
+  if (t) {
+    const [m, ss] = t.first().split(':')
+    content = content.replace(/(0|1):\d{1,2}/, `${m.to_n() * 60 + ss.to_n()}s`)
+  }
+
   // コマンドの処理
   if (msg.content.charAt(0) === '/') {
     await command.Process(content, alpha, msg)
@@ -58,13 +65,16 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   // 上書きできるように前のダメージを消す
   damages = damages.filter(d => d.id !== member.id || d.already)
 
+  // 事故っている場合のフラグ
+  const accident = /事故|じこ|死|失敗|落ち/.test(content)
+
   const damage: Damage = {
     name: member.name,
     id: member.id,
     num: '0',
-    exclusion: false,
-    flag: 'none',
-    text: content,
+    exclusion: accident,
+    flag: accident ? 'ng' : 'none',
+    text: msg.content,
     damage: fetchDamage(content),
     time: fetchTime(content),
     date: util.GetCurrentDate(),
@@ -142,7 +152,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
   await list.SetDamage(alpha, state)
 
   const members = await status.Fetch()
-  situation.Report(members)
+  situation.Boss(members)
 
   return state
 }
@@ -173,14 +183,33 @@ export const ExpectRemainingHP = (HP: number, total: number): number => {
 }
 
 /**
+ * フル持越のダメージを計算する
+ * @param HP 現在のHP
+ * @param maxHP ボスの最大HP
+ * @return ダメージ
+ */
+export const FullCarryOverDamage = (HP: number, maxHP: number): string => {
+  // フル持越させるのに必要なダメージの倍率
+  const magnification = 4.2857143
+
+  const damage = Math.ceil(HP * magnification)
+  if (damage > maxHP) {
+    const time = Math.ceil((1 - HP / maxHP) * 90 + 20)
+    return `不可(最大${time}秒)`
+  } else {
+    return damage.to_s()
+  }
+}
+
+/**
  * 予想残りHPを計算する
  * @param HP 現在のHP
  * @param damage ダメージ
  * @return 持越秒数
  */
 export const CalcCarryOver = (HP: number, damage: number): string => {
-  const calc = Math.ceil((1 - HP / damage) * 90 + 20)
-  return HP <= damage ? `${calc >= 90 ? '90秒(フル)' : calc + '秒'}` : '不可'
+  const time = Math.ceil((1 - HP / damage) * 90 + 20)
+  return HP <= damage ? `${time >= 90 ? '90秒(フル)' : time + '秒'}` : '不可'
 }
 
 /**
@@ -246,7 +275,11 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
   if (B.damage === 0) return
 
   // ボスを倒せない場合は終了
-  if (A.damage + B.damage < HP) return
+  if (A.damage + B.damage < HP) {
+    const msg = await channel.send(`\`${A.num}\`と\`${B.num}\`じゃ倒せないわ`)
+    await msg.react(Settings.EMOJI_ID.SUMI)
+    return
+  }
 
   const a = etc.OverCalc(HP, A.damage, B.damage)
   const b = etc.OverCalc(HP, B.damage, A.damage)
@@ -280,6 +313,7 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
     if (!id) return d
+    if (d.already) return d
 
     d.exclusion = !d.exclusion
     return d
@@ -305,10 +339,7 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
   if (!dList.length) return
 
   const idList = dList.map(l => l.id)
-  const mentions = dList
-    .filter(d => d.flag !== 'check')
-    .map(d => `<@!${d.id}>`)
-    .join(' ')
+  const mentions = dList.filter(d => d.flag !== 'check').map(d => `<@!${d.id}>`)
 
   damages = damages.map(d => {
     const id = idList.find(id => id === d.id)
@@ -324,8 +355,10 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
 
   if (!mentions.length) return
 
-  const msg = await channel.send(`${mentions} 通し！`)
-  await msg.react(Settings.EMOJI_ID.SUMI)
+  mentions.forEach(async m => {
+    const msg = await channel.send(`${m} 通し！`)
+    msg.react(Settings.EMOJI_ID.SUMI)
+  })
 }
 
 /**

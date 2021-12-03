@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as dateTable from '../../io/dateTable'
-import * as status from '../../io/status'
-import * as util from '../../util'
-import {Member} from '../../util/type'
+import * as dateTable from '../io/dateTable'
+import * as status from '../io/status'
+import * as util from '../util'
+import {Member} from '../util/type'
 
 /**
  * 選択された情報に応じて活動限界時間を更新する

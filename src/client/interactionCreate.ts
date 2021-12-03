@@ -2,10 +2,10 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import ThrowEnv from 'throw-env'
 import * as declare from '../convex/declare/interaction'
-import * as limit from '../convex/time/limit'
+import * as limit from '../convex/timeLimit'
 import * as manage from '../convex/manage'
 import * as kill from '../convex/role/kill'
-import * as attendance from '../convex/time/attendance'
+import * as attendance from '../convex/role/attendance'
 
 /**
  * インタラクションが起きた際の処理を実行する

@@ -3,13 +3,16 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as status from './status'
+import * as situation from '../situation'
+import * as attendance from '../role/attendance'
 import * as damageList from '../../io/damageList'
 import * as member from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current, Damage, Member} from '../../util/type'
 
 /**
- * 凸宣言の管理を行う
+ * 凸宣言の管理を行う。
+ * ダメージ報告やコマンド入力
  * @param msg DiscordからのMessage
  * @return 凸管理の実行結果
  */
@@ -23,9 +26,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   ) as Option<AtoE>
   if (!alpha) return
 
-  msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
-
   await status.Process(msg, alpha)
+
+  await attendance.Remove(msg.member)
+  situation.Plans()
 
   return 'Report damage or execute command'
 }
@@ -38,7 +42,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 export const NextBoss = async (alpha: AtoE, state: Current) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  await list.SetPlan(alpha, state, channel)
+  await situation.DeclarePlan(alpha, state, channel)
 
   const members = await undeclare(alpha)
 
@@ -89,8 +93,9 @@ const messageDelete = async (channel: Discord.TextChannel) => {
 
 /**
  * 渡されたユーザーの凸宣言を完了する
+ * @param alpha ボス番号
+ * @param id ユーザーID
  * @param member メンバーの状態
- * @param user リアクションを外すユーザー
  */
 export const Done = async (alpha: AtoE, id: string, member: Member) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
@@ -126,6 +131,18 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
 
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
+
+  // 通し通知を削除
+  const msgs = (await channel.messages.fetch())
+    .map(m => m)
+    .filter(m => m.author.id === Settings.CAL_ID)
+    .filter(m => m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
+    .filter(m => new RegExp(id, 'g').test(m.content))
+    .filter(m => m)
+  for (const m of msgs) {
+    await util.Sleep(100)
+    m.delete()
+  }
 
   console.log('Completion of convex declaration')
 }

@@ -3,18 +3,18 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as update from './update'
 import * as list from './list'
-import * as current from '../../io/current'
-import * as damageList from '../../io/damageList'
-import * as status from '../../io/status'
 import * as declare from '../declare'
 import * as declareList from '../declare/list'
 import * as declareStatus from '../declare/status'
 import * as over from '../over'
-import * as cancel from '../plan/delete'
-import * as planList from '../plan/list'
 import * as role from '../role'
+import * as attendance from '../role/attendance'
 import * as situation from '../situation'
-import * as limit from '../time/limit'
+import * as limit from '../timeLimit'
+import * as cancel from '../plan/delete'
+import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Member} from '../../util/type'
 
@@ -51,19 +51,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Not carry over'
   }
 
-  if (!member_1.declare.length) {
-    msg.reply('凸宣言をしてから凸報告をしてね')
-    return 'Not declared convex'
-  }
-
-  if (member_1.declare.length > 1) {
-    let result: boolean
-    ;[member_1, result] = await duplicateConvexDeclare(member_1)
-    if (result) {
-      msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
-      return 'Duplicate convex declaration'
-    }
-  }
+  let errText: Option<string>
+  ;[member_1, errText] = await confirmConvexDeclare(member_1, msg)
+  if (errText) return errText
 
   const carry = member_1.carry
   const alpha = <AtoE>member_1.declare
@@ -85,22 +75,32 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     state = await declareStatus.RemainingHPChange(content, alpha, state)
   }
 
+  // 凸予定削除より先に離席中ロールを外す
+  await attendance.Remove(msg.member)
+
   // `;`が入っている場合は凸予定を取り消さない
-  if (!/;/i.test(content)) {
+  if (!/;/i.test(msg.content)) {
     cancel.Remove(alpha, msg.author.id)
-    planList.SituationEdit()
+    situation.Plans()
   }
 
   overDelete(member_2, carry, overMsgs)
 
   situation.Report(members, state)
+  situation.Boss(members, state)
+
   if (content !== '@0') {
     declare.Done(alpha, msg.author.id, member_2)
   }
-  declareList.SetPlan(alpha, state)
+  situation.DeclarePlan(alpha, state)
 
   msg.react(Settings.EMOJI_ID.TORIKESHI)
-  roleDelete(member_2, msg)
+
+  if (member_2.end) {
+    // 3凸終了している場合に不要なロールを外す
+    msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
+    role.RemoveBossRole(msg.member)
+  }
 
   limit.Display(members)
 
@@ -134,18 +134,77 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
 }
 
 /**
- * 複数凸宣言あった場合、ダメージ報告が1つならそのボスの凸宣言にする。
- * そうでない場合は全てキャンセルする
+ * 凸宣言とダメージ報告を確認してエラーかどうか確認する
  * @param member メンバーの状態
- * @return [メンバーの状態, ダメージ報告が1つじゃない場合]
+ * @param msg DiscordからのMessage
+ * @return [メンバーの状態, エラーテキスト]
  */
-const duplicateConvexDeclare = async (member: Member): Promise<[Member, boolean]> => {
+const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promise<[Member, Option<string>]> => {
+  const damageBoss = await fetchBossNumberForDamages(member)
+
+  // 凸宣言がない場合
+  if (member.declare === '') {
+    if (damageBoss.length === 1) {
+      // ダメージ報告が1つなら、そのボスに凸宣言した事にする
+      member.declare = damageBoss
+      await status.UpdateMember(member)
+
+      return [member, undefined]
+    } else {
+      msg.reply('凸宣言をしてから凸報告をしてね')
+      return [member, 'Not declared convex']
+    }
+  }
+
+  // 凸宣言が1つの場合
+  if (member.declare.length === 1) {
+    // ダメージ報告がない場合はスルー
+    if (damageBoss === '') {
+      return [member, undefined]
+    }
+    // 凸宣言とダメージ報告のボスが同じか確認
+    if (damageBoss.includes(member.declare)) {
+      return [member, undefined]
+    } else {
+      msg.reply('凸宣言をしているボスとダメージ報告のボスが違うから確認してね')
+      return [member, 'The boss of the damage report is different']
+    }
+  }
+
+  // 凸宣言が複数の場合
+  if (member.declare.length > 1) {
+    if (damageBoss.length === 1) {
+      // ダメージ報告が1つなら、そのボスに凸宣言した事にする
+      member.declare = damageBoss
+      await status.UpdateMember(member)
+
+      return [member, undefined]
+    } else {
+      const alphas = member.declare.split('')
+      member.declare = ''
+      const members = await status.UpdateMember(member)
+
+      // 凸宣言していたボスの表を更新
+      alphas.forEach(a => declareList.SetUser(<AtoE>a, undefined, members))
+
+      msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
+      return [member, 'Duplicate convex declaration']
+    }
+  }
+
+  return [member, 'Impossible']
+}
+
+/**
+ * 受け取ったメンバーがダメージ報告していたボス番号を文字列にして返す
+ * @param member メンバーの状態
+ * @returns
+ */
+const fetchBossNumberForDamages = async (member: Member): Promise<string> => {
   const dList = await damageList.Fetch()
-
-  const alphas = member.declare.split('').sort()
-
   // メンバーの報告済ではないボス番号を取得
-  const alpha = alphas
+  return 'abcde'
+    .split('')
     .map(a => {
       const ds = dList[<AtoE>a]
       const d = ds.filter(d => !d.already).find(d => d.id === member.id)
@@ -153,24 +212,6 @@ const duplicateConvexDeclare = async (member: Member): Promise<[Member, boolean]
     })
     .filter(a => a)
     .join('')
-
-  let result: boolean
-
-  if (alpha.length === 1) {
-    member.declare = alpha
-    result = false
-  } else {
-    member.declare = ''
-    result = true
-  }
-
-  // 凸宣言一をを更新
-  const members = await status.UpdateMember(member)
-  for (const a of alphas) {
-    await declareList.SetUser(<AtoE>a, undefined, members)
-  }
-
-  return [member, result]
 }
 
 /**
@@ -232,19 +273,5 @@ const overDelete = (member: Member, carry: boolean, overMsgs: Discord.Message[])
   // 持越状況のメッセージが1つの場合は削除
   if (overMsgs.length === 1) {
     over.DeleteAllUserMsg(overMsgs)
-  }
-}
-
-/**
- * 不要になったロールを削除する
- * @param member メンバーの状態
- * @param msg DiscordからのMessage
- */
-const roleDelete = (member: Member, msg: Discord.Message) => {
-  msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
-
-  if (member.end) {
-    msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
-    role.RemoveBossRole(msg.member)
   }
 }

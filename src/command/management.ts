@@ -5,7 +5,6 @@ import * as command from '.'
 import * as etc from '../convex/etc'
 import * as category from '../convex/category'
 import * as plan from '../convex/plan/delete'
-import * as list from '../convex/plan/list'
 import * as role from '../convex/role'
 import * as situation from '../convex/situation'
 import * as bossTable from '../io/bossTable'
@@ -206,10 +205,11 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
   }
 
   const members = await status.Fetch()
-  situation.Report(members)
+  await situation.Report(members)
+  await situation.Boss(members)
 
   const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
 }
 
 /**

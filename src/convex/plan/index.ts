@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as util from '../../util'
-import * as status from '../../io/status'
-import * as list from './list'
 import * as update from './update'
+import * as situation from '../situation'
 import * as declare from '../declare/list'
+import * as status from '../../io/status'
+import * as util from '../../util'
 
 /**
  * 凸予定を行う
@@ -42,9 +42,8 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   const [plans, plan] = await update.Plans(msg)
 
-  await list.SituationEdit(plans)
-  await declare.SetPlan(plan.alpha)
-
+  situation.Plans(plans)
+  situation.DeclarePlan(plan.alpha)
   declare.SetUser(plan.alpha)
 
   return 'Make a convex reservation'

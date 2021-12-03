@@ -78,6 +78,11 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
   }
 }
 
+/**
+ * 正規表現のリストから重複を省いたリストにして返す
+ * @param list 受け取った正規表現のリスト
+ * @returns 番号一覧
+ */
 const fetchNumbers = (list: RegExpMatchArray): string[] => {
   const set = list
     .map(l => l)

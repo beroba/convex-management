@@ -1,31 +1,12 @@
 import * as Discord from 'discord.js'
 import Settings from 'const-settings'
 import * as declare from './status'
-import * as plan from '../plan/list'
 import * as current from '../../io/current'
 import * as damageList from '../../io/damageList'
 import * as schedule from '../../io/schedule'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current, Damage, Member, Plan} from '../../util/type'
-
-/**
- * 凸予定一覧を更新する
- * @param alpha ボス番号
- * @param state 現在の状況
- * @param channel 凸宣言のチャンネル
- */
-export const SetPlan = async (alpha: AtoE, state?: Current, channel?: Discord.TextChannel) => {
-  state ??= await current.Fetch()
-  channel ??= util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
-
-  const msg = await channel.messages.fetch(Settings.DECLARE_MESSAGE_ID[alpha].PLAN)
-  const plans = await schedule.Fetch()
-  const text = await plan.CreatePlanText(alpha, state.stage, plans)
-
-  // 凸予定の前2行を取り除いて結合
-  await msg.edit('凸予定\n```ts\n' + text.split('\n').slice(2).join('\n'))
-}
 
 /**
  * メンバーの凸宣言から凸宣言一覧を作る
@@ -76,7 +57,7 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, 
       const over = '+'.repeat(m.over)
       const limit = m.limit !== '' ? `, ${m.limit}時` : ''
 
-      const p = plans.find(p => p.playerID === m?.id)
+      const p = plans.reverse().find(p => p.playerID === m?.id)
       const msg = p ? ` ${p.msg}` : ''
 
       return `${carry}${m.name}[${convex}${over}${limit}]${msg}`
@@ -113,6 +94,8 @@ export const SetDamage = async (
   const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
 
   const total = await declare.TotalDamage(damages)
+  const remaining = declare.ExpectRemainingHP(HP, total)
+  const full = declare.FullCarryOverDamage(HP, maxHP)
 
   const before = await createDamageList(damages, HP, members, false)
   const after = await createDamageList(damages, HP, members, true)
@@ -122,8 +105,8 @@ export const SetDamage = async (
     'ダメージ集計 `⭕優先権(通したい)` `🆖事故・下振れ(通したくない)` `✅通し`',
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
-    `${bar} ${HP}/${maxHP}`,
-    `ダメージ合計: ${total}, 予想残りHP: ${declare.ExpectRemainingHP(HP, total)}`,
+    `${bar} ${HP}/${maxHP}, フル持越: ${full}`,
+    `ダメージ合計: ${total}, 予想残りHP: ${remaining}`,
     '',
     '- ダメージ一覧',
     `${before.join('\n')}`,
