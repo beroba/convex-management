@@ -130,14 +130,15 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
  * @return [メンバーの状態, エラーテキスト]
  */
 const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promise<[Member, Option<string>]> => {
+  const declares = await fetchBossNumberForDamages(member)
+
   // 凸宣言がない場合
   if (member.declare === '') {
-    const declares = await fetchBossNumberForDamages(member)
-
-    // ダメージ報告が1つなら、そのボスに凸宣言した事にする
     if (declares.length === 1) {
+      // ダメージ報告が1つなら、そのボスに凸宣言した事にする
       member.declare = declares
       await status.UpdateMember(member)
+
       return [member, undefined]
     } else {
       msg.reply('凸宣言をしてから凸報告をしてね')
@@ -147,16 +148,22 @@ const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promi
 
   // 凸宣言が1つの場合
   if (member.declare.length === 1) {
+    // 凸宣言とダメージ報告のボスが同じか確認
+    if (declares.includes(member.declare)) {
+      return [member, undefined]
+    } else {
+      msg.reply('凸宣言をしているボスとダメージ報告のボスが違うから確認してね')
+      return [member, 'The boss of the damage report is different']
+    }
   }
 
   // 凸宣言が複数の場合
   if (member.declare.length > 1) {
-    const declares = await fetchBossNumberForDamages(member)
-
-    // ダメージ報告が1つなら、そのボスに凸宣言した事にする
     if (declares.length === 1) {
+      // ダメージ報告が1つなら、そのボスに凸宣言した事にする
       member.declare = declares
       await status.UpdateMember(member)
+
       return [member, undefined]
     } else {
       const alphas = member.declare.split('')
