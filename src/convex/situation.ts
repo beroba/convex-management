@@ -1,12 +1,14 @@
 import Settings from 'const-settings'
+import * as plan from './plan/list'
 import * as current from '../io/current'
 import * as dateTable from '../io/dateTable'
+import * as schedule from '../io/schedule'
 import * as status from '../io/status'
 import * as util from '../util'
-import {AtoE, Current, Member} from '../util/type'
+import {AtoE, Current, Member, Plan} from '../util/type'
 
 /**
- * 凸状況を更新する
+ * 全体の凸状況を更新する
  * @param members メンバー一覧
  * @param state 現在の状況
  */
@@ -48,7 +50,49 @@ export const Report = async (members?: Member[], state?: Current) => {
     await msg.edit(text)
   }
 
-  console.log('Report convex situation')
+  console.log('Overall convex situation update')
+}
+
+/**
+ * ボス状況を更新する
+ * @param members メンバー一覧
+ * @param state 現在の状況
+ */
+export const Boss = async (members?: Member[], state?: Current) => {
+  members ??= await status.Fetch()
+  state ??= await current.Fetch()
+
+  // 昇順ソート
+  members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  // const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
+
+  const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.BOSS)
+  const text = await createBossText(members, state)
+  await msg.edit(text)
+
+  console.log('Boss status update')
+}
+
+/**
+ * 凸予定を更新する
+ * @param plans 凸予定一覧
+ */
+export const Plans = async (plans?: Plan[]) => {
+  plans ??= await schedule.Fetch()
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+
+  const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.PLAN)
+  // prettier-ignore
+  const text = [
+    '予定一覧',
+    await plan.CreateAllPlanText(plans),
+  ].join('\n')
+  await msg.edit(text)
+
+  console.log('Convex schedule update of convex situation')
 }
 
 /**

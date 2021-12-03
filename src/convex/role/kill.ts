@@ -7,7 +7,7 @@ import * as util from '../../util'
  * メッセージ送信者にタスキルロールを付与する
  * @param msg DiscordからのMessage
  */
-export const AddRole = async (msg: Discord.Message) => {
+export const Add = async (msg: Discord.Message) => {
   const isRole = util.IsRole(msg.member, Settings.ROLE_ID.TASK_KILL)
 
   if (isRole) {
@@ -18,6 +18,19 @@ export const AddRole = async (msg: Discord.Message) => {
 
     msg.reply('タスキルロールを付けたわよ！')
   }
+}
+
+/**
+ * 全員のタスキルロールを外す
+ */
+export const RemoveAll = () => {
+  const guildMembers = util.GetGuild()?.members.cache.map(m => m)
+  guildMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.TASK_KILL))
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+  channel.send('全員のタスキルロールを外したわ')
+
+  console.log('remove task kill role')
 }
 
 /**
@@ -66,17 +79,4 @@ const edit = async () => {
   const msg = await channel.messages.fetch(Settings.BOT_OPERATION.TASK_KILL)
 
   await msg.edit(text)
-}
-
-/**
- * 全員のタスキルロールを外す
- */
-export const RemoveAllRole = () => {
-  const guildMembers = util.GetGuild()?.members.cache.map(m => m)
-  guildMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.TASK_KILL))
-
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-  channel.send('全員のタスキルロールを外したわ')
-
-  console.log('remove task kill role')
 }

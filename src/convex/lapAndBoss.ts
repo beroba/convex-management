@@ -94,8 +94,11 @@ const progressLap = async (lap: number) => {
  * @param state 現在の状況
  */
 const damageReportUpdate = async (alpha: AtoE, state: Current) => {
-  for (const a of 'abcde'.replace(alpha, '').split('')) {
-    const damages = await damageList.DeleteBoss(alpha)
-    await list.SetDamage(<AtoE>a, state, undefined, damages)
-  }
+  'abcde'
+    .replace(alpha, '')
+    .split('')
+    .forEach(async a => {
+      const damages = await damageList.DeleteBoss(alpha)
+      list.SetDamage(<AtoE>a, state, undefined, damages)
+    })
 }

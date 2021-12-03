@@ -152,7 +152,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
   await list.SetDamage(alpha, state)
 
   const members = await status.Fetch()
-  situation.Report(members)
+  situation.Boss(members)
 
   return state
 }
@@ -355,10 +355,10 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
 
   if (!mentions.length) return
 
-  for (const mention of mentions) {
-    const msg = await channel.send(`${mention} 通し！`)
+  mentions.forEach(async m => {
+    const msg = await channel.send(`${m} 通し！`)
     msg.react(Settings.EMOJI_ID.SUMI)
-  }
+  })
 }
 
 /**

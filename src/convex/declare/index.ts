@@ -3,13 +3,16 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as status from './status'
+import * as situation from '../situation'
+import * as attendance from '../role/attendance'
 import * as damageList from '../../io/damageList'
 import * as member from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Current, Damage, Member} from '../../util/type'
 
 /**
- * 凸宣言の管理を行う
+ * 凸宣言の管理を行う。
+ * ダメージ報告やコマンド入力
  * @param msg DiscordからのMessage
  * @return 凸管理の実行結果
  */
@@ -23,9 +26,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   ) as Option<AtoE>
   if (!alpha) return
 
-  msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
-
   await status.Process(msg, alpha)
+
+  await attendance.Remove(msg.member)
+  situation.Plans()
 
   return 'Report damage or execute command'
 }

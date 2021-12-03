@@ -40,6 +40,7 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
 
   await killConfirm(member.history)
   situation.Report(members)
+  situation.Boss(members)
 
   return 'Convex cancellation'
 }
@@ -64,6 +65,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 
   await killConfirm(member.history)
   situation.Report(members)
+  situation.Boss(members)
 
   return 'Convex cancellation'
 }

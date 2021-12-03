@@ -24,25 +24,10 @@ export const Output = async (alpha: AtoE) => {
  */
 export const AllOutput = async () => {
   const plans = await schedule.Fetch()
-  const text = await createAllPlanText(plans)
+  const text = await CreateAllPlanText(plans)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
   channel.send(text)
-}
-
-/**
- * #凸状況の凸予定を編集
- * @param plans 凸予定一覧
- */
-export const SituationEdit = async (plans?: Plan[]) => {
-  plans ??= await schedule.Fetch()
-
-  const text = await createAllPlanText(plans)
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.PLAN)
-  msg.edit('予定一覧\n' + text)
-
-  console.log('Edit the convex schedule of the convex situation')
 }
 
 /**
@@ -97,7 +82,7 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
  * @param plans 凸予定一覧
  * @return 作成したテキスト
  */
-const createAllPlanText = async (plans: Plan[]): Promise<string> => {
+export const CreateAllPlanText = async (plans: Plan[]): Promise<string> => {
   const state = await current.Fetch()
 
   // 昇順ソート

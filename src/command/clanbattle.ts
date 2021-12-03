@@ -203,10 +203,11 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
   await lapAndBoss.UpdateLap(lap.to_n(), <AtoE>alpha)
 
   const members = await status.Fetch()
-  situation.Report(members)
+  await situation.Report(members)
+  await situation.Boss(members)
 
   const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
 }
 
 /**
@@ -230,9 +231,7 @@ const deleteDeclareController = async (_command: string, _content: string, _msg:
   member.declare = ''
   members = await status.UpdateMember(member)
 
-  for (const a of 'abcde'.split('')) {
-    await declare.SetUser(<AtoE>a, undefined, members)
-  }
+  'abcde'.split('').forEach(a => declare.SetUser(<AtoE>a, undefined, members))
 
   _msg.reply('凸宣言を全て削除したわ')
 }
@@ -253,7 +252,7 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   const [plans, plan] = await schedule.Delete(id)
   if (!plan) return _msg.reply(`${id}の凸予定はなかったわ`)
 
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
   await declare.SetPlan(plan.alpha)
 
   _msg.reply('凸予定を削除したわ')
@@ -303,7 +302,7 @@ const overController = async (_command: string, _content: string, _msg: Discord.
  * @param _msg DiscordからのMessage
  */
 const taskKillController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  kill.AddRole(_msg)
+  kill.Add(_msg)
 }
 
 /**
@@ -314,10 +313,11 @@ const taskKillController = async (_command: string, _content: string, _msg: Disc
  */
 const updateReportController = async (_command: string, _content: string, _msg: Discord.Message) => {
   const members = await status.Fetch()
-  situation.Report(members)
+  await situation.Report(members)
+  await situation.Boss(members)
 
   const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
 
   _msg.reply('凸状況を更新したわよ！')
 }

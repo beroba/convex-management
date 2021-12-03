@@ -2,8 +2,8 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as declare from '../declare/list'
-import * as list from './list'
 import * as role from '../role'
+import * as situation from '../situation'
 import * as schedule from '../../io/schedule'
 import * as util from '../../util'
 import {Plan} from '../../util/type'
@@ -50,8 +50,8 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   const [plans, plan] = await planDelete(msg)
   if (!plan) return
 
-  await list.SituationEdit(plans)
-  await declare.SetPlan(plan.alpha)
+  situation.Plans(plans)
+  declare.SetPlan(plan.alpha)
 
   declare.SetUser(plan.alpha)
 
@@ -59,7 +59,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 引数で渡されたボス番号の凸予定一覧から、引数で渡されたユーザーidの先頭の凸予定を削除する
+ * 引数で渡されたボス番号の凸予定一覧から、引数で渡されたユーザーidの後ろの凸予定を削除する
  * @parrm alpha ボス番号
  * @param id ユーザーid
  */
@@ -72,7 +72,7 @@ export const Remove = async (alpha: string, id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
   const msg = await channel.messages.fetch(plan.senderID)
 
-  msg.delete()
+  await msg.delete()
 
   console.log('Delete completed message')
 }
@@ -137,7 +137,7 @@ export const DeleteAll = async () => {
   }
 
   const plans = await schedule.Fetch()
-  await list.SituationEdit(plans)
+  await situation.Plans(plans)
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('全ての凸予定を削除したわ')

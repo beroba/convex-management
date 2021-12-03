@@ -3,18 +3,18 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as update from './update'
 import * as list from './list'
-import * as current from '../../io/current'
-import * as damageList from '../../io/damageList'
-import * as status from '../../io/status'
 import * as declare from '../declare'
 import * as declareList from '../declare/list'
 import * as declareStatus from '../declare/status'
 import * as over from '../over'
-import * as cancel from '../plan/delete'
-import * as planList from '../plan/list'
 import * as role from '../role'
+import * as attendance from '../role/attendance'
 import * as situation from '../situation'
-import * as limit from '../time/limit'
+import * as limit from '../timeLimit'
+import * as cancel from '../plan/delete'
+import * as current from '../../io/current'
+import * as damageList from '../../io/damageList'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE, Member} from '../../util/type'
 
@@ -75,22 +75,32 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     state = await declareStatus.RemainingHPChange(content, alpha, state)
   }
 
+  // 凸予定削除より先に離席中ロールを外す
+  await attendance.Remove(msg.member)
+
   // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(msg.content)) {
     cancel.Remove(alpha, msg.author.id)
-    planList.SituationEdit()
+    situation.Plans()
   }
 
   overDelete(member_2, carry, overMsgs)
 
   situation.Report(members, state)
+  situation.Boss(members, state)
+
   if (content !== '@0') {
     declare.Done(alpha, msg.author.id, member_2)
   }
   declareList.SetPlan(alpha, state)
 
   msg.react(Settings.EMOJI_ID.TORIKESHI)
-  roleDelete(member_2, msg)
+
+  if (member_2.end) {
+    // 3凸終了している場合に不要なロールを外す
+    msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
+    role.RemoveBossRole(msg.member)
+  }
 
   limit.Display(members)
 
@@ -130,13 +140,13 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
  * @return [メンバーの状態, エラーテキスト]
  */
 const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promise<[Member, Option<string>]> => {
-  const declares = await fetchBossNumberForDamages(member)
+  const damageBoss = await fetchBossNumberForDamages(member)
 
   // 凸宣言がない場合
   if (member.declare === '') {
-    if (declares.length === 1) {
+    if (damageBoss.length === 1) {
       // ダメージ報告が1つなら、そのボスに凸宣言した事にする
-      member.declare = declares
+      member.declare = damageBoss
       await status.UpdateMember(member)
 
       return [member, undefined]
@@ -148,8 +158,12 @@ const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promi
 
   // 凸宣言が1つの場合
   if (member.declare.length === 1) {
+    // ダメージ報告がない場合はスルー
+    if (damageBoss === '') {
+      return [member, undefined]
+    }
     // 凸宣言とダメージ報告のボスが同じか確認
-    if (declares.includes(member.declare)) {
+    if (damageBoss.includes(member.declare)) {
       return [member, undefined]
     } else {
       msg.reply('凸宣言をしているボスとダメージ報告のボスが違うから確認してね')
@@ -159,9 +173,9 @@ const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promi
 
   // 凸宣言が複数の場合
   if (member.declare.length > 1) {
-    if (declares.length === 1) {
+    if (damageBoss.length === 1) {
       // ダメージ報告が1つなら、そのボスに凸宣言した事にする
-      member.declare = declares
+      member.declare = damageBoss
       await status.UpdateMember(member)
 
       return [member, undefined]
@@ -171,9 +185,7 @@ const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promi
       const members = await status.UpdateMember(member)
 
       // 凸宣言していたボスの表を更新
-      for (const a of alphas) {
-        await declareList.SetUser(<AtoE>a, undefined, members)
-      }
+      alphas.forEach(a => declareList.SetUser(<AtoE>a, undefined, members))
 
       msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
       return [member, 'Duplicate convex declaration']
@@ -261,19 +273,5 @@ const overDelete = (member: Member, carry: boolean, overMsgs: Discord.Message[])
   // 持越状況のメッセージが1つの場合は削除
   if (overMsgs.length === 1) {
     over.DeleteAllUserMsg(overMsgs)
-  }
-}
-
-/**
- * 不要になったロールを削除する
- * @param member メンバーの状態
- * @param msg DiscordからのMessage
- */
-const roleDelete = (member: Member, msg: Discord.Message) => {
-  msg.member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
-
-  if (member.end) {
-    msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
-    role.RemoveBossRole(msg.member)
   }
 }
