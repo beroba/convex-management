@@ -52,6 +52,11 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Change boss'
     }
 
+    case /cb delete declare/.test(content): {
+      await deleteDeclareController('/cb delete declare', content, msg)
+      return 'Delete declare'
+    }
+
     case /cb delete plan/.test(content): {
       await deletePlanController('/cb delete plan', content, msg)
       return 'Delete plan'
@@ -202,6 +207,34 @@ const lapController = async (_command: string, _content: string, _msg: Discord.M
 
   const plans = await schedule.Fetch()
   await list.SituationEdit(plans)
+}
+
+/**
+ * `/cb delete declare`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const deleteDeclareController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const args = command.ExtractArgument(_command, _content)
+  if (!args) return _msg.reply('削除する凸宣言者を指定しないと消せないわ')
+
+  // 引数からユーザーidだけを取り除く
+  const id = util.Format(args).replace(/[^0-9]/g, '')
+
+  let members = await status.Fetch()
+  const member = members.find(m => m.id === id)
+
+  if (!member) return _msg.reply(`クランメンバーにいなかったわ`)
+
+  member.declare = ''
+  members = await status.UpdateMember(member)
+
+  for (const a of 'abcde'.split('')) {
+    await declare.SetUser(<AtoE>a, undefined, members)
+  }
+
+  _msg.reply('凸宣言を全て削除したわ')
 }
 
 /**
