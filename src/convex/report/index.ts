@@ -51,19 +51,9 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
     return 'Not carry over'
   }
 
-  if (!member_1.declare.length) {
-    msg.reply('凸宣言をしてから凸報告をしてね')
-    return 'Not declared convex'
-  }
-
-  if (member_1.declare.length > 1) {
-    let result: boolean
-    ;[member_1, result] = await duplicateConvexDeclare(member_1)
-    if (result) {
-      msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
-      return 'Duplicate convex declaration'
-    }
-  }
+  let errText: Option<string>
+  ;[member_1, errText] = await confirmConvexDeclare(member_1, msg)
+  if (errText) return errText
 
   const carry = member_1.carry
   const alpha = <AtoE>member_1.declare
@@ -134,18 +124,68 @@ const threeConvexProcess = async (member: Member, msg: Discord.Message): Promise
 }
 
 /**
- * 複数凸宣言あった場合、ダメージ報告が1つならそのボスの凸宣言にする。
- * そうでない場合は全てキャンセルする
+ * 凸宣言とダメージ報告を確認してエラーかどうか確認する
  * @param member メンバーの状態
- * @return [メンバーの状態, ダメージ報告が1つじゃない場合]
+ * @param msg DiscordからのMessage
+ * @return [メンバーの状態, エラーテキスト]
  */
-const duplicateConvexDeclare = async (member: Member): Promise<[Member, boolean]> => {
+const confirmConvexDeclare = async (member: Member, msg: Discord.Message): Promise<[Member, Option<string>]> => {
+  // 凸宣言がない場合
+  if (member.declare === '') {
+    const declares = await fetchBossNumberForDamages(member)
+
+    // ダメージ報告が1つなら、そのボスに凸宣言した事にする
+    if (declares.length === 1) {
+      member.declare = declares
+      await status.UpdateMember(member)
+      return [member, undefined]
+    } else {
+      msg.reply('凸宣言をしてから凸報告をしてね')
+      return [member, 'Not declared convex']
+    }
+  }
+
+  // 凸宣言が1つの場合
+  if (member.declare.length === 1) {
+  }
+
+  // 凸宣言が複数の場合
+  if (member.declare.length > 1) {
+    const declares = await fetchBossNumberForDamages(member)
+
+    // ダメージ報告が1つなら、そのボスに凸宣言した事にする
+    if (declares.length === 1) {
+      member.declare = declares
+      await status.UpdateMember(member)
+      return [member, undefined]
+    } else {
+      const alphas = member.declare.split('')
+      member.declare = ''
+      const members = await status.UpdateMember(member)
+
+      // 凸宣言していたボスの表を更新
+      for (const a of alphas) {
+        await declareList.SetUser(<AtoE>a, undefined, members)
+      }
+
+      msg.reply('凸宣言が複数されていたからリセットしたわ\nもう一度凸宣言してね')
+      return [member, 'Duplicate convex declaration']
+    }
+  }
+
+  return [member, 'Impossible']
+}
+
+/**
+ * 受け取ったメンバーがダメージ報告していたボス番号を文字列にして返す
+ * @param member メンバーの状態
+ * @returns
+ */
+const fetchBossNumberForDamages = async (member: Member): Promise<string> => {
   const dList = await damageList.Fetch()
-
-  const alphas = member.declare.split('').sort()
-
   // メンバーの報告済ではないボス番号を取得
-  const alpha = alphas
+  return 'abcde'
+    .split('')
     .map(a => {
       const ds = dList[<AtoE>a]
       const d = ds.filter(d => !d.already).find(d => d.id === member.id)
@@ -153,24 +193,6 @@ const duplicateConvexDeclare = async (member: Member): Promise<[Member, boolean]
     })
     .filter(a => a)
     .join('')
-
-  let result: boolean
-
-  if (alpha.length === 1) {
-    member.declare = alpha
-    result = false
-  } else {
-    member.declare = ''
-    result = true
-  }
-
-  // 凸宣言一をを更新
-  const members = await status.UpdateMember(member)
-  for (const a of alphas) {
-    await declareList.SetUser(<AtoE>a, undefined, members)
-  }
-
-  return [member, result]
 }
 
 /**
