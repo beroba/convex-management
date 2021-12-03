@@ -25,6 +25,13 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
   // @とsが両方ある場合は@を消す
   content = /(?=.*@)(?=.*(s|秒))/.test(content) ? content.replace(/@/g, '') : content
 
+  // m:ssを[\d]sに変換
+  const t = content.match(/(0|1):\d{1,2}/g)
+  if (t) {
+    const [m, ss] = t.first().split(':')
+    content = content.replace(/(0|1):\d{1,2}/, `${m.to_n() * 60 + ss.to_n()}s`)
+  }
+
   // コマンドの処理
   if (msg.content.charAt(0) === '/') {
     await command.Process(content, alpha, msg)
@@ -64,7 +71,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
     num: '0',
     exclusion: false,
     flag: 'none',
-    text: content,
+    text: msg.content,
     damage: fetchDamage(content),
     time: fetchTime(content),
     date: util.GetCurrentDate(),
