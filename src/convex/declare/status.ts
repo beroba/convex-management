@@ -178,12 +178,17 @@ export const ExpectRemainingHP = (HP: number, total: number): number => {
  * @param maxHP ボスの最大HP
  * @return ダメージ
  */
-export const FullCarryOverDamage = (HP: number, maxHP: number): number | string => {
+export const FullCarryOverDamage = (HP: number, maxHP: number): string => {
   // フル持越させるのに必要なダメージの倍率
   const magnification = 4.2857143
 
   const damage = Math.ceil(HP * magnification)
-  return damage > maxHP ? '不可' : damage
+  if (damage > maxHP) {
+    const time = Math.ceil((1 - HP / maxHP) * 90 + 20)
+    return `不可(最大${time}秒)`
+  } else {
+    return damage.to_s()
+  }
 }
 
 /**
@@ -193,8 +198,8 @@ export const FullCarryOverDamage = (HP: number, maxHP: number): number | string 
  * @return 持越秒数
  */
 export const CalcCarryOver = (HP: number, damage: number): string => {
-  const calc = Math.ceil((1 - HP / damage) * 90 + 20)
-  return HP <= damage ? `${calc >= 90 ? '90秒(フル)' : calc + '秒'}` : '不可'
+  const time = Math.ceil((1 - HP / damage) * 90 + 20)
+  return HP <= damage ? `${time >= 90 ? '90秒(フル)' : time + '秒'}` : '不可'
 }
 
 /**
