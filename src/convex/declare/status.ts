@@ -272,7 +272,11 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
   if (B.damage === 0) return
 
   // ボスを倒せない場合は終了
-  if (A.damage + B.damage < HP) return
+  if (A.damage + B.damage < HP) {
+    const msg = await channel.send(`\`${A.num}\`と\`${B.num}\`じゃ倒せないわ`)
+    await msg.react(Settings.EMOJI_ID.SUMI)
+    return
+  }
 
   const a = etc.OverCalc(HP, A.damage, B.damage)
   const b = etc.OverCalc(HP, B.damage, A.damage)
