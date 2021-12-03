@@ -113,6 +113,8 @@ export const SetDamage = async (
   const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
 
   const total = await declare.TotalDamage(damages)
+  const remaining = declare.ExpectRemainingHP(HP, total)
+  const full = declare.FullCarryOverDamage(HP, maxHP)
 
   const before = await createDamageList(damages, HP, members, false)
   const after = await createDamageList(damages, HP, members, true)
@@ -122,8 +124,8 @@ export const SetDamage = async (
     'ダメージ集計 `⭕優先権(通したい)` `🆖事故・下振れ(通したくない)` `✅通し`',
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
-    `${bar} ${HP}/${maxHP}`,
-    `ダメージ合計: ${total}, 予想残りHP: ${declare.ExpectRemainingHP(HP, total)}`,
+    `${bar} ${HP}/${maxHP}, フル持越: ${full}`,
+    `ダメージ合計: ${total}, 予想残りHP: ${remaining}`,
     '',
     '- ダメージ一覧',
     `${before.join('\n')}`,

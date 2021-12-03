@@ -173,6 +173,20 @@ export const ExpectRemainingHP = (HP: number, total: number): number => {
 }
 
 /**
+ * フル持越のダメージを計算する
+ * @param HP 現在のHP
+ * @param maxHP ボスの最大HP
+ * @return ダメージ
+ */
+export const FullCarryOverDamage = (HP: number, maxHP: number): number | string => {
+  // フル持越させるのに必要なダメージの倍率
+  const magnification = 4.2857143
+
+  const damage = Math.ceil(HP * magnification)
+  return damage > maxHP ? '不可' : damage
+}
+
+/**
  * 予想残りHPを計算する
  * @param HP 現在のHP
  * @param damage ダメージ
