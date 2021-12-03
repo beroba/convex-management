@@ -66,7 +66,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
 export const Remove = async (alpha: string, id: string) => {
   const plans = await schedule.FetchBoss(alpha)
 
-  const plan = plans.find(p => p.playerID === id)
+  const plan = plans.reverse().find(p => p.playerID === id)
   if (!plan) return
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)

@@ -86,7 +86,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // `;`が入っている場合は凸予定を取り消さない
-  if (!/;/i.test(content)) {
+  if (!/;/i.test(msg.content)) {
     cancel.Remove(alpha, msg.author.id)
     planList.SituationEdit()
   }
