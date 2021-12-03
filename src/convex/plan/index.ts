@@ -43,7 +43,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   const [plans, plan] = await update.Plans(msg)
 
   situation.Plans(plans)
-  declare.SetPlan(plan.alpha)
+  situation.DeclarePlan(plan.alpha)
   declare.SetUser(plan.alpha)
 
   return 'Make a convex reservation'

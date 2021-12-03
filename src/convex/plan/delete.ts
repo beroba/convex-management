@@ -51,7 +51,7 @@ export const Delete = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!plan) return
 
   situation.Plans(plans)
-  declare.SetPlan(plan.alpha)
+  situation.DeclarePlan(plan.alpha)
 
   declare.SetUser(plan.alpha)
 

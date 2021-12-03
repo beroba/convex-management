@@ -42,7 +42,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 export const NextBoss = async (alpha: AtoE, state: Current) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
 
-  await list.SetPlan(alpha, state, channel)
+  await situation.DeclarePlan(alpha, state, channel)
 
   const members = await undeclare(alpha)
 

@@ -26,7 +26,7 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   const plans = await schedule.Edit(text, msg.id)
 
   situation.Plans(plans)
-  declare.SetPlan(alpha)
+  situation.DeclarePlan(alpha)
   declare.SetUser(alpha)
 
   return 'Edit appointment message'

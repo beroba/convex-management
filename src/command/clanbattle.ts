@@ -1,14 +1,12 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import {NtoA} from 'alphabet-to-number'
 import * as command from '.'
 import * as declare from '../convex/declare/list'
 import * as etc from '../convex/etc'
 import * as format from '../convex/format'
 import * as lapAndBoss from '../convex/lapAndBoss'
 import * as manage from '../convex/manage'
-import * as list from '../convex/plan/list'
 import * as kill from '../convex/role/kill'
 import * as situation from '../convex/situation'
 import * as schedule from '../io/schedule'
@@ -60,11 +58,6 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     case /cb delete plan/.test(content): {
       await deletePlanController('/cb delete plan', content, msg)
       return 'Delete plan'
-    }
-
-    case /cb plan/.test(content): {
-      await planController('/cb plan', content, msg)
-      return 'Display convex plan list'
     }
 
     case /cb over/.test(content): {
@@ -253,31 +246,9 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   if (!plan) return _msg.reply(`${id}の凸予定はなかったわ`)
 
   await situation.Plans(plans)
-  await declare.SetPlan(plan.alpha)
+  await situation.DeclarePlan(plan.alpha)
 
   _msg.reply('凸予定を削除したわ')
-}
-
-/**
- * `/cb plan`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const planController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content) ?? ''
-
-  // 引数にボス番号があるか確認
-  if (/^[a-e]$/i.test(args)) {
-    // ボス番号の凸予定一覧を表示
-    list.Output(args as AtoE)
-  } else if (/^[1-5]$/i.test(args)) {
-    // ボス番号の凸予定一覧を表示
-    list.Output(NtoA(args) as AtoE)
-  } else {
-    // 凸予定一覧を全て表示
-    list.AllOutput()
-  }
 }
 
 /**

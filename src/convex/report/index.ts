@@ -92,7 +92,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   if (content !== '@0') {
     declare.Done(alpha, msg.author.id, member_2)
   }
-  declareList.SetPlan(alpha, state)
+  situation.DeclarePlan(alpha, state)
 
   msg.react(Settings.EMOJI_ID.TORIKESHI)
 

@@ -2,7 +2,6 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as situation from '../situation'
-import * as declare from '../declare/list'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
 
@@ -23,7 +22,7 @@ const planUpdate = () => {
   situation.Plans()
 
   // #凸宣言の凸予定を更新
-  'abcde'.split('').forEach(a => declare.SetPlan(<AtoE>a))
+  'abcde'.split('').forEach(a => situation.DeclarePlan(<AtoE>a))
 }
 
 /**
