@@ -10,6 +10,10 @@ declare global {
      * 配列の最後の要素を取得
      */
     last(): T
+    /**
+     * 配列同士の比較
+     */
+    equals(array: Array<T>): boolean
   }
 
   interface Number {
@@ -37,6 +41,9 @@ Array.prototype.first = function <T>(): T {
 
 Array.prototype.last = function <T>(): T {
   return this[this.length - 1]
+}
+Array.prototype.equals = function <T>(array: Array<T>): boolean {
+  return JSON.stringify(this) === JSON.stringify(array)
 }
 
 Number.prototype.to_s = function (): string {

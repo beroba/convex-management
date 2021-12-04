@@ -27,13 +27,13 @@ export const Cancel = async (react: Discord.MessageReaction, user: Discord.User)
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_REPORT)
   await channel.messages.fetch(react.message.id)
 
+  const member = await status.FetchMember(user.id)
+  if (!member) return
+
   const msg = <Discord.Message>react.message
 
-  const isAuthor = msg.author.id === user.id
+  const isAuthor = member?.id.find(n => n === msg.author.id)
   if (!isAuthor) return
-
-  const member = await status.FetchMember(msg.author.id)
-  if (!member) return
 
   const members = await statusRestore(msg, member)
   if (!members) return
