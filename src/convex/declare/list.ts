@@ -57,7 +57,7 @@ const createDeclareList = async (members: Member[], plans: Plan[], alpha: AtoE, 
       const over = '+'.repeat(m.over)
       const limit = m.limit !== '' ? `, ${m.limit}時` : ''
 
-      const p = plans.reverse().find(p => p.playerID === m?.id)
+      const p = plans.reverse().find(p => m?.id.find(n => n === p.playerID))
       const msg = p ? ` ${p.msg}` : ''
 
       return `${carry}${m.name}[${convex}${over}${limit}]${msg}`
@@ -134,7 +134,7 @@ const createDamageList = async (
   return damages
     .filter(d => d.already === already)
     .map(d => {
-      const m = members.find(m => m.id === d.id)
+      const m = members.find(m => m.id.find(n => n === d.id))
       if (!m) return ''
 
       const _ = d.exclusion ? '_' : ''

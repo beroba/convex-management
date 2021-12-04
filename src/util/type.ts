@@ -87,7 +87,7 @@ export type Plan = {
  */
 export type User = {
   name: string
-  id: string
+  id: string[]
   limit: string
   declare: string
   carry: boolean

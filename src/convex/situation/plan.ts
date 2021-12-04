@@ -66,7 +66,7 @@ export const CreatePlanText = async (alpha: AtoE, stage: string, plans: Plan[]):
       })
   )
   // 値の重複、空の値を潰す
-  const text = [...new Set(p)].filter(v => v).join('\n')
+  const text = [...new Set(p)].filter(Boolean).join('\n')
 
   // ボス名とHPを取得
   const name = await bossTable.TakeName(alpha)

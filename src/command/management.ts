@@ -12,6 +12,7 @@ import * as dateTable from '../io/dateTable'
 import * as schedule from '../io/schedule'
 import * as status from '../io/status'
 import * as util from '../util'
+import {Member} from '../util/type'
 
 /**
  * 運営管理者用のコマンド
@@ -151,8 +152,14 @@ const updateMembersController = async (_command: string, _content: string, _msg:
     return
   }
 
-  await etc.UpdateMembers(_msg)
+  const members = await etc.UpdateMembers(_msg)
   _msg.reply('クランメンバー一覧を更新したわよ！')
+
+  await situation.Report(members)
+  await situation.Boss(members)
+
+  const plans = await schedule.Fetch()
+  await situation.Plans(plans)
 }
 
 /**
@@ -175,11 +182,15 @@ const deleteAllPlanController = async (_command: string, _content: string, _msg:
 const setNameController = async (_command: string, _content: string, _msg: Discord.Message) => {
   const args = command.ExtractArgument(_command, _content)
 
+  let members: Member[]
+
   // 引数が無い場合はキャルステータスの名前を適用
   if (!args) {
     // キャルステータスの名前を適用
     const err = await status.SetNames()
     _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
+
+    members = await status.Fetch()
   } else {
     // 変更先の名前を取得
     const name = util
@@ -199,12 +210,11 @@ const setNameController = async (_command: string, _content: string, _msg: Disco
       return
     }
 
-    await status.SetName(member, name)
+    members = await status.SetName(member, name)
 
     _msg.reply(`\`${name}\`の名前を更新したわよ！`)
   }
 
-  const members = await status.Fetch()
   await situation.Report(members)
   await situation.Boss(members)
 

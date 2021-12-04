@@ -5,6 +5,7 @@ import * as declare from '../declare/list'
 import * as role from '../role'
 import * as situation from '../situation'
 import * as schedule from '../../io/schedule'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import {Plan} from '../../util/type'
 
@@ -27,8 +28,13 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
   await channel.messages.fetch(react.message.id)
 
+  const member = await status.FetchMember(user.id)
+  if (!member) return
+
   const msg = <Discord.Message>react.message
-  if (msg.author.id !== user.id) return
+
+  const isAuthor = member?.id.find(n => n === msg.author.id)
+  if (!isAuthor) return
 
   react.message.delete()
 

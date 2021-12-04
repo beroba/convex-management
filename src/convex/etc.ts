@@ -5,7 +5,7 @@ import * as situation from './situation'
 import * as json from '../io/json'
 import * as status from '../io/status'
 import * as util from '../util'
-import {User, Json} from '../util/type'
+import {User, Json, Member} from '../util/type'
 
 /**
  * 同時凸の持越計算を行う
@@ -61,24 +61,26 @@ export const ResetConvex = async () => {
  * botのクランメンバー一覧を更新する
  * @param msg DiscordからのMessage
  */
-export const UpdateMembers = async (msg: Discord.Message) => {
+export const UpdateMembers = async (msg: Discord.Message): Promise<Member[]> => {
   // クランメンバー一覧をニックネームで取得
   const users: Option<User[]> = msg.guild?.roles.cache
     .get(Settings.ROLE_ID.CLAN_MEMBERS)
     ?.members.map(m => ({
       name: util.GetUserName(m),
-      id: m.id,
+      id: [m.id],
       limit: '',
       declare: '',
       carry: false,
     }))
     .sort((a, b) => (a.id > b.id ? 1 : -1)) // ID順にソート
-  if (!users) return
+  if (!users) return []
 
-  await status.UpdateUsers(users)
+  const members = await status.UpdateUsers(users)
 
-  const list: Json = users.map(u => ({[u.id]: u.name})).reduce((a, b) => ({...a, ...b}))
+  const list: Json = users.map(u => ({[u.id.first()]: u.name})).reduce((a, b) => ({...a, ...b}))
   await json.Send(list)
+
+  return members
 }
 
 /**

@@ -49,10 +49,10 @@ export const React = (msg: Discord.Message): Option<string> => {
  * 渡されたメンバーidの持越状況のメッセージを全て取得
  * @param id 取得したいメンバーのid
  */
-export const GetAllUserMsg = async (id: string): Promise<Discord.Message[]> => {
+export const GetAllUserMsg = async (id: string[]): Promise<Discord.Message[]> => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
   const msgs = (await channel.messages.fetch()).map(m => m)
-  return msgs.filter(m => m.author.id === id).filter(m => m)
+  return msgs.filter(m => id.find(n => n === m.author.id)).filter(Boolean)
 }
 
 /**
@@ -73,7 +73,7 @@ export const DeleteAllUserMsg = async (msgs: Discord.Message[]) => {
  */
 export const DeleteAllMsg = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION)
-  const msgs = (await channel.messages.fetch()).map(m => m).filter(m => m)
+  const msgs = (await channel.messages.fetch()).map(m => m).filter(Boolean)
   for (const m of msgs) {
     await util.Sleep(100)
     m.delete()

@@ -215,7 +215,7 @@ class Generate {
     return list
       .join('\n') // 複数のリストを結合
       .split('\n') // 改行で分割
-      .filter(l => l) // 空の行を取り除く
+      .filter(Boolean) // 空の行を取り除く
       .map(l => l.replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // 括弧の前にスラッシュを入れる
       .map(l => l.replace(/:\s*/, ':').split(':')) // `:`で分割
       .map(this.toTLFormat) // TLFormatの形に変更

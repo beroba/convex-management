@@ -80,6 +80,16 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
       return 'Convex situation updated'
     }
 
+    case /cb set sub/.test(content): {
+      await setSubController('/cb set sub', content, msg)
+      return 'Sub-account settings'
+    }
+
+    case /cb reset member id/.test(content): {
+      await resetMemberIdController('/cb reset member id', content, msg)
+      return 'Sub-account settings'
+    }
+
     case /cb help/.test(content): {
       await helpController('/cb help', content, msg)
       return 'Show help'
@@ -113,7 +123,10 @@ const tleController = async (_command: string, _content: string, _msg: Discord.M
 
   // TL部分の生成
   const tl = _msg.content.split('\n').slice(1).join('\n')
-  if (!tl) return _msg.reply('TLがないわ')
+  if (!tl) {
+    _msg.reply('TLがないわ')
+    return
+  }
 
   // timeを作成
   const time = args && toTime(args)
@@ -146,7 +159,10 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
 
   // TL部分の生成
   const tl = _msg.content.split('\n').slice(1).join('\n')
-  if (!tl) return _msg.reply('TLがないわ')
+  if (!tl) {
+    _msg.reply('TLがないわ')
+    return
+  }
 
   // timeを作成
   const time = args && toTime(args)
@@ -161,7 +177,10 @@ const tlController = async (_command: string, _content: string, _msg: Discord.Me
  */
 const convexController = async (_command: string, _content: string, _msg: Discord.Message) => {
   const args = command.ExtractArgument(_command, _content)
-  if (!args) return _msg.reply('更新したいプレイヤーと凸状況を指定しなさい')
+  if (!args) {
+    _msg.reply('更新したいプレイヤーと凸状況を指定しなさい')
+    return
+  }
 
   // 更新先の凸状況を取得
   const state = util
@@ -170,7 +189,10 @@ const convexController = async (_command: string, _content: string, _msg: Discor
     .trim()
 
   const isFormat = /^(3|2\+{0,1}|1\+{0,2}|0\+{0,3})$/.test(state)
-  if (!isFormat) return _msg.reply('凸状況の書式が違うわ')
+  if (!isFormat) {
+    _msg.reply('凸状況の書式が違うわ')
+    return
+  }
 
   await manage.Update(state, _msg)
 }
@@ -183,15 +205,24 @@ const convexController = async (_command: string, _content: string, _msg: Discor
  */
 const lapController = async (_command: string, _content: string, _msg: Discord.Message) => {
   const args = command.ExtractArgument(_command, _content)
-  if (!args) return _msg.reply('周回数とボス番号を指定しなさい')
+  if (!args) {
+    _msg.reply('周回数とボス番号を指定しなさい')
+    return
+  }
 
   // 周回数とボス番号を取得
   const lap = util.Format(args).replace(/\s|[a-e]/gi, '')
   const alpha = util.Format(args).replace(/\s|\d/gi, '').toLowerCase()
 
   // 書式が違う場合は終了
-  if (!/\d/.test(lap)) return _msg.reply('周回数の書式が違うわ、\\dで指定してね')
-  if (!/[a-e]/i.test(alpha)) return _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
+  if (!/\d/.test(lap)) {
+    _msg.reply('周回数の書式が違うわ、\\dで指定してね')
+    return
+  }
+  if (!/[a-e]/i.test(alpha)) {
+    _msg.reply('ボス番号の書式が違うわ、[a-e]で指定してね')
+    return
+  }
 
   await lapAndBoss.UpdateLap(lap.to_n(), <AtoE>alpha)
 
@@ -217,9 +248,12 @@ const deleteDeclareController = async (_command: string, _content: string, _msg:
   const id = util.Format(args).replace(/[^0-9]/g, '')
 
   let members = await status.Fetch()
-  const member = members.find(m => m.id === id)
+  const member = members.find(m => m.id.find(n => n === id))
 
-  if (!member) return _msg.reply(`クランメンバーにいなかったわ`)
+  if (!member) {
+    _msg.reply(`クランメンバーにいなかったわ`)
+    return
+  }
 
   member.declare = ''
   members = await status.UpdateMember(member)
@@ -243,7 +277,10 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   const id = util.Format(args).replace(/[^0-9]/g, '')
 
   const [plans, plan] = await schedule.Delete(id)
-  if (!plan) return _msg.reply(`${id}の凸予定はなかったわ`)
+  if (!plan) {
+    _msg.reply(`${id}の凸予定はなかったわ`)
+    return
+  }
 
   await situation.Plans(plans)
   await situation.DeclarePlan(plan.alpha)
@@ -259,7 +296,10 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
  */
 const overController = async (_command: string, _content: string, _msg: Discord.Message) => {
   const args = command.ExtractArgument(_command, _content)
-  if (!args) return _msg.reply('HP A Bを指定しなさい')
+  if (!args) {
+    _msg.reply('HP A Bを指定しなさい')
+    return
+  }
 
   // HP, A, Bを分割して代入
   const [HP, A, B] = util.Format(args).split(' ').map(Number)
@@ -291,6 +331,85 @@ const updateReportController = async (_command: string, _content: string, _msg: 
   await situation.Plans(plans)
 
   _msg.reply('凸状況を更新したわよ！')
+}
+
+/**
+ * `/cb set sub`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setSubController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合はキャルステータスの名前を適用
+  if (!args) {
+    _msg.reply('メンションで誰のメンバーIDをリセットしたいか指定しなさい')
+    return
+  }
+
+  const mentions = _msg.mentions.users.map(u => u)
+  if (mentions.length !== 2) {
+    _msg.reply('`@メインアカウント` `@サブアカウント`を指定しなさい')
+    return
+  }
+
+  const main = _msg.mentions.users.first() as Discord.User
+  const sub = _msg.mentions.users.last() as Discord.User
+
+  let member = await status.FetchMember(main.id)
+  if (!member) {
+    _msg.reply('その人はクランメンバーじゃないわ')
+    return
+  }
+
+  const members = await status.SetSubAccount(member, sub.id)
+
+  _msg.reply(`<@!${sub.id}>を\`${member.name}\`のサブアカウントに設定したわよ！`)
+
+  await situation.Report(members)
+  await situation.Boss(members)
+
+  const plans = await schedule.Fetch()
+  await situation.Plans(plans)
+}
+
+/**
+ * `/cb reset member id`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const resetMemberIdController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const args = command.ExtractArgument(_command, _content)
+
+  // 引数が無い場合はキャルステータスの名前を適用
+  if (!args) {
+    _msg.reply('メンションで誰のメンバーIDをリセットしたいか指定しなさい')
+    return
+  }
+
+  const user = _msg.mentions.users.first()
+  if (!user) {
+    _msg.reply('メンションで誰のメンバーIDをリセットしたいか指定しなさい')
+    return
+  }
+
+  let member = await status.FetchMember(user.id)
+  if (!member) {
+    _msg.reply('その人はクランメンバーじゃないわ')
+    return
+  }
+
+  const members = await status.ResetAccountID(member, user.id)
+
+  _msg.reply(`\`${member.name}\`のアカウントIDをリセットしたわよ！`)
+
+  await situation.Report(members)
+  await situation.Boss(members)
+
+  const plans = await schedule.Fetch()
+  await situation.Plans(plans)
 }
 
 /**

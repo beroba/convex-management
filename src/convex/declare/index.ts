@@ -84,7 +84,7 @@ const messageDelete = async (channel: Discord.TextChannel) => {
     .map(m => m)
     .filter(m => m.author.id === Settings.CAL_ID)
     .filter(m => m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
-    .filter(m => m)
+    .filter(Boolean)
   for (const m of msgs) {
     await util.Sleep(100)
     m.delete()
@@ -94,20 +94,19 @@ const messageDelete = async (channel: Discord.TextChannel) => {
 /**
  * 渡されたユーザーの凸宣言を完了する
  * @param alpha ボス番号
- * @param id ユーザーID
  * @param member メンバーの状態
  */
-export const Done = async (alpha: AtoE, id: string, member: Member) => {
+export const Done = async (alpha: AtoE, member: Member) => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   await list.SetUser(alpha, channel)
 
   let damages = await damageList.FetchBoss(alpha)
-  const damage = damages.find(d => d.id === id)
+  const damage = damages.find(d => member.id.find(n => n === d.id))
 
-  // ダメージにチェックを付けるない場合は追加
+  // ダメージにチェックを付ける。ない場合は追加
   if (damage) {
     damages = damages.map(d => {
-      if (d.id !== id) return d
+      if (!member.id.find(n => n === d.id)) return d
       d.exclusion = true
       d.flag = 'check'
       d.already = true
@@ -116,7 +115,7 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
   } else {
     const damage: Damage = {
       name: member.name,
-      id: member.id,
+      id: member.id.first(),
       num: '0',
       exclusion: true,
       flag: 'check',
@@ -137,8 +136,8 @@ export const Done = async (alpha: AtoE, id: string, member: Member) => {
     .map(m => m)
     .filter(m => m.author.id === Settings.CAL_ID)
     .filter(m => m.reactions.cache.map(r => r).find(r => r.emoji.id === Settings.EMOJI_ID.SUMI))
-    .filter(m => new RegExp(id, 'g').test(m.content))
-    .filter(m => m)
+    .filter(m => new RegExp(member.id.first(), 'g').test(m.content))
+    .filter(Boolean)
   for (const m of msgs) {
     await util.Sleep(100)
     m.delete()

@@ -90,7 +90,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   situation.Boss(members, state)
 
   if (content !== '@0') {
-    declare.Done(alpha, msg.author.id, member_2)
+    declare.Done(alpha, member_2)
   }
   situation.DeclarePlan(alpha, state)
 
@@ -207,7 +207,7 @@ const fetchBossNumberForDamages = async (member: Member): Promise<string> => {
     .split('')
     .map(a => {
       const ds = dList[<AtoE>a]
-      const d = ds.filter(d => !d.already).find(d => d.id === member.id)
+      const d = ds.filter(d => !d.already).find(d => member.id.find(n => n === d.id))
       return d && a
     })
     .filter(a => a)
@@ -240,7 +240,7 @@ const fetchHPOrEmpty = async (member: Member, alpha: AtoE, msg: Discord.Message)
   if (!num) return ''
 
   const damages = await damageList.FetchBoss(alpha)
-  const d = damages.find(d => d.id === member.id)
+  const d = damages.find(d => member.id.find(n => n === d.id))
   const damage = d ? d.damage : 0
 
   // ダメージが0の場合は空

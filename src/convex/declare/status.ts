@@ -63,14 +63,14 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   if (!member) return
 
   // 上書きできるように前のダメージを消す
-  damages = damages.filter(d => d.id !== member.id || d.already)
+  damages = damages.filter(d => !member.id.find(n => n === d.id) || d.already)
 
   // 事故っている場合のフラグ
   const accident = /事故|じこ|死|失敗|落ち/.test(content)
 
   const damage: Damage = {
     name: member.name,
-    id: member.id,
+    id: member.id.first(),
     num: '0',
     exclusion: accident,
     flag: accident ? 'ng' : 'none',
@@ -368,5 +368,5 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
  * @return 除外したダメージ一覧
  */
 const excludeNoNumbers = (numbers: string[], damages: Damage[]): Damage[] => {
-  return numbers.map(n => damages.find(d => d.num === n)).filter(n => n) as Damage[]
+  return numbers.map(n => damages.find(d => d.num === n)).filter(Boolean) as Damage[]
 }
