@@ -132,7 +132,7 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
     // 3凸目で持越がある場合は持越
     member.carry = !member.convex && member.over ? true : false
   }
-  member.declare = [...new Set(`${member.declare}${alpha}`.split(''))].join('')
+  member.declare = [...new Set(`${member.declare}${alpha}`.split(''))].sort().join('')
   const members = await status.UpdateMember(member)
 
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
