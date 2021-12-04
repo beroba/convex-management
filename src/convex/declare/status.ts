@@ -84,6 +84,13 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
 
   damages = await damageList.UpdateBoss(alpha, damages)
 
+  // 凸宣言していない場合
+  if (!member.declare.includes(alpha)) {
+    member.declare = `${member.declare}${alpha}`.split('').sort().join('')
+    const members = await status.UpdateMember(member)
+    await list.SetUser(alpha, undefined, members)
+  }
+
   return damages
 }
 
