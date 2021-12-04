@@ -66,7 +66,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   damages = damages.filter(d => !member.id.find(n => n === d.id) || d.already)
 
   // 事故っている場合のフラグ
-  const accident = /事故|じこ|死|失敗|落ち/.test(content)
+  const accident = /事故|じこ|死|失敗|落ち|ダメ(?!ージ)/.test(content)
 
   const damage: Damage = {
     name: member.name,
