@@ -1,4 +1,5 @@
 import Option from 'type-of-option'
+import * as util from '../util'
 import {DateTable} from '../util/type'
 
 /**
@@ -10,14 +11,7 @@ export const Create = (): DateTable[] => {
 
   // 今月の最終日を取得
   const last = new Date(year, month, 0).getDate()
-
-  return [
-    {num: '1日目', day: `${month}/${last - 5}`},
-    {num: '2日目', day: `${month}/${last - 4}`},
-    {num: '3日目', day: `${month}/${last - 3}`},
-    {num: '4日目', day: `${month}/${last - 2}`},
-    {num: '5日目', day: `${month}/${last - 1}`},
-  ]
+  return util.Range(1, 6).map(i => ({num: `${i}日目`, day: `${month}/${last - 6 + i}`}))
 }
 
 /**
