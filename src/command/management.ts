@@ -8,7 +8,6 @@ import * as plan from '../convex/plan/delete'
 import * as role from '../convex/role'
 import * as situation from '../convex/situation'
 import * as bossTable from '../io/bossTable'
-import * as dateTable from '../io/dateTable'
 import * as schedule from '../io/schedule'
 import * as status from '../io/status'
 import * as util from '../util'
@@ -36,11 +35,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
     case /cb manage delete category/.test(content): {
       await deleteCategoryController('/cb manage delete category', content, msg)
       return 'Delete ClanBattle category'
-    }
-
-    case /cb manage set days/.test(content): {
-      await setDaysController('/cb manage set days', content, msg)
-      return 'Set convex days'
     }
 
     case /cb manage set boss/.test(content): {
@@ -101,20 +95,6 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
 
   const [year, month] = args.split('/').map(Number)
   category.Delete(year, month, _msg)
-}
-
-/**
- * `/cb manage set days`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const setDaysController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content)
-  if (!args) return _msg.reply('設定したい日付を入力しなさい！')
-
-  await dateTable.Update(args)
-  _msg.reply('クランバトルの日付を設定したわよ！')
 }
 
 /**

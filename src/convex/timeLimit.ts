@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as dateTable from '../io/dateTable'
+import * as dateTable from './dateTable'
 import * as status from '../io/status'
 import * as util from '../util'
 import {Member} from '../util/type'
@@ -128,7 +128,7 @@ export const MorningActivitySurvey = async () => {
   const d = new Date()
   const nextDay = `${d.getMonth() + 1}/${d.getDate() + 1}`
 
-  const date = await dateTable.Fetch()
+  const date = dateTable.Create()
   const isDay = date.find(d => d.day === nextDay)
   if (!isDay) return
 

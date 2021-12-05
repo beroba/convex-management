@@ -1,5 +1,5 @@
 import Settings from 'const-settings'
-import * as dateTable from '../../io/dateTable'
+import * as dateTable from '../dateTable'
 import {Current, Member} from '../../util/type'
 
 /**

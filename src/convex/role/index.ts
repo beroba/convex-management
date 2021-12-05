@@ -3,7 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as over from '../over'
 import * as plan from '../plan/delete'
-import * as dateTable from '../../io/dateTable'
+import * as dateTable from '../dateTable'
 import * as util from '../../util'
 
 /**
