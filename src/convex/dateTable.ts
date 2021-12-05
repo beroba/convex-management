@@ -1,31 +1,23 @@
 import Option from 'type-of-option'
-import * as util from '../util'
-import * as io from './redis'
 import {DateTable} from '../util/type'
 
 /**
- * 日付テーブルを設定する
- * @param args 開始日の日付
+ * 今月のクラバトの日付テーブルを作成
  */
-export const Update = async (args: string) => {
-  // 開始日から順番に日付の配列を作成
-  const days = util.Range(5).map(i => `${args.split('/').first()}/${args.split('/').last().to_n() + i}`)
+export const Create = (): DateTable[] => {
+  const d = new Date()
+  const [year, month] = [d.getFullYear(), d.getMonth() + 1]
 
-  // 日付テーブルを作成
-  const table: DateTable[] = days.map((d, i) => ({
-    num: `${i + 1}日目`,
-    day: d.split('/').map(Number).join('/'),
-  }))
+  // 今月の最終日を取得
+  const last = new Date(year, month, 0).getDate()
 
-  await io.UpdateArray('dateTable', table)
-}
-
-/**
- * キャルステータスから日付テーブルを取得
- * @return 日付テーブル
- */
-export const Fetch = async (): Promise<DateTable[]> => {
-  return io.Fetch<DateTable[]>('dateTable')
+  return [
+    {num: '1日目', day: `${month}/${last - 5}`},
+    {num: '2日目', day: `${month}/${last - 4}`},
+    {num: '3日目', day: `${month}/${last - 3}`},
+    {num: '4日目', day: `${month}/${last - 2}`},
+    {num: '5日目', day: `${month}/${last - 1}`},
+  ]
 }
 
 /**
@@ -34,7 +26,7 @@ export const Fetch = async (): Promise<DateTable[]> => {
  * @return 日付の情報
  */
 export const TakeDate = async (): Promise<DateTable> => {
-  const table = await Fetch()
+  const table = Create()
 
   // クラバトの日を取得
   const date: Option<DateTable> = table.find(d => d.day === mmdd())
