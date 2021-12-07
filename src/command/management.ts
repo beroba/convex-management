@@ -9,9 +9,7 @@ import * as role from '../convex/role'
 import * as situation from '../convex/situation'
 import * as bossTable from '../io/bossTable'
 import * as schedule from '../io/schedule'
-import * as status from '../io/status'
 import * as util from '../util'
-import {Member} from '../util/type'
 
 /**
  * 運営管理者用のコマンド
@@ -52,11 +50,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'All delete plan'
     }
 
-    case /cb manage set name/.test(content): {
-      await setNameController('/cb manage set name', content, msg)
-      return 'Set member name'
-    }
-
     case /cb manage set cal/.test(content): {
       await setCalController('/cb manage set cal', content, msg)
       return 'Set cal name'
@@ -74,13 +67,10 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
   const args = command.ExtractArgument(_command, _content)
   if (!args) return _msg.reply('削除したい年と月を入力しなさい！')
 
-  const guild = util.GetGuild()
-  if (!guild) return
-
   const [year, month] = args.split('/').map(Number)
-  const err = await category.Delete(year, month, guild)
+  const err = await category.Delete(year, month)
 
-  const title = `${year}年${month}月クラバト`
+  const title = category.CreateTitle(year, month)
   _msg.reply(err ? `${title}なんてないんだけど！` : `${title}を削除したわ`)
 }
 
@@ -91,8 +81,16 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
  * @param _msg DiscordからのMessage
  */
 const setBossController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const err = await bossTable.Update()
-  _msg.reply(err ? '`boss`の値が見つからなかったわ' : 'クランバトルのボステーブルを設定したわよ！')
+  const table = await bossTable.Update()
+  if (!table) {
+    return _msg.reply('`boss`の値が見つからなかったわ')
+  }
+
+  const d = new Date()
+  const [year, month] = [d.getFullYear(), d.getMonth() + 1]
+  await category.Rename(year, month, table)
+
+  _msg.reply('クランバトルのボステーブルを設定したわよ！')
 }
 
 /**
@@ -138,55 +136,6 @@ const updateMembersController = async (_command: string, _content: string, _msg:
 const deleteAllPlanController = async (_command: string, _content: string, _msg: Discord.Message) => {
   await plan.DeleteAll()
   _msg.reply('凸予定を全て削除したわよ！')
-}
-
-/**
- * `/cb manage set name`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const setNameController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content)
-
-  let members: Member[]
-
-  // 引数が無い場合はキャルステータスの名前を適用
-  if (!args) {
-    // キャルステータスの名前を適用
-    const err = await status.SetNames()
-    _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
-
-    members = await status.Fetch()
-  } else {
-    // 変更先の名前を取得
-    const name = util
-      .Format(args)
-      .replace(/<.+>/, '') // プレイヤーIDを省く
-      .trim()
-
-    const user = _msg.mentions.users.first()
-    if (!user) {
-      _msg.reply('メンションで誰の名前を変更したいか指定しなさい')
-      return
-    }
-
-    let member = await status.FetchMember(user.id)
-    if (!member) {
-      _msg.reply('その人はクランメンバーじゃないわ')
-      return
-    }
-
-    members = await status.SetName(member, name)
-
-    _msg.reply(`\`${name}\`の名前を更新したわよ！`)
-  }
-
-  await situation.Report(members)
-  await situation.Boss(members)
-
-  const plans = await schedule.Fetch()
-  await situation.Plans(plans)
 }
 
 /**

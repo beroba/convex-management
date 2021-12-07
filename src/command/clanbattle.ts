@@ -12,7 +12,7 @@ import * as situation from '../convex/situation'
 import * as schedule from '../io/schedule'
 import * as status from '../io/status'
 import * as util from '../util'
-import {AtoE} from '../util/type'
+import {AtoE, Member} from '../util/type'
 
 /**
  * クラバト用のコマンド
@@ -78,6 +78,11 @@ export const ClanBattle = async (content: string, msg: Discord.Message): Promise
     case /cb update report/.test(content): {
       await updateReportController('/cb update report', content, msg)
       return 'Convex situation updated'
+    }
+
+    case /cb set name/.test(content): {
+      await setNameController('/cb set name', content, msg)
+      return 'Set member name'
     }
 
     case /cb set sub/.test(content): {
@@ -331,6 +336,55 @@ const updateReportController = async (_command: string, _content: string, _msg: 
   await situation.Plans(plans)
 
   _msg.reply('凸状況を更新したわよ！')
+}
+
+/**
+ * `/cb set name`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const setNameController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  const args = command.ExtractArgument(_command, _content)
+
+  let members: Member[]
+
+  // 引数が無い場合はキャルステータスの名前を適用
+  if (!args) {
+    // キャルステータスの名前を適用
+    const err = await status.SetNames()
+    _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
+
+    members = await status.Fetch()
+  } else {
+    // 変更先の名前を取得
+    const name = util
+      .Format(args)
+      .replace(/<.+>/, '') // プレイヤーIDを省く
+      .trim()
+
+    const user = _msg.mentions.users.first()
+    if (!user) {
+      _msg.reply('メンションで誰の名前を変更したいか指定しなさい')
+      return
+    }
+
+    let member = await status.FetchMember(user.id)
+    if (!member) {
+      _msg.reply('その人はクランメンバーじゃないわ')
+      return
+    }
+
+    members = await status.SetName(member, name)
+
+    _msg.reply(`\`${name}\`の名前を更新したわよ！`)
+  }
+
+  await situation.Report(members)
+  await situation.Boss(members)
+
+  const plans = await schedule.Fetch()
+  await situation.Plans(plans)
 }
 
 /**

@@ -19,7 +19,7 @@ export const CronOperation = () => {
   // 04:30
   cron.schedule('0 30 4 * * *', () => etc.NotifyDailyMission())
   // 12:00
-  cron.schedule('0 0 12 * * *', () => limit.MorningActivitySurvey())
+  cron.schedule('0 0 12 * * *', () => etc.ClanBattleOperation())
   // 1時間起き
   cron.schedule('0 0 */1 * * *', () => limit.LimitTimeDisplay())
 }

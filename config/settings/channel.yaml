@@ -75,9 +75,9 @@ COMMAND_CHANNEL:
     - 進行-連携
     - くらばと-vc用
     - おためしキャルちゃん
-    - 🔔情報共有🔔
-    - bot-test
     - tlを修正するﾈｺﾁｬﾝ
+    - 運営管理用
+    - bot-test
   # 凸予定コマンドが入力できるチャンネル
   CONVEX_RESERVATION:
     - 凸予定
@@ -93,7 +93,6 @@ MAJOR_THAT_CHANNEL:
   - 進行-連携
   - 茶室
   - 茶の間
-  - 🔔情報共有🔔
   - vc用
   - vc用2
   - vc用-運営

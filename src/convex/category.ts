@@ -5,13 +5,25 @@ import * as util from '../util'
 import {BossTable} from '../util/type'
 
 /**
+ * 編成カテゴリーのタイトルを作成
+ * @param year 編成カテゴリーの年
+ * @param month 編成カテゴリーの月
+ * @return タイトルの文字列
+ */
+export const CreateTitle = (year: number, month: number): string => {
+  return `${year}年${month}月クラバト`
+}
+
+/**
  * 編成カテゴリーとチャンネルを作成する
  * @param year 編成カテゴリーの年
  * @param month 編成カテゴリーの月
  * @param guild クランサーバーのguildを情報
  */
-export const Create = async (year: number, month: number, guild: Discord.Guild) => {
-  const title = createTitle(year, month)
+export const Create = async (year: number, month: number, guild?: Discord.Guild) => {
+  guild ??= util.GetGuild() as Discord.Guild
+
+  const title = CreateTitle(year, month)
 
   // カテゴリーの作成
   const permit = settingPermit(guild)
@@ -30,8 +42,6 @@ export const Create = async (year: number, month: number, guild: Discord.Guild) 
   }
 
   console.log('Creating organization category')
-  // const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-  // await channel.send(`${title}のカテゴリーを作成したわよ！`)
 }
 
 /**
@@ -40,7 +50,9 @@ export const Create = async (year: number, month: number, guild: Discord.Guild) 
  * @param month 編成カテゴリーの月
  * @param guild クランサーバーのguildを情報
  */
-export const SetClanBattle = async (year: number, month: number, guild: Discord.Guild) => {
+export const SetClanBattle = async (year: number, month: number, guild?: Discord.Guild) => {
+  guild ??= util.GetGuild() as Discord.Guild
+
   // カテゴリーの取得
   const [cb_putting, cb_sub, cb_beroba, cb_beronya, cb_inspection] = fetchCBCategory()
   const organization = fetchOrganizationCategory(year, month, guild)
@@ -63,7 +75,9 @@ export const SetClanBattle = async (year: number, month: number, guild: Discord.
  * @param month 編成カテゴリーの月
  * @param guild クランサーバーのguildを情報
  */
-export const SetDefault = async (year: number, month: number, guild: Discord.Guild) => {
+export const SetDefault = async (year: number, month: number, guild?: Discord.Guild) => {
+  guild ??= util.GetGuild() as Discord.Guild
+
   // カテゴリーの取得
   const [cb_putting, cb_sub, cb_beroba, cb_beronya, cb_inspection] = fetchCBCategory()
   const organization = fetchOrganizationCategory(year, month, guild)
@@ -87,9 +101,12 @@ export const SetDefault = async (year: number, month: number, guild: Discord.Gui
  * 編成カテゴリーのチャンネル名を設定する
  * @param year 編成カテゴリーの年
  * @param month 編成カテゴリーの月
+ * @param table ボステーブル
  * @param guild クランサーバーのguildを情報
  */
-export const Rename = async (year: number, month: number, guild: Discord.Guild, table: BossTable[]) => {
+export const Rename = async (year: number, month: number, table: BossTable[], guild?: Discord.Guild) => {
+  guild ??= util.GetGuild() as Discord.Guild
+
   const organization = fetchOrganizationCategory(year, month, guild)
   if (!organization) return
 
@@ -114,7 +131,8 @@ export const Rename = async (year: number, month: number, guild: Discord.Guild, 
  * @param guild クランサーバーのguildを情報
  * @return 値がなかった場合のエラー
  */
-export const Delete = async (year: number, month: number, guild: Discord.Guild): Promise<Option<Error>> => {
+export const Delete = async (year: number, month: number, guild?: Discord.Guild): Promise<Option<Error>> => {
+  guild ??= util.GetGuild() as Discord.Guild
   const organization = fetchOrganizationCategory(year, month, guild)
   if (!organization) return Error()
 
@@ -123,16 +141,6 @@ export const Delete = async (year: number, month: number, guild: Discord.Guild):
     await c.delete()
   }
   await organization.delete()
-}
-
-/**
- * 編成カテゴリーのタイトルを作成
- * @param year 編成カテゴリーの年
- * @param month 編成カテゴリーの月
- * @return タイトルの文字列
- */
-const createTitle = (year: number, month: number): string => {
-  return `${year}年${month}月クラバト`
 }
 
 // prettier-ignore
@@ -208,5 +216,5 @@ const fetchOrganizationCategory = (
 ): Option<Discord.CategoryChannel> => {
   return guild.channels.cache
     .map(c => c as Discord.CategoryChannel)
-    .find(c => new RegExp(createTitle(year, month), 'ig').test(c.name))
+    .find(c => new RegExp(CreateTitle(year, month), 'ig').test(c.name))
 }

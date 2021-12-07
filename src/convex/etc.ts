@@ -1,11 +1,13 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as category from './category'
+import * as dateTable from './dateTable'
 import * as situation from './situation'
 import * as json from '../io/json'
 import * as status from '../io/status'
 import * as util from '../util'
-import {User, Json, Member} from '../util/type'
+import {DateTable, User, Json, Member} from '../util/type'
 
 /**
  * 同時凸の持越計算を行う
@@ -102,6 +104,106 @@ export const Fetch = async () => {
       )
     })
   )
+}
+
+/**
+ * クランバトルに関連するする操作を行う
+ */
+export const ClanBattleOperation = () => {
+  const date = dateTable.Create()
+  const d = new Date()
+
+  // クランバトルがある日の前日か確認
+  {
+    const day = `${d.getMonth() + 1}/${d.getDate() + 1}`
+    const isDay = date.find(d => d.day === day)
+    if (isDay) {
+      return morningActivitySurvey(isDay)
+    }
+  }
+
+  // クランバトル1日目の3日前か確認
+  {
+    const day = `${d.getMonth() + 1}/${d.getDate() + 3}`
+    const isDay = date.find(d => d.day === day)
+    if (isDay?.num === '1日目') {
+      return preparingTrainingMode(d)
+    }
+  }
+
+  // クランバトル5日目の1日後か確認
+  {
+    const day = `${d.getMonth() + 1}/${d.getDate() - 1}`
+    const isDay = date.find(d => d.day === day)
+    if (isDay?.num === '5日目') {
+      return returnToDefault(d)
+    }
+  }
+}
+
+/**
+ * 朝活アンケートを通知する
+ */
+const morningActivitySurvey = async (isDay: DateTable) => {
+  const text = [
+    `<@&${Settings.ROLE_ID.CLAN_MEMBERS}>`,
+    `\`${isDay.day}\` クラバト${isDay.num}の朝活アンケートです`,
+    `朝活に参加する予定の方は、${Settings.EMOJI_FULL_ID.SANKA} を押して下さい`,
+  ].join('\n')
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CLAN_BATTLE_CONTACT)
+  const msg = await channel.send(text)
+  await msg.react(Settings.EMOJI_ID.SANKA)
+
+  console.log('Take a morning activity questionnaire')
+}
+
+/**
+ * クランバトルのカテゴリーを作成する
+ */
+const preparingTrainingMode = async (d: Date) => {
+  const guild = util.GetGuild()
+  if (!guild) return
+
+  // カテゴリーの作成と並び替え
+  const [year, month] = [d.getFullYear(), d.getMonth() + 1]
+  await category.Create(year, month, guild)
+  await util.Sleep(1000)
+  await category.SetClanBattle(year, month, guild)
+
+  const title = category.CreateTitle(year, month)
+
+  // クラバト連絡に通知
+  {
+    const text = [
+      `<@&${Settings.ROLE_ID.CLAN_MEMBERS}>`,
+      `トレーニングモードが始まったわよ！`,
+      `編成やTLは \`${title}\` に書き込んでね`,
+      `\`例: 12-a, 12段階目の1ボス\` ※チャンネル名は後ほど修正されます`,
+    ].join('\n')
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.CLAN_BATTLE_CONTACT)
+    const msg = await channel.send(text)
+    await msg.react(Settings.EMOJI_ID.KAKUNIN)
+  }
+
+  // bot-notifyに通知
+  {
+    const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+    await channel.send(`${title}のカテゴリーを作成したわよ！`)
+  }
+
+  console.log('Prepare and set up training')
+}
+
+/**
+ * クランバトルのカテゴリーを元の位置に戻す
+ */
+const returnToDefault = async (d: Date) => {
+  // カテゴリーの作成と並び替え
+  const [year, month] = [d.getFullYear(), d.getMonth() + 1]
+  await category.SetDefault(year, month)
+
+  console.log('Return category to its original position')
 }
 
 /**

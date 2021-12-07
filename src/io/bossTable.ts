@@ -7,10 +7,10 @@ import {AtoE, BossTable} from '../util/type'
  * ボステーブルを設定する
  * @return 値がなかった場合のエラー
  */
-export const Update = async (): Promise<Option<Error>> => {
+export const Update = async (): Promise<Option<BossTable[]>> => {
   // ボス情報をキャルステータスから取得
   const list = await json.Fetch('boss')
-  if (!list) return Error()
+  if (!list) return
 
   // ボステーブルを作成
   const table: BossTable[] = 'abcde'.split('').map((a, i) => ({
@@ -20,6 +20,8 @@ export const Update = async (): Promise<Option<Error>> => {
   }))
 
   await io.UpdateArray('bossTable', table)
+
+  return table
 }
 
 /**
