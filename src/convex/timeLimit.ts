@@ -1,7 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as dateTable from './dateTable'
 import * as status from '../io/status'
 import * as util from '../util'
 import {Member} from '../util/type'
@@ -119,30 +118,6 @@ const limitMember = (h: number, members: Member[]): string => {
     .filter(m => !m.end) // 3凸終了している人は省く
     .map(m => m.name)
     .join(', ')
-}
-
-/**
- * 朝活アンケートを通知する
- */
-export const MorningActivitySurvey = async () => {
-  const d = new Date()
-  const nextDay = `${d.getMonth() + 1}/${d.getDate() + 1}`
-
-  const date = dateTable.Create()
-  const isDay = date.find(d => d.day === nextDay)
-  if (!isDay) return
-
-  const text = [
-    `<@&${Settings.ROLE_ID.CLAN_MEMBERS}>`,
-    `\`${isDay.day}\` クラバト${isDay.num}の朝活アンケートです`,
-    `朝活に参加する予定の方は、${Settings.EMOJI_FULL_ID.SANKA} を押して下さい`,
-  ].join('\n')
-
-  const channel = util.GetTextChannel(Settings.CHANNEL_ID.CLAN_BATTLE_CONTACT)
-  const msg = await channel.send(text)
-  await msg.react(Settings.EMOJI_ID.SANKA)
-
-  console.log('Notify daily mission digestion')
 }
 
 /**

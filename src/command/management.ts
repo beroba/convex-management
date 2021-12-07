@@ -9,9 +9,7 @@ import * as role from '../convex/role'
 import * as situation from '../convex/situation'
 import * as bossTable from '../io/bossTable'
 import * as schedule from '../io/schedule'
-import * as status from '../io/status'
 import * as util from '../util'
-import {Member} from '../util/type'
 
 /**
  * 運営管理者用のコマンド
@@ -27,14 +25,9 @@ export const Management = async (content: string, msg: Discord.Message): Promise
   if (!isRole) return
 
   switch (true) {
-    case /cb manage create category/.test(content): {
-      await createCategoryController('/cb manage create category', content, msg)
-      return 'Create ClanBattle category'
-    }
-
     case /cb manage delete category/.test(content): {
       await deleteCategoryController('/cb manage delete category', content, msg)
-      return 'Delete ClanBattle category'
+      return 'Delete organization category'
     }
 
     case /cb manage set boss/.test(content): {
@@ -57,30 +50,11 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'All delete plan'
     }
 
-    case /cb manage set name/.test(content): {
-      await setNameController('/cb manage set name', content, msg)
-      return 'Set member name'
-    }
-
     case /cb manage set cal/.test(content): {
       await setCalController('/cb manage set cal', content, msg)
       return 'Set cal name'
     }
   }
-}
-
-/**
- * `/cb manage create category`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const createCategoryController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content)
-
-  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と月を代入
-  const [year, month] = args ? args.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
-  category.Create(year, month, _msg)
 }
 
 /**
@@ -94,7 +68,10 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
   if (!args) return _msg.reply('削除したい年と月を入力しなさい！')
 
   const [year, month] = args.split('/').map(Number)
-  category.Delete(year, month, _msg)
+  const err = await category.Delete(year, month)
+
+  const title = category.CreateTitle(year, month)
+  _msg.reply(err ? `${title}なんてないんだけど！` : `${title}を削除したわ`)
 }
 
 /**
@@ -104,8 +81,16 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
  * @param _msg DiscordからのMessage
  */
 const setBossController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const err = await bossTable.Update()
-  _msg.reply(err ? '`boss`の値が見つからなかったわ' : 'クランバトルのボステーブルを設定したわよ！')
+  const table = await bossTable.Update()
+  if (!table) {
+    return _msg.reply('`boss`の値が見つからなかったわ')
+  }
+
+  const d = new Date()
+  const [year, month] = [d.getFullYear(), d.getMonth() + 1]
+  await category.Rename(year, month, table)
+
+  _msg.reply('クランバトルのボステーブルを設定したわよ！')
 }
 
 /**
@@ -151,55 +136,6 @@ const updateMembersController = async (_command: string, _content: string, _msg:
 const deleteAllPlanController = async (_command: string, _content: string, _msg: Discord.Message) => {
   await plan.DeleteAll()
   _msg.reply('凸予定を全て削除したわよ！')
-}
-
-/**
- * `/cb manage set name`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const setNameController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content)
-
-  let members: Member[]
-
-  // 引数が無い場合はキャルステータスの名前を適用
-  if (!args) {
-    // キャルステータスの名前を適用
-    const err = await status.SetNames()
-    _msg.reply(err ? '`user`の値が見つからなかったわ' : 'キャルステータスの名前を適用したわよ！')
-
-    members = await status.Fetch()
-  } else {
-    // 変更先の名前を取得
-    const name = util
-      .Format(args)
-      .replace(/<.+>/, '') // プレイヤーIDを省く
-      .trim()
-
-    const user = _msg.mentions.users.first()
-    if (!user) {
-      _msg.reply('メンションで誰の名前を変更したいか指定しなさい')
-      return
-    }
-
-    let member = await status.FetchMember(user.id)
-    if (!member) {
-      _msg.reply('その人はクランメンバーじゃないわ')
-      return
-    }
-
-    members = await status.SetName(member, name)
-
-    _msg.reply(`\`${name}\`の名前を更新したわよ！`)
-  }
-
-  await situation.Report(members)
-  await situation.Boss(members)
-
-  const plans = await schedule.Fetch()
-  await situation.Plans(plans)
 }
 
 /**
