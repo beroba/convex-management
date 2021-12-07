@@ -27,14 +27,9 @@ export const Management = async (content: string, msg: Discord.Message): Promise
   if (!isRole) return
 
   switch (true) {
-    case /cb manage create category/.test(content): {
-      await createCategoryController('/cb manage create category', content, msg)
-      return 'Create ClanBattle category'
-    }
-
     case /cb manage delete category/.test(content): {
       await deleteCategoryController('/cb manage delete category', content, msg)
-      return 'Delete ClanBattle category'
+      return 'Delete organization category'
     }
 
     case /cb manage set boss/.test(content): {
@@ -70,20 +65,6 @@ export const Management = async (content: string, msg: Discord.Message): Promise
 }
 
 /**
- * `/cb manage create category`のController
- * @param _command 引数以外のコマンド部分
- * @param _content 入力された内容
- * @param _msg DiscordからのMessage
- */
-const createCategoryController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  const args = command.ExtractArgument(_command, _content)
-
-  // 引数がある場合は引数の年と日を代入し、ない場合は現在の年と月を代入
-  const [year, month] = args ? args.split('/').map(Number) : (d => [d.getFullYear(), d.getMonth() + 1])(new Date())
-  category.Create(year, month, _msg)
-}
-
-/**
  * `/cb manage delete category`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
@@ -93,8 +74,14 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
   const args = command.ExtractArgument(_command, _content)
   if (!args) return _msg.reply('削除したい年と月を入力しなさい！')
 
+  const guild = util.GetGuild()
+  if (!guild) return
+
   const [year, month] = args.split('/').map(Number)
-  category.Delete(year, month, _msg)
+  const err = await category.Delete(year, month, guild)
+
+  const title = `${year}年${month}月クラバト`
+  _msg.reply(err ? `${title}なんてないんだけど！` : `${title}を削除したわ`)
 }
 
 /**

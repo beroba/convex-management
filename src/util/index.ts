@@ -139,3 +139,11 @@ export const GetMembersFromUser = (
 export const GetTextChannel = (id: string): Discord.TextChannel => {
   return Client.channels.cache.get(id) as Discord.TextChannel
 }
+
+/**
+ * 渡されたidのCategoryChannelを取得する
+ * @param id チャンネルのid
+ */
+export const GetCategoryChannel = (id: string): Discord.CategoryChannel => {
+  return Client.channels.cache.get(id) as Discord.CategoryChannel
+}

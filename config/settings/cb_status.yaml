@@ -46,10 +46,6 @@ STAGE:
       d: 12000
       e: 13000
 
-# クラバトカテゴリーの場所
-CATEGORY:
-  POSITION: 9
-
 # bot操作のメッセージID
 BOT_OPERATION:
   CONVEX_SITUATION: '885842181569536020'
