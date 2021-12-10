@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as status from '../../io/status'
 import * as util from '../../util'
 
 /**
@@ -8,12 +9,16 @@ import * as util from '../../util'
  * @param msg DiscordからのMessage
  */
 export const Add = async (msg: Discord.Message) => {
-  const isRole = util.IsRole(msg.member, Settings.ROLE_ID.TASK_KILL)
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
+  const guildMember = await util.MemberFromId(member.id.first())
+
+  const isRole = util.IsRole(guildMember, Settings.ROLE_ID.TASK_KILL)
 
   if (isRole) {
     msg.reply('既にタスキルしてるわ')
   } else {
-    await msg.member?.roles.add(Settings.ROLE_ID.TASK_KILL)
+    await guildMember.roles.add(Settings.ROLE_ID.TASK_KILL)
     await edit()
 
     msg.reply('タスキルロールを付けたわよ！')
@@ -23,9 +28,10 @@ export const Add = async (msg: Discord.Message) => {
 /**
  * 全員のタスキルロールを外す
  */
-export const RemoveAll = () => {
-  const guildMembers = util.GetGuild()?.members.cache.map(m => m)
-  guildMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.TASK_KILL))
+export const RemoveAll = async () => {
+  const members = await status.Fetch()
+  const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
+  guildMembers.forEach(m => m.roles.remove(Settings.ROLE_ID.TASK_KILL))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('全員のタスキルロールを外したわ')
@@ -50,15 +56,18 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   // インタラクション失敗を回避
   interaction.deferUpdate()
 
-  const member = interaction.member as Discord.GuildMember
+  const member = await status.FetchMember(interaction.user.id)
+  if (!member) return
+
+  const guildMember = await util.MemberFromId(member.id.first())
 
   const id = idList.last()
   if (id === 'on') {
-    await member.roles.add(Settings.ROLE_ID.TASK_KILL)
+    await guildMember.roles.add(Settings.ROLE_ID.TASK_KILL)
     await edit()
     return 'Add task kill roll'
   } else if (id === 'off') {
-    await member.roles.remove(Settings.ROLE_ID.TASK_KILL)
+    await guildMember.roles.remove(Settings.ROLE_ID.TASK_KILL)
     await edit()
     return 'Remove task kill roll'
   } else {

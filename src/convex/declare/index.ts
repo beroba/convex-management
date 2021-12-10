@@ -28,7 +28,10 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   await status.Process(msg, alpha)
 
-  await attendance.Remove(msg.member)
+  const m = await member.FetchMember(msg.author.id)
+  if (!m) return
+
+  await attendance.Remove(m.id.first())
   situation.Plans()
 
   return 'Report damage or execute command'

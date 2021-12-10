@@ -76,11 +76,11 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   }
 
   // 凸予定削除より先に離席中ロールを外す
-  await attendance.Remove(msg.member)
+  await attendance.Remove(member_2.id.first())
 
   // `;`が入っている場合は凸予定を取り消さない
   if (!/;/i.test(msg.content)) {
-    cancel.Remove(alpha, msg.author.id)
+    cancel.Remove(alpha, member_2.id.first())
     situation.Plans()
   }
 
@@ -98,7 +98,8 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
 
   if (member_2.end) {
     // 3凸終了している場合に不要なロールを外す
-    msg.member?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
+    const guildMember = await util.MemberFromId(member_2.id.first())
+    guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
     role.RemoveBossRole(msg.member)
   }
 

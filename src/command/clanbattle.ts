@@ -188,18 +188,18 @@ const convexController = async (_command: string, _content: string, _msg: Discor
   }
 
   // 更新先の凸状況を取得
-  const state = util
+  const st = util
     .Format(args)
     .replace(/<.+>/, '') // プレイヤーIDを省く
     .trim()
 
-  const isFormat = /^(3|2\+{0,1}|1\+{0,2}|0\+{0,3})$/.test(state)
+  const isFormat = /^(3|2\+{0,1}|1\+{0,2}|0\+{0,3})$/.test(st)
   if (!isFormat) {
     _msg.reply('凸状況の書式が違うわ')
     return
   }
 
-  await manage.Update(state, _msg)
+  await manage.Update(st, _msg)
 }
 
 /**
@@ -281,7 +281,10 @@ const deletePlanController = async (_command: string, _content: string, _msg: Di
   // 引数からユーザーidだけを取り除く
   const id = util.Format(args).replace(/[^0-9]/g, '')
 
-  const [plans, plan] = await schedule.Delete(id)
+  const member = await status.FetchMember(id)
+  if (!member) return [[], undefined]
+
+  const [plans, plan] = await schedule.Delete(member.id.first())
   if (!plan) {
     _msg.reply(`${id}の凸予定はなかったわ`)
     return

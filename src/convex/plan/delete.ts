@@ -76,7 +76,7 @@ export const Remove = async (alpha: string, id: string) => {
   if (!plan) return
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
-  const msg = await channel.messages.fetch(plan.senderID)
+  const msg = await channel.messages.fetch(plan.msgID)
 
   await msg.delete()
 
@@ -89,18 +89,20 @@ export const Remove = async (alpha: string, id: string) => {
  * @return [凸予定一覧, 削除した凸予定]
  */
 const planDelete = async (msg: Discord.Message): Promise<[Plan[], Option<Plan>]> => {
-  const [plans, plan] = await schedule.Delete(msg.id)
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return [[], undefined]
+
+  const [plans, plan] = await schedule.Delete(member.id.first())
   if (!plan) return [plans, plan]
 
   await calMsgDel(plan.calID)
-  await unroleBoss(plans, plan, msg)
+  await unroleBoss(plans, plan)
 
   return [plans, plan]
 }
 
 /**
  * 凸予定のメッセージを削除する
- * @param id 削除するメッセージid
  */
 const calMsgDel = async (id: string) => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE)
@@ -111,19 +113,22 @@ const calMsgDel = async (id: string) => {
     .catch(_ => undefined)
   if (!msg) return
 
+  console.log(msg.content)
+
   msg.delete()
 }
 
 /**
  * 削除されたメッセージのボスのロールを外す
- * @param plan 削除されたPlanの値
- * @param msg DiscordからのMessage
+ * @param plans 凸予定一覧
+ * @param plan 削除された凸予定
  */
-const unroleBoss = async (plans: Plan[], plan: Plan, msg: Discord.Message) => {
+const unroleBoss = async (plans: Plan[], plan: Plan) => {
   const find = plans.find(p => p.playerID === plan.playerID)
   if (find) return
 
-  await msg.member?.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
+  const guildMember = await util.MemberFromId(plan.playerID)
+  await guildMember.roles.remove(Settings.BOSS_ROLE_ID[plan.alpha])
 }
 
 /**
@@ -133,14 +138,9 @@ export const DeleteAll = async () => {
   await schedule.AllDelete()
   await msgAllRemove()
 
-  const clanMembers = util
-    .GetGuild()
-    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => m)
-
-  if (clanMembers) {
-    await Promise.all(clanMembers.map(async m => role.RemoveBossRole(m)))
-  }
+  const members = await status.Fetch()
+  const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
+  await Promise.all(guildMembers.map(async m => role.RemoveBossRole(m)))
 
   const plans = await schedule.Fetch()
   await situation.Plans(plans)
