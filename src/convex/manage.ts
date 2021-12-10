@@ -29,75 +29,13 @@ export const Update = async (state: string, msg: Discord.Message) => {
 
   // 3凸終了とそれ以外に処理を分ける
   let text: string
-  ;[member, text] = state === '0' ? await convexEndProcess(member, user) : await updateProcess(member, state, user)
+  ;[member, text] = state === '0' ? await convexEndProcess(member) : await updateProcess(member, state)
 
   const members = await status.UpdateMember(member)
   await msg.reply(text)
 
   situation.Report(members)
   situation.Boss(members)
-}
-
-/**
- * 3凸状態に更新する処理
- * @param member 更新するメンバー
- * @param user 更新したいユーザー
- * @return [更新したメンバー, 報告するテキスト]
- */
-const convexEndProcess = async (member: Member, user: Discord.User): Promise<[Member, string]> => {
-  // 凸状況を変更
-  member.convex = 0
-  member.over = 0
-  member.end = true
-
-  // ロールを削除
-  const guildMember = await util.MemberFromId(user.id)
-  await guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
-  await role.RemoveBossRole(guildMember)
-
-  // 何人目の3凸終了者なのかを報告する
-  const members = await status.Fetch()
-  const n = members.filter(s => s.end).length + 1
-
-  // prettier-ignore
-  const text = [
-    '```ts',
-    `残凸数: 0, 持越数: 0`,
-    `${n}人目の3凸終了よ！`,
-    '```',
-  ].join('\n')
-
-  limit.Display(members)
-
-  return [member, text]
-}
-
-/**
- * 凸状況を更新する処理
- * @param member 更新するメンバー
- * @param state 更新する凸状況
- * @param user 更新したいユーザー
- * @return [更新したメンバー, 報告するテキスト]
- */
-const updateProcess = async (member: Member, state: string, user: Discord.User): Promise<[Member, string]> => {
-  // 凸状況を変更
-  member.convex = state[0].to_n()
-  member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
-  member.end = false
-  member.declare = ''
-  member.carry = false
-
-  const guildMember = await util.MemberFromId(user.id)
-  await guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
-
-  // prettier-ignore
-  const text = [
-    '```ts',
-    `残凸数: ${member.convex}, 持越数: ${member.over}`,
-    '```',
-  ].join('\n')
-
-  return [member, text]
 }
 
 /**
@@ -122,7 +60,7 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
 
   // 3凸終了とそれ以外に処理を分ける
   let text: string
-  ;[member, text] = state === '0' ? await convexEndProcess(member, user) : await updateProcess(member, state, user)
+  ;[member, text] = state === '0' ? await convexEndProcess(member) : await updateProcess(member, state)
 
   const members = await status.UpdateMember(member)
   interaction.reply({content: text, ephemeral: true})
@@ -132,6 +70,67 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   situation.Boss(members)
 
   return 'Change of convex management'
+}
+
+/**
+ * 3凸状態に更新する処理
+ * @param member 更新するメンバー
+ * @return [更新したメンバー, 報告するテキスト]
+ */
+const convexEndProcess = async (member: Member): Promise<[Member, string]> => {
+  // 凸状況を変更
+  member.convex = 0
+  member.over = 0
+  member.end = true
+
+  // ロールを削除
+  const guildMember = await util.MemberFromId(member.id.first())
+  await guildMember.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)
+  await role.RemoveBossRole(guildMember)
+
+  // 何人目の3凸終了者なのかを報告する
+  const members = await status.Fetch()
+  const n = members.filter(s => s.end).length + 1
+
+  // prettier-ignore
+  const text = [
+    '```ts',
+    `残凸数: 0, 持越数: 0`,
+    `${n}人目の3凸終了よ！`,
+    '```',
+  ].join('\n')
+
+  limit.Display(members)
+
+  return [member, text]
+}
+
+/**
+ * 凸状況を更新する処理
+ * @param member 更新するメンバー
+ * @param state 更新する凸状況
+ * @return [更新したメンバー, 報告するテキスト]
+ */
+const updateProcess = async (member: Member, state: string): Promise<[Member, string]> => {
+  // 凸状況を変更
+  member.convex = state[0].to_n()
+  member.over = state.match(/\+/g) ? <number>state.match(/\+/g)?.length : 0
+  member.end = false
+  member.declare = ''
+  member.carry = false
+
+  // ロールを追加
+  const guildMember = await util.MemberFromId(member.id.first())
+  await guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
+
+  // prettier-ignore
+  const text = [
+    '```ts',
+    `残凸数: ${member.convex}, 持越数: ${member.over}`,
+    '```',
+  ].join('\n')
+
+  return [member, text]
 }
 
 /**

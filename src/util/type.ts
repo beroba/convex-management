@@ -57,20 +57,20 @@ export type Current = {
 
 /**
  * 凸予定の情報
- * @property senderID 送信者のID
+ * @property msgID メッセージのID
  * @property calID botのID
- * @property name ボスの名前
  * @property playerID ユーザーのID
+ * @property name ボスの名前
  * @property num ボス番号 (数字)
  * @property alpha ボス番号 (英語)
  * @property boss ボスの名前
  * @property msg 予定の内容
  */
 export type Plan = {
-  senderID: string
+  msgID: string
   calID: string
-  name: string
   playerID: string
+  name: string
   num: string
   alpha: AtoE
   boss: string

@@ -4,6 +4,7 @@ import Settings from 'const-settings'
 import * as over from '../over'
 import * as plan from '../plan/delete'
 import * as dateTable from '../dateTable'
+import * as status from '../../io/status'
 import * as util from '../../util'
 
 /**
@@ -14,13 +15,9 @@ export const SetRemainConvex = async () => {
   const date = await dateTable.TakeDate()
   if (date.num === '練習日') return
 
-  // べろばあのクランメンバー一覧を取得
-  const clanMembers = util
-    .GetGuild()
-    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => m)
-
-  clanMembers?.forEach(m => m?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
+  const members = await status.Fetch()
+  const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
+  guildMembers.forEach(m => m.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   channel.send('クランメンバーに凸残ロールを付与したわ')
@@ -32,15 +29,9 @@ export const SetRemainConvex = async () => {
  * 凸残ロールを全て外す
  */
 export const RemoveConvexRoles = async () => {
-  // べろばあのクランメンバー一覧を取得
-  const clanMembers =
-    util
-      .GetGuild()
-      ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-      ?.members.map(m => m) ?? []
-
-  // クランメンバーの凸残ロールを全て外す
-  await Promise.all(clanMembers.map(async m => await m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX)))
+  const members = await status.Fetch()
+  const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
+  guildMembers.forEach(m => m.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
 }
 
 /**
@@ -58,16 +49,12 @@ export const RemoveBossRole = async (member: Option<Discord.GuildMember>) => {
 /**
  * 凸予定、持越、凸残ロールを全て削除する
  */
-export const ResetAllConvex = () => {
+export const ResetAllConvex = async () => {
   plan.DeleteAll()
 
   over.DeleteAllMsg()
 
-  // べろばあのクランメンバー一覧を取得
-  const clanMembers = util
-    .GetGuild()
-    ?.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)
-    ?.members.map(m => m)
-
-  clanMembers?.forEach(m => m?.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
+  const members = await status.Fetch()
+  const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
+  guildMembers.forEach(m => m.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
 }

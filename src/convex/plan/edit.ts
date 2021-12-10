@@ -5,6 +5,7 @@ import {NtoA} from 'alphabet-to-number'
 import * as situation from '../situation'
 import * as declare from '../declare/list'
 import * as schedule from '../../io/schedule'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
 
@@ -20,10 +21,13 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   const isChannel = msg.channel.id === Settings.CHANNEL_ID.CONVEX_RESERVATE
   if (!isChannel) return
 
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
+
   const content = util.Format(msg.content.replace(/\n/g, ' '))
   const alpha = NtoA(content[0]) as AtoE
   const text = content.slice(1).trim()
-  const plans = await schedule.Edit(text, msg.id)
+  const plans = await schedule.Edit(text, member.id.first())
 
   situation.Plans(plans)
   situation.DeclarePlan(alpha)

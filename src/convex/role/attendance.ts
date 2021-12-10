@@ -2,15 +2,17 @@ import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as situation from '../situation'
+import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
 
 /**
  * 離席中ロールを外す
- * @param member メンバーの状態
+ * @param id メンバーのID
  */
-export const Remove = async (member: Option<Discord.GuildMember>) => {
-  await member?.roles.remove(Settings.ROLE_ID.ATTENDANCE)
+export const Remove = async (id: string) => {
+  const member = await util.MemberFromId(id)
+  await member.roles.remove(Settings.ROLE_ID.ATTENDANCE)
   planUpdate()
 }
 
@@ -42,18 +44,21 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   // インタラクション失敗を回避
   interaction.deferUpdate()
 
-  const member = interaction.member as Discord.GuildMember
+  const member = await status.FetchMember(interaction.user.id)
+  if (!member) return
+
+  const guildMember = await util.MemberFromId(member.id.first())
 
   const id = idList.last()
   if (id === 'on') {
-    await member.roles.add(Settings.ROLE_ID.ATTENDANCE)
+    await guildMember.roles.add(Settings.ROLE_ID.ATTENDANCE)
     await edit()
-    await planUpdate()
+    planUpdate()
     return 'Add riseki roll'
   } else if (id === 'off') {
-    await member.roles.remove(Settings.ROLE_ID.ATTENDANCE)
+    await guildMember.roles.remove(Settings.ROLE_ID.ATTENDANCE)
     await edit()
-    await planUpdate()
+    planUpdate()
     return 'Remove riseki roll'
   } else {
     return

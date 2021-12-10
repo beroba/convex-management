@@ -18,15 +18,16 @@ export const Plans = async (msg: Discord.Message): Promise<[Plan[], Plan]> => {
   // prettier-ignore
   const text = [
     `${plan.boss}を予定したわよ！`,
-    `id: ${plan.senderID}`,
+    `id: ${plan.msgID}`,
   ].join('\n')
   const m = await msg.reply(text)
 
   plan.calID = m.id
   const plans = await schedule.Add(plan)
 
+  const guildMember = await util.MemberFromId(plan.playerID)
   await msg.react(Settings.EMOJI_ID.KANRYOU)
-  await msg.member?.roles.add(Settings.BOSS_ROLE_ID[plan.alpha])
+  await guildMember.roles.add(Settings.BOSS_ROLE_ID[plan.alpha])
 
   return [plans, plan]
 }
@@ -45,10 +46,10 @@ const createPlan = async (msg: Discord.Message): Promise<Plan> => {
   const member = await status.FetchMember(msg.author.id)
 
   return {
-    senderID: msg.id,
+    msgID: msg.id,
     calID: '',
+    playerID: member?.id.first() ?? '',
     name: member?.name ?? '',
-    playerID: msg.member?.id ?? '',
     num: content[0],
     alpha: alpha,
     boss: boss ?? '',

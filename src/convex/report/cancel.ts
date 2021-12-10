@@ -83,7 +83,7 @@ const statusRestore = async (msg: Discord.Message, member: Member): Promise<Opti
   member = rollback(member)
 
   if (member.end) {
-    member = endConfirm(member, msg)
+    member = await endConfirm(member)
   }
 
   // prettier-ignore
@@ -126,12 +126,13 @@ const rollback = (member: Member): Member => {
 /**
  * 3凸目の取消の場合に凸残ロールを付与する
  * @param member 更新するメンバー
- * @param msg DiscordからのMessage
  * @return 更新したメンバー
  */
-const endConfirm = (member: Member, msg: Discord.Message): Member => {
+const endConfirm = async (member: Member): Promise<Member> => {
   member.end = false
-  msg.member?.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
+
+  const guildMember = await util.MemberFromId(member.id.first())
+  guildMember.roles.add(Settings.ROLE_ID.REMAIN_CONVEX)
 
   return member
 }
