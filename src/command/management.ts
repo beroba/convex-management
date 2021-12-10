@@ -35,6 +35,11 @@ export const Management = async (content: string, msg: Discord.Message): Promise
       return 'Set convex bossTable'
     }
 
+    case /cb manage reset role/.test(content): {
+      await resetRoleController('/cb manage reset role', content, msg)
+      return 'Release all resetting convex rolls'
+    }
+
     case /cb manage remove role/.test(content): {
       await removeRoleController('/cb manage remove role', content, msg)
       return 'Release all remaining convex rolls'
@@ -94,13 +99,24 @@ const setBossController = async (_command: string, _content: string, _msg: Disco
 }
 
 /**
+ * `/cb manage reset role`のController
+ * @param _command 引数以外のコマンド部分
+ * @param _content 入力された内容
+ * @param _msg DiscordからのMessage
+ */
+const resetRoleController = async (_command: string, _content: string, _msg: Discord.Message) => {
+  await role.ResetRemainConvex()
+  _msg.reply('凸残ロール振り直したわよ！')
+}
+
+/**
  * `/cb manage remove role`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
  */
 const removeRoleController = async (_command: string, _content: string, _msg: Discord.Message) => {
-  await role.RemoveConvexRoles()
+  await role.RemoveRemainConvex()
   _msg.reply('凸残ロール全て外したわよ！')
 }
 

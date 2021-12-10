@@ -26,9 +26,22 @@ export const SetRemainConvex = async () => {
 }
 
 /**
+ * 3凸終了していない人に凸残ロールを付与する
+ */
+export const ResetRemainConvex = async () => {
+  const members = await status.Fetch()
+
+  const addMembers = await Promise.all(members.filter(m => !m.end).map(m => util.MemberFromId(m.id.first())))
+  addMembers.forEach(m => m.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
+
+  const removeMembers = await Promise.all(members.filter(m => m.end).map(m => util.MemberFromId(m.id.first())))
+  removeMembers.forEach(m => m.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
+}
+
+/**
  * 凸残ロールを全て外す
  */
-export const RemoveConvexRoles = async () => {
+export const RemoveRemainConvex = async () => {
   const members = await status.Fetch()
   const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
   guildMembers.forEach(m => m.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
