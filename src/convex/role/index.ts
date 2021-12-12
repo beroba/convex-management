@@ -20,7 +20,7 @@ export const SetRemainConvex = async () => {
   guildMembers.forEach(m => m.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
-  channel.send('クランメンバーに凸残ロールを付与したわ')
+  channel.send(`${date.num} クランメンバーに凸残ロールを付与したわ`)
 
   console.log('Add convex role')
 }
