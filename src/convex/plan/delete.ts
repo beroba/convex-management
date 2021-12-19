@@ -89,10 +89,7 @@ export const Remove = async (alpha: string, id: string) => {
  * @return [凸予定一覧, 削除した凸予定]
  */
 const planDelete = async (msg: Discord.Message): Promise<[Plan[], Option<Plan>]> => {
-  const member = await status.FetchMember(msg.author.id)
-  if (!member) return [[], undefined]
-
-  const [plans, plan] = await schedule.Delete(member.id.first())
+  const [plans, plan] = await schedule.Delete(msg.id)
   if (!plan) return [plans, plan]
 
   await calMsgDel(plan.calID)
