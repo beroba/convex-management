@@ -13,6 +13,9 @@ import * as util from '../../util'
 import * as send from '../../util/send'
 import {AtoE, Current, Damage} from '../../util/type'
 
+// フル持越させるのに必要なダメージの倍率
+const MAGNIFICATION = 4.2857143
+
 /**
  * 凸宣言に入力されたメッセージを処理する
  * 必ずメッセージは削除する
@@ -171,10 +174,7 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
  * @return ダメージ
  */
 export const FullCarryOverDamage = (HP: number, maxHP: number): string => {
-  // フル持越させるのに必要なダメージの倍率
-  const magnification = 4.2857143
-
-  const damage = Math.ceil(HP * magnification)
+  const damage = Math.ceil(HP * MAGNIFICATION)
   if (damage > maxHP) {
     const time = Math.ceil((1 - HP / maxHP) * 90 + 20)
     return `${time}秒`
@@ -214,7 +214,9 @@ export const DamageCalc = async (HP: number, damages: Damage[]): Promise<[number
     }
 
     const time = etc.OverCalc(HP, damage.total, list[damage.index])
-    return [total, `${time}, ${damage.index + 1}人目`]
+    const lack = time !== '90秒(フル)' ? `(${HP - damage.total - Math.floor(list[damage.index] / MAGNIFICATION)})` : ''
+    const index = `${damage.index + 1}人目`
+    return [total, `${time}${lack} ${index}`]
   }
 }
 
