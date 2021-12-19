@@ -47,6 +47,7 @@ export const Swap = async (alpha: AtoE, id: string): Promise<string> => {
   const pList = plans.filter(p => p.alpha === alpha).filter(p => p.playerID === id)
   // 入れ替える凸予定が無い場合は終了
   if (pList.length < 2) return ''
+
   const plan = pList.first()
   plans = await schedule.Swap(plan.msgID)
 

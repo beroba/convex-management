@@ -32,11 +32,11 @@ export const Add = async (plan: Plan): Promise<Plan[]> => {
 export const Delete = async (id: string): Promise<[Plan[], Option<Plan>]> => {
   let plans = await Fetch()
 
-  const plan = plans.find(p => p.playerID === id)
+  const plan = plans.find(p => p.msgID === id)
   if (!plan) return [plans, plan]
 
   // 凸予定一覧から渡されたidの凸予定を取り除く
-  plans = plans.filter(p => p.playerID !== id)
+  plans = plans.filter(p => p.msgID !== id)
   await Update(plans)
 
   return [plans, plan]
@@ -82,7 +82,7 @@ export const Swap = async (id: string): Promise<Plan[]> => {
   const plan = plans.find(p => p.msgID === id)
   if (!plan) return plans
 
-  plans = [...(plans.filter(p => p.msgID) as Plan[]), plan]
+  plans = [...(plans.filter(p => p.msgID !== id) as Plan[]), plan]
   await Update(plans)
 
   return plans

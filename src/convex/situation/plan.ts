@@ -13,9 +13,6 @@ import {AtoE, Plan} from '../../util/type'
 export const CreateAllPlanText = async (plans: Plan[]): Promise<string> => {
   const state = await current.Fetch()
 
-  // 昇順ソート
-  plans = plans.sort((a, b) => (a.name > b.name ? 1 : -1))
-
   // 全ボスの凸予定一覧のテキストを作成
   const a = await CreatePlanText('a', state.stage, plans)
   const b = await CreatePlanText('b', state.stage, plans)
