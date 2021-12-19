@@ -88,14 +88,11 @@ export const SetDamage = async (
 
   const HP = boss.hp
   const maxHP = Settings.STAGE[state.stage].HP[alpha]
-  const percent = Math.ceil(20 * (HP / maxHP))
-  const bar = `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`
 
   const icon = boss.lap - state.lap >= 2 ? '🎁' : boss.lap - state.lap >= 1 ? '+1' : ''
-
-  const total = await declare.TotalDamage(damages)
-  const remaining = declare.ExpectRemainingHP(HP, total)
+  const bar = (percent => `[${'■'.repeat(percent)}${' '.repeat(20 - percent)}]`)(Math.ceil(20 * (HP / maxHP)))
   const full = declare.FullCarryOverDamage(HP, maxHP)
+  const [total, remaining] = await declare.DamageCalc(HP, damages)
 
   const before = await createDamageList(damages, HP, members, false)
   const after = await createDamageList(damages, HP, members, true)
@@ -106,7 +103,7 @@ export const SetDamage = async (
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}, フル持越: ${full}`,
-    `ダメージ合計: ${total}, 予想残りHP: ${remaining}`,
+    `合計ダメージ: ${total}, 予想残りHP: ${remaining}`,
     '',
     '- ダメージ一覧',
     `${before.join('\n')}`,
@@ -137,22 +134,21 @@ const createDamageList = async (
       const m = members.find(m => m.id.find(n => n === d.id))
       if (!m) return ''
 
-      const _ = d.exclusion ? '_' : ''
+      const _ = d.exclusion ? '_' : ' '
       const carry = m.carry ? '⭐' : ''
-
       const convex = m.convex
       const over = '+'.repeat(m.over)
       const limit = m.limit !== '' ? `, ${m.limit}時` : ''
 
       const flag = Settings.DAMAGE_FLAG[d.flag]
-
-      const damage = d.damage || '不明'
-      const time = d.time ? `${d.time}秒` : '不明'
+      const damage = d.damage || '    '
+      const time = d.time || '  '
       const calc = m.carry || d.already ? '不可' : declare.CalcCarryOver(HP, d.damage)
+      const text = d.text && `'${d.text}'`
 
       return [
-        `${_}${d.num}: ${carry}${d.name}[${convex}${over}${limit}] '${d.text}'`,
-        `${flag}| ダメージ: ${damage} | 秒数: ${time} | 時刻: ${d.date} | 持越: ${calc}`,
+        `${_}${d.num}: ${carry}${d.name}[${convex}${over}${limit}], ${d.date}`,
+        `${flag}| ${damage.padStart(4, ' ')},${time.padStart(2, ' ')}秒 | 持越:${calc} | ${text}`,
       ].join('\n')
     })
 }
