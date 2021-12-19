@@ -66,7 +66,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   damages = damages.filter(d => !member.id.find(n => n === d.id) || d.already)
 
   // 事故っている場合のフラグ
-  const accident = /事故|じこ|死|失敗|落ち|ダメ(?!ージ)/.test(content)
+  const accident = /事故|じこ|死|しぼう|失敗|しっぱい|落ち|ダメ(?!ージ)|ミス|みす|間違|まちが/.test(content)
 
   const damage: Damage = {
     name: member.name,
@@ -165,31 +165,6 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
 }
 
 /**
- * ダメージ報告の合計ダメージを計算する
- * @param damage ダメージ一覧
- * @return 合計ダメージ
- */
-export const TotalDamage = async (damages: Damage[]): Promise<number> => {
-  const list = damages.filter(d => !d.exclusion)
-  // ダメージ一覧がない場合は0を返す
-  return list.length && list.map(d => d.damage).reduce((a, b) => a + b)
-}
-
-/**
- * 予想残りHPを計算する
- * @param HP 現在のHP
- * @param total 合計ダメージ
- * @return 残りHP
- */
-export const ExpectRemainingHP = (HP: number, total: number): number => {
-  // 残りHPを計算
-  const hp = HP - total
-
-  // 0以下なら0にする
-  return hp >= 0 ? hp : 0
-}
-
-/**
  * フル持越のダメージを計算する
  * @param HP 現在のHP
  * @param maxHP ボスの最大HP
@@ -202,9 +177,44 @@ export const FullCarryOverDamage = (HP: number, maxHP: number): string => {
   const damage = Math.ceil(HP * magnification)
   if (damage > maxHP) {
     const time = Math.ceil((1 - HP / maxHP) * 90 + 20)
-    return `不可(最大${time}秒)`
+    return `${time}秒`
   } else {
     return damage.to_s()
+  }
+}
+
+/**
+ * ダメージ報告の合計ダメージと予想残りHPを計算する
+ * @param HP 現在のHP
+ * @param damage ダメージ一覧
+ * @return [合計ダメージ, 予想残りHP]
+ */
+export const DamageCalc = async (HP: number, damages: Damage[]): Promise<[number, string]> => {
+  const list = damages.filter(d => !d.exclusion)
+  // ダメージ一覧がない場合は0
+  const total = list.length && list.map(d => d.damage).reduce((a, b) => a + b)
+  const remaining = HP - total
+
+  if (remaining > 0) {
+    return [total, remaining.to_s()]
+  } else {
+    // ダメージを降順で取得
+    const list = damages
+      .filter(d => !d.exclusion)
+      .map(d => d.damage)
+      .sort((a, b) => b - a)
+
+    // hpを超える直前のダメージと超えるダメージのインデックスを取得
+    const damage = {index: 0, total: 0}
+    for (let i in list) {
+      damage.index = i.to_n()
+      const total = damage.total + list[damage.index]
+      if (total >= HP) break
+      damage.total = total
+    }
+
+    const time = etc.OverCalc(HP, damage.total, list[damage.index])
+    return [total, `${time}, ${damage.index + 1}人目`]
   }
 }
 
@@ -288,14 +298,12 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
     return
   }
 
-  const a = etc.OverCalc(HP, A.damage, B.damage)
-  const b = etc.OverCalc(HP, B.damage, A.damage)
-
   // prettier-ignore
   const text = [
     '```ts',
-    `${A.name}: ${a >= 90 ? '90秒(フル)' : a + '秒'}`,
-    `${B.name}: ${b >= 90 ? '90秒(フル)' : b + '秒'}`,
+    '// 先通しの人: 持越秒数',
+    `${A.name}: ${etc.OverCalc(HP, A.damage, B.damage)}`,
+    `${B.name}: ${etc.OverCalc(HP, B.damage, A.damage)}`,
     '```',
   ].join('\n')
 
