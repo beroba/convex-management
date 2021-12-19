@@ -36,6 +36,9 @@ export const ResetRemainConvex = async () => {
 
   const removeMembers = await Promise.all(members.filter(m => m.end).map(m => util.MemberFromId(m.id.first())))
   removeMembers.forEach(m => m.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+  channel.send('クランメンバーの凸残ロールを付与し直したわ')
 }
 
 /**
@@ -69,5 +72,8 @@ export const ResetAllConvex = async () => {
 
   const members = await status.Fetch()
   const guildMembers = await Promise.all(members.map(m => util.MemberFromId(m.id.first())))
-  guildMembers.forEach(m => m.roles.add(Settings.ROLE_ID.REMAIN_CONVEX))
+  guildMembers.forEach(m => m.roles.remove(Settings.ROLE_ID.REMAIN_CONVEX))
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
+  channel.send('凸予定、持越、凸残ロールを全て削除したわ')
 }
