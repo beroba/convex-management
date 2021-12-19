@@ -3,6 +3,7 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as list from './list'
 import * as situation from '../situation'
+import * as edit from '../plan/edit'
 import * as attendance from '../role/attendance'
 import * as damageList from '../../io/damageList'
 import * as status from '../../io/status'
@@ -25,6 +26,8 @@ export const Convex = async (interaction: Discord.Interaction): Promise<Option<s
     return damage(interaction, idList)
   } else if (idList.first() === 'boss') {
     return boss(interaction, idList)
+  } else if (idList.first() === 'plan') {
+    return plan(interaction, idList)
   }
 }
 
@@ -146,4 +149,18 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
 
   await attendance.Remove(member.id.first())
   situation.Plans()
+}
+
+/**
+ * 凸予定の処理
+ * @param interaction ボタンのインタラクション
+ * @param idList ボタンのidリスト
+ * @return 実行結果の文字列
+ */
+const plan = async (interaction: Discord.ButtonInteraction, idList: string[]): Promise<string> => {
+  // インタラクション失敗を回避
+  interaction.deferUpdate()
+
+  const alpha = <AtoE>idList.last()
+  return edit.Swap(alpha, interaction.user.id)
 }

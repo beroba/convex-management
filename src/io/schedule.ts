@@ -52,13 +52,12 @@ export const AllDelete = async () => {
 /**
  * 渡されたidの凸予定のメッセージを編集する
  * @param text 変更するテキスト
- * @param id 変更したいの凸予定のid
+ * @param id 変更したい凸予定のid
  * @return 編集した凸予定一覧
  */
 export const Edit = async (text: string, id: string): Promise<Plan[]> => {
   let plans = await Fetch()
 
-  // 凸予定一覧から渡されたidの凸予定を取り除く
   plans = plans.map(p => {
     // 一致する凸予定以外はそのまま帰す
     if (p.playerID !== id) return p
@@ -67,6 +66,23 @@ export const Edit = async (text: string, id: string): Promise<Plan[]> => {
     return p
   })
 
+  await Update(plans)
+
+  return plans
+}
+
+/**
+ * 渡されたidの凸予定を最後尾に移動する
+ * @param id 移動したい凸予定のid
+ * @return 編集した凸予定一覧
+ */
+export const Swap = async (id: string): Promise<Plan[]> => {
+  let plans = await Fetch()
+
+  const plan = plans.find(p => p.msgID === id)
+  if (!plan) return plans
+
+  plans = [...(plans.filter(p => p.msgID) as Plan[]), plan]
   await Update(plans)
 
   return plans

@@ -35,3 +35,24 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
 
   return 'Edit appointment message'
 }
+
+/**
+ * 渡されたIDの凸予定を入れ替える
+ * @param alpha ボス番号
+ * @param id ユーザーID
+ * @return 更新処理の実行結果
+ */
+export const Swap = async (alpha: AtoE, id: string): Promise<string> => {
+  let plans = await schedule.Fetch()
+  const pList = plans.filter(p => p.alpha === alpha).filter(p => p.playerID === id)
+  // 入れ替える凸予定が無い場合は終了
+  if (pList.length < 2) return ''
+  const plan = pList.first()
+  plans = await schedule.Swap(plan.msgID)
+
+  situation.Plans(plans)
+  situation.DeclarePlan(alpha)
+  declare.SetUser(alpha)
+
+  return 'Swap reservation messages'
+}
