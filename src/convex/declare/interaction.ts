@@ -59,6 +59,8 @@ const damage = async (interaction: Discord.ButtonInteraction, idList: string[]):
     // NGが付いたら_を付ける
     if (d.flag === 'ng') {
       d.exclusion = true
+    } else if (d.flag === 'ok') {
+      d.exclusion = false
     } else if (flag === 'ng') {
       d.exclusion = false
     }
