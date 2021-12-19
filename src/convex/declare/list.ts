@@ -103,7 +103,7 @@ export const SetDamage = async (
     '```ts',
     `${boss.lap}周目 ${boss.name} ${icon}`,
     `${bar} ${HP}/${maxHP}, フル持越: ${full}`,
-    `合計ダメージ: ${total}, 予想残り: ${remaining}`,
+    `合計ダメージ: ${total}, ${remaining}`,
     '',
     '- ダメージ一覧',
     `${before.join('\n')}`,

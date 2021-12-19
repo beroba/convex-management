@@ -196,7 +196,7 @@ export const DamageCalc = async (HP: number, damages: Damage[]): Promise<[number
   const remaining = HP - total
 
   if (remaining > 0) {
-    return [total, remaining.to_s()]
+    return [total, `予想残りHP: ${remaining}`]
   } else {
     // ダメージを降順で取得
     const list = damages
@@ -216,7 +216,7 @@ export const DamageCalc = async (HP: number, damages: Damage[]): Promise<[number
     const time = etc.OverCalc(HP, damage.total, list[damage.index])
     const lack = time !== '90秒(フル)' ? `(${HP - damage.total - Math.floor(list[damage.index] / MAGNIFICATION)})` : ''
     const index = `${damage.index + 1}人目`
-    return [total, `${time}${lack} ${index}`]
+    return [total, `予想持越秒数: ${time}${lack} ${index}`]
   }
 }
 
