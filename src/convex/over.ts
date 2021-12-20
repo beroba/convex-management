@@ -36,13 +36,43 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
  * @param msg DiscordからのMessage
  * @return 絵文字をつけたかの結果
  */
-export const React = (msg: Discord.Message): Option<string> => {
+export const React = async (msg: Discord.Message): Promise<Option<string>> => {
   const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
   if (!isChannel) return
 
   msg.react(Settings.EMOJI_ID.KANRYOU)
+  sendHistory(msg)
 
   return 'React Kanryou'
+}
+
+/**
+ * 持越状況が更新された際に履歴を追加する
+ * @param msg DiscordからのMessage
+ * @return 絵文字をつけたかの結果
+ */
+export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
+  if (!isChannel) return
+
+  sendHistory(msg)
+
+  return 'Edit history'
+}
+
+/**
+ * 凸状況の履歴を追加する
+ * @param msg DiscordからのMessage
+ */
+const sendHistory = async (msg: Discord.Message) => {
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION_HISTORY)
+  await history.send(util.HistoryLine())
+  // prettier-ignore
+  const text = [
+    `\`${util.GetUserName(msg.member)}\``,
+    msg.content,
+  ].join('\n')
+  await history.send(text)
 }
 
 /**

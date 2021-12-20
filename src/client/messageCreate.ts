@@ -33,7 +33,7 @@ export const MessageCreate = async (msg: Discord.Message) => {
     comment = await plan.Convex(msg)
     if (comment) return console.log(comment)
 
-    comment = over.React(msg)
+    comment = await over.React(msg)
     if (comment) return console.log(comment)
 
     comment = etc.SisterReactAdd(msg)
