@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as status from '../io/status'
 import * as util from '../util'
 
 /**
@@ -61,15 +62,18 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 凸状況の履歴を追加する
+ * 持越状況の履歴を追加する
  * @param msg DiscordからのMessage
  */
 const sendHistory = async (msg: Discord.Message) => {
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
+
   const history = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION_HISTORY)
   await history.send(util.HistoryLine())
   // prettier-ignore
   const text = [
-    `\`${util.GetUserName(msg.member)}\``,
+    `\`${member.name}\``,
     msg.content,
   ].join('\n')
   await history.send(text)

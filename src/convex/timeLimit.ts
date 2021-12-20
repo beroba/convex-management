@@ -28,9 +28,27 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   const members = await status.UpdateMember(member)
   Display(members)
 
-  interaction.reply({content: `${member.limit}時`, ephemeral: true})
+  const content = `${member.limit}時`
+  interaction.reply({content: content, ephemeral: true})
+  sendHistory(member, content)
 
   return
+}
+
+/**
+ * 活動限界時間の変更履歴を追加する
+ * @param member メンバーの状態
+ * @param content 履歴の内容
+ */
+const sendHistory = async (member: Member, content: string) => {
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
+  await history.send(util.HistoryLine())
+  // prettier-ignore
+  const text = [
+    `\`${member.name}\` 活動限界時間の変更`,
+    content,
+  ].join('\n')
+  await history.send(text)
 }
 
 /**
@@ -52,7 +70,7 @@ export const Display = async (members: Member[]) => {
   const msg = await channel.messages.fetch(Settings.BOT_OPERATION.TIME_LIMIT)
 
   const text = [
-    '活動限界時間',
+    '活動限界時間の変更',
     '```',
     `over: ${over}`,
     `${h % 24}: ${now}`,

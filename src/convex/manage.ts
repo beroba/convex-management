@@ -59,15 +59,16 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   if (!member) return
 
   // 3凸終了とそれ以外に処理を分ける
-  let text: string
-  ;[member, text] = state === '0' ? await convexEndProcess(member) : await updateProcess(member, state)
+  let content: string
+  ;[member, content] = state === '0' ? await convexEndProcess(member) : await updateProcess(member, state)
 
   const members = await status.UpdateMember(member)
-  interaction.reply({content: text, ephemeral: true})
+  interaction.reply({content: content, ephemeral: true})
 
   await edit()
   situation.Report(members)
   situation.Boss(members)
+  sendHistory(member, content)
 
   return 'Change of convex management'
 }
@@ -141,4 +142,20 @@ const edit = async () => {
   const msg = await channel.messages.fetch(Settings.BOT_OPERATION.CONVEX_SITUATION)
 
   await msg.edit('凸状況の変更')
+}
+
+/**
+ * 凸状況の変更履歴を追加する
+ * @param member メンバーの状態
+ * @param content 履歴の内容
+ */
+const sendHistory = async (member: Member, content: string) => {
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
+  await history.send(util.HistoryLine())
+  // prettier-ignore
+  const text = [
+    `\`${member.name}\` 凸状況の変更`,
+    content,
+  ].join('\n')
+  await history.send(text)
 }
