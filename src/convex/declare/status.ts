@@ -68,7 +68,7 @@ const addDamage = async (msg: Discord.Message, content: string, alpha: AtoE): Pr
   if (!member) return
 
   // 上書きできるように前のダメージを消す
-  // damages = damages.filter(d => !member.id.find(n => n === d.id) || d.already)
+  damages = damages.filter(d => !member.id.find(n => n === d.id) || d.already)
 
   // 事故っている場合のフラグ
   const accident = /事故|じこ|死|しぼう|失敗|しっぱい|落ち|おちた|ダメ(?!ージ)|ミス|みす|間違|まちが/.test(content)
