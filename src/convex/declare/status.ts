@@ -37,8 +37,10 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
 
   // コマンドの処理
   if (msg.content.charAt(0) === '/') {
-    await command.Process(content, alpha, msg)
-    await util.Sleep(100)
+    const comment = await command.Process(content, alpha, msg)
+    if (comment) console.log(comment)
+
+    await util.Sleep(500)
     msg.delete()
     return
   }
@@ -139,9 +141,15 @@ const fetchTime = (content: string): number => {
  * @param content 変更先HPのメッセージ
  * @param alpha ボス番号
  * @param state 現在の状況
+ * @param msg DiscordからのMessage
  * @return 変更後の状態
  */
-export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Current): Promise<Current> => {
+export const RemainingHPChange = async (
+  content: string,
+  alpha: AtoE,
+  state?: Current,
+  msg?: Discord.Message
+): Promise<Current> => {
   state ??= await current.Fetch()
 
   // 変更先のHPを取り出す
@@ -163,6 +171,11 @@ export const RemainingHPChange = async (content: string, alpha: AtoE, state?: Cu
 
   const members = await status.Fetch()
   situation.Boss(members)
+
+  if (msg) {
+    const name = util.GetUserName(msg.member)
+    sendHistory(alpha, name, `\`${hp}\`にHP変更`)
+  }
 
   return state
 }
@@ -233,17 +246,27 @@ export const CalcCarryOver = (HP: number, damage: number): string => {
 
 /**
  * ダメージ報告を削除する
- * @param numbers 通知する番号
+ * @param numbers 削除する番号
  * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
+ * @param msg DiscordからのMessage
  */
-export const DeleteDamage = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+export const DeleteDamage = async (
+  numbers: string[],
+  alpha: AtoE,
+  channel: Discord.TextChannel,
+  msg: Discord.Message
+) => {
   let damages = await damageList.FetchBoss(alpha)
   // 指定された番号のダメージ報告を除外
   damages = damages.filter(d => !numbers.find(n => n === d.num))
 
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
+
+  // 履歴を送信
+  const name = util.GetUserName(msg.member)
+  sendHistory(alpha, name, `\`${numbers.join(',')}\`のダメージ報告を削除`)
 }
 
 /**
@@ -251,8 +274,14 @@ export const DeleteDamage = async (numbers: string[], alpha: AtoE, channel: Disc
  * @param numbers 通知する番号
  * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
+ * @param msg DiscordからのMessage
  */
-export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+export const RandomSelection = async (
+  numbers: string[],
+  alpha: AtoE,
+  channel: Discord.TextChannel,
+  msg: Discord.Message
+) => {
   let damages = await damageList.FetchBoss(alpha)
 
   const dList = excludeNoNumbers(numbers, damages)
@@ -269,8 +298,12 @@ export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: D
     `<@!${idList[rand]}>`,
   ].join('\n')
 
-  const msg = await channel.send(text)
-  await msg.react(Settings.EMOJI_ID.SUMI)
+  const cal = await channel.send(text)
+  await cal.react(Settings.EMOJI_ID.SUMI)
+
+  // 履歴を送信
+  const name = util.GetUserName(msg.member)
+  sendHistory(alpha, name, `\`${numbers.join(',')}\`のランダム選択`, text)
 }
 
 /**
@@ -278,8 +311,14 @@ export const RandomSelection = async (numbers: string[], alpha: AtoE, channel: D
  * @param numbers 通知する番号
  * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
+ * @param msg DiscordからのMessage
  */
-export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+export const CarryoverCalculation = async (
+  numbers: string[],
+  alpha: AtoE,
+  channel: Discord.TextChannel,
+  msg: Discord.Message
+) => {
   const state = await current.Fetch()
   let damages = await damageList.FetchBoss(alpha)
 
@@ -309,8 +348,12 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
     '```',
   ].join('\n')
 
-  const msg = await channel.send(text)
-  await msg.react(Settings.EMOJI_ID.SUMI)
+  const cal = await channel.send(text)
+  await cal.react(Settings.EMOJI_ID.SUMI)
+
+  // 履歴を送信
+  const name = util.GetUserName(msg.member)
+  sendHistory(alpha, name, `\`${numbers.join(',')}\`の持越秒数計算`, text)
 }
 
 /**
@@ -318,8 +361,14 @@ export const CarryoverCalculation = async (numbers: string[], alpha: AtoE, chann
  * @param numbers 通知する番号
  * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
+ * @param msg DiscordからのMessage
  */
-export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+export const ExclusionSettings = async (
+  numbers: string[],
+  alpha: AtoE,
+  channel: Discord.TextChannel,
+  msg: Discord.Message
+) => {
   let damages = await damageList.FetchBoss(alpha)
 
   const dList = excludeNoNumbers(numbers, damages)
@@ -339,6 +388,10 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
   damages = await damageList.UpdateBoss(alpha, damages)
   await list.SetDamage(alpha, undefined, channel, damages)
 
+  // 履歴を送信
+  const name = util.GetUserName(msg.member)
+  sendHistory(alpha, name, `\`${numbers.join(',')}\`のダメージ計算から除外`)
+
   // メッセージを削除する際に残像が残るので追加
   await util.Sleep(500)
 }
@@ -348,8 +401,14 @@ export const ExclusionSettings = async (numbers: string[], alpha: AtoE, channel:
  * @param numbers 通知する番号
  * @param alpha ボス番号
  * @param channel 凸宣言のチャンネル
+ * @param msg DiscordからのMessage
  */
-export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Discord.TextChannel) => {
+export const ThroughNotice = async (
+  numbers: string[],
+  alpha: AtoE,
+  channel: Discord.TextChannel,
+  msg: Discord.Message
+) => {
   let damages = await damageList.FetchBoss(alpha)
 
   const dList = excludeNoNumbers(numbers, damages)
@@ -376,6 +435,10 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
     const msg = await channel.send(`${m} 通し！`)
     msg.react(Settings.EMOJI_ID.SUMI)
   })
+
+  // 履歴を送信
+  const name = util.GetUserName(msg.member)
+  sendHistory(alpha, name, `\`${numbers.join(',')}\`の通しの通知`)
 }
 
 /**
@@ -386,4 +449,26 @@ export const ThroughNotice = async (numbers: string[], alpha: AtoE, channel: Dis
  */
 const excludeNoNumbers = (numbers: string[], damages: Damage[]): Damage[] => {
   return numbers.map(n => damages.find(d => d.num === n)).filter(Boolean) as Damage[]
+}
+
+/**
+ * コマンドの実行履歴を送信する
+ * @param alpha ボス番号
+ * @param name コマンド実行者の名前
+ * @param command 実行したコマンド
+ * @param content 履歴の内容
+ */
+const sendHistory = async (alpha: AtoE, name: string, command: string, content?: string) => {
+  const history = util.GetTextChannel(Settings.DECLARE_HISTORY_CHANNEL_ID[alpha])
+  await history.send(util.HistoryLine())
+  const msg = await history.send(`\`${name}\` ${command}`)
+
+  if (content) {
+    // prettier-ignore
+    const text = [
+      `\`${name}\` ${command}`,
+      content,
+    ].join('\n')
+    await msg.edit(text)
+  }
 }

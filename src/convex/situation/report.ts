@@ -1,5 +1,6 @@
 import Settings from 'const-settings'
 import * as dateTable from '../dateTable'
+import * as util from '../../util'
 import {Current, Member} from '../../util/type'
 
 /**
@@ -10,7 +11,7 @@ import {Current, Member} from '../../util/type'
  */
 export const CreateWholeText = async (members: Member[], state: Current): Promise<string> => {
   // 日付と時刻
-  const time = getCurrentDate()
+  const time = util.GetCurrentFullDate()
   const date = await dateTable.TakeDate()
 
   // 残り凸数
@@ -33,19 +34,6 @@ export const CreateWholeText = async (members: Member[], state: Current): Promis
     `完凸人数 ${完凸済}人`,
     '```',
   ].join('\n')
-}
-
-/**
- * 現在の日付と時刻を取得
- * @return 取得した文字列
- */
-const getCurrentDate = (): string => {
-  const d = new Date()
-  const MM = (d.getMonth() + 1).padStart(2, '0')
-  const dd = d.getDate().padStart(2, '0')
-  const HH = d.getHours().padStart(2, '0')
-  const mm = d.getMinutes().padStart(2, '0')
-  return `${MM}/${dd} ${HH}:${mm}`
 }
 
 /**

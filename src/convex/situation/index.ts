@@ -22,7 +22,8 @@ export const Report = async (members?: Member[], state?: Current) => {
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION_HISTORY)
+  await history.send(util.HistoryLine())
 
   // 全体状況
   {
@@ -62,11 +63,13 @@ export const Boss = async (members?: Member[], state?: Current) => {
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  // const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_HISTORY)
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOSS_SITUATION_HISTORY)
+  await history.send(util.HistoryLine())
 
   const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.BOSS)
   const text = await boss.CreateBossText(members, state)
   await msg.edit(text)
+  await history.send(text)
 
   console.log('Boss status update')
 }
@@ -79,10 +82,13 @@ export const Plans = async (plans?: Plan[]) => {
   plans ??= await schedule.Fetch()
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE_HISTORY)
+  await history.send(util.HistoryLine())
 
   const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.PLAN)
   const text = await plan.CreateAllPlanText(plans)
   await msg.edit(text)
+  await history.send(text)
 
   console.log('Convex schedule update of convex situation')
 }

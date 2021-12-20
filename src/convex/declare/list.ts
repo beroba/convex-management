@@ -36,6 +36,7 @@ export const SetUser = async (alpha: AtoE, channel?: Discord.TextChannel, member
     '```',
   ].join('\n')
   await msg.edit(text)
+  await sendHistory(alpha, text)
 }
 
 /**
@@ -112,6 +113,7 @@ export const SetDamage = async (
     '```',
   ].join('\n')
   await msg.edit(text)
+  await sendHistory(alpha, text)
 }
 
 /**
@@ -151,4 +153,15 @@ const createDamageList = async (
         `${flag}| ${damage.padStart(4, ' ')},${time.padStart(2, ' ')}秒 | 持越:${calc} | ${text}`,
       ].join('\n')
     })
+}
+
+/**
+ * 凸宣言の履歴を送信する
+ * @param alpha ボス番号
+ * @param text ダメージ集計のテキスト
+ */
+const sendHistory = async (alpha: AtoE, text: string) => {
+  const history = util.GetTextChannel(Settings.DECLARE_HISTORY_CHANNEL_ID[alpha])
+  await history.send(util.HistoryLine())
+  await history.send(text)
 }

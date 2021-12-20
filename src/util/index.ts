@@ -64,6 +64,27 @@ export const GetCurrentDate = (): string => {
 }
 
 /**
+ * 現在の時刻を取得
+ * @return 取得した文字列
+ */
+export const GetCurrentFullDate = (): string => {
+  const d = new Date()
+  const MM = (d.getMonth() + 1).padStart(2, '0')
+  const dd = d.getDate().padStart(2, '0')
+  const HH = d.getHours().padStart(2, '0')
+  const mm = d.getMinutes().padStart(2, '0')
+  return `${MM}/${dd} ${HH}:${mm}`
+}
+
+/**
+ * 履歴用の区切り文字列を返す
+ * @return 区切り文字列
+ */
+export const HistoryLine = (): string => {
+  return `―――― **${GetCurrentFullDate()}** ――――`
+}
+
+/**
  * クランサーバーのguildを取得する
  * @return クランサーバーのguild
  */

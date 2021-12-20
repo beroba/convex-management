@@ -17,16 +17,25 @@ CHANNEL_ID:
   CONVEX_RESERVATE: '720767289070321764'
   # 凸状況
   CONVEX_SITUATION: '848602049217953822'
-  # 凸状況履歴
-  CONVEX_HISTORY: '735186004238925824'
   # 持越状況
   CARRYOVER_SITUATION: '739400220290449488'
   # 進行-連携
   PROGRESS: '720773327395881130'
-  # 活動時間
+  # bot操作
   BOT_OPERATION: '881962172673060894'
   # 持越凸先
   CARRYOVER_DESTINATION: '761073612261818378'
+
+  # bot操作-履歴
+  BOT_OPERATION_HISTORY: '922284755913961582'
+  # 持越状況-履歴
+  CARRYOVER_SITUATION_HISTORY: '922285226334507059'
+  # 凸予定-履歴
+  CONVEX_RESERVATE_HISTORY: '922285313114669136'
+  # 凸状況-履歴
+  CONVEX_SITUATION_HISTORY: '735186004238925824'
+  # ボス状況-履歴
+  BOSS_SITUATION_HISTORY: '922285387110572032'
 
   # 肉
   NIKU: '714033825100988438'
@@ -123,7 +132,15 @@ NOT_EMOJI_CHANNEL:
   - 5ボス-凸宣言
   - 凸報告
   - 持越状況
-  - 凸可能時間
   - 凸予定
   - 凸状況
-  - 凸状況履歴
+  - bot操作-履歴
+  - 1ボス-凸宣言-履歴
+  - 2ボス-凸宣言-履歴
+  - 3ボス-凸宣言-履歴
+  - 4ボス-凸宣言-履歴
+  - 5ボス-凸宣言-履歴
+  - 持越状況-履歴
+  - 凸予定-履歴
+  - 凸状況-履歴
+  - ボス状況-履歴

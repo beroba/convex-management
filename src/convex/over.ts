@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import * as status from '../io/status'
 import * as util from '../util'
 
 /**
@@ -36,13 +37,46 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
  * @param msg DiscordからのMessage
  * @return 絵文字をつけたかの結果
  */
-export const React = (msg: Discord.Message): Option<string> => {
+export const React = async (msg: Discord.Message): Promise<Option<string>> => {
   const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
   if (!isChannel) return
 
   msg.react(Settings.EMOJI_ID.KANRYOU)
+  sendHistory(msg)
 
   return 'React Kanryou'
+}
+
+/**
+ * 持越状況が更新された際に履歴を送信する
+ * @param msg DiscordからのMessage
+ * @return 絵文字をつけたかの結果
+ */
+export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
+  if (!isChannel) return
+
+  sendHistory(msg)
+
+  return 'Edit history'
+}
+
+/**
+ * 持越状況の履歴を送信する
+ * @param msg DiscordからのMessage
+ */
+const sendHistory = async (msg: Discord.Message) => {
+  const member = await status.FetchMember(msg.author.id)
+  if (!member) return
+
+  const history = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION_HISTORY)
+  await history.send(util.HistoryLine())
+  // prettier-ignore
+  const text = [
+    `\`${member.name}\``,
+    msg.content,
+  ].join('\n')
+  await history.send(text)
 }
 
 /**

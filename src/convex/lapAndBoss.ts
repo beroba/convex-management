@@ -38,9 +38,10 @@ export const UpdateHP = async (hp: number, alpha: AtoE, state: Current): Promise
  * ボスの周回数を変更する
  * @param lap 変更先の周回数
  * @param alpha ボス番号
+ * @param msg DiscordからのMessage
  * @return 現在の状況
  */
-export const UpdateLap = async (lap: number, alpha: AtoE, user?: Discord.User): Promise<Current> => {
+export const UpdateLap = async (lap: number, alpha: AtoE, msg?: Discord.Message): Promise<Current> => {
   let state = await current.Fetch()
 
   // 変更前の周回数
@@ -50,18 +51,20 @@ export const UpdateLap = async (lap: number, alpha: AtoE, user?: Discord.User): 
   const hp = Settings.STAGE[state.stage].HP[alpha]
 
   state = await current.Update(hp, alpha, state, lap)
-  const msg = await progressReport(alpha, state)
+  await progressReport(alpha, state)
   await declare.NextBoss(alpha, state)
-
-  // ボス状況からだと誰が周回数を変更したか分からないので表示
-  if (user) {
-    msg.reply(`<@!${user.id}> 周回数変更者`)
-  }
 
   // 周回数が変わったら通知
   if (state.lap > l) {
     await progressLap(state.lap)
     await damageReportUpdate(alpha, state)
+  }
+
+  if (msg) {
+    const name = util.GetUserName(msg.member)
+    const history = util.GetTextChannel(Settings.DECLARE_HISTORY_CHANNEL_ID[alpha])
+    await history.send(util.HistoryLine())
+    await history.send(`\`${name}\` \`${lap}\`に周回数変更`)
   }
 
   return state
