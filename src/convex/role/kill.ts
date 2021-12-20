@@ -94,7 +94,7 @@ const edit = async () => {
 }
 
 /**
- * タスキルの履歴を追加する
+ * タスキルの履歴を送信する
  * @param member メンバーの状態
  * @param content 履歴の内容
  */

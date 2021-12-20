@@ -84,7 +84,7 @@ const edit = async () => {
 }
 
 /**
- * 離席中状態の変更履歴を追加する
+ * 離席中状態の変更履歴を送信する
  * @param member メンバーの状態
  * @param content 履歴の内容
  */

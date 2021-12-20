@@ -145,7 +145,7 @@ const edit = async () => {
 }
 
 /**
- * 凸状況の変更履歴を追加する
+ * 凸状況の変更履歴を送信する
  * @param member メンバーの状態
  * @param content 履歴の内容
  */

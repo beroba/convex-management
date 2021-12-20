@@ -36,7 +36,7 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
 }
 
 /**
- * 活動限界時間の変更履歴を追加する
+ * 活動限界時間の変更履歴を送信する
  * @param member メンバーの状態
  * @param content 履歴の内容
  */

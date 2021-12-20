@@ -48,7 +48,7 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 持越状況が更新された際に履歴を追加する
+ * 持越状況が更新された際に履歴を送信する
  * @param msg DiscordからのMessage
  * @return 絵文字をつけたかの結果
  */
@@ -62,7 +62,7 @@ export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
 }
 
 /**
- * 持越状況の履歴を追加する
+ * 持越状況の履歴を送信する
  * @param msg DiscordからのMessage
  */
 const sendHistory = async (msg: Discord.Message) => {
