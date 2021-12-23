@@ -38,7 +38,7 @@ STAGE:
       e: 2700
   FIFTH:
     NUMBER: 5
-    LAP: [41]
+    LAP: [39]
     HP:
       a: 9500
       b: 10000
