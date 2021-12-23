@@ -11,8 +11,6 @@ export const Ready = async () => {
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.BOT_NOTIFY)
   await channel.send('きゃるきゃるーん')
 
-  etc.ClanBattleOperation()
-
   // リアクションのキャッシュを取る
   etc.Fetch()
 
