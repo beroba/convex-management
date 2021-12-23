@@ -29,7 +29,7 @@ STAGE:
       e: 2200
   FOURTH:
     NUMBER: 4
-    LAP: [31, 40]
+    LAP: [31, 38]
     HP:
       a: 1900
       b: 2000
