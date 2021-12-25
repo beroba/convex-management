@@ -147,6 +147,8 @@ const add = async (id: string, interaction: Discord.ButtonInteraction) => {
   const damages = await damageList.FetchBoss(alpha)
   await list.SetDamage(alpha, undefined, channel, damages)
 
+  await situation.Boss(members)
+
   await attendance.Remove(member.id.first())
   situation.Plans()
 }
