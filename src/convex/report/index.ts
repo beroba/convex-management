@@ -226,7 +226,7 @@ const fetchHPOrEmpty = async (member: Member, alpha: AtoE, msg: Discord.Message)
   const content = util.Format(msg.content)
 
   // killの場合は@0にする
-  if (/^k|kill|き(っ|l)l/i.test(content)) {
+  if (/^k|kill|き(っ|l)l|キル/i.test(content)) {
     return '@0'
   }
 
