@@ -60,7 +60,7 @@ export const Edit = async (text: string, id: string): Promise<Plan[]> => {
 
   plans = plans.map(p => {
     // 一致する凸予定以外はそのまま帰す
-    if (p.playerID !== id) return p
+    if (p.msgID !== id) return p
 
     p.msg = text
     return p

@@ -27,7 +27,7 @@ export const Message = async (msg: Discord.Message): Promise<Option<string>> => 
   const content = util.Format(msg.content.replace(/\n/g, ' '))
   const alpha = NtoA(content[0]) as AtoE
   const text = content.slice(1).trim()
-  const plans = await schedule.Edit(text, member.id.first())
+  const plans = await schedule.Edit(text, msg.id)
 
   situation.Plans(plans)
   situation.DeclarePlan(alpha)
