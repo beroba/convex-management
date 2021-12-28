@@ -126,7 +126,7 @@ export const IsRole = (member: Option<Discord.GuildMember>, role: string): Optio
  * @return 取得したMember
  */
 export const MemberFromId = async (id: string): Promise<Discord.GuildMember> => {
-  const members = await GetGuild()?.members.fetch()
+  const members = GetGuild()?.members.cache.map(m => m)
   return members?.map(m => m).find(m => m.id === id) as Discord.GuildMember
 }
 
