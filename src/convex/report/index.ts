@@ -95,6 +95,7 @@ export const Convex = async (msg: Discord.Message): Promise<Option<string>> => {
   situation.DeclarePlan(alpha, state)
 
   msg.react(Settings.EMOJI_ID.TORIKESHI)
+  await msg.member?.roles.remove(Settings.BOSS_ROLE_ID[alpha])
 
   if (member_2.end) {
     // 3凸終了している場合に不要なロールを外す
