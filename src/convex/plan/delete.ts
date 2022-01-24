@@ -36,7 +36,7 @@ export const Already = async (react: Discord.MessageReaction, user: Discord.User
   const isAuthor = member?.id.find(n => n === msg.author.id)
   if (!isAuthor) return
 
-  react.message.delete()
+  await react.message.delete()
 
   return 'Already completed message'
 }
@@ -112,7 +112,7 @@ const calMsgDel = async (id: string) => {
 
   console.log(msg.content)
 
-  msg.delete()
+  await msg.delete()
 }
 
 /**

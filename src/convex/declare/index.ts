@@ -90,7 +90,7 @@ const messageDelete = async (channel: Discord.TextChannel) => {
     .filter(Boolean)
   for (const m of msgs) {
     await util.Sleep(100)
-    m.delete()
+    await m.delete()
   }
 }
 
@@ -143,7 +143,7 @@ export const Done = async (alpha: AtoE, member: Member) => {
     .filter(Boolean)
   for (const m of msgs) {
     await util.Sleep(100)
-    m.delete()
+    await m.delete()
   }
 
   console.log('Completion of convex declaration')
@@ -178,7 +178,7 @@ export const Sumi = async (react: Discord.MessageReaction, user: Discord.User): 
     return
   }
 
-  react.message.delete()
+  await react.message.delete()
 
   return 'Delete completed message'
 }

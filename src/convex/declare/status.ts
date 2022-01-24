@@ -41,7 +41,7 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
     if (comment) console.log(comment)
 
     await util.Sleep(500)
-    msg.delete()
+    await msg.delete()
     return
   }
 
@@ -51,7 +51,7 @@ export const Process = async (msg: Discord.Message, alpha: AtoE) => {
   }
 
   await util.Sleep(100)
-  msg.delete()
+  await msg.delete()
 }
 
 /**

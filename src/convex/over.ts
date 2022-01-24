@@ -27,7 +27,7 @@ export const Delete = async (react: Discord.MessageReaction, user: Discord.User)
   const msg = <Discord.Message>react.message
   if (msg.author.id !== user.id) return
 
-  react.message.delete()
+  await react.message.delete()
 
   return 'Delete completed message'
 }
@@ -96,7 +96,7 @@ export const GetAllUserMsg = async (id: string[]): Promise<Discord.Message[]> =>
 export const DeleteAllUserMsg = async (msgs: Discord.Message[]) => {
   for (const m of msgs) {
     await util.Sleep(100)
-    m.delete()
+    await m.delete()
   }
 
   console.log('Delete carryover message')
@@ -110,7 +110,7 @@ export const DeleteAllMsg = async () => {
   const msgs = (await channel.messages.fetch()).map(m => m).filter(Boolean)
   for (const m of msgs) {
     await util.Sleep(100)
-    m.delete()
+    await m.delete()
   }
 
   console.log('Delete carryover message')

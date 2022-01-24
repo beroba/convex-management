@@ -235,7 +235,7 @@ export const SisterReactDelete = async (
   const msg = <Discord.Message>react.message
   if (msg.author.id !== user.id) return
 
-  react.message.delete()
+  await react.message.delete()
 
   return "Delete my sister's completed message"
 }
