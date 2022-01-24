@@ -6,6 +6,22 @@ import * as util from '../util'
 import {TLList, TLFormat} from '../util/type'
 
 /**
+ * tlを修正するﾈｺﾁｬﾝに送信されたメッセージを整形する
+ * @param msg DiscordからのMessage
+ * @return 修正の結果
+ */
+export const Fix = async (msg: Discord.Message): Promise<Option<string>> => {
+  const isBot = msg.member?.user.bot
+  if (isBot) return
+
+  const isChannel = msg.channel.id === Settings.CHANNEL_ID.TL_FORMAT_CAL
+  if (!isChannel) return
+
+  await TL(msg.content, undefined, msg, true)
+  return 'TL shaping'
+}
+
+/**
  * TLを正しい書式に整形させる、
  * timeが指定されていた場合は、その持越秒数にする
  * @param tl 整形させるTL

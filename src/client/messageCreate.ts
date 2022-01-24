@@ -4,6 +4,7 @@ import ThrowEnv from 'throw-env'
 import {Command} from '../command'
 import * as declare from '../convex/declare'
 import * as etc from '../convex/etc'
+import * as format from '../convex/format'
 import * as over from '../convex/over'
 import * as plan from '../convex/plan'
 import * as report from '../convex/report'
@@ -34,6 +35,9 @@ export const MessageCreate = async (msg: Discord.Message) => {
     if (comment) return console.log(comment)
 
     comment = await over.React(msg)
+    if (comment) return console.log(comment)
+
+    comment = await format.Fix(msg)
     if (comment) return console.log(comment)
 
     comment = etc.SisterReactAdd(msg)
