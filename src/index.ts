@@ -15,5 +15,9 @@ process.on('unhandledRejection', console.dir)
 ClientEvent()
 CronOperation()
 
+Client.on('rateLimit', info => {
+  console.log(info)
+})
+
 const token = ThrowEnv('CAL_TOKEN')
 Client.login(token)

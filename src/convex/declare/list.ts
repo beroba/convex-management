@@ -162,6 +162,10 @@ const createDamageList = async (
  */
 const sendHistory = async (alpha: AtoE, text: string) => {
   const history = util.GetTextChannel(Settings.DECLARE_HISTORY_CHANNEL_ID[alpha])
-  await history.send(util.HistoryLine())
+  // prettier-ignore
+  text = [
+    util.HistoryLine(),
+    text
+  ].join('\n')
   await history.send(text)
 }

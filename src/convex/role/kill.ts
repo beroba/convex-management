@@ -100,9 +100,9 @@ const edit = async () => {
  */
 const sendHistory = async (member: Member, content: string) => {
   const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
-  await history.send(util.HistoryLine())
   // prettier-ignore
   const text = [
+    util.HistoryLine(),
     `\`${member.name}\` タスキル状態の変更`,
     content,
   ].join('\n')

@@ -463,15 +463,12 @@ const excludeNoNumbers = (numbers: string[], damages: Damage[]): Damage[] => {
  */
 const sendHistory = async (alpha: AtoE, name: string, command: string, content?: string) => {
   const history = util.GetTextChannel(Settings.DECLARE_HISTORY_CHANNEL_ID[alpha])
-  await history.send(util.HistoryLine())
-  const msg = await history.send(`\`${name}\` ${command}`)
 
-  if (content) {
-    // prettier-ignore
-    const text = [
-      `\`${name}\` ${command}`,
-      content,
-    ].join('\n')
-    await msg.edit(text)
-  }
+  // prettier-ignore
+  const text = [
+    util.HistoryLine(),
+    `\`${name}\` ${command}`,
+    content || '',
+  ].join('\n')
+  await history.send(text)
 }

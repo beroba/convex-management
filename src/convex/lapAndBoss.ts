@@ -63,8 +63,12 @@ export const UpdateLap = async (lap: number, alpha: AtoE, msg?: Discord.Message)
   if (msg) {
     const name = util.GetUserName(msg.member)
     const history = util.GetTextChannel(Settings.DECLARE_HISTORY_CHANNEL_ID[alpha])
-    await history.send(util.HistoryLine())
-    await history.send(`\`${name}\` \`${lap}\`に周回数変更`)
+    // prettier-ignore
+    const text = [
+      util.HistoryLine(),
+      `\`${name}\` \`${lap}\`に周回数変更`,
+    ].join('\n')
+    await history.send(text)
   }
 
   return state

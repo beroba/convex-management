@@ -42,9 +42,9 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
  */
 const sendHistory = async (member: Member, content: string) => {
   const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
-  await history.send(util.HistoryLine())
   // prettier-ignore
   const text = [
+    util.HistoryLine(),
     `\`${member.name}\` 活動限界時間の変更`,
     content,
   ].join('\n')

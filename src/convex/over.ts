@@ -70,9 +70,9 @@ const sendHistory = async (msg: Discord.Message) => {
   if (!member) return
 
   const history = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION_HISTORY)
-  await history.send(util.HistoryLine())
   // prettier-ignore
   const text = [
+    util.HistoryLine(),
     `\`${member.name}\``,
     msg.content,
   ].join('\n')
