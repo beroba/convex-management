@@ -349,10 +349,13 @@ class Generate {
       })
       .map(l => (/ /.test(l[0]) ? `    ${l}` : l)) // 先頭がスペースの場合は4文字スペースを追加する
       .map(l => l.replace(/ +$/g, '')) // 行末のスペースを取り除く
+      // '1:00 ボスUB'に――――を入れる
       .map(l => {
         if (!/\d:\d\d ボスUB/.test(l)) return l
         return `${l.split(' ').first()} ――――ボスUB――――`
-      }) // '1:00 ボスUB'に――――を入れる
+      })
+      .map(l => l.replace(/^ ――――ボスUB――――$/, '     ――――ボスUB――――'))
+      .map(l => l.replace(/^     ボスUB$/, '     ――――ボスUB――――'))
       .join('\n') // 全ての行を結合
     return this
   }
