@@ -151,7 +151,6 @@ export const Delete = async (year: number, month: number, guild?: Discord.Guild)
  */
 const settingPermit = (guild: Discord.Guild): Discord.OverwriteResolvable[] => {
   // 各ロールがあるか確認
-  const leader        = guild.roles.cache.get(Settings.ROLE_ID.LEADER)?.id         ?? ''
   const subLeader     = guild.roles.cache.get(Settings.ROLE_ID.SUB_LEADER)?.id     ?? ''
   const progress      = guild.roles.cache.get(Settings.ROLE_ID.PROGRESS)?.id       ?? ''
   const clanMembers   = guild.roles.cache.get(Settings.ROLE_ID.CLAN_MEMBERS)?.id   ?? ''
@@ -161,12 +160,11 @@ const settingPermit = (guild: Discord.Guild): Discord.OverwriteResolvable[] => {
 
   // カテゴリーの権限を設定
   return [
-    {id: leader,        allow: ['MENTION_EVERYONE']                },
-    {id: subLeader,     allow: ['MANAGE_MESSAGES']                 },
-    {id: progress,      allow: ['MANAGE_MESSAGES']                 },
-    {id: clanMembers,   allow: ['VIEW_CHANNEL']                    },
-    {id: sisterMembers, allow: ['VIEW_CHANNEL']                    },
-    {id: tomodachi,     allow: ['VIEW_CHANNEL']                    },
+    {id: subLeader,     allow: ['MANAGE_MESSAGES']},
+    {id: progress,      allow: ['MANAGE_MESSAGES']},
+    {id: clanMembers,   allow: ['VIEW_CHANNEL']   },
+    {id: sisterMembers, allow: ['VIEW_CHANNEL']   },
+    {id: tomodachi,     allow: ['VIEW_CHANNEL']   },
     {id: everyone,      deny:  ['VIEW_CHANNEL', 'MENTION_EVERYONE']},
   ]
 }
