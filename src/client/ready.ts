@@ -14,7 +14,5 @@ export const Ready = async () => {
   // リアクションのキャッシュを取る
   etc.Fetch()
 
-  etc.ClanBattleOperation()
-
   console.log(`Logged in as ${Client.user?.username}!`)
 }
