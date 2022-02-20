@@ -1,7 +1,5 @@
 # ロールのID
 ROLE_ID:
-  # リーダー
-  LEADER: &LEADER '722547140487938181'
   # サブリーダー
   SUB_LEADER: &SUB_LEADER '739666967509598218'
   # 進行役
@@ -31,7 +29,6 @@ ROLE_ID:
 
 # クラバトコマンドの実行可能ユーザー
 COMMAND_ROLE:
-  - *LEADER
   - *SUB_LEADER
 
 # ボスのロールID
