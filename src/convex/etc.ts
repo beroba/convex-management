@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
+import {AtoN} from 'alphabet-to-number'
 import * as category from './category'
 import * as dateTable from './dateTable'
 import * as situation from './situation'
@@ -238,6 +239,32 @@ export const SisterReactDelete = async (
   await react.message.delete()
 
   return "Delete my sister's completed message"
+}
+
+/**
+ * 凸残り Nボス、次にお願いします！を通知する
+ * @param interaction インタラクションの情報
+ * @return 凸お願い処理の実行結果
+ */
+export const TotuPlease = async (interaction: Discord.Interaction): Promise<Option<string>> => {
+  const isBot = interaction.user.bot
+  if (isBot) return
+
+  if (!interaction.isButton()) return
+
+  const idList = interaction.customId.split('-')
+  if (idList.first() !== 'onegai') return
+
+  // インタラクション失敗を回避
+  interaction.deferUpdate()
+
+  const id = idList.last()
+
+  const channel = util.GetTextChannel(Settings.CHANNEL_ID.PROGRESS)
+
+  channel.send(`<@&738500598718136373> ${AtoN(id)}ボス、次にお願いします！`)
+
+  return 'Please be convex'
 }
 
 /**
