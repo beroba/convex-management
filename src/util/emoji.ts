@@ -164,7 +164,9 @@ const oyasumiReact = (msg: Discord.Message) => {
  * @param msg DiscordからのMessage
  */
 const otukareReact = (msg: Discord.Message) => {
-  const match = msg.content.replace(/お疲れ|おつです|おつでした|お先に?失礼|お先です/g, 'おつかれ').match(/おつかれ/)
+  const match = msg.content
+    .replace(/お疲れ|おつです|おつでした|お先に?失礼|お先です|アディオス/g, 'おつかれ')
+    .match(/おつかれ/)
   if (!match) return
 
   msg.react(Settings.EMOJI_ID.OTUKARE)
