@@ -1,7 +1,6 @@
 import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
-import * as status from '../io/status'
 import * as util from '../util'
 
 /**
@@ -42,8 +41,6 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
   if (!isChannel) return
 
   msg.react(Settings.EMOJI_ID.KANRYOU)
-  sendHistory(msg)
-
   return 'React Kanryou'
 }
 
@@ -55,28 +52,7 @@ export const React = async (msg: Discord.Message): Promise<Option<string>> => {
 export const Edit = async (msg: Discord.Message): Promise<Option<string>> => {
   const isChannel = msg.channel.id === Settings.CHANNEL_ID.CARRYOVER_SITUATION
   if (!isChannel) return
-
-  sendHistory(msg)
-
   return 'Edit history'
-}
-
-/**
- * 持越状況の履歴を送信する
- * @param msg DiscordからのMessage
- */
-const sendHistory = async (msg: Discord.Message) => {
-  const member = await status.FetchMember(msg.author.id)
-  if (!member) return
-
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.CARRYOVER_SITUATION_HISTORY)
-  // prettier-ignore
-  const text = [
-    util.HistoryLine(),
-    `\`${member.name}\``,
-    msg.content,
-  ].join('\n')
-  await history.send(text)
 }
 
 /**
@@ -91,7 +67,7 @@ export const GetAllUserMsg = async (id: string[]): Promise<Discord.Message[]> =>
 
 /**
  * 渡されたメンバーidの持越状況を全て削除する
- * @param id 削除したいメンバーのid
+ * @param msgs メッセージのリスト
  */
 export const DeleteAllUserMsg = async (msgs: Discord.Message[]) => {
   for (const m of msgs) {

@@ -5,7 +5,6 @@ import * as situation from '../situation'
 import * as status from '../../io/status'
 import * as util from '../../util'
 import {AtoE} from '../../util/type'
-import {Member} from '../../util/type'
 
 /**
  * 離席中ロールを外す
@@ -54,13 +53,11 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   if (id === 'on') {
     await guildMember.roles.add(Settings.ROLE_ID.ATTENDANCE)
     await edit()
-    sendHistory(member, '離席中状態の追加')
     planUpdate()
     return 'Add riseki roll'
   } else if (id === 'off') {
     await guildMember.roles.remove(Settings.ROLE_ID.ATTENDANCE)
     await edit()
-    sendHistory(member, '離席中状態の解除')
     planUpdate()
     return 'Remove riseki roll'
   } else {
@@ -81,20 +78,4 @@ const edit = async () => {
   const msg = await channel.messages.fetch(Settings.BOT_OPERATION.ATTENDANCE)
 
   await msg.edit(text)
-}
-
-/**
- * 離席中状態の変更履歴を送信する
- * @param member メンバーの状態
- * @param content 履歴の内容
- */
-const sendHistory = async (member: Member, content: string) => {
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
-  // prettier-ignore
-  const text = [
-    util.HistoryLine(),
-    `\`${member.name}\` 離席中状態の変更`,
-    content,
-  ].join('\n')
-  await history.send(text)
 }
