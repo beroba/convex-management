@@ -3,7 +3,6 @@ import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as status from '../../io/status'
 import * as util from '../../util'
-import {Member} from '../../util/type'
 
 /**
  * メッセージ送信者にタスキルロールを付与する
@@ -66,12 +65,10 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
   if (id === 'on') {
     await guildMember.roles.add(Settings.ROLE_ID.TASK_KILL)
     await edit()
-    sendHistory(member, 'タスキルの追加')
     return 'Add task kill roll'
   } else if (id === 'off') {
     await guildMember.roles.remove(Settings.ROLE_ID.TASK_KILL)
     await edit()
-    sendHistory(member, 'タスキルの解除')
     return 'Remove task kill roll'
   } else {
     return
@@ -91,20 +88,4 @@ const edit = async () => {
   const msg = await channel.messages.fetch(Settings.BOT_OPERATION.TASK_KILL)
 
   await msg.edit(text)
-}
-
-/**
- * タスキルの履歴を送信する
- * @param member メンバーの状態
- * @param content 履歴の内容
- */
-const sendHistory = async (member: Member, content: string) => {
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
-  // prettier-ignore
-  const text = [
-    util.HistoryLine(),
-    `\`${member.name}\` タスキル状態の変更`,
-    content,
-  ].join('\n')
-  await history.send(text)
 }

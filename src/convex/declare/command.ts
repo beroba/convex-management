@@ -1,4 +1,3 @@
-import * as Discord from 'discord.js'
 import Option from 'type-of-option'
 import Settings from 'const-settings'
 import * as status from './status'
@@ -9,11 +8,10 @@ import {AtoE} from '../../util/type'
 /**
  * 凸宣言のコマンドを処理する
  * @param content ダメージ報告のメッセージ
- * @param msg DiscordからのMessage*
  * @param alpha ボス番号
  * @return コマンドの実行結果
  */
-export const Process = async (content: string, alpha: AtoE, msg: Discord.Message): Promise<Option<string>> => {
+export const Process = async (content: string, alpha: AtoE): Promise<Option<string>> => {
   const channel = util.GetTextChannel(Settings.DECLARE_CHANNEL_ID[alpha])
   switch (true) {
     case /\/(del|d)/i.test(content): {
@@ -21,7 +19,7 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       if (!list) return
       const numbers = fetchNumbers(list)
 
-      await status.DeleteDamage(numbers, alpha, channel, msg)
+      await status.DeleteDamage(numbers, alpha, channel)
       return 'Delete damage'
     }
 
@@ -31,7 +29,7 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       const numbers = fetchNumbers(list)
       if (numbers.length < 2) return
 
-      await status.RandomSelection(numbers, alpha, channel, msg)
+      await status.RandomSelection(numbers, alpha, channel)
       return 'Random selection'
     }
 
@@ -41,13 +39,13 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       const numbers = fetchNumbers(list)
       if (numbers.length !== 2) return
 
-      await status.CarryoverCalculation(numbers, alpha, channel, msg)
+      await status.CarryoverCalculation(numbers, alpha, channel)
       return 'Carryover calculation'
     }
 
     case /\/(@|hp?)/i.test(content): {
       content = content.replace(/\/hp?/gi, '@')
-      await status.RemainingHPChange(content, alpha, undefined, msg)
+      await status.RemainingHPChange(content, alpha)
       return 'Remaining HP change'
     }
 
@@ -56,7 +54,7 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       if (!list) return
       const lap = list.map(l => l).first()
 
-      await lapAndBoss.UpdateLap(lap.to_n(), alpha, msg)
+      await lapAndBoss.UpdateLap(lap.to_n(), alpha)
       return 'Change boss'
     }
 
@@ -65,7 +63,7 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       if (!list) return
       const numbers = fetchNumbers(list)
 
-      await status.ExclusionSettings(numbers, alpha, channel, msg)
+      await status.ExclusionSettings(numbers, alpha, channel)
       return 'Exclusion settings'
     }
 
@@ -74,7 +72,7 @@ export const Process = async (content: string, alpha: AtoE, msg: Discord.Message
       if (!list) return
       const numbers = fetchNumbers(list)
 
-      await status.ThroughNotice(numbers, alpha, channel, msg)
+      await status.ThroughNotice(numbers, alpha, channel)
       return 'Through notification'
     }
   }

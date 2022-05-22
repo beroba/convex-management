@@ -22,32 +22,25 @@ export const Report = async (members?: Member[], state?: Current) => {
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION_HISTORY)
-  const texts = [util.HistoryLine()]
-
   // 全体状況
   {
     const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.WHOLE)
     const text = await report.CreateWholeText(members, state)
     await msg.edit(text)
-    texts.push(text)
   }
   // 残凸状況
   {
     const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.CONVEX)
     const text = await report.CreateConvexText(members)
     await msg.edit(text)
-    texts.push(text)
   }
   // 持越状況
   {
     const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.OVER)
     const text = await report.CreateOverText(members)
     await msg.edit(text)
-    texts.push(text)
   }
 
-  await history.send(texts.join('\n'))
   console.log('Overall convex situation update')
 }
 
@@ -64,12 +57,10 @@ export const Boss = async (members?: Member[], state?: Current) => {
   members = members.sort((a, b) => (a.name > b.name ? 1 : -1))
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOSS_SITUATION_HISTORY)
 
   const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.BOSS)
   const text = await boss.CreateBossText(members, state)
   await msg.edit(text)
-  await history.send([util.HistoryLine(), text].join('\n'))
 
   console.log('Boss status update')
 }
@@ -82,12 +73,10 @@ export const Plans = async (plans?: Plan[]) => {
   plans ??= await schedule.Fetch()
 
   const channel = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_SITUATION)
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.CONVEX_RESERVATE_HISTORY)
 
   const msg = await channel.messages.fetch(Settings.SITUATION_MESSAGE_ID.PLAN)
   const text = await plan.CreateAllPlanText(plans)
   await msg.edit(text)
-  await history.send([util.HistoryLine(), text].join('\n'))
 
   console.log('Convex schedule update of convex situation')
 }

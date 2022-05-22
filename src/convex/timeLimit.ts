@@ -30,25 +30,8 @@ export const Interaction = async (interaction: Discord.Interaction): Promise<Opt
 
   const content = `${member.limit}時`
   interaction.reply({content: content, ephemeral: true})
-  sendHistory(member, content)
 
   return
-}
-
-/**
- * 活動限界時間の変更履歴を送信する
- * @param member メンバーの状態
- * @param content 履歴の内容
- */
-const sendHistory = async (member: Member, content: string) => {
-  const history = util.GetTextChannel(Settings.CHANNEL_ID.BOT_OPERATION_HISTORY)
-  // prettier-ignore
-  const text = [
-    util.HistoryLine(),
-    `\`${member.name}\` 活動限界時間の変更`,
-    content,
-  ].join('\n')
-  await history.send(text)
 }
 
 /**
