@@ -25,45 +25,45 @@ export const Management = async (content: string, msg: Discord.Message): Promise
   if (!isRole) return
 
   switch (true) {
-    case /cb manage delete category/.test(content): {
-      await deleteCategoryController('/cb manage delete category', content, msg)
+    case /cb delete category/.test(content): {
+      await deleteCategoryController('/cb delete category', content, msg)
       return 'Delete organization category'
     }
 
-    case /cb manage set boss/.test(content): {
-      await setBossController('/cb manage set boss', content, msg)
+    case /cb set boss/.test(content): {
+      await setBossController('/cb set boss', content, msg)
       return 'Set convex bossTable'
     }
 
-    case /cb manage reset role/.test(content): {
-      await resetRoleController('/cb manage reset role', content, msg)
+    case /cb reset role/.test(content): {
+      await resetRoleController('/cb reset role', content, msg)
       return 'Release all resetting convex rolls'
     }
 
-    case /cb manage remove role/.test(content): {
-      await removeRoleController('/cb manage remove role', content, msg)
+    case /cb remove role/.test(content): {
+      await removeRoleController('/cb remove role', content, msg)
       return 'Release all remaining convex rolls'
     }
 
-    case /cb manage update members/.test(content): {
-      await updateMembersController('/cb manage update members', content, msg)
+    case /cb update members/.test(content): {
+      await updateMembersController('/cb update members', content, msg)
       return 'Update convex management members'
     }
 
-    case /cb manage delete all plan/.test(content): {
-      await deleteAllPlanController('/cb manage delete all plan', content, msg)
+    case /cb delete all plan/.test(content): {
+      await deleteAllPlanController('/cb delete all plan', content, msg)
       return 'All delete plan'
     }
 
-    case /cb manage set cal/.test(content): {
-      await setCalController('/cb manage set cal', content, msg)
+    case /cb set cal/.test(content): {
+      await setCalController('/cb set cal', content, msg)
       return 'Set cal name'
     }
   }
 }
 
 /**
- * `/cb manage delete category`のController
+ * `/cb delete category`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -80,7 +80,7 @@ const deleteCategoryController = async (_command: string, _content: string, _msg
 }
 
 /**
- * `/cb manage set boss`のController
+ * `/cb set boss`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -99,7 +99,7 @@ const setBossController = async (_command: string, _content: string, _msg: Disco
 }
 
 /**
- * `/cb manage reset role`のController
+ * `/cb reset role`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -110,7 +110,7 @@ const resetRoleController = async (_command: string, _content: string, _msg: Dis
 }
 
 /**
- * `/cb manage remove role`のController
+ * `/cb remove role`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -121,7 +121,7 @@ const removeRoleController = async (_command: string, _content: string, _msg: Di
 }
 
 /**
- * `/cb manage update members`のController
+ * `/cb update members`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -144,7 +144,7 @@ const updateMembersController = async (_command: string, _content: string, _msg:
 }
 
 /**
- * `/cb manage delete all plan`のController
+ * `/cb delete all plan`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
@@ -155,7 +155,7 @@ const deleteAllPlanController = async (_command: string, _content: string, _msg:
 }
 
 /**
- * `/cb manage set cal`のController
+ * `/cb set cal`のController
  * @param _command 引数以外のコマンド部分
  * @param _content 入力された内容
  * @param _msg DiscordからのMessage
